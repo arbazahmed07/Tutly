@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
+import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
 
 export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
-  
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -14,11 +15,8 @@ export default function ThemeSwitch() {
 
   return (
     <>
-      <p>Current theme: {resolvedTheme}</p>
-      <button
-        onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}
-      >
-        <span>Toggle Theme</span>
+      <button onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}>
+        <div className="rounded-full cursor-pointer hover:bg-secondary-800 p-2">{resolvedTheme==="light"?<MdOutlineDarkMode className="text-xl"/>:<MdOutlineLightMode className="text-xl"/>}</div>
       </button>
     </>
   );
