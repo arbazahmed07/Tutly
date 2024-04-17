@@ -8,7 +8,7 @@ import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
 import { useState } from "react";
 
-const links = [
+const items = [
     {
         name:"Dashboard",
         icon:<RxDashboard/>,
@@ -40,7 +40,7 @@ export default function HomeLayout({children,currentUser}:any) {
     const [menu,setMenu] = useState<boolean>(true);
     return (
         <div className="flex">
-            <Sidebar links={links} menu={menu} />
+            <Sidebar items={items} menu={menu} />
             <div className="w-full">
                 <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
                 {children}
