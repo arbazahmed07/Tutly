@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import Provider from "@/providers/Provider";
-import Navbar from "@/components/navbar/Navbar";
 import getCurrentUser from "@/actions/getCurrentUser";
-import Footer from "@/components/Footer";
+import HomeLayout from "@/components/layouts/home-layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,9 +22,8 @@ export default async function RootLayout({
     <html lang="en" className="bg-background text-foreground">
       <body className={inter.className}>
         <Provider>
-          <Navbar currentUser={currentUser} />
-          {children}
-          <Footer />
+          <HomeLayout children={children} currentUser={currentUser}/>
+          {/* <Footer /> */}
         </Provider>
       </body>
     </html>

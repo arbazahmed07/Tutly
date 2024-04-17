@@ -6,8 +6,9 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { NEXT_PUBLIC_SIGN_IN_URL } from "@/utils/constants";
 import useClickOutside from "@/hooks/useClickOutside";
+import { FaCaretDown,FaCaretUp } from "react-icons/fa6";
 
-const UserProfile = ({ currentUser }) => {
+const UserProfile = ({ currentUser }:any) => {
   const router = useRouter();
 
   const [isOpen, setIsOpen, componentRef] = useClickOutside<HTMLDivElement>(false);
@@ -19,7 +20,7 @@ const UserProfile = ({ currentUser }) => {
         <div
           ref={componentRef}
           onClick={() => setIsOpen(!isOpen)}
-          className="relative px-2 py-1 border-[1px] border-neutral-200 flex items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition"
+          className="relative px-1 py-[0.5px] bg-secondary-800 flex items-center gap-3 rounded-full cursor-pointer shadow-md transition"
         >
           <div className="">
             <Image
@@ -30,9 +31,9 @@ const UserProfile = ({ currentUser }) => {
               alt="profile img"
             />
           </div>
-          <AiOutlineMenu />
+          {isOpen?<FaCaretUp/>:<FaCaretDown />}
           {isOpen && (
-            <div className="absolute rounded-xl shadow-md min-w-max overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
+            <div className="absolute rounded-lg bg-primary-900 shadow-md min-w-max overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
               <>
                 <MenuItem
                   onClick={() => {
