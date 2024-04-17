@@ -20,7 +20,7 @@ export default async function RootLayout({
 }>) {
   const currentUser = await getCurrentUser();
   return (
-    <html lang="en">
+    <html lang="en" className="bg-background text-foreground">
       <body className={inter.className}>
         <Provider>
           <Navbar currentUser={currentUser} />
