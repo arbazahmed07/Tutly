@@ -7,7 +7,7 @@ import { editorOptions } from './config';
 import { Context } from './context';
 import * as monaco from 'monaco-editor';
 
-export const EditorPanel = () => {
+const EditorPanel = () => {
   const { state, dispatch, currentTabIndex, setCurrentTabIndex, theme } = useContext(Context);
 
   const value = currentTabIndex === 0 ? state.html : currentTabIndex === 1 ? state.css : state.js;
@@ -139,3 +139,5 @@ export const EditorPanel = () => {
     </div>
   );
 };
+
+export default EditorPanel;

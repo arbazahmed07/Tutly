@@ -1,5 +1,7 @@
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 
+export type EditorTheme = 'light' | 'dark';
+
 export const editorOptions: monaco.editor.IStandaloneEditorConstructionOptions =
   {
     acceptSuggestionOnCommitCharacter: true,
@@ -60,7 +62,7 @@ export const editorOptions: monaco.editor.IStandaloneEditorConstructionOptions =
     wrappingIndent: "none",
   };
 
-export const htmlDefaultTemplate: string = `<!DOCTYPE html>
+  const htmlDefaultTemplate: string = `<!DOCTYPE html>
 <html>
 
 <head>
@@ -75,12 +77,12 @@ export const htmlDefaultTemplate: string = `<!DOCTYPE html>
 </html>
 `;
 
-export const cssDefaultTemplate: string = `h1 {
+const cssDefaultTemplate: string = `h1 {
   color: green;
 }
 `;
 
-export const jsDefaultTemplate: string = `console.log('Hello World');
+const jsDefaultTemplate: string = `console.log('Hello World');
 `;
 
 export const defaultState = {

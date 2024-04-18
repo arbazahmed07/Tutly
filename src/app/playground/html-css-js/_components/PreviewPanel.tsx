@@ -3,7 +3,7 @@
 import { useContext } from 'react';
 import { Context } from './context';
 
-export const PreviewPanel = () => {
+const PreviewPanel = () => {
   const { state } = useContext(Context);
   const srcDoc = state.html + '<style>' + state.css + '</style>' + '<script>' + state.js + '</script>';
 
@@ -19,3 +19,5 @@ export const PreviewPanel = () => {
     </div>
   );
 };
+
+export default PreviewPanel;

@@ -2,8 +2,7 @@
 
 import { createContext } from 'react';
 import { Dispatch, SetStateAction } from 'react';
-
-export type EditorTheme = 'light' | 'dark';
+import { EditorTheme } from './config';
 
 export interface IState {
   html: string;
