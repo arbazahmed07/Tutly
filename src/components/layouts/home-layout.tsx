@@ -3,7 +3,7 @@ import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/sidebar";
 
 import { RxDashboard } from "react-icons/rx";
-import { MdOutlineAssignment } from "react-icons/md";
+import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
 import { MdOutlineCastForEducation } from "react-icons/md";
@@ -35,10 +35,18 @@ const items = [
         name: "Doubts",
         icon: <TbMessageQuestion />,
         path: "/doubts"
+    },
+    {
+        name: "Playgrounds",
+        icon: <MdAirplay />,
+        path: "/playground/html-css-js"
     }
 ]
 
-export default function HomeLayout({ children, currentUser }: any) {
+export default function HomeLayout({ children, currentUser }: {
+    children: React.ReactNode,
+    currentUser: any
+}) {
     const [menu, setMenu] = useState<boolean>(true);
     return (
         <div className="flex">

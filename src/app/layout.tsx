@@ -22,7 +22,9 @@ export default async function RootLayout({
     <html lang="en" className="bg-background text-foreground">
       <body className={inter.className}>
         <Provider>
-          <HomeLayout children={children} currentUser={currentUser}/>
+          <HomeLayout currentUser={currentUser}>
+            {children}
+          </HomeLayout>
           {/* <Footer /> */}
         </Provider>
       </body>
