@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import UserProfile from './UserProfile';
 import ThemeSwitch from './ThemeSwitch';
 import { GrMenu } from "react-icons/gr";
@@ -9,9 +9,11 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 interface Props {
   // todo: change types
   currentUser?: any;
+  menu : boolean;
+  setMenu: Dispatch<SetStateAction<boolean>>
 }
 
-const Navbar: React.FC<Props> = ({ currentUser,menu,setMenu }:any) => {
+const Navbar: React.FC<Props> = ({ currentUser,menu,setMenu }:Props) => {
 
   return (
     <div className='shadow-md px-2 z-10 sticky top-0'>

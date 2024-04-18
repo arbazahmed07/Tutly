@@ -10,7 +10,7 @@ import { MdOutlineCastForEducation } from "react-icons/md";
 import { Suspense, useState } from "react";
 import Loading from "@/app/loading";
 
-const links = [
+const items = [
     {
         name: "Dashboard",
         icon: <RxDashboard />,
@@ -42,7 +42,7 @@ export default function HomeLayout({ children, currentUser }: any) {
     const [menu, setMenu] = useState<boolean>(true);
     return (
         <div className="flex">
-            <Sidebar links={links} menu={menu} />
+            <Sidebar items={items} menu={menu} />
             <div className="w-full">
                 <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
                 <Suspense fallback={<Loading/>}>

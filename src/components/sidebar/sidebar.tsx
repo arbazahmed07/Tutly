@@ -2,7 +2,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Sidebar({links,menu}:any) {
+interface Props {
+    items :{
+        name:string,
+        icon:any,
+        path:string
+    }[],
+    menu: boolean
+}
+
+export default function Sidebar({items,menu}:Props) {
     const pathname = usePathname();
     return (
         <div className={`min-h-dvh shadow-xl px-2 pt-3`}>
@@ -12,7 +21,7 @@ export default function Sidebar({links,menu}:any) {
                 </div>
             </Link>
             {
-                links.map((link:any)=>{
+                items.map((link:any)=>{
                     return (
                         <Link href={link.path} className={`${pathname===link.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded py-2 px-4 my-2 flex items-center gap-4`}>
                             <div className={`text-2xl`}>{link.icon}</div>
