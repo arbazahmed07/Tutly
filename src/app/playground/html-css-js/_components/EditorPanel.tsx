@@ -100,7 +100,7 @@ const EditorPanel = () => {
   }
 
   return (
-    <div className="h-full py-2 mx-1 relative">
+    <div>
       <ThemeSwitcher />
       <ul className="flex p-2">
         <li className={`mr-1 rounded px-4 cursor-pointer ${currentTabIndex === 0 ? 'dark:bg-secondary-800' : ''}`}

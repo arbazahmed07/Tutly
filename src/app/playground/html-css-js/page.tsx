@@ -29,7 +29,9 @@ const Page = () => {
         sizes={[50, 50]}
         minSize={300}
       >
-        <EditorPanel />
+        <div className='h-full py-2 mx-1 relative'>
+          <EditorPanel />
+        </div>
         <PreviewPanel />
       </Split>
     </Context.Provider>
