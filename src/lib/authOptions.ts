@@ -58,33 +58,18 @@ const authOptions: AuthOptions = {
           throw new Error(data.Data);
         }
 
-        const user = await prisma.user.findUnique({
-          where: { username: username },
+        const user = await prisma.user.upsert({
+          where: { username },
+          update: {
+            password: bcrypt.hashSync(password, 10),
+          },
+          create: {
+            username,
+            password: bcrypt.hashSync(password, 10),
+          },
         });
 
-        let userWithCookie: any = null;
-
-        if (!user) {
-          const newUser = await prisma.user.create({
-            data: {
-              username: username,
-              password: await bcrypt.hash(password, 10),
-            },
-          });
-          userWithCookie = { ...newUser, cookie: data.cookie };
-        } else {
-          const updatedUser = await prisma.user.update({
-            where: { username: username },
-            data: {
-              password: await bcrypt.hash(password, 10),
-            },
-          });
-          userWithCookie = { ...updatedUser, eduprimeCookie: data.cookie };
-        }
-
-        return userWithCookie;
-
-        // if (user && (await bcrypt.compare(password, user.password!))) {
+        return { ...user, eduprimeCookie: data.cookie } as any;
       },
     }),
   ],
