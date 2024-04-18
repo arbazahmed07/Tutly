@@ -6,7 +6,9 @@ import { RxDashboard } from "react-icons/rx";
 import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
-import { useState } from "react";
+import { MdOutlineCastForEducation } from "react-icons/md";
+import { Suspense, useState } from "react";
+import Loading from "@/app/loading";
 
 const items = [
     {
@@ -16,7 +18,7 @@ const items = [
     },
     {
         name: "Courses",
-        icon: <MdOutlineAssignment />,
+        icon: <MdOutlineCastForEducation />,
         path: "/courses"
     },
     {
@@ -51,7 +53,9 @@ export default function HomeLayout({ children, currentUser }: {
             <Sidebar items={items} menu={menu} />
             <div className="w-full">
                 <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
-                {children}
+                <Suspense fallback={<Loading/>}>
+                    {children}
+                </Suspense>
             </div>
         </div>
     )

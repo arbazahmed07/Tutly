@@ -14,17 +14,17 @@ interface Props {
 export default function Sidebar({items,menu}:Props) {
     const pathname = usePathname();
     return (
-        <div className={`${menu?"w-[220px]":"w-[60px]"} min-h-dvh shadow-xl px-2 pt-3`}>
+        <div className={`min-h-dvh shadow-xl px-2 pt-3`}>
             <Link href='/'>
-                <div className={`text-2xl font-bold mb-6 ${!menu&&"text-center"}`}>
+                <div className={`text-2xl font-bold mb-6`}>
                     LMS
                 </div>
             </Link>
             {
                 items.map((link:any)=>{
                     return (
-                        <Link href={link.path} className={`${pathname===link.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded p-2 my-2 flex items-center gap-4`}>
-                            <div className={`text-2xl ${!menu&&"text-center"}`}>{link.icon}</div>
+                        <Link href={link.path} className={`${pathname===link.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded py-2 px-4 my-2 flex items-center gap-4`}>
+                            <div className={`text-2xl`}>{link.icon}</div>
                             <h1 className={`${!menu&&"hidden"}`}>{link.name}</h1>
                         </Link>
                     )
