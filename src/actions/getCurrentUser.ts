@@ -6,11 +6,11 @@ export default async function getCurrentUser() {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.email) return null;
+    if (!session?.user?.username) return null;
 
     const currentUser = await db.user.findUnique({
       where: {
-        email: session.user.email as string,
+        username: session.user.username
       },
     });
 

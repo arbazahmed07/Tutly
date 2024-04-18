@@ -7,8 +7,8 @@ import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
 import { MdOutlineCastForEducation } from "react-icons/md";
-import { Suspense, useState } from "react";
-import Loading from "@/app/loading";
+import { Suspense, useEffect, useState } from "react";
+import Loading from "@/app/(dashboard)/loading";
 
 const items = [
     {
@@ -53,7 +53,7 @@ export default function HomeLayout({ children, currentUser }: {
             <Sidebar items={items} menu={menu} />
             <div className="w-full">
                 <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
-                <Suspense fallback={<Loading/>}>
+                <Suspense fallback={<Loading />}>
                     {children}
                 </Suspense>
             </div>

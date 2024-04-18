@@ -22,11 +22,12 @@ enum Role {
 model User {
   id       String  @id @default(uuid())
   name     String?
-  username String?
+  username String? @unique
   email    String? @unique
   image    String?
   password String?
-  role     Role?   @default(STUDENT)
+  mobile   String?
+  role     Role    @default(STUDENT)
 
   lastLogin     DateTime[]
   emailVerified DateTime?
@@ -38,6 +39,7 @@ model User {
   account        Account[]
   Course         Course[]
   userAssignment userAssignment[]
+  EnrolledUsers  EnrolledUsers[]
 }
 
 // model Profile {
@@ -68,6 +70,9 @@ model Course {
 
 model EnrolledUsers {
   id String @id @default(uuid())
+
+  userId   String
+  user User @relation(fields: [userId], references: [id])
 
   startDate DateTime  @default(now())
   endDate   DateTime?
@@ -105,23 +110,23 @@ enum attachmentType {
 }
 
 model Attachment {
-  id             String         @id @default(uuid())
-  title          String         @default("Attachment")
-  Details        Json?  
+  id             String           @id @default(uuid())
+  title          String           @default("Attachment")
+  Details        Json?
   attachmentType attachmentType
   link           String?
   userAssignment userAssignment[]
   classId        String?
-  Class          Class?         @relation(fields: [classId], references: [id])
+  Class          Class?           @relation(fields: [classId], references: [id])
 }
 
 model userAssignment {
   id           String @id @default(uuid())
-  userId          String
+  userId       String
   AssignedUser User   @relation(fields: [userId], references: [id])
 
-  attachmentId    String
-  assignment Attachment @relation(fields: [attachmentId], references: [id])
+  attachmentId String
+  assignment   Attachment @relation(fields: [attachmentId], references: [id])
 
   DueDate DateTime
   points  Point[]
