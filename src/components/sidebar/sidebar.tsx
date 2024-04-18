@@ -21,11 +21,11 @@ export default function Sidebar({items,menu}:Props) {
                 </div>
             </Link>
             {
-                items.map((link:any)=>{
+                items.map((item)=>{
                     return (
-                        <Link href={link.path} className={`${pathname===link.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded py-2 px-4 my-2 flex items-center gap-4`}>
-                            <div className={`text-2xl`}>{link.icon}</div>
-                            <h1 className={`${!menu&&"hidden"}`}>{link.name}</h1>
+                        <Link href={item.path} key={item.path} className={`${pathname===item.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded p-2 my-2 flex items-center gap-4`}>
+                            <div className={`text-2xl ${!menu&&"text-center"}`}>{item.icon}</div>
+                            <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
                         </Link>
                     )
                 })
