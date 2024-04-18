@@ -5,30 +5,34 @@ import { toast } from "react-hot-toast";
 import { FieldValues, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import SigninWithGithub from "./SigninWithGithub";
+import { useState } from "react";
 
 
 const SignIn = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const onSubmit = async (data: FieldValues) => {
+    setLoading(true);
     try {
+      toast.loading("Signing in...");
       const response = await signIn('credentials', {
         username: data.username.toUpperCase(),
         password: data.password,
         callbackUrl: "/",
         redirect: false,
       });
-
-      console.log(response);
-
+      toast.dismiss();
       if (response?.error) {
         toast.error(response.error);
       } else{
+        toast.success("Redirecting to dashboard...");
         router.push("/");
-        toast.success("Signed in successfully");
       }
     } catch (error: any) {
       toast.error("An error occurred. Please try again later");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -52,7 +56,8 @@ const SignIn = () => {
           {errors.password && <p className="text-red-500">Password must have more than 8 characters</p>}
           <button
             type="submit"
-            className="bg-gray-950 hover:bg-gray-800 text-white text-sm font-semibold py-2 px-3 rounded-lg"
+            disabled={loading}
+            className="bg-gray-950 hover:bg-gray-800 text-white text-sm font-semibold py-2 px-3 rounded-lg disabled:opacity-50"
           >
             Sign In
           </button>
