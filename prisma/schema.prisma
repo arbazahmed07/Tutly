@@ -107,6 +107,7 @@ model Video {
 enum attachmentType {
   ASSIGNMENT
   GITHUB
+  ZOOM
   OTHERS
 }
 
