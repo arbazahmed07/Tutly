@@ -1,8 +1,8 @@
-import { getAllCourses, getCourseClasses } from "@/actions/courses"
+import { getAllCourses, getCourseClasses, getEnrolledCourses } from "@/actions/courses"
 import CourseCard from "@/components/courseCard";
 
 export default async function Courses() {
-    const courses = await getAllCourses();
+    const courses = await getEnrolledCourses();
     return (
         <div className="m-14 flex gap-14 flex-wrap">
             {
