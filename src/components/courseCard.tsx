@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 export default function CourseCard({ course, percent, classesCompleted }: any) {
     const router = useRouter();
     return (
-        <div key={course.id} onClick={() => router.push(`/courses/${course.id}}`)} className="w-[300px] rounded-3xl border cursor-pointer">
+        <div key={course.id} onClick={() => router.push(`/courses/${course.id}`)} className="w-[300px] rounded-3xl border cursor-pointer">
             <div className="h-[200px] flex relative">
                 <div className="h-[5px] absolute rounded border w-[80%] bottom-5 left-[10%]">
                     <div className={`border-2 w-[${percent}%]`}></div>

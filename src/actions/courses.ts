@@ -21,7 +21,7 @@ export const getAllCourses=async()=>{
 export const getCourseClasses=async(id:string)=>{
     const classes = await db.class.findMany({
         where:{
-            courseId : id,
+            courseId:id
         },
         include:{
             Course:true,
