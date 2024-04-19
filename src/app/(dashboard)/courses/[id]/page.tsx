@@ -1,6 +1,5 @@
 import { getCourseClasses } from '@/actions/getAllCourses'
 import React from 'react'
-import Sidebar from "@/components/sidebar/sidebar";
 
 const page = async ({ params }: {
     params: { id: string }
