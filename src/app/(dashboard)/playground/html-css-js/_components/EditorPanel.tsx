@@ -100,20 +100,20 @@ const EditorPanel = () => {
   }
 
   return (
-    <div>
+    <div className="shadow-xl">
       <ThemeSwitcher />
-      <ul className="flex p-2">
-        <li className={`mr-1 rounded px-4 cursor-pointer ${currentTabIndex === 0 ? 'dark:bg-secondary-800' : ''}`}
+      <ul className="flex p-3">
+        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 0 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(0)}
         >
           HTML
         </li>
-        <li className={`mr-1 rounded px-4 cursor-pointer ${currentTabIndex === 1 ? 'dark:bg-secondary-800' : ''}`}
+        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 1 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(1)}
         >
           CSS
         </li>
-        <li className={`mr-1 rounded px-4 cursor-pointer ${currentTabIndex === 2 ? 'dark:bg-secondary-800' : ''}`}
+        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 2 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(2)}
         >
           JS
