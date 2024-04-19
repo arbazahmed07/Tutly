@@ -41,6 +41,16 @@ const formSchema = z.object({
     title: z.string().min(1,{
         message: 'Title is required'
     }),
+    link: z.string().min(1,{
+        message: 'Link is required'
+    }),
+    type: z.string().min(1,{
+        message: 'Type is required'
+    }),
+    class: z.string().min(1,{
+        message: 'class is required'
+    }),
+    details: z.string(),
 })
 
 const newCoursePage = () => {
@@ -49,7 +59,11 @@ const newCoursePage = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {   
-            title: ''
+            title: '',
+            link: '',
+            type: '',   
+            class: '',
+            details: ''
         }
     })
     
@@ -88,7 +102,7 @@ const newCoursePage = () => {
                                 />
                         </div>
                         <div>
-                            <Select classname="">
+                            <Select >
                                 <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Select a type" />
                                 </SelectTrigger>
@@ -112,7 +126,7 @@ const newCoursePage = () => {
                                         <FormControl>
                                             <Input className='text-sm'  disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
                                         </FormControl>
-                                        <FormMessage>{form.formState.errors.title?.message}</FormMessage>
+                                        <FormMessage>{form.formState.errors.link?.message}</FormMessage>
                                     </FormItem>
                                 )}
                                 />
