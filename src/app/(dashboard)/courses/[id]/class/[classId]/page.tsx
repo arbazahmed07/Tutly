@@ -1,43 +1,42 @@
 
+
 import { getClassDetails } from "@/actions/courses"
 import getCurrentUser from "@/actions/getCurrentUser";
+
 import YoutubeEmbed from "@/components/YoutubeEmbed";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export default async function Class({ params }: { params: { classId: string } }) {
-    const details = await getClassDetails(params.classId);
-    const currentUser = await getCurrentUser();
 
-    return (
-        <div className="w-full flex justify-between m-8">
-            {
-                currentUser?.role === "STUDENT" ? (
-                <div>
-                    <YoutubeEmbed embedId="Big_aFLmekI" />
-                    <div className="mt-2 rounded bg-secondary-500 p-4">
-                        Attachments
-                        {currentUser?.role }
-                    {/* <div className="w-[400px] rounded bg-secondary-600 p-4">Doubts | Timestamps</div> */}
-                    </div>
-                </div>
-                ) : (
-                <div className=" ">
-                    <YoutubeEmbed embedId="Big_aFLmekI" />
-                    <div className=" flex justify-between items-center mx-2 mt-4">
-                        <div className="mt-2 rounded bg-secondary-500 p-4">
-                            Attachments
-                        </div>
-                        <Link href={'/assignments/new'} >
-                            <Button variant={'secondary'} size={'sm'}>
-                                Add Attachment
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-                )
-            }
-            <div className="w-[400px] rounded bg-secondary-600 p-4">Doubts | Timestamps</div>
+export default async function Class({
+  params,
+}: {
+  params: { classId: string };
+}) {
+  const details = await getClassDetails(params.classId);
+  var pattern =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  var match = details?.video.videoLink?.match(pattern);
+  let YoutubeId;
+  if (match && match[1]) {
+    YoutubeId = match[1];
+  }
+
+  return (
+    <div className="w-full flex justify-between m-8">
+      <div>
+        <h1>{details?.title}</h1>
+        <pre>{JSON.stringify(details?.video, null, 2)}</pre>
+        {YoutubeId && <YoutubeEmbed embedId={YoutubeId} />}
+        <div className="mt-2 rounded bg-secondary-500 p-4">
+          Attachments
+          <pre>{JSON.stringify(details?.attachments, null, 2)}</pre>
+
         </div>
-    )
+      </div>
+      <div className="w-[400px] rounded bg-secondary-600 p-4">
+        Doubts | Timestamps
+      </div>
+    </div>
+  );
 }
