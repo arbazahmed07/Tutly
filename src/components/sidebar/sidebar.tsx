@@ -24,7 +24,7 @@ export default function Sidebar({items,menu}:Props) {
                 items.map((item)=>{
                     return (
                         <Link href={item.path} key={item.path} className={`${pathname===item.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded p-2 my-2 flex items-center gap-4`}>
-                            <div className={`text-2xl ${!menu&&"text-center"}`}>{item.icon}</div>
+                            <div className={`text-2xl px-2`}>{item.icon}</div>
                             <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
                         </Link>
                     )

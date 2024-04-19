@@ -9,6 +9,7 @@ import { TbMessageQuestion } from "react-icons/tb";
 import { MdOutlineCastForEducation } from "react-icons/md";
 import { Suspense, useEffect, useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
+import { usePathname } from "next/navigation";
 
 const items = [
     {
@@ -48,9 +49,11 @@ export default function HomeLayout({ children, currentUser }: {
     currentUser: any
 }) {
     const [menu, setMenu] = useState<boolean>(true);
+    const pathname = usePathname();
+    const isCoursePage = pathname.startsWith('/courses/');
     return (
         <div className="flex">
-            <Sidebar items={items} menu={menu} />
+            {!isCoursePage&&<Sidebar items={items} menu={menu} />}
             <div className="w-full">
                 <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
                 <Suspense fallback={<Loading />}>
