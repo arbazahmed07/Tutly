@@ -2,6 +2,8 @@ import "../styles/globals.css";
 import type { Metadata } from "next";
 import Provider from "@/providers/Provider";
 import { Inter } from "next/font/google";
+import HomeLayout from "@/components/layouts/home-layout";
+import getCurrentUser from "@/actions/getCurrentUser";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,12 +17,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const currentUser = await getCurrentUser();
   return (
     <html lang="en" className="bg-background text-foreground">
       <body className={inter.className}>
         <Provider>
-          {children}
-
+          <HomeLayout currentUser={currentUser}>
+            {children}
+          </HomeLayout>
         </Provider>
       </body>
     </html>
