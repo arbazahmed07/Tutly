@@ -10,6 +10,7 @@ export default async function getLeaderboardData() {
     }
 
     const enrolledCourses = await getEnrolledCourses()
+    if(!enrolledCourses) return null;
 
     const points = await db.userAssignment.findMany({
       where: {
@@ -23,11 +24,34 @@ export default async function getLeaderboardData() {
           },
         },
       },
-      select: {
+      include: {
         points: true,
+        assignment: {
+          select: {
+            Class: {
+              select: {
+                Course: {
+                  select: {
+                    id: true,
+                    title: true,
+                    startDate: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        assignment: {
+          Class: {
+            Course: {
+              startDate: 'asc', 
+            },
+          },
+        },
       },
     });
-
     return points
 
   } catch (error: any) {
