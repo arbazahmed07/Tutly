@@ -20,11 +20,11 @@ const Playground = () => {
   return (
     <Context.Provider value={{ state, dispatch, currentTabIndex, setCurrentTabIndex, theme, setTheme }}>
       <Split
-        className="flex h-[90vh] overflow-hidden mb-2"
+        className="flex h-[90vh] overflow-hidden"
         sizes={[50, 50]}
-        minSize={300}
+        minSize={300} 
       >
-        <div className='h-full py-2 mx-1 relative'>
+        <div className='h-full relative'>
           <EditorPanel />
         </div>
         <PreviewPanel />

@@ -15,6 +15,8 @@
     "@prisma/client": "^5.12.1",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
+    "monaco": "^1.201704190613.0",
+    "monaco-editor": "^0.47.0",
     "next": "14.2.1",
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",

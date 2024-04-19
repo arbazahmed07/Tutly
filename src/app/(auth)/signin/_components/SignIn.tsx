@@ -38,34 +38,46 @@ const SignIn = () => {
 
   return (
     <div className="w-full">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} >
         <div className="flex flex-col gap-3">
           <input
             type="text"
             placeholder="Username"
-            className="border border-gray-300 px-2 py-1 rounded-lg"
+            className="border border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg"
             {...register("username", { required: true })}
           />
-          {errors.username && <p className="text-red-500">Username is required</p>}
+          {errors.username && <p className="text-sm font-medium">* Username is required</p>}
           <input
             type="password"
             placeholder="Password"
-            className="border border-gray-300 px-2 py-1 rounded-lg"
+            className="border border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg"
             {...register("password", { required: true, minLength: 8 })}
           />
-          {errors.password && <p className="text-red-500">Password must have more than 8 characters</p>}
+          {errors.password && <p className="text-sm font-medium">* Password must have more than 8 characters</p>}
           <button
             type="submit"
             disabled={loading}
-            className="bg-gray-950 hover:bg-gray-800 text-white text-sm font-semibold py-2 px-3 rounded-lg disabled:opacity-50"
+            className="bg-primary-400 text-secondary-100 p-3 text-sm rounded-lg font-medium"
           >
             Sign In
           </button>
         </div>
-        {/* <SigninWithGithub /> */}
+        <SigninWithGithub />
       </form>
     </div>
   );
 };
 
 export default SignIn;
+
+// <div className="h-[85vh] sm:h-[90vh] flex justify-center items-center">
+//     <div className="bg-white m-auto items-center w-96 mx-2 rounded-lg p-4" style={{boxShadow:"rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
+//       <div>
+//         <form className="flex flex-col gap-3" action={login}>
+//         <input type="text" placeholder="username" name="username" className="border border-slate-300 p-2.5 outline-none rounded-lg"/>
+//         <input type="password" placeholder="password" name="password" className="border border-slate-300 p-2.5 outline-none rounded-lg"/>
+//         <button className="bg-red-500 text-white p-2.5 text-sm rounded-lg font-semibold">Login</button>
+//         </form>
+//       </div> 
+//     </div>
+//   </div>
