@@ -76,24 +76,15 @@ const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        return {
-          ...token,
-          username: user.username,
-          eduprimeCookie: user.eduprimeCookie,
-        };
+        token.username = user.username;
+        token.eduprimeCookie = user.eduprimeCookie;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
-        return {
-          ...session,
-          user: {
-            ...session.user,
-            username: token.username,
-            eduprimeCookie: token.eduprimeCookie,
-          },
-        };
+        session.user.username = token.username;
+        session.user.eduprimeCookie = token.eduprimeCookie;
       }
       return session;
     },
