@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
+import { getEnrolledCourses } from "./courses";
 
 export default async function getLeaderboardData() {
   try {
@@ -8,15 +9,7 @@ export default async function getLeaderboardData() {
       return null;
     }
 
-    const enrolledCourses = await db.course.findMany({
-      where: {
-        enrolledUsers: {
-          some: {
-            userId: currentUser.id,
-          },
-        },
-      },
-    });
+    const enrolledCourses = await getEnrolledCourses()
 
     const points = await db.userAssignment.findMany({
       where: {
