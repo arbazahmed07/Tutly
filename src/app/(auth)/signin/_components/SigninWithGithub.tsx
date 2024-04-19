@@ -19,18 +19,9 @@ const SigninWithGithub = () => {
 
   return (
     <div>
-      <h2 className="text-center my-2">Or</h2>
-
-      <button onClick={(e) => { e.preventDefault(); loginWithGithub() }} className='bg-gray-950 hover:bg-gray-800 text-white text-sm font-semibold py-2 px-3 rounded-lg w-full  '>
-        <div className='flex justify-center items-center gap-5 relative'>
-
-          <div
-          >
-            <FaGithub />
-          </div>
-          Continue with Github
+        <div className="bg-primary-600 text-secondary-100 my-2.5 p-3 text-sm rounded-lg font-semibold">
+          <button onClick={(e) => { e.preventDefault(); loginWithGithub() }} className="flex items-center w-full justify-center"><FaGithub className="h-5 w-5 mr-5"/>Sign in with GitHub</button>
         </div>
-      </button>
     </div>
   );
 };
