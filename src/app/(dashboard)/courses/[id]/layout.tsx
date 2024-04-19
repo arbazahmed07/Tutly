@@ -15,9 +15,9 @@ export default async function CourseLayout({
                 <h1 className="px-2">HTML</h1>
                 <div>
                     {
-                        classes.map((x) => {
+                        classes.map((x,index) => {
                             return (
-                                <Link className="px-2" href={`/`}>{x.title}</Link>
+                                <Link className="px-2" key={index} href={`/`}>{x.title}</Link>
                             )
                         })
                     }

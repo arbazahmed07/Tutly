@@ -18,7 +18,7 @@ export const getAllCourses=async()=>{
     }
 }
 
-export const getCourseClasses=async(id)=>{
+export const getCourseClasses=async(id:string)=>{
     const classes = await db.class.findMany({
         where:{
             courseId : id,
