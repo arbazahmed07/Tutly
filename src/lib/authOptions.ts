@@ -2,7 +2,6 @@ import { AuthOptions } from "next-auth";
 import bcrypt from "bcrypt";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
 import eduprimeLogin from "@/actions/eduprimeLogin";
@@ -29,10 +28,6 @@ const authOptions: AuthOptions = {
       //     username: profile.login,
       //   };
       // },
-    }),
-    GoogleProvider({
-      clientId: process.env.NEXTAUTH_GOOGLE_ID as string,
-      clientSecret: process.env.NEXTAUTH_GOOGLE_SECRET as string,
     }),
     CredentialsProvider({
       id: "credentials",
@@ -76,24 +71,15 @@ const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        return {
-          ...token,
-          username: user.username,
-          eduprimeCookie: user.eduprimeCookie,
-        };
+        token.username = user.username;
+        token.eduprimeCookie = user.eduprimeCookie;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
-        return {
-          ...session,
-          user: {
-            ...session.user,
-            username: token.username,
-            eduprimeCookie: token.eduprimeCookie,
-          },
-        };
+        session.user.username = token.username;
+        session.user.eduprimeCookie = token.eduprimeCookie;
       }
       return session;
     },
