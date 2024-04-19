@@ -83,6 +83,7 @@ model EnrolledUsers {
 
 model Class {
   id          String       @id @default(uuid())
+  title       String       @default("class")
   video       Video        @relation(fields: [videoId], references: [id])
   attachments Attachment[]
   courseId    String?
