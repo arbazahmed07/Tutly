@@ -1,4 +1,5 @@
 import { getCourseClasses } from '@/actions/getAllCourses'
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import React from 'react'
 
@@ -7,8 +8,8 @@ const page = async ({ params }: {
 }) => {
     const classes = await getCourseClasses(params.id)
     return (
-        <div className="flex">
-            <div className="flex flex-col px-4 py-3 gap-2 shadow-xl min-h-[90vh]">
+        <div className="">
+            {/* <div className="flex flex-col px-4 py-3 gap-2 shadow-xl min-h-[90vh]">
                 <h1 className="px-4">HTML</h1>
                     {
                         classes.map((x) => {
@@ -17,8 +18,17 @@ const page = async ({ params }: {
                             )
                         })
                     }
-            </div>
+            </div> */}
             <div>{JSON.stringify(classes,null,2)}</div>
+
+            <div className='p-5'>
+                <Link href='/courses/new' >
+                    <Button variant={'secondary'}>
+                        New Course
+                    </Button>
+                </Link>
+            </div>
+            {/* <div>her</div> */}
         </div>
     )
 }

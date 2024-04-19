@@ -7,6 +7,7 @@ const Page=async()=>{
         <div className="p-5">
             <h1>Profile</h1>
             {JSON.stringify(currentUser)}
+            
         </div>
     )
 }
