@@ -1,17 +1,14 @@
 'use client'
 
 import * as z from 'zod'
-import axios from 'axios'
-import { useRouter } from 'next/router'
 import {useForm } from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import react from 'react'
+import React from 'react'
 
 import {
     Form,
     FormControl,
     FormLabel,
-    FormDescription,
     FormMessage,
     FormField,
     FormItem
@@ -41,16 +38,14 @@ const formSchema = z.object({
     title: z.string().min(1,{
         message: 'Title is required'
     }),
-    link: z.string().min(1,{
+    videoLink: z.string().min(1,{
         message: 'Link is required'
     }),
-    type: z.string().min(1,{
-        message: 'Type is required'
-    }),
-    class: z.string().min(1,{
-        message: 'class is required'
-    }),
-    details: z.string(),
+    videoType: z.string(),
+    // class: z.string().min(1,{
+    //     message: 'class is required'
+    // }),
+    // details: z.string(),
 })
 
 const NewCoursePage = () => {
@@ -60,10 +55,10 @@ const NewCoursePage = () => {
         resolver: zodResolver(formSchema),
         defaultValues: {   
             title: '',
-            link: '',
-            type: '',   
-            class: '',
-            details: ''
+            videoLink: '',
+            videoType: '',   
+            // class: '',
+            // details: ''
         }
     })
     
@@ -102,24 +97,39 @@ const NewCoursePage = () => {
                                 />
                         </div>
                         <div>
-                            <Select >
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Select a type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                    <SelectLabel>Type</SelectLabel>
-                                        <SelectItem value="youtube">Youtube</SelectItem>
+                            <FormField
+                                control={form.control}
+                                name="videoType"
+                                render={({ field }) => {
+                                return (
+                                    <FormItem>
+                                    <FormLabel>Video type</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        value={field.value}
+                                    >
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a type" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
                                         <SelectItem value="zoom">Zoom</SelectItem>
+                                        <SelectItem value="youtube">Youtube</SelectItem>
                                         <SelectItem value="github">Github</SelectItem>
                                         <SelectItem value="other">Other</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                    </FormItem>
+                                );
+                                }}
+                            />
                         </div>
                         <div>
                             <FormField
-                                name='link'
+                                name='videoLink'
                                 control={form.control}
                                 render={({field}) => (
                                     <FormItem className =' '>
