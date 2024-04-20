@@ -2,12 +2,11 @@
 import { useContext, useState } from 'react';
 import { Context } from './context';
 import { RiFullscreenExitLine } from "react-icons/ri";
-import SigninWithGithub from '@/app/(auth)/signin/_components/SigninWithGithub';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { Octokit } from "@octokit/core";
-import { RxCross2 } from "react-icons/rx";  
+import { RxCross2 } from "react-icons/rx"; 
+import { FaEye } from "react-icons/fa6"; 
 import {
   createPullRequest,
   DELETE_FILE,
@@ -21,8 +20,6 @@ const PreviewPanel = () => {
   const session = useSession();
   const params = useSearchParams();
   const assignmentId = params.get('userAssignmentId');
-  const confirmSubmission = params.get('confirm-submssion');
-  const router = useRouter()
   const token = session.data?.user.githubToken;
   const [submitting, setSubmitting] = useState(false);
   const [show, setShow] = useState(false);
@@ -34,11 +31,6 @@ const PreviewPanel = () => {
       setShow(false);
   }
   const handleSubmit = async () => {
-    if (!token) {
-      alert('Please connect with github to submit');
-      router.push(`/playground/html-css-js?userAssignmentId=${confirmSubmission}`);
-      return;
-    }
     try {
       setSubmitting(true);
       const octokit = new MyOctokit({
@@ -89,17 +81,14 @@ const PreviewPanel = () => {
 
   return (
     <div>
-      <div className={`flex justify-between px-3 items-center ${assignmentId ? "p-1" : "p-3"}`}>
+      <div className={`hidden md:flex justify-between px-3 items-center ${assignmentId ? "p-1" : "p-3"}`}>
         <h1 className="text-primary-400 text-sm font-semibold">Preview</h1>
         {
-          assignmentId && <SigninWithGithub assignmentId={assignmentId} />
+          assignmentId && <button disabled={submitting} onClick={handleSubmit} className="text-primary-400 text-sm font-semibold disabled:opacity-50">Submit</button>
         }
-        {
-          confirmSubmission && <button disabled={submitting} onClick={handleSubmit} className="text-primary-400 text-sm font-semibold disabled:opacity-50">Submit</button>
-        }
-        <h1 onClick={handleShow} className="text-primary-400 text-sm font-semibold"><RiFullscreenExitLine className="h-5 w-5" /></h1>
+        <h1 onClick={handleShow} className="flex text-primary-400 text-sm font-semibold"><RiFullscreenExitLine className="h-5 w-5" /></h1>
                 {show && (
-                <div className="fixed z-40 inset-0 overflow-y-auto">
+                 <div className="fixed z-50 inset-0 overflow-y-auto">
                     <div className="rounded-lg bg-primary-50">
                             <h1 className="h-[7vh] flex justify-end items-center bg-primary-900 text-primary-50">
                                 <RxCross2 className="h-8 w-8 mr-2" onClick={handleClose}/>
@@ -115,14 +104,33 @@ const PreviewPanel = () => {
                         </div>
                     </div>
                 )}
-      </div>
-      <iframe
-        srcDoc={srcDoc}
-        title="output"
-        sandbox="allow-scripts"
-        width="100%"
-        height="100%"
-      />
+            </div>
+            <iframe
+              srcDoc={srcDoc}
+              title="output"
+              sandbox="allow-scripts"
+              width="100%"
+              height="100%"
+              className="h-screen hidden md:flex"
+            /> 
+            <h1 onClick={handleShow} className="px-1 md:hidden text-primary-400 text-sm font-semibold"><FaEye className="h-5 w-5" /></h1>
+                 {show&&
+                 <div className="md:hidden fixed z-50 inset-0 overflow-y-auto">
+                    <div className="rounded-lg bg-primary-50">
+                            <h1 className="h-[7vh] flex justify-end items-center bg-primary-900 text-primary-50">
+                                <RxCross2 className="h-8 w-8 mr-2" onClick={handleClose}/>
+                            </h1> 
+                              <iframe
+                                srcDoc={srcDoc}
+                                title="output"
+                                sandbox="allow-scripts"
+                                width="100%"
+                                height="100%"
+                                className="h-[93vh] bg-primary-50"  
+                              />
+                        </div>
+                    </div>
+                  }
     </div>
   );
 };

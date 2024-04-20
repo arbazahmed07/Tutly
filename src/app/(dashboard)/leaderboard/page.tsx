@@ -5,7 +5,6 @@ import Leaderboard from "@/components/leaderBoard";
 export default async function Page() {
   const assignments = await getLeaderboardData();
   const courses = await getEnrolledCourses();
-
   return (
     <div>
       <div>

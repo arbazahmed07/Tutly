@@ -6,13 +6,13 @@ import { ThemeSwitcher } from './ThemeSwitcher';
 import { editorOptions } from './config';
 import { Context } from './context';
 import * as monaco from 'monaco-editor';
+import PreviewPanel from './PreviewPanel';
+
 
 const EditorPanel = () => {
   const { state, dispatch, currentTabIndex, setCurrentTabIndex, theme } = useContext(Context);
-
   const value = currentTabIndex === 0 ? state.html : currentTabIndex === 1 ? state.css : state.js;
   const language = currentTabIndex === 0 ? 'html' : currentTabIndex === 1 ? 'css' : 'javascript';
-
   const handleEditorChange = (value: string | undefined) => {
     if (!value) return;
 
@@ -102,23 +102,26 @@ const EditorPanel = () => {
   return (
     <div className="shadow-xl">
       <ThemeSwitcher />
-      <ul className="flex p-3">
-        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 0 ? 'text-primary-500' : ''}`}
+      <div className="flex p-3">
+        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 0 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(0)}
         >
           HTML
-        </li>
-        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 1 ? 'text-primary-500' : ''}`}
+        </h1>
+        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 1 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(1)}
         >
           CSS
-        </li>
-        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 2 ? 'text-primary-500' : ''}`}
+        </h1>
+        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 2 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(2)}
         >
           JS
-        </li>
-      </ul>
+        </h1>
+        <div className="md:hidden">
+          <PreviewPanel/>
+        </div>
+      </div>
       <div className="flex-1 h-full absolute w-full">
         <MonacoEditor
           options={editorOptions}

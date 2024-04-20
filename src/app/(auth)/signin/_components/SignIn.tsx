@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { FieldValues, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import SigninWithGoogle from "./SigninWithGoogle";
 
 
 const SignIn = () => {
@@ -56,26 +57,16 @@ const SignIn = () => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary-400 text-secondary-100 p-3 text-sm rounded-lg font-medium"
+            className="bg-primary-800 text-secondary-100 p-2 text-sm rounded-lg font-medium"
           >
             Sign In
           </button>
         </div>
       </form>
+      <SigninWithGoogle />
     </div>
   );
 };
 
 export default SignIn;
 
-// <div className="h-[85vh] sm:h-[90vh] flex justify-center items-center">
-//     <div className="bg-white m-auto items-center w-96 mx-2 rounded-lg p-4" style={{boxShadow:"rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
-//       <div>
-//         <form className="flex flex-col gap-3" action={login}>
-//         <input type="text" placeholder="username" name="username" className="border border-slate-300 p-2.5 outline-none rounded-lg"/>
-//         <input type="password" placeholder="password" name="password" className="border border-slate-300 p-2.5 outline-none rounded-lg"/>
-//         <button className="bg-red-500 text-white p-2.5 text-sm rounded-lg font-semibold">Login</button>
-//         </form>
-//       </div> 
-//     </div>
-//   </div>
