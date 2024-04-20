@@ -2,13 +2,13 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-function AssignmentBoard({ courses, assignments }: any) {
+export default function AssignmentBoard({ courses, assignments }: any) {
+  const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
+  const router = useRouter();
   if (courses.length === 0) {
     alert("No courses enrolled!");
     return;
   }
-  const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
-  const router = useRouter();
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-3">
@@ -55,4 +55,3 @@ function AssignmentBoard({ courses, assignments }: any) {
   );
 }
 
-export default AssignmentBoard;
