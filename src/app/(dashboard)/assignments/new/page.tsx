@@ -53,7 +53,7 @@ const formSchema = z.object({
     details: z.string(),
 })
 
-const newCoursePage = () => {
+const NewCoursePage = () => {
 
 
     const form = useForm<z.infer<typeof formSchema>>({
