@@ -35,13 +35,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  account        Account[]
-  course         Course[]
-  userAssignment userAssignment[]
-  enrolledUsers  EnrolledUsers[]
-  profile        Profile?
-  doubt          Doubt[]
-  response       Response[]
+  account         Account[]
+  course          Course[]
+  userAssignment  userAssignment[]
+  enrolledUsers   EnrolledUsers[]
+  profile         Profile?
+  doubt           Doubt[]
+  response        Response[]
+  assignedMentors AssignedMentors[]
 }
 
 model Profile {
@@ -70,8 +71,9 @@ model Course {
 
   isPublished Boolean @default(false)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  assignedMentors AssignedMentors[]
 }
 
 model EnrolledUsers {
@@ -80,6 +82,8 @@ model EnrolledUsers {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
+  assignedMentors AssignedMentors[]
+
   startDate DateTime  @default(now())
   endDate   DateTime?
 
@@ -87,6 +91,24 @@ model EnrolledUsers {
   course   Course? @relation(fields: [courseId], references: [id])
 
   @@unique([userId, courseId])
+}
+
+model AssignedMentors {
+  id String @id @default(uuid())
+
+  mentorId String
+  mentor   User   @relation(fields: [mentorId], references: [id])
+
+  enrolledUserId String
+  enrolledUser   EnrolledUsers @relation(fields: [enrolledUserId], references: [id])
+
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+
+  courseId String?
+  course   Course? @relation(fields: [courseId], references: [id])
+
+  @@unique([mentorId, enrolledUserId, courseId])
 }
 
 model Class {
