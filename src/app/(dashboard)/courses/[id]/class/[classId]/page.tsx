@@ -46,7 +46,7 @@ const details = await getClassDetails(params.classId);
                                 <div className="flex justify-between">
                                     <div className="">
                                         <h3 className="text-xl font-semibold text-gray-500 mb-2">{attachment.title}</h3>
-                                        <p className="text-gray-300">{attachment.Details ? attachment.Details.toString() : 'No details available'}</p>
+                                        <p className="text-gray-300">{attachment.details ? attachment.details.toString() : 'No details available'}</p>
                                         <div className="text-gray-300 flex items-center">
                                             <p className="mr-2">Attachment Type:</p>
                                             <p>{attachment.attachmentType}</p>
@@ -60,7 +60,7 @@ const details = await getClassDetails(params.classId);
                                         )}
                                     </div>
                                     <div className="absolute top-0 right-0 p-3 ">
-                                        <p className="text-red-700 font-bold">{attachment?.userAssignment[0]?.DueDate ? new Date(attachment?.userAssignment[0]?.DueDate).toLocaleDateString() : 'Not specified'}</p>
+                                        <p className="text-red-700 font-bold">{attachment?.userAssignment[0]?.dueDate ? new Date(attachment?.userAssignment[0]?.dueDate).toLocaleDateString() : 'Not specified'}</p>
                                     </div>
                                 </div>
                             </div>

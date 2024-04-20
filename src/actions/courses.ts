@@ -8,7 +8,7 @@ export const getAllCourses = async () => {
             include: {
                 _count: {
                     select: {
-                        Classes: true
+                        classes: true
                     }
                 }
             }
@@ -25,7 +25,7 @@ export const getCourseClasses = async (id: string) => {
             courseId: id
         },
         include: {
-            Course: true,
+            course: true,
             video: true,
             attachments: true,            
         }
@@ -45,11 +45,11 @@ export const getEnrolledCourses = async () => {
             }
         },
         include: {
-            Classes: true,
+            classes: true,
             createdBy: true,
             _count: {
                 select: {
-                    Classes: true
+                    classes: true
                 }
             }
         }
@@ -69,7 +69,7 @@ export const getClassDetails = async (id: string) => {
                     userAssignment:{
                         distinct : "attachmentId" ,
                         select:{
-                            DueDate:true
+                            dueDate:true
                         }
                     }
                 }

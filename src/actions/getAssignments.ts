@@ -17,9 +17,9 @@ export const getAllAssignedAssignments = async () => {
     include: {
       assignment: true,
       points: true,
-      AssignedUser: {
+      assignedUser: {
         select: {
-          Course: {
+          course: {
             select: {
               id: true,
               title: true,
@@ -46,9 +46,9 @@ export const getAssignmentById = async (id: string) => {
     include: {
       assignment: true,
       points: true,
-      AssignedUser: {
+      assignedUser: {
         select: {
-          Course: {
+          course: {
             select: {
               id: true,
               title: true,
