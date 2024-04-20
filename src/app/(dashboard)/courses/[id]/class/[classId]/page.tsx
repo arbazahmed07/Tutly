@@ -32,8 +32,8 @@ const details = await getClassDetails(params.classId);
                 <div className=" text-2xl my-2 flex justify-between items-center">
                     Attachments
                     <Link href={'/assignments/new'}>
-                        <Button className="flex justify-between items-center" variant={"secondary"}>
-                            Add assignment &nbsp;<FaPlus />
+                        <Button className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"  variant={"secondary"}>
+                            Add a assignment &nbsp;<FaPlus />
                         </Button>
                     </Link>
                 </div>
