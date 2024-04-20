@@ -1,17 +1,14 @@
 'use client'
 
 import * as z from 'zod'
-import axios from 'axios'
-import { useRouter } from 'next/router'
 import {useForm } from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import react from 'react'
+import React from 'react'
 
 import {
     Form,
     FormControl,
     FormLabel,
-    FormDescription,
     FormMessage,
     FormField,
     FormItem
@@ -34,17 +31,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-
+import { MdOutlineCreate } from "react-icons/md";
 
 
 const formSchema = z.object({
     title: z.string().min(1,{
         message: 'Title is required'
     }),
-    link: z.string().min(1,{
+    videoLink: z.string().min(1,{
         message: 'Link is required'
     }),
-    type: z.string().min(1,{
+    videoType: z.string().min(1,{
         message: 'Type is required'
     }),
     class: z.string().min(1,{
@@ -60,8 +57,8 @@ const NewCoursePage = () => {
         resolver: zodResolver(formSchema),
         defaultValues: {   
             title: '',
-            link: '',
-            type: '',   
+            videoLink: '',
+            videoType: '',   
             class: '',
             details: ''
         }
@@ -78,21 +75,20 @@ const NewCoursePage = () => {
     return (
         <div className='  h-full w-full  flex md:justify-start p-10 '> 
             <div>
-                <h1 className=' text-xl'>Name your Course</h1>
-                <p className=' text-xs text-gray-400'>Description about the course</p>
+                <h1 className=' flex items-center text-xl'>Create a new assignment!&nbsp;<MdOutlineCreate className='w-5 h-5 ' /></h1>
                 <Form {...form}>
                     <form  action="" 
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className=' space-y-6 mt-7'
+                    className=' space-y-6 mt-7 w-full '
                     >
-                    <div className=' grid gap-y-4'>
-                        <div>
+                    <div className='  flex-col items-center justify-between h-full sm:grid sm:grid-cols-4 sm:grid-rows-2 gap-10 '>
+                        <div className='mt-5'>
                             <FormField
                                 name='title'
                                 control={form.control}
                                 render={({field}) => (
                                     <FormItem className ='  '>
-                                        <FormLabel>Course Title</FormLabel>
+                                        <FormLabel>Title</FormLabel>
                                         <FormControl>
                                             <Input className='text-sm'  disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
                                         </FormControl>
@@ -101,64 +97,95 @@ const NewCoursePage = () => {
                                 )}
                                 />
                         </div>
-                        <div>
-                            <Select >
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Select a type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                    <SelectLabel>Type</SelectLabel>
-                                        <SelectItem value="youtube">Youtube</SelectItem>
-                                        <SelectItem value="zoom">Zoom</SelectItem>
-                                        <SelectItem value="github">Github</SelectItem>
-                                        <SelectItem value="other">Other</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div>
+                        <div className='mt-5 '>
                             <FormField
-                                name='link'
+                                control={form.control}
+                                name="videoType"
+                                render={({ field }) => {
+                                return (
+                                    <FormItem >
+                                    <FormLabel>Video type</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        value={field.value}
+                                    >
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a type" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className=' bg-secondary-700 '>
+                                        <SelectItem className=' hover:bg-secondary-800' value="zoom">Zoom</SelectItem>
+                                        <SelectItem className=' hover:bg-secondary-800' value="youtube">Youtube</SelectItem>
+                                        <SelectItem className=' hover:bg-secondary-800' value="github">Github</SelectItem>
+                                        <SelectItem className=' hover:bg-secondary-800' value="other">Other</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                    </FormItem>
+                                );
+                                }}
+                            />
+                        </div>
+                        <div className='mt-5'>
+                            <FormField
+                                name='videoLink'
                                 control={form.control}
                                 render={({field}) => (
                                     <FormItem className =' '>
+                                        <FormLabel>Link</FormLabel>
                                         <FormControl>
                                             <Input className='text-sm'  disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
                                         </FormControl>
-                                        <FormMessage>{form.formState.errors.link?.message}</FormMessage>
+                                        <FormMessage>{form.formState.errors.videoLink?.message}</FormMessage>
                                     </FormItem>
                                 )}
                                 />
                         </div>
-                        <div>
-                            <Select>
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Select a Class" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                    <SelectLabel>Type</SelectLabel>
-                                        <SelectItem value="class1">Class - 1</SelectItem>
-                                        <SelectItem value="class2">Class - 2</SelectItem>
-                                        <SelectItem value="class3">Class - 3</SelectItem>
-                                        <SelectItem value="class4">Class - 4</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                        <div className='mt-5'>
+                            <FormField
+                                control={form.control}
+                                name="class"
+                                render={({ field }) => {
+                                return (
+                                    <FormItem>
+                                    <FormLabel>Assign a class</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        value={field.value}
+                                    >
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a class" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className=' bg-secondary-700 '>
+                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class1">Class - 1</SelectItem>
+                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class2">Class - 2</SelectItem>
+                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class3">Class - 3</SelectItem>
+                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class4">Class - 4</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                    </FormItem>
+                                );
+                                }}
+                            />
                         </div>
-                        <div className="grid w-full gap-1.5">
-                            <Label htmlFor="message">Add Details</Label>
-                            <Textarea placeholder="Type details here..." id="message" />
-                        </div>
+                            <div className="grid w-full gap-1.5 col-span-4 mt-5">
+                                <Label htmlFor="message">Add Details</Label>
+                                <Textarea placeholder="Type details here..." id="message" />
+                            </div>
                         </div>
                         <div className=' flex items-center gap-x-3'>
                             <Link href={'/'}>
-                                <Button variant={"destructive"} >
+                                <Button className='bg-red-700' variant={"destructive"} style={{backgroundColor:'#b91c1c'}} >
                                     Cancel
                                 </Button>
                             </Link>
-                            <Button type='submit' disabled={!isValid || isSubmitting} >
+                            <Button type='submit' disabled={!isValid || isSubmitting} style={{border:'2px solid #6b7280'}} >
                                 Continue   
                             </Button>
                         </div>
