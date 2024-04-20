@@ -4,7 +4,6 @@ import { signIn } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { FieldValues, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import SigninWithGithub from "./SigninWithGithub";
 import { useState } from "react";
 
 
@@ -62,7 +61,6 @@ const SignIn = () => {
             Sign In
           </button>
         </div>
-        {/* <SigninWithGithub /> */}
       </form>
     </div>
   );

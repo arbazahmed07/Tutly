@@ -31,3 +31,32 @@ export const getAllAssignedAssignments = async () => {
   });
   return assignments;
 };
+
+export const getAssignmentById = async (id: string) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+
+  const assignment = await db.userAssignment.findFirst({
+    where: {
+      id,
+      userId: currentUser.id,
+    },
+    include: {
+      assignment: true,
+      points: true,
+      AssignedUser: {
+        select: {
+          Course: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  return assignment;
+};
