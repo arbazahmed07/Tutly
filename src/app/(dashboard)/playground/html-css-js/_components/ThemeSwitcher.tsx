@@ -14,7 +14,7 @@ export const ThemeSwitcher = () => {
       <button className="`rounded px-2 cursor-pointer rounded-md text-sm font-medium bg-secondary-800 p-1.5 text-secondary-50" onClick={() => dispatch(defaultState)}>
         Reset
       </button>
-      <div className="relative inline-block text-left z-20 ml-4">
+      <div className="hidden md:inline-block relative  text-left z-20 ml-4">
         <button
           className="flex justify-between items-center gap-3 w-full px-4 py-1.5 text-sm font-medium bg-white border border-secondary-300 rounded-md shadow-sm outline-none"
           onClick={() => setIsOpen(!isOpen)}

@@ -1,18 +1,23 @@
 "use client";
 
 import MonacoEditor from '@monaco-editor/react';
-import { useContext } from 'react';
+import { useContext,useState } from 'react';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { editorOptions } from './config';
 import { Context } from './context';
+import PreviewPanel from './PreviewPanel';
 import * as monaco from 'monaco-editor';
+import { RiFullscreenExitLine } from "react-icons/ri";
 
 const EditorPanel = () => {
   const { state, dispatch, currentTabIndex, setCurrentTabIndex, theme } = useContext(Context);
-
   const value = currentTabIndex === 0 ? state.html : currentTabIndex === 1 ? state.css : state.js;
   const language = currentTabIndex === 0 ? 'html' : currentTabIndex === 1 ? 'css' : 'javascript';
+  const [showPreview, setShowPreview] = useState(false);
 
+  const handleFullscreenExitClick = () => {
+    setShowPreview(true);
+  };
   const handleEditorChange = (value: string | undefined) => {
     if (!value) return;
 
@@ -102,24 +107,26 @@ const EditorPanel = () => {
   return (
     <div className="shadow-xl">
       <ThemeSwitcher />
-      <ul className="flex p-3">
-        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 0 ? 'text-primary-500' : ''}`}
+      <div className="flex p-3">
+        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 0 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(0)}
         >
           HTML
-        </li>
-        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 1 ? 'text-primary-500' : ''}`}
+        </h1>
+        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 1 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(1)}
         >
           CSS
-        </li>
-        <li className={`mr-1 rounded px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 2 ? 'text-primary-500' : ''}`}
+        </h1>
+        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 2 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(2)}
         >
           JS
-        </li>
-      </ul>
+        </h1>
+        <h1 onClick={handleFullscreenExitClick} className="px-1 md:hidden text-primary-400 text-sm font-semibold"><RiFullscreenExitLine className="h-5 w-5" /></h1>
+      </div>
       <div className="flex-1 h-full absolute w-full">
+      {showPreview ? <PreviewPanel />:
         <MonacoEditor
           options={editorOptions}
           theme={theme === 'dark' ? 'vs-dark' : ''}
@@ -135,6 +142,7 @@ const EditorPanel = () => {
           }
           }
         />
+      }
       </div>
     </div>
   );
