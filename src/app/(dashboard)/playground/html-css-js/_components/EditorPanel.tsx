@@ -1,23 +1,18 @@
 "use client";
 
 import MonacoEditor from '@monaco-editor/react';
-import { useContext,useState } from 'react';
+import { useContext } from 'react';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { editorOptions } from './config';
 import { Context } from './context';
-import PreviewPanel from './PreviewPanel';
 import * as monaco from 'monaco-editor';
-import { RiFullscreenExitLine } from "react-icons/ri";
+import PreviewPanel from './PreviewPanel';
+
 
 const EditorPanel = () => {
   const { state, dispatch, currentTabIndex, setCurrentTabIndex, theme } = useContext(Context);
   const value = currentTabIndex === 0 ? state.html : currentTabIndex === 1 ? state.css : state.js;
   const language = currentTabIndex === 0 ? 'html' : currentTabIndex === 1 ? 'css' : 'javascript';
-  const [showPreview, setShowPreview] = useState(false);
-
-  const handleFullscreenExitClick = () => {
-    setShowPreview(true);
-  };
   const handleEditorChange = (value: string | undefined) => {
     if (!value) return;
 
@@ -123,10 +118,9 @@ const EditorPanel = () => {
         >
           JS
         </h1>
-        <h1 onClick={handleFullscreenExitClick} className="px-1 md:hidden text-primary-400 text-sm font-semibold"><RiFullscreenExitLine className="h-5 w-5" /></h1>
+        <PreviewPanel/>
       </div>
       <div className="flex-1 h-full absolute w-full">
-      {showPreview ? <PreviewPanel />:
         <MonacoEditor
           options={editorOptions}
           theme={theme === 'dark' ? 'vs-dark' : ''}
@@ -142,7 +136,6 @@ const EditorPanel = () => {
           }
           }
         />
-      }
       </div>
     </div>
   );
