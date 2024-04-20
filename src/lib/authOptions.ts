@@ -72,13 +72,19 @@ const authOptions: AuthOptions = {
           });
 
           if (existingUser) {
-            // If user exists, check if there's no associated account
             if (existingUser.account.length === 0) {
               await prisma.account.create({
                 data: {
                   type: "oauth",
                   provider: account.provider,
-                  providerAccountId: account.id as string, // Make sure providerAccountId is provided
+                  providerAccountId: account.providerAccountId,
+                  access_token: account.access_token,
+                  refresh_token: account.refresh_token,
+                  expires_at: account.expires_at,
+                  id_token: account.id_token,
+                  scope: account.scope,
+                  session_state: account.session_state,
+                  token_type: account.token_type,
                   user: {
                     connect: {
                       id: existingUser.id,
@@ -86,10 +92,20 @@ const authOptions: AuthOptions = {
                   },
                 },
               });
+              await prisma.user.update({
+                where: {
+                  id: existingUser.id,
+                },
+                data: {
+                  email: user.email,
+                  name: user.name,
+                  image: user.image,
+                  emailVerified: new Date(),
+                },
+              });
             }
-            return true; // User exists and has an account
+            return true;
           } else {
-            // Create a new user and link the account
             await prisma.user.create({
               data: {
                 username: user.email?.split("@")[0].toUpperCase(),
@@ -97,24 +113,17 @@ const authOptions: AuthOptions = {
                 name: user.name,
                 image: user.image,
                 emailVerified: new Date(),
-                account: {
-                  create: {
-                    type: "oauth",
-                    provider: account.provider,
-                    providerAccountId: account.id as string, // Make sure providerAccountId is provided
-                  },
-                },
               },
             });
-            return true; // New user created and account linked
+            return true;
           }
         }
       } catch (error) {
         console.error("Error occurred during sign-in:", error);
-        return false; // Sign-in failed
+        return false;
       }
 
-      return false; // Default case: sign-in failed
+      return false;
     },
     async jwt({ token, user, account, profile }) {
       if (user) {
