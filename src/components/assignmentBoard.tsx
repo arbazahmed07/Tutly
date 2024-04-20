@@ -3,9 +3,10 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 function AssignmentBoard({ courses, assignments }: any) {
-    if(courses.length===0) {
-        return alert("No courses enrolled!")
-    }
+  if (courses.length === 0) {
+    alert("No courses enrolled!");
+    return;
+  }
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
   const router = useRouter();
   return (
@@ -26,7 +27,7 @@ function AssignmentBoard({ courses, assignments }: any) {
         })}
       </div>
       {assignments?.map((assignment: any) => {
-        const searchCourse = assignment.AssignedUser.Course.find(
+        const searchCourse = assignment.assignedUser.course.find(
           (course: any) => {
             return course.id === currentCourse;
           }
@@ -40,12 +41,12 @@ function AssignmentBoard({ courses, assignments }: any) {
               <div>
                 {assignment.assignment.title}-{assignment.assignment.id}
               </div>
-              <div
-                onClick={()=>router.push(`/assignments/${assignment.id}`)}
+              <button
+                onClick={() => router.push(`/assignments/${assignment.id}`)}
                 className="p-2 bg-secondary-800 rounded-md"
               >
-                Submit
-              </div>
+                Details
+              </button>
             </div>
           );
         }
