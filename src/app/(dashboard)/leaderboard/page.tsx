@@ -1,29 +1,15 @@
+import { getEnrolledCourses } from "@/actions/courses";
 import getLeaderboardData from "@/actions/getLeaderboard";
-import { useRouter } from "next/router";
-import StudentTable from "./leaderBoard";
+import Leaderboard from "@/components/leaderBoard";
 
-
-
-
-export default async function Leaderboard() {
-
-    const points: any = await getLeaderboardData();
-
-    return (
-        <div>Leaderboard
-
-            <pre>
-                {JSON.stringify(points, null, 2)}
-            </pre>
-
-            <div>
-                start here
-                {/* <LeaderboardComponent submissions={points} /> */}
-
-                {
-                    points && <StudentTable submissions={points} />
-                }
-            </div>
-        </div>
-    )
+export default async function Page() {
+  const assignments = await getLeaderboardData();
+  const courses = await getEnrolledCourses();
+  return (
+    <div>
+      <div>
+        <Leaderboard assignments={assignments} courses={courses}/>
+      </div>
+    </div>
+  );
 }
