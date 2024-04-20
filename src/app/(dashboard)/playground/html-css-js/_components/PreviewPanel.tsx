@@ -2,12 +2,12 @@
 import { useContext, useState } from 'react';
 import { Context } from './context';
 import { RiFullscreenExitLine } from "react-icons/ri";
-import Link from 'next/link';
 import SigninWithGithub from '@/app/(auth)/signin/_components/SigninWithGithub';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Octokit } from "@octokit/core";
+import { RxCross2 } from "react-icons/rx";  
 import {
   createPullRequest,
   DELETE_FILE,
@@ -25,7 +25,14 @@ const PreviewPanel = () => {
   const router = useRouter()
   const token = session.data?.user.githubToken;
   const [submitting, setSubmitting] = useState(false);
+  const [show, setShow] = useState(false);
+  function handleShow() {
+      setShow(true);
+  }
 
+  function handleClose() {
+      setShow(false);
+  }
   const handleSubmit = async () => {
     if (!token) {
       alert('Please connect with github to submit');
@@ -90,7 +97,24 @@ const PreviewPanel = () => {
         {
           confirmSubmission && <button disabled={submitting} onClick={handleSubmit} className="text-primary-400 text-sm font-semibold disabled:opacity-50">Submit</button>
         }
-        <Link href="/" className="text-primary-400 text-sm font-semibold"><RiFullscreenExitLine className="h-5 w-5" /></Link>
+        <h1 onClick={handleShow} className="text-primary-400 text-sm font-semibold"><RiFullscreenExitLine className="h-5 w-5" /></h1>
+                {show && (
+                <div className="fixed z-40 inset-0 overflow-y-auto">
+                    <div className="rounded-lg">
+                            <h1 className="h-[7vh] flex justify-end items-center bg-primary-900 text-primary-50">
+                                <RxCross2 className="h-8 w-8 mr-2" onClick={handleClose}/>
+                            </h1>
+                              <iframe
+                                srcDoc={srcDoc}
+                                title="output"
+                                sandbox="allow-scripts"
+                                width="100%"
+                                height="100%"
+                                className="h-[93vh]"  
+                              />
+                        </div>
+                    </div>
+                )}
       </div>
       <iframe
         srcDoc={srcDoc}
