@@ -6,7 +6,6 @@ import ThemeSwitch from './ThemeSwitch';
 import { GrMenu } from "react-icons/gr";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { usePathname } from 'next/navigation';
-
 interface Props {
   // todo: change types
   currentUser?: any;

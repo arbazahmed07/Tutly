@@ -12,7 +12,7 @@ const UserProfile = ({ currentUser }:any) => {
   const router = useRouter();
 
   const [isOpen, setIsOpen, componentRef] = useClickOutside<HTMLDivElement>(false);
-
+  
   return (
     <div className="">
       <div className="flex gap-1 sm:gap-3 items-center ">
