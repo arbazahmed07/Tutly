@@ -57,7 +57,7 @@ export default function Doubts() {
                         <div className="p-5">
                           <h3 className="text-lg font-bold leading-6 text-secondary-700">Enter your doubt here</h3>
                           <form className="mt-2">
-                            <textarea id="message" rows={4} className="block p-2.5 w-full bg-primary-700 text-secondary-600 rounded-lg outline-none"></textarea>
+                            <textarea id="message" rows={4} className="block p-2.5 w-full bg-primary-700 text-secondary-200 rounded-lg outline-none"></textarea>
                             <button type="submit" className="px-6 py-2 bg-primary-400 rounded-md mt-3">Submit</button>
                           </form>
                         </div>

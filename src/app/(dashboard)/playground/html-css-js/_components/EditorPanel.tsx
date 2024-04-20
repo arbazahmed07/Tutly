@@ -118,7 +118,9 @@ const EditorPanel = () => {
         >
           JS
         </h1>
-        <PreviewPanel/>
+        <div className="md:hidden">
+          <PreviewPanel/>
+        </div>
       </div>
       <div className="flex-1 h-full absolute w-full">
         <MonacoEditor
