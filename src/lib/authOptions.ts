@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
+import { randomUUID } from "crypto";
 
 const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -26,13 +27,16 @@ const authOptions: AuthOptions = {
       credentials: {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
+        tokenId: { label: "Token", type: "uuid" },
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) {
-          throw new Error("Username and password are required");
+        if (!credentials?.tokenId) {
+          if (!credentials?.username || !credentials?.password) {
+            throw new Error("Username and password are required");
+          }
         }
 
-        const { username, password } = credentials;
+        const { username, password, tokenId } = credentials;
 
         const user = await prisma.user.findUnique({
           where: {
@@ -44,17 +48,39 @@ const authOptions: AuthOptions = {
           throw new Error("No user found");
         }
 
-        if (!user.password) {
-          throw new Error("User has not set a password");
+        if (tokenId) {
+          if (!user.oneTimePassword) {
+            throw new Error("User has not set a one time password");
+          }
+          const valid = user.oneTimePassword == tokenId;
+
+          if (!valid) {
+            throw new Error("Invalid token");
+          }
+
+          await prisma.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              oneTimePassword: randomUUID(),
+            },
+          });
+
+          return user as any;
+        } else {
+          if (!user.password) {
+            throw new Error("User has not set a password");
+          }
+
+          const valid = await bcrypt.compare(password, user.password);
+
+          if (!valid) {
+            throw new Error("Invalid username or password");
+          }
+
+          return user as any;
         }
-
-        const valid = await bcrypt.compare(password, user.password);
-
-        if (!valid) {
-          throw new Error("Invalid username or password");
-        }
-
-        return user as any;
       },
     }),
   ],
@@ -113,6 +139,7 @@ const authOptions: AuthOptions = {
                 name: user.name,
                 image: user.image,
                 emailVerified: new Date(),
+                oneTimePassword: randomUUID(),
               },
             });
             return true;
@@ -123,7 +150,7 @@ const authOptions: AuthOptions = {
         return false;
       }
 
-      return false;
+      return true;
     },
     async jwt({ token, user, account, profile }) {
       if (user) {
