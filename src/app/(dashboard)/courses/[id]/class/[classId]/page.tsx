@@ -40,9 +40,9 @@ const details = await getClassDetails(params.classId);
             {/* <pre>{JSON.stringify(details?.attachments,null,3)}</pre> */}
             <div>
                 {
-                    details?.attachments?.map((attachment) => {
+                    details?.attachments?.map((attachment,index) => {
                         return (
-                            <div className=" p-4 rounded-lg mb-4 relative hover:bg-[#08205e] bg-[#061846] "   >
+                            <div key={index} className=" p-4 rounded-lg mb-4 relative hover:bg-[#08205e] bg-[#061846] "   >
                                 <div className="flex justify-between">
                                     <div className="">
                                         <h3 className="text-xl font-semibold text-gray-500 mb-2">{attachment.title}</h3>

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-const useTimeStore = create((set) => ({
+const currentUser = create((set) => ({
     setUser : '',
     getUser : '',
     // setMode : (Mode) =>set({Mode}),

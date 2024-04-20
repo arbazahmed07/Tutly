@@ -132,7 +132,7 @@ const NewCoursePage = () => {
                                 />
                         </div>
                         <div>
-                            <Select classname="">
+                            <Select>
                                 <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Select a Class" />
                                 </SelectTrigger>
@@ -169,4 +169,4 @@ const NewCoursePage = () => {
     )
 }
 
-export default newCoursePage; 
+export default NewCoursePage; 
