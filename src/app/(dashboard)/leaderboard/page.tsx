@@ -8,7 +8,7 @@ import StudentTable from "./leaderBoard";
 export default async function Leaderboard() {
 
     const points: any = await getLeaderboardData();
-    
+
     return (
         <div>Leaderboard
 
@@ -19,7 +19,10 @@ export default async function Leaderboard() {
             <div>
                 start here
                 {/* <LeaderboardComponent submissions={points} /> */}
-                <StudentTable submissions={points} />
+
+                {
+                    points && <StudentTable submissions={points} />
+                }
             </div>
         </div>
     )

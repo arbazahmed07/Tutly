@@ -35,11 +35,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  account        Account[]
-  course         Course[]
-  userAssignment userAssignment[]
-  enrolledUsers  EnrolledUsers[]
-  profile        Profile?
+  account         Account[]
+  course          Course[]
+  userAssignment  userAssignment[]
+  enrolledUsers   EnrolledUsers[]
+  profile         Profile?
+  doubt           Doubt[]
+  response        Response[]
+  assignedMentors AssignedMentors[]
 }
 
 model Profile {
@@ -68,8 +71,9 @@ model Course {
 
   isPublished Boolean @default(false)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  assignedMentors AssignedMentors[]
 }
 
 model EnrolledUsers {
@@ -77,6 +81,8 @@ model EnrolledUsers {
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+
+  assignedMentors AssignedMentors[]
 
   startDate DateTime  @default(now())
   endDate   DateTime?
@@ -87,6 +93,24 @@ model EnrolledUsers {
   @@unique([userId, courseId])
 }
 
+model AssignedMentors {
+  id String @id @default(uuid())
+
+  mentorId String
+  mentor   User   @relation(fields: [mentorId], references: [id])
+
+  enrolledUserId String
+  enrolledUser   EnrolledUsers @relation(fields: [enrolledUserId], references: [id])
+
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+
+  courseId String?
+  course   Course? @relation(fields: [courseId], references: [id])
+
+  @@unique([mentorId, enrolledUserId, courseId])
+}
+
 model Class {
   id          String       @id @default(uuid())
   title       String       @default("class")
@@ -95,6 +119,31 @@ model Class {
   courseId    String?
   course      Course?      @relation(fields: [courseId], references: [id])
   videoId     String
+  doubts      Doubt[]
+}
+
+model Doubt {
+  id          String     @id @default(uuid())
+  title       String?
+  description String?
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
+  class       Class?     @relation(fields: [classId], references: [id])
+  classId     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  response    Response[]
+}
+
+model Response {
+  id          String   @id @default(uuid())
+  description String?
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  doubt       Doubt    @relation(fields: [doubtId], references: [id])
+  doubtId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum VideoType {
@@ -139,7 +188,7 @@ model userAssignment {
   dueDate DateTime
   points  Point[]
 
-  isSubmitted Boolean @default(false)
+  isSubmitted     Boolean @default(false)
   overallFeedback String?
 }
 
