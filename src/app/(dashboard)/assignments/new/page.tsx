@@ -75,7 +75,7 @@ const NewCoursePage = () => {
     return (
         <div className='  h-full w-full  flex md:justify-start p-10 '> 
             <div>
-                <h1 className=' flex items-center text-xl'>Create a new Course!&nbsp;<MdOutlineCreate className='w-5 h-5 ' /></h1>
+                <h1 className=' flex items-center text-xl'>Create a new assignment!&nbsp;<MdOutlineCreate className='w-5 h-5 ' /></h1>
                 <Form {...form}>
                     <form  action="" 
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -88,7 +88,7 @@ const NewCoursePage = () => {
                                 control={form.control}
                                 render={({field}) => (
                                     <FormItem className ='  '>
-                                        <FormLabel>Course Title</FormLabel>
+                                        <FormLabel>Title</FormLabel>
                                         <FormControl>
                                             <Input className='text-sm'  disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
                                         </FormControl>
@@ -162,10 +162,10 @@ const NewCoursePage = () => {
                                         </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className=' bg-secondary-700 '>
-                                        <SelectItem className=' hover:bg-secondary-800' value="class1">Class - 1</SelectItem>
-                                        <SelectItem className=' hover:bg-secondary-800' value="class2">Class - 2</SelectItem>
-                                        <SelectItem className=' hover:bg-secondary-800' value="class3">Class - 3</SelectItem>
-                                        <SelectItem className=' hover:bg-secondary-800' value="class4">Class - 4</SelectItem>
+                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class1">Class - 1</SelectItem>
+                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class2">Class - 2</SelectItem>
+                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class3">Class - 3</SelectItem>
+                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class4">Class - 4</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
