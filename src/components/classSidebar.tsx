@@ -41,7 +41,7 @@ function ClassSidebar({ params, classes }: any) {
       {!open && (
         <div
           onClick={() => setOpen(!open)}
-          className="absolute left-0 top-[300px] bg-primary-700 py-2 rounded-r-lg cursor-pointer"
+          className="fixed left-0 top-[300px] bg-primary-700 py-2 rounded-r-lg cursor-pointer"
         >
           <IoIosArrowForward />
         </div>
