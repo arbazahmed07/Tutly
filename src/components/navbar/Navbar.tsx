@@ -18,7 +18,7 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
   const isCoursePage = pathname.startsWith('/courses/');
 
   return (
-    <div className='shadow-md px-2 z-40 sticky top-0 backdrop-blur-lg'>
+    <div className='shadow-md px-2 z-40 sticky top-0 backdrop-blur-3xl'>
       <div className='flex items-center justify-between p-2'>
         <div onClick={() => setMenu(!menu)} className='p-2 rounded-full hover:bg-secondary-800 cursor-pointer'>
           {!isCoursePage ? <GrMenu className='text-xl' />:"LMS"}
