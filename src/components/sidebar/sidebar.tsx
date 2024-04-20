@@ -14,7 +14,7 @@ interface Props {
 export default function Sidebar({items,menu}:Props) {
     const pathname = usePathname();
     return (
-        <div className={`min-h-dvh shadow-xl px-2 pt-3`}>
+        <div className={`min-h-dvh shadow-xl px-2 pt-3 sticky top-0`}>
             <Link href='/'>
                 <div className={`text-2xl font-bold mb-6`}>
                     LMS
