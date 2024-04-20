@@ -1,6 +1,6 @@
 import getLeaderboardData from "@/actions/getLeaderboard";
 import { useRouter } from "next/router";
-import StudentTable from "./leaderboard";
+import StudentTable from "./leaderBoard";
 
 
 
