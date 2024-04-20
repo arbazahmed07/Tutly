@@ -9,8 +9,8 @@ export default async function Courses() {
                 courses?.map(async(course) => {
                     const classesCompleted = 0;
                     let percent;
-                    if(course._count.Classes==0) percent=0;
-                    else percent = (classesCompleted*100)/(course._count.Classes);
+                    if(course._count.classes==0) percent=0;
+                    else percent = (classesCompleted*100)/(course._count.classes);
 
                     return (
                         <CourseCard key={course.id} course={course} percent={percent} classesCompleted={classesCompleted}/>
