@@ -13,7 +13,8 @@ const nextConfig = {
     ],
     domains:[
       "cdn-icons-png.flaticon.com",
-      "png.pngtree.com"
+      "png.pngtree.com",
+      "acourseoflove.org"
     ]
   },
 };
