@@ -1,10 +1,9 @@
 import { AuthOptions } from "next-auth";
 import bcrypt from "bcrypt";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
-import eduprimeLogin from "@/actions/eduprimeLogin";
 
 const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -16,12 +15,9 @@ const authOptions: AuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET as string,
   providers: [
-    GithubProvider({
-      clientId: process.env.NEXTAUTH_GITHUB_ID as string,
-      clientSecret: process.env.NEXTAUTH_GITHUB_SECRET as string,
-      authorization: {
-        params: { scope: "public_repo" },
-      },
+    GoogleProvider({
+      clientId: process.env.NEXTAUTH_GOOGLE_ID as string,
+      clientSecret: process.env.NEXTAUTH_GOOGLE_SECRET as string,
       allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
@@ -38,112 +34,97 @@ const authOptions: AuthOptions = {
 
         const { username, password } = credentials;
 
-        const data: {
-          Status: boolean;
-          Data: string;
-          cookie: string;
-        } = await eduprimeLogin(username, password);
-
-        if (!data.Status) {
-          throw new Error(data.Data);
-        }
-
-        const user = await prisma.user.upsert({
-          where: { username },
-          update: {
-            password: bcrypt.hashSync(password, 10),
-          },
-          create: {
-            username,
-            password: bcrypt.hashSync(password, 10),
-          },
-          include: {
-            account: {
-              select: {
-                provider: true,
-                providerAccountId: true,
-                access_token: true,
-                refresh_token: true,
-                expires_at: true,
-              },
-            },
+        const user = await prisma.user.findUnique({
+          where: {
+            username: username.toUpperCase(),
           },
         });
 
-        return { ...user, eduprimeCookie: data.cookie } as any;
+        if (!user) {
+          throw new Error("No user found");
+        }
+
+        if (!user.password) {
+          throw new Error("User has not set a password");
+        }
+
+        const valid = await bcrypt.compare(password, user.password);
+
+        if (!valid) {
+          throw new Error("Invalid username or password");
+        }
+
+        return user as any;
       },
     }),
   ],
   callbacks: {
     async signIn({ user, account }) {
       try {
-        if (account?.provider === "github") {
-          const existingUser = await prisma.account.findFirst({
+        if (account?.provider === "google") {
+          const existingUser = await prisma.user.findUnique({
             where: {
-              providerAccountId: account.providerAccountId,
+              username: user.email?.split("@")[0].toUpperCase(),
+            },
+            include: {
+              account: true,
             },
           });
+
           if (existingUser) {
-            await prisma.account.update({
-              where: {
-                id: existingUser.id,
-              },
+            // If user exists, check if there's no associated account
+            if (existingUser.account.length === 0) {
+              await prisma.account.create({
+                data: {
+                  type: "oauth",
+                  provider: account.provider,
+                  providerAccountId: account.id as string, // Make sure providerAccountId is provided
+                  user: {
+                    connect: {
+                      id: existingUser.id,
+                    },
+                  },
+                },
+              });
+            }
+            return true; // User exists and has an account
+          } else {
+            // Create a new user and link the account
+            await prisma.user.create({
               data: {
-                access_token: account.access_token,
-                refresh_token: account.refresh_token,
-                expires_at: account.expires_at,
+                username: user.email?.split("@")[0].toUpperCase(),
+                email: user.email,
+                name: user.name,
+                image: user.image,
+                emailVerified: new Date(),
+                account: {
+                  create: {
+                    type: "oauth",
+                    provider: account.provider,
+                    providerAccountId: account.id as string, // Make sure providerAccountId is provided
+                  },
+                },
               },
             });
-            return true;
+            return true; // New user created and account linked
           }
-          await prisma.account.create({
-            data: {
-              type: "account",
-              userId: user.id,
-              provider: account.provider,
-              providerAccountId: account.providerAccountId,
-              access_token: account.access_token,
-              refresh_token: account.refresh_token,
-              expires_at: account.expires_at,
-            },
-          });
         }
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.error("Error occurred during sign-in:", error);
+        return false; // Sign-in failed
       }
 
-      return true;
+      return false; // Default case: sign-in failed
     },
-
     async jwt({ token, user, account, profile }) {
       if (user) {
         token.username = user.username;
-        token.eduprimeCookie = user.eduprimeCookie;
-      }
-      if (account) {
-        token.provider = account.provider;
-        token.providerAccountId = account.providerAccountId;
-        token.githubTokenType = account.token_type;
-        token.githubToken = account.access_token;
-        token.githubTokenScope = account.scope;
-      }
-      if (profile) {
-        // @ts-ignore
-        token.githubUsername = profile.login;
-        token.githubEmail = profile.email;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
         session.user.username = token.username;
-        session.user.eduprimeCookie = token.eduprimeCookie;
-        session.user.provider = token.provider;
-        session.user.providerAccountId = token.providerAccountId;
-        session.user.githubUsername = token.githubUsername;
-        session.user.githubToken = token.githubToken;
-        session.user.githubTokenType = token.githubTokenType;
-        session.user.githubTokenScope = token.githubTokenScope;
       }
       return session;
     },

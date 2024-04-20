@@ -2,10 +2,8 @@
 import { useContext, useState } from 'react';
 import { Context } from './context';
 import { RiFullscreenExitLine } from "react-icons/ri";
-import SigninWithGithub from '@/app/(auth)/signin/_components/SigninWithGithub';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { Octokit } from "@octokit/core";
 import { RxCross2 } from "react-icons/rx";  
 import {
@@ -21,8 +19,6 @@ const PreviewPanel = () => {
   const session = useSession();
   const params = useSearchParams();
   const assignmentId = params.get('userAssignmentId');
-  const confirmSubmission = params.get('confirm-submssion');
-  const router = useRouter()
   const token = session.data?.user.githubToken;
   const [submitting, setSubmitting] = useState(false);
   const [show, setShow] = useState(false);
@@ -34,11 +30,6 @@ const PreviewPanel = () => {
       setShow(false);
   }
   const handleSubmit = async () => {
-    if (!token) {
-      alert('Please connect with github to submit');
-      router.push(`/playground/html-css-js?userAssignmentId=${confirmSubmission}`);
-      return;
-    }
     try {
       setSubmitting(true);
       const octokit = new MyOctokit({
@@ -92,10 +83,7 @@ const PreviewPanel = () => {
       <div className={`flex justify-between px-3 items-center ${assignmentId ? "p-1" : "p-3"}`}>
         <h1 className="text-primary-400 text-sm font-semibold">Preview</h1>
         {
-          assignmentId && <SigninWithGithub assignmentId={assignmentId} />
-        }
-        {
-          confirmSubmission && <button disabled={submitting} onClick={handleSubmit} className="text-primary-400 text-sm font-semibold disabled:opacity-50">Submit</button>
+          assignmentId && <button disabled={submitting} onClick={handleSubmit} className="text-primary-400 text-sm font-semibold disabled:opacity-50">Submit</button>
         }
         <h1 onClick={handleShow} className="text-primary-400 text-sm font-semibold"><RiFullscreenExitLine className="h-5 w-5" /></h1>
                 {show && (
