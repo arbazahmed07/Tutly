@@ -139,6 +139,7 @@ model userAssignment {
   dueDate DateTime
   points  Point[]
 
+  isSubmitted Boolean @default(false)
   overallFeedback String?
 }
 
