@@ -14,8 +14,8 @@ export default async function getLeaderboardData() {
 
     const points = await db.userAssignment.findMany({
       where: {
-        AssignedUser: {
-          Course: {
+        assignedUser: {
+          course: {
             some: {
               id: {
                 in: enrolledCourses.map((course) => course.id),
@@ -28,9 +28,9 @@ export default async function getLeaderboardData() {
         points: true,
         assignment: {
           select: {
-            Class: {
+            class: {
               select: {
-                Course: {
+                course: {
                   select: {
                     id: true,
                     title: true,
@@ -44,8 +44,8 @@ export default async function getLeaderboardData() {
       },
       orderBy: {
         assignment: {
-          Class: {
-            Course: {
+          class: {
+            course: {
               startDate: 'asc', 
             },
           },

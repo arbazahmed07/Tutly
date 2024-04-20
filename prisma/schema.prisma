@@ -35,29 +35,33 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Profile Profile?
   account        Account[]
-  Course         Course[]
+  course         Course[]
   userAssignment userAssignment[]
-  EnrolledUsers  EnrolledUsers[]
+  enrolledUsers  EnrolledUsers[]
+  profile        Profile?
 }
 
-// model Profile {
-//   id Int @id @default(autoincrement())
-//   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   userId Int  @unique
+model Profile {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
+  section      String?
+  branch       String?
+  academicYear String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
 model Course {
   id            String          @id @default(uuid())
-  CreatedById   String
-  createdBy     User            @relation(fields: [CreatedById], references: [id])
+  createdById   String
+  createdBy     User            @relation(fields: [createdById], references: [id])
   title         String
   enrolledUsers EnrolledUsers[]
-  Classes       Class[]
+  classes       Class[]
 
   startDate DateTime  @default(now())
   endDate   DateTime?
@@ -71,14 +75,16 @@ model Course {
 model EnrolledUsers {
   id String @id @default(uuid())
 
-  userId   String
-  user User @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
   startDate DateTime  @default(now())
   endDate   DateTime?
 
   courseId String?
-  Course   Course? @relation(fields: [courseId], references: [id])
+  course   Course? @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
 }
 
 model Class {
@@ -87,7 +93,7 @@ model Class {
   video       Video        @relation(fields: [videoId], references: [id])
   attachments Attachment[]
   courseId    String?
-  Course      Course?      @relation(fields: [courseId], references: [id])
+  course      Course?      @relation(fields: [courseId], references: [id])
   videoId     String
 }
 
@@ -100,8 +106,8 @@ model Video {
   id         String    @id @default(uuid())
   videoLink  String?
   videoType  VideoType
-  TimeStamps Json?
-  Class      Class[]
+  timeStamps Json?
+  class      Class[]
 }
 
 enum attachmentType {
@@ -114,23 +120,23 @@ enum attachmentType {
 model Attachment {
   id             String           @id @default(uuid())
   title          String           @default("Attachment")
-  Details        Json?
+  details        Json?
   attachmentType attachmentType
   link           String?
   userAssignment userAssignment[]
   classId        String?
-  Class          Class?           @relation(fields: [classId], references: [id])
+  class          Class?           @relation(fields: [classId], references: [id])
 }
 
 model userAssignment {
   id           String @id @default(uuid())
   userId       String
-  AssignedUser User   @relation(fields: [userId], references: [id])
+  assignedUser User   @relation(fields: [userId], references: [id])
 
   attachmentId String
   assignment   Attachment @relation(fields: [attachmentId], references: [id])
 
-  DueDate DateTime
+  dueDate DateTime
   points  Point[]
 
   overallFeedback String?

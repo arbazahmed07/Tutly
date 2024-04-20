@@ -15,7 +15,7 @@ function ClassSidebar({ params, classes }: any) {
           !open && "hidden"
         } flex flex-col px-4 items-center py-3 gap-2 shadow-xl min-h-[90vh] relative`}
       >
-        <h1 className="px-4 my-2">{classes[0].Course?.title}</h1>
+        <h1 className="px-4 my-2">{classes[0].course?.title}</h1>
         {classes.map((x: any) => {
           return (
             <Link
