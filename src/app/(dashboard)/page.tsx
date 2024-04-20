@@ -9,7 +9,7 @@ export default async function Home() {
           <h1 className="text-secondary-50 font-bold text-2xl">Welcome back 👏</h1>
           <p className="text-secondary-50 font-medium text-sm mt-3">Here is your monthly report</p>
         </div>
-        <div className="flex justify-around mt-2 text-center">
+        <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
             <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
                 <Image src="https://png.pngtree.com/png-clipart/20210312/original/pngtree-game-score-wood-sign-style-png-image_6072790.png" alt="" height={100} width={110} className="m-auto"/>
                 <p className="text-primary-600 font-bold pt-2">590</p>
