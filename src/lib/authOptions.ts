@@ -19,15 +19,10 @@ const authOptions: AuthOptions = {
     GithubProvider({
       clientId: process.env.NEXTAUTH_GITHUB_ID as string,
       clientSecret: process.env.NEXTAUTH_GITHUB_SECRET as string,
-      // profile(profile) {
-      //   return {
-      //     id: profile.id,
-      //     name: profile.name,
-      //     email: profile.email,
-      //     image: profile.avatar_url,
-      //     username: profile.login,
-      //   };
-      // },
+      authorization: {
+        params: { scope: "public_repo" },
+      },
+      allowDangerousEmailAccountLinking: true,
     }),
     CredentialsProvider({
       id: "credentials",
@@ -62,6 +57,17 @@ const authOptions: AuthOptions = {
             username,
             password: bcrypt.hashSync(password, 10),
           },
+          include: {
+            account: {
+              select: {
+                provider: true,
+                providerAccountId: true,
+                access_token: true,
+                refresh_token: true,
+                expires_at: true,
+              },
+            },
+          },
         });
 
         return { ...user, eduprimeCookie: data.cookie } as any;
@@ -69,10 +75,62 @@ const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      try {
+        if (account?.provider === "github") {
+          const existingUser = await prisma.account.findFirst({
+            where: {
+              providerAccountId: account.providerAccountId,
+            },
+          });
+          if (existingUser) {
+            await prisma.account.update({
+              where: {
+                id: existingUser.id,
+              },
+              data: {
+                access_token: account.access_token,
+                refresh_token: account.refresh_token,
+                expires_at: account.expires_at,
+              },
+            });
+            return true;
+          }
+          await prisma.account.create({
+            data: {
+              type: "account",
+              userId: user.id,
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              access_token: account.access_token,
+              refresh_token: account.refresh_token,
+              expires_at: account.expires_at,
+            },
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      }
+
+      return true;
+    },
+
+    async jwt({ token, user, account, profile }) {
       if (user) {
         token.username = user.username;
         token.eduprimeCookie = user.eduprimeCookie;
+      }
+      if (account) {
+        token.provider = account.provider;
+        token.providerAccountId = account.providerAccountId;
+        token.githubTokenType = account.token_type;
+        token.githubToken = account.access_token;
+        token.githubTokenScope = account.scope;
+      }
+      if (profile) {
+        // @ts-ignore
+        token.githubUsername = profile.login;
+        token.githubEmail = profile.email;
       }
       return token;
     },
@@ -80,6 +138,12 @@ const authOptions: AuthOptions = {
       if (session?.user) {
         session.user.username = token.username;
         session.user.eduprimeCookie = token.eduprimeCookie;
+        session.user.provider = token.provider;
+        session.user.providerAccountId = token.providerAccountId;
+        session.user.githubUsername = token.githubUsername;
+        session.user.githubToken = token.githubToken;
+        session.user.githubTokenType = token.githubTokenType;
+        session.user.githubTokenScope = token.githubTokenScope;
       }
       return session;
     },
