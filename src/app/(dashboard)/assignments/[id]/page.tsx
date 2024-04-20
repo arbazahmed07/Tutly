@@ -1,4 +1,5 @@
 import { getAssignmentById } from "@/actions/getAssignments";
+import Link from "next/link";
 
 export default async function SubmmitAssignment({ params }: { params: { id: string } }) {
 
@@ -9,9 +10,9 @@ export default async function SubmmitAssignment({ params }: { params: { id: stri
             <div>
                 SubmitAssignmet: {params.id}
             </div>
-            <button className="bg-primary-600 text-secondary-100 p-2 text-sm rounded-lg font-semibold">
+            <Link href={`/playground/html-css-js?userAssignmentId=${params.id}`}  className="bg-primary-600 text-secondary-100 p-2 text-sm rounded-lg font-semibold">
                 Submit Through playground
-            </button>
+            </Link>
             <pre>{JSON.stringify(assignment, null, 2)}</pre>
         </div >
     )
