@@ -184,7 +184,7 @@ model Attachment {
 model submission {
   id           String @id @default(uuid())
   userId       String
-  assignedUser User   @relation(fields: [userId], references: [id])
+  user         User   @relation(fields: [userId], references: [id])
 
   attachmentId String
   assignment   Attachment @relation(fields: [attachmentId], references: [id])
