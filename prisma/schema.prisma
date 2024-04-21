@@ -177,6 +177,7 @@ model Attachment {
   link           String?
   submissions    userAssignment[]
   classId        String?
+  dueDate        DateTime?
   class          Class?           @relation(fields: [classId], references: [id])
 }
 
@@ -188,9 +189,8 @@ model userAssignment {
   attachmentId String
   assignment   Attachment @relation(fields: [attachmentId], references: [id])
 
-  dueDate DateTime?
-  points  Point[]
-
+  points Point[]
+  
   isSubmitted     Boolean @default(false)
   overallFeedback String?
 }

@@ -97,9 +97,9 @@ export default async function Class({
                                         </div>
                                         <div className="absolute top-0 right-0 p-3">
                                             <p className="text-red-700 font-bold">
-                                                {attachment?.userAssignment[0]?.dueDate
+                                                {attachment?.dueDate
                                                     ? new Date(
-                                                        attachment?.userAssignment[0]?.dueDate
+                                                        attachment?.dueDate
                                                     ).toLocaleDateString()
                                                     : "Not specified"}
                                             </p>

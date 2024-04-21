@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     const attachment = await createAttachment(data);
     return NextResponse.json(attachment);
-  } catch (e) {
+  } catch (e :any) {
     return NextResponse.json({ error: e.message }, { status: 400 });
   }
 }

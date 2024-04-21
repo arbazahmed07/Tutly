@@ -22,8 +22,8 @@ export default async function SubmmitAssignment({
             );
           })}
         </div>
-        <div className={`p-1 rounded bg-secondary-700 ${assignment?.dueDate!=null&&(new Date(assignment?.dueDate)>(assignment?.dueDate))?"bg-primary-600":"bg-secondary-700"}`}>{`${
-          assignment?.dueDate === null ? "No last date" : assignment?.dueDate
+        <div className={`p-1 rounded bg-secondary-700 ${assignment?.assignment.dueDate!=null&&(new Date(assignment?.assignment.dueDate)>(new Date()))?"bg-primary-600":"bg-secondary-700"}`}>{`${
+          assignment?.assignment.dueDate === null ? "No last date" : assignment?.assignment.dueDate
         }`}</div>
       </div>
 

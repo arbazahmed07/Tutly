@@ -64,16 +64,7 @@ export const getClassDetails = async (id: string) => {
         },
         include: {
             video: true,
-            attachments: {
-                include:{
-                    userAssignment:{
-                        distinct : "attachmentId" ,
-                        select:{
-                            dueDate:true
-                        }
-                    }
-                }
-            }
+            attachments: true
         }
     });
     return classDetails;

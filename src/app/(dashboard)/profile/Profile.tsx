@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -7,7 +8,7 @@ const formatDate = (e: string) => {
     const date = new Date(e);
 
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; 
+    const month = date.getMonth() + 1;
     const day = date.getDate();
     let hours = date.getHours();
     const minutes = date.getMinutes();
@@ -15,7 +16,7 @@ const formatDate = (e: string) => {
 
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
-    hours = hours || 12; 
+    hours = hours || 12;
 
     const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
     const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
@@ -23,7 +24,7 @@ const formatDate = (e: string) => {
     return `${formattedDate} ${formattedTime}`;
 }
 
-const UserProfile = async ({ currentUser }: { currentUser: any }) => {
+const UserProfile = ({ currentUser }: { currentUser: any }) => {
     const router = useRouter();
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState(currentUser);
@@ -46,7 +47,7 @@ const UserProfile = async ({ currentUser }: { currentUser: any }) => {
 
     return (
         <div className="flex flex-col items-center m-10 font-semibold">
-            <img src={formData?.image || 'image.png'} alt="User Image" className="w-40 h-40 rounded-full bg-slate-300" />    
+            <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" className="w-40 h-40 rounded-full bg-slate-300" />
             <form onSubmit={handleSubmit} className="flex justify-center gap-10">
                 <div className="w-[40%] mt-2 text-gray-600">
                     <label className="text-sm text-gray-600">Username:</label>
