@@ -39,7 +39,7 @@ model User {
 
   account         Account[]
   course          Course[]
-  userAssignment  userAssignment[]
+  submissions     submission[]
   enrolledUsers   EnrolledUsers[]
   profile         Profile?
   doubt           Doubt[]
@@ -170,18 +170,18 @@ enum attachmentType {
 }
 
 model Attachment {
-  id             String           @id @default(uuid())
-  title          String           @default("Attachment")
+  id             String         @id @default(uuid())
+  title          String         @default("Attachment")
   details        String?
   attachmentType attachmentType
   link           String?
-  submissions    userAssignment[]
+  submissions    submission[]
   classId        String?
   dueDate        DateTime?
-  class          Class?           @relation(fields: [classId], references: [id])
+  class          Class?         @relation(fields: [classId], references: [id])
 }
 
-model userAssignment {
+model submission {
   id           String @id @default(uuid())
   userId       String
   assignedUser User   @relation(fields: [userId], references: [id])
@@ -192,14 +192,6 @@ model userAssignment {
   points Point[]
 
   overallFeedback String?
-
-  submissionDetails submissionDetails[]
-}
-
-model submissionDetails {
-  id               String         @id @default(uuid())
-  userAssignmentId String
-  userAssignment   userAssignment @relation(fields: [userAssignmentId], references: [id])
 
   submissionLink String?
   submissionDate DateTime @default(now())
@@ -212,12 +204,12 @@ enum pointCategory {
 }
 
 model Point {
-  id               String          @id @default(uuid())
-  category         pointCategory
-  feedback         String?
-  score            Int             @default(0)
-  userAssignment   userAssignment? @relation(fields: [userAssignmentId], references: [id])
-  userAssignmentId String?
+  id            String        @id @default(uuid())
+  category      pointCategory
+  feedback      String?
+  score         Int           @default(0)
+  submissions   submission?  @relation(fields: [submissionId], references: [id])
+  submissionId String?
 }
 
 model Account {
