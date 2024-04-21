@@ -19,9 +19,9 @@ export default async function RootLayout({
     const classes = await getCourseClasses(params.id)
     return (
         <>
-            <div className="flex">
+            <div className="flex w-full">
                 <ClassSidebar params={params} classes={classes}/>
-                <div>{children}</div>
+                <div className="flex-1">{children}</div>
             </div>
         </>
     );

@@ -31,7 +31,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-import { MdOutlineCreate } from "react-icons/md";
+import { FaFilePen } from "react-icons/fa6";
 
 
 const formSchema = z.object({
@@ -51,7 +51,6 @@ const formSchema = z.object({
 })
 
 const NewCoursePage = () => {
-
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -73,9 +72,9 @@ const NewCoursePage = () => {
     
 
     return (
-        <div className='  h-full w-full  flex md:justify-start p-10 '> 
+        <div className='  h-full w-full  md:flex md:justify-start p-10 '> 
             <div>
-                <h1 className=' flex items-center text-xl'>Create a new assignment!&nbsp;<MdOutlineCreate className='w-5 h-5 ' /></h1>
+                <h1 className=' flex items-center text-xl'>Create a new assignment!&nbsp;<FaFilePen className='w-5 h-5 ' /></h1>
                 <Form {...form}>
                     <form  action="" 
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -174,10 +173,9 @@ const NewCoursePage = () => {
                                 }}
                             />
                         </div>
-                            <div className="grid w-full gap-1.5 col-span-4 mt-5">
-                                <Label htmlFor="message">Add Details</Label>
-                                <Textarea placeholder="Type details here..." id="message" />
-                            </div>
+                            <div className=' col-span-4' >
+                                text field
+                            </div>  
                         </div>
                         <div className=' flex items-center gap-x-3'>
                             <Link href={'/'}>
