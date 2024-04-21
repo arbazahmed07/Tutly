@@ -12,9 +12,9 @@ export default async function getLeaderboardData() {
     const enrolledCourses = await getEnrolledCourses()
     if(!enrolledCourses) return null;
 
-    const points = await db.userAssignment.findMany({
+    const points = await db.submission.findMany({
       where: {
-        assignedUser: {
+        user: {
           course: {
             some: {
               id: {

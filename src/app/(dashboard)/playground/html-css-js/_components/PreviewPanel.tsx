@@ -23,7 +23,7 @@ const PreviewPanel = () => {
   const email = data?.user.email;
 
   const params = useSearchParams();
-  const assignmentId = params.get('userAssignmentId');
+  const assignmentId = params.get('attachmentId');
   const [submitting, setSubmitting] = useState(false);
   const [show, setShow] = useState(false);
   function handleShow() {

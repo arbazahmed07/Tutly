@@ -7,29 +7,36 @@ export const getAllAssignedAssignments = async () => {
     return null;
   }
 
-  const assignments = await db.userAssignment.findMany({
+  const coursesWithAssignments = await db.course.findMany({
     where: {
-      userId: currentUser.id,
-      assignment: {
-        attachmentType: "ASSIGNMENT",
+      enrolledUsers: {
+        some: {
+          userId: currentUser.id,
+        },
       },
     },
-    include: {
-      assignment: true,
-      points: true,
-      assignedUser: {
+    select: {
+      id: true,
+      classes: {
         select: {
-          course: {
-            select: {
-              id: true,
-              title: true,
+          attachments: {
+            where: {
+              attachmentType: "ASSIGNMENT",
+            },
+            include:{
+              class: true,
+              submissions: {
+                where:{
+                  userId: currentUser.id
+                }
+              },
             },
           },
         },
       },
     },
   });
-  return assignments;
+  return coursesWithAssignments;
 };
 
 export const getAssignmentById = async (id: string) => {
@@ -38,7 +45,7 @@ export const getAssignmentById = async (id: string) => {
     return null;
   }
 
-  const assignment = await db.userAssignment.findFirst({
+  const assignment = await db.submission.findFirst({
     where: {
       id,
       userId: currentUser.id,
@@ -46,7 +53,7 @@ export const getAssignmentById = async (id: string) => {
     include: {
       assignment: true,
       points: true,
-      assignedUser: {
+      user: {
         select: {
           course: {
             select: {

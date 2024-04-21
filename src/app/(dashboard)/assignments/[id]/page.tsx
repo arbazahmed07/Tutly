@@ -14,7 +14,7 @@ export default async function SubmmitAssignment({
       </h1>
       <div className="flex items-center justify-between my-4">
         <div className="flex gap-2">
-          {assignment?.assignedUser.course.map((course) => {
+          {assignment?.user.course.map((course) => {
             return (
               <p key={course.id} className="rounded p-1 px-2 bg-secondary-700">
                 # {course.title}
@@ -39,7 +39,7 @@ export default async function SubmmitAssignment({
         </div>
         <div>
           <Link
-            href={`/playground/html-css-js?userAssignmentId=${params.id}`}
+            href={`/playground/html-css-js?attachmentId=${params.id}`}
             className="bg-primary-600 p-2 text-sm rounded font-semibold"
           >
             Submit through Playground
