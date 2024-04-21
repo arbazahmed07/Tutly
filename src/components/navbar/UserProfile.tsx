@@ -34,7 +34,7 @@ const UserProfile = ({ currentUser }:any) => {
           {isOpen?<FaCaretUp/>:<FaCaretDown />}
           {isOpen && (
             <div className="absolute rounded-lg bg-primary-900 shadow-md min-w-max overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
-              <>
+              <div className="  ">
                 <MenuItem
                   onClick={() => {
                     router.push("/profile");
@@ -46,7 +46,7 @@ const UserProfile = ({ currentUser }:any) => {
                   onClick={() => signOut({ callbackUrl: NEXT_PUBLIC_SIGN_IN_URL })}
                   label="SignOut"
                 />
-              </>
+              </div>
             </div>
           )}
         </div>
