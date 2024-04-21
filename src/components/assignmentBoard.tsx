@@ -2,27 +2,7 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-interface Props {
-  courses: any;
-  assignments: {
-    id: string;
-    classes: {
-      attachments: {
-        id: string;
-        title: string;
-        details: string;
-        attachmentType: string;
-        link: string;
-        classId: string;
-        dueDate: Date | null;
-        class: { id: string; title: string; courseId: string | null; videoId: string; } | null;
-        submissions: { id: string; userId: string; attachmentId: string; overallFeedback: string | null; submissionLink: string | null; submissionDate: Date; }[]
-      }[];
-    }[]
-  }[];
-}
-
-export default function AssignmentBoard({ courses, assignments }: Props) {
+export default function AssignmentBoard({ courses, assignments }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
   const router = useRouter();
   if (courses.length === 0) {
@@ -47,11 +27,11 @@ export default function AssignmentBoard({ courses, assignments }: Props) {
         })}
       </div>
       {
-        assignments.map((couse) => {
-          if(couse.id !== currentCourse) return null;
-          return (couse.classes.map(cls => {
+        assignments.map((couse: any) => {
+          if (couse.id !== currentCourse) return null;
+          return (couse.classes.map((cls: any) => {
             return (
-              cls.attachments.map((assignment,index) => {
+              cls.attachments.map((assignment: any) => {
                 return (
                   <div key={assignment.id} className="border p-4">
                     <div className="flex justify-between">
@@ -68,7 +48,7 @@ export default function AssignmentBoard({ courses, assignments }: Props) {
                     <p>Submissions:</p>
                     <ul>
                       {assignment.submissions.length === 0 && <li>No submissions yet!</li>}
-                      {assignment.submissions.map((submission) => {
+                      {assignment.submissions.map((submission: any) => {
                         return (
                           <li key={submission.id}>
                             <a href={submission.submissionLink} target="_blank">
@@ -86,7 +66,7 @@ export default function AssignmentBoard({ courses, assignments }: Props) {
         }
         )}
 
-      
+
       <pre>{JSON.stringify(assignments, null, 2)}</pre>
 
     </div>
