@@ -12,9 +12,9 @@ import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
 
 export default async function Class({
     params,
-}: {
+  }: {
     params: { classId: string };
-}) {
+  }) {
     const details = await getClassDetails(params.classId);
     const YOUTUBE = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const DRIVE = /\/file\/d\/([^\/]+)/;
@@ -48,7 +48,7 @@ export default async function Class({
                 <div className="mt-2 rounded bg-secondary-500 p-4 flex-1">
                     <div className="text-2xl my-2 flex justify-between items-center">
                         Attachments
-                        <Link href={"/assignments/new"}>
+                        <Link href={`/attachments/new?classId=${details?.id}`}>
                             <Button
                                 className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
                                 variant={"secondary"}

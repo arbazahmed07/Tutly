@@ -172,10 +172,10 @@ enum attachmentType {
 model Attachment {
   id             String           @id @default(uuid())
   title          String           @default("Attachment")
-  details        Json?
+  details        String?
   attachmentType attachmentType
   link           String?
-  userAssignment userAssignment[]
+  submissions    userAssignment[]
   classId        String?
   class          Class?           @relation(fields: [classId], references: [id])
 }
@@ -188,7 +188,7 @@ model userAssignment {
   attachmentId String
   assignment   Attachment @relation(fields: [attachmentId], references: [id])
 
-  dueDate DateTime
+  dueDate DateTime?
   points  Point[]
 
   isSubmitted     Boolean @default(false)
