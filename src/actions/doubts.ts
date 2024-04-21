@@ -138,15 +138,24 @@ export const createDoubt = async (
       title: title,
       description: description,
     },
+    include: {
+      user: true,
+      class: true,
+      response: {
+        include: {
+          user: true,
+        },
+      },
+    },
   });
   return doubt;
 };
 
-//for mentor/instructor to create response for user doubts , even user can create response for his own doubts(like commenting)
+//for user/mentor/instructor to create response for user doubts , even user can create response for his own doubts(like commenting)
 export const createResponse = async (doubtId: string, description: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-  
+
   const response = await db.response.create({
     data: {
       doubtId: doubtId,
@@ -166,6 +175,15 @@ export const deleteDoubt = async (doubtId: string) => {
       id: doubtId,
       userId: currentUser.id,
     },
+    include: {
+      user: true,
+      class: true,
+      response: {
+        include: {
+          user: true,
+        },
+      },
+    },
   });
   return doubt;
 };
@@ -176,6 +194,28 @@ export const deleteAnyDoubt = async (doubtId: string) => {
     where: {
       id: doubtId,
     },
+    include: {
+      user: true,
+      class: true,
+      response: {
+        include: {
+          user: true,
+        },
+      },
+    },
   });
   return doubt;
+};
+
+//for user to delete his own response
+export const deleteResponse = async (responseId: string) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+  const response = await db.response.delete({
+    where: {
+      id: responseId,
+      userId: currentUser.id,
+    },
+  });
+  return response;
 };

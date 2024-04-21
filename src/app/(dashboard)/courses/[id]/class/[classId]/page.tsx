@@ -1,7 +1,6 @@
 
 
 import { getClassDetails } from "@/actions/courses"
-import getCurrentUser from "@/actions/getCurrentUser";
 
 import YoutubeEmbed from "@/components/videoEmbeds/YoutubeEmbed";
 import { Button } from "@/components/ui/button";
@@ -9,12 +8,15 @@ import Link from "next/link";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
+import { getUserDoubtsByClassId } from "@/actions/doubts";
+import UserDoubts from "./UserDoubts";
 
 export default async function Class({
     params,
-  }: {
+}: {
     params: { classId: string };
-  }) {
+}) {
+    const userDoubts = await getUserDoubtsByClassId(params.classId);
     const details = await getClassDetails(params.classId);
     const YOUTUBE = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const DRIVE = /\/file\/d\/([^\/]+)/;
@@ -111,8 +113,8 @@ export default async function Class({
                     </div>
                 </div>
             </div>
-            <div className="w-96 bg-secondary-600 p-4 ml-8 rounded">
-                Doubts | Timestamps
+            <div className="h-[80vh] ml-2">
+                <UserDoubts userDoubts={userDoubts} classId={params.classId} />
             </div>
         </div>
     );
