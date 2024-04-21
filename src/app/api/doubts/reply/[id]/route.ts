@@ -1,4 +1,4 @@
-import { deleteDoubt, deleteResponse } from "@/actions/doubts";
+import { deleteResponse } from "@/actions/doubts";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(request: NextRequest,{params}:{
