@@ -149,6 +149,7 @@ model Response {
 }
 
 enum VideoType {
+  DRIVE
   YOUTUBE
   ZOOM
 }
