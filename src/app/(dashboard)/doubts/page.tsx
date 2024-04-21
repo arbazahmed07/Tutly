@@ -41,7 +41,7 @@ export default function Doubts() {
         setShow(false);
     }
     return (
-        <div className="h-72 w-full bg-primary-700 p-10 text-secondary-50">
+        <div className="h-72 w-full bg-primary-600 px-2 py-10 text-secondary-50">
             <h1 className="text-center text-3xl font-semibold">Share , Discuss & Clear all your Doubts</h1>
             <div className="flex justify-center mt-12 gap-10">
                 <div className="flex flex-col items-center text-sm font-medium leading-6">
@@ -60,7 +60,7 @@ export default function Doubts() {
                           <h3 className="text-lg font-bold leading-6 text-secondary-700">Enter your doubt here</h3>
                           <form className="mt-2">
                             <textarea id="message" rows={4} className="block p-2.5 w-full bg-primary-700 text-secondary-200 rounded-lg outline-none"></textarea>
-                            <button type="submit" className="px-6 py-2 bg-primary-400 rounded-md mt-3">Submit</button>
+                            <button type="submit" className="px-6 py-2 bg-primary-600 rounded-md mt-3 font-semibold ">Submit</button>
                           </form>
                         </div>
                       </div>
@@ -71,11 +71,11 @@ export default function Doubts() {
                     <Image src="https://acourseoflove.org/wp-content/uploads/2020/08/Ask-your-questions-3.png" alt="" height={160} width={160}/>
                 </div>
             </div>
-            <div id="accordion-color" data-accordion="collapse" className="mt-16 bg-primary-700">
+            <div id="accordion-color" data-accordion="collapse" className="mt-16 w-full bg-primary-700">
             {
                QA.map((qa,index)=>(
-                  <div key={index}>
-                    <button type="button" className={`flex items-center justify-between w-full p-3 font-medium gap-3 ${openAccordion === index && 'bg-primary-700: bg-primary-400'}`} onClick={() => toggleAccordion(index)}>
+                  <div className=' border border-spacing-2 border-secondary-50' key={index}>
+                    <button type="button" className={`flex items-center justify-between w-full p-3 font-medium gap-3 ${openAccordion === index && 'bg-primary-700: bg-primary-600'}`} onClick={() => toggleAccordion(index)}>
                       <div>{qa.question}</div>
                       <div className="flex items-center">
                         {

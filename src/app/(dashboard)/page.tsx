@@ -1,10 +1,9 @@
 import Image from "next/image";
-import getCurrentUser from "@/actions/getCurrentUser";
 
 export default async function Home() {
 
   return (
-    <div className="h-60 bg-primary-700">
+    <div className="h-60 bg-primary-600">
         <div className="p-10">
           <h1 className="text-secondary-50 font-bold text-2xl">Welcome back 👏</h1>
           <p className="text-secondary-50 font-medium text-sm mt-3">Here is your monthly report</p>
