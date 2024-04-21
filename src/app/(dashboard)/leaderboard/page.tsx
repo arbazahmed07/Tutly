@@ -8,7 +8,13 @@ export default async function Page() {
   return (
     <div>
       <div>
-        <Leaderboard assignments={assignments} courses={courses}/>
+        {
+          !assignments || !courses ? (
+            <div>
+              No courses enrolled!
+            </div>
+          ) : <Leaderboard assignments={assignments} courses={courses} />
+        }
       </div>
     </div>
   );
