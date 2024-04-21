@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts","types/next-auth.d.ts", "src/components/AssigmentList.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts","types/next-auth.d.ts", "src/components/AssigmentList.tsx", "src/app/(dashboard)/assignments/new/MarkDownEditor.js"],
   "exclude": ["node_modules"]
 }

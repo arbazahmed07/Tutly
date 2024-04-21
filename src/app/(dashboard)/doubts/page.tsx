@@ -6,6 +6,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import { FcDisapprove } from "react-icons/fc";
 import { FcApproval } from "react-icons/fc";
+
+
 const QA = [
   {
     question: "How does React handle state?",
@@ -91,7 +93,7 @@ export default function Doubts() {
                       </div>
                     }
                   </div>
-               ))
+                ))
             }
             </div>
         </div>
