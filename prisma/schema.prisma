@@ -190,9 +190,19 @@ model userAssignment {
   assignment   Attachment @relation(fields: [attachmentId], references: [id])
 
   points Point[]
-  
-  isSubmitted     Boolean @default(false)
+
   overallFeedback String?
+
+  submissionDetails submissionDetails[]
+}
+
+model submissionDetails {
+  id               String         @id @default(uuid())
+  userAssignmentId String
+  userAssignment   userAssignment @relation(fields: [userAssignmentId], references: [id])
+
+  submissionLink String?
+  submissionDate DateTime @default(now())
 }
 
 enum pointCategory {
