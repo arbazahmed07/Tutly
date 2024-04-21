@@ -41,7 +41,7 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
       setReply("");
       setReplyId("");
       setDoubts(
-        doubts.map((d) =>
+        doubts.map((d:any) =>
           d.id === id
             ? { ...d, response: [...d.response, res.data] }
             : d
@@ -57,7 +57,7 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
       toast.error("Failed to delete doubt");
     } else {
       toast.success("Doubt deleted successfully");
-      setDoubts(doubts.filter((d) => d.id !== id));
+      setDoubts(doubts.filter((d:any) => d.id !== id));
     }
   }
 
@@ -69,9 +69,9 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
     } else {
       toast.success("Reply deleted successfully");
       setDoubts(
-        doubts.map((d) => ({
+        doubts.map((d:any) => ({
           ...d,
-          response: d.response.filter((r) => r.id !== replyId),
+          response: d.response.filter((r:any) => r.id !== replyId),
         }))
       );
     }
