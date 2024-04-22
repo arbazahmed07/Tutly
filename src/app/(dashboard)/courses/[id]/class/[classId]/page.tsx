@@ -13,7 +13,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 export default async function Class({
     params,
 }: {
-    params: { classId: string };
+    params: { classId: string ,id:string };
 }) {
     const userDoubts = await getUserDoubtsByClassId(params.classId);
     const details = await getClassDetails(params.classId);
@@ -22,8 +22,6 @@ export default async function Class({
     const videoLink = details?.video.videoLink;
     const videoType = details?.video.videoType;
     let matchType;
-
-    console.log(details);
     
     switch (videoType) {
         case 'YOUTUBE':
@@ -42,7 +40,6 @@ export default async function Class({
     if (videoLink && match) {
         videoId = match[1];
     }
-
     
     return (
         <div className="flex md:m-5 flex-wrap gap-6">
@@ -52,7 +49,7 @@ export default async function Class({
                 {videoId && videoType === "DRIVE" && <DriveEmbed embedId={videoId} />}
                 <div className="mt-5 rounded bg-secondary-500 p-2 w-full">
                     <div className="text-xl my-2">
-                        <Link href={`/attachments/new?classId=${details?.id}`}>
+                        <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
                             <Button
                                 className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
                                 variant={"secondary"}
