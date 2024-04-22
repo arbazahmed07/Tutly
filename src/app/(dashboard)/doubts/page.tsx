@@ -1,26 +1,13 @@
-import React from 'react';
-import "../../../styles/globals.css"
-const page = () => {
+import { getEnrolledCourses } from "@/actions/courses";
+import StudentDoubts from "@/components/studentDoubts";
+
+export default async function Assignments() {
+  const courses = await getEnrolledCourses();
+
   return (
-    <div className="w-full h-[90vh] bg-background text-foreground z-50 flex justify-center items-center">
-      <div className="relative w-full h-20 flex items-center justify-center loading-text text-lg">
-        <span>C</span>
-        <span>O</span>
-        <span>M</span>
-        <span>I</span>
-        <span>N</span>
-        <span>G</span>
-        <span></span>
-        <span>S</span>
-        <span>O</span>
-        <span>O</span>
-        <span>N</span>
-        <span>.</span>
-        <span>.</span>
-        <span>.</span>
-      </div>
+    <div className="mx-2 md:mx-14 px-2 md:px-8 py-2 flex flex-col gap-4">
+      <h1 className="text-center text-xl font-bold border py-2">Ask doubt?</h1>
+      {!courses ? <div className="text-center">No Courses enrolled!</div> : <StudentDoubts courses={courses}/>}
     </div>
   );
-};
-
-export default page;
+}

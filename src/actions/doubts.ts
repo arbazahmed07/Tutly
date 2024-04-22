@@ -71,6 +71,38 @@ export const getAllDoubtsByClassIdForMentor = async (classId: string) => {
   return doubts;
 };
 
+// get all doubts for mentor
+export const getAllDoubtsForMentor = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  const doubts = await db.doubt.findMany({
+    where: {
+      user: {
+        enrolledUsers: {
+          some: {
+            assignedMentors: {
+              some: {
+                mentorId: currentUser.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    include: {
+      user: true,
+      class: true,
+      response: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  });
+  return doubts;
+};
+
 //get all doubts for instructor in a course
 export const getAllDoubtsByCourseId = async (courseId: string) => {
   const doubts = await db.doubt.findMany({
