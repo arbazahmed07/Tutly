@@ -9,7 +9,7 @@ function ClassSidebar({ params, classes }: any) {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
   return (
-    <div className="fixed z-50">
+    <div className="">
       <div
         className={`${
           !open && "hidden"
@@ -46,7 +46,7 @@ function ClassSidebar({ params, classes }: any) {
           <IoIosArrowBack />
         </div>
       </div>
-      <div className="fixed">
+      <div className="">
       {!open && (
         <div
           onClick={() => setOpen(!open)}

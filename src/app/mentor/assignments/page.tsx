@@ -4,7 +4,7 @@ import AssignmentBoard from "@/components/assignmentBoard";
 import Link from "next/link";
 
 
-export default async function mentorAssignments() {
+export default async function mentorAssignments(a) {
   const students = await getMentorStudents();
 
   return (
