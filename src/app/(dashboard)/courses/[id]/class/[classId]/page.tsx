@@ -22,6 +22,9 @@ export default async function Class({
     const videoLink = details?.video.videoLink;
     const videoType = details?.video.videoType;
     let matchType;
+
+    console.log(details);
+    
     switch (videoType) {
         case 'YOUTUBE':
             matchType = YOUTUBE;
@@ -32,6 +35,7 @@ export default async function Class({
         default:
             matchType = null;
             break;
+            
     }
     const match = videoLink?.match(matchType as RegExp);
     let videoId;
@@ -39,9 +43,11 @@ export default async function Class({
         videoId = match[1];
     }
 
+    
     return (
         <div className="flex md:m-5 flex-wrap gap-6">
             <div className="flex-grow text-secondary-100">
+                <h1 className="text-3xl font-semibold my-5">{details?.title}</h1>
                 {videoId && videoType === "YOUTUBE" && <YoutubeEmbed embedId={videoId} />}
                 {videoId && videoType === "DRIVE" && <DriveEmbed embedId={videoId} />}
                 <div className="mt-5 rounded bg-secondary-500 p-2 w-full">

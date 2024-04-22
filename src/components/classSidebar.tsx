@@ -31,6 +31,14 @@ function ClassSidebar({ params, classes }: any) {
             </Link>
           );
         })}
+        <Link
+          href={`/courses/${params.id}/class/new`}
+          className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded hover:bg-primary-900`}
+        >
+          <MdOndemandVideo />
+          class +
+        </Link>
+          
         <div
           onClick={() => setOpen(!open)}
           className="absolute right-0 top-[250px] bg-primary-700 py-2 rounded-l-lg cursor-pointer"
