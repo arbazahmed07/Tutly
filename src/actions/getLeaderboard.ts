@@ -57,20 +57,42 @@ export default async function getLeaderboardData() {
         0
       );
       return [...acc, { ...curr, totalPoints }];
-    }
-    , []);
+    }, []);
 
     const sortedSubmissions = totalPoints.sort(
       (a: any, b: any) => b.totalPoints - a.totalPoints
     );
 
-    return {sortedSubmissions, currentUser, enrolledCourses};
+    return { sortedSubmissions, currentUser, enrolledCourses } as any;
   } catch (error: any) {
     return null;
   }
 }
 
+export const getDashboardData = async () => {
+  const leaderboardData = await getLeaderboardData();
+  if (!leaderboardData) return null;
 
-// export const getLeaderboardPoints = async () => {
-//   const {sortedSubmissions, currentUser, enrolledCourses} = await getLeaderboardData();
-// }
+  const currentUser = leaderboardData.currentUser;
+  const enrolledCourses = leaderboardData.enrolledCourses;
+  const sortedSubmissions = leaderboardData.sortedSubmissions;
+
+  const position = sortedSubmissions.findIndex(
+    (x: any) => x.enrolledUser.user.id === currentUser.id
+  );
+
+  const points = sortedSubmissions[position].totalPoints;
+
+  const assignmentsSubmitted = sortedSubmissions.filter(
+    (x: any) => x.enrolledUser.user.id === currentUser.id
+  ).length;
+  // const assignmentsPending = 
+
+  return {
+    position,
+    points,
+    assignmentsSubmitted,
+    // assignmentsPending,
+    currentUser,
+  } as any;
+};
