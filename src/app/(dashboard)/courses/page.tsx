@@ -4,7 +4,7 @@ import CourseCard from "@/components/courseCard";
 export default async function Courses() {
     const courses = await getEnrolledCourses();
     return (
-        <div className="m-14 flex gap-14 flex-wrap">
+        <div className="grid grid-cols-3 gap-2 m-6">
             {
                 courses?.map(async(course) => {
                     const classesCompleted = 0;

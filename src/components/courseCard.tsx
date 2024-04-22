@@ -1,19 +1,20 @@
 "use client"
 
 import { useRouter } from "next/navigation";
+import { IoMdBookmarks } from "react-icons/io";
 
 export default function CourseCard({ course, percent, classesCompleted }: any) {
     const router = useRouter();
     return (
-        <div key={course.id} onClick={course._count.classes===0?()=>alert("No classes available!"):() => router.push(`/courses/${course.id}`)} className="w-[300px] rounded-3xl border cursor-pointer">
+        <div key={course.id} onClick={course._count.classes===0?()=>alert("No classes available!"):() => router.push(`/courses/${course.id}`)} className="rounded-xl border cursor-pointer m-5">
             <div className="h-[200px] flex relative">
-                <div className="h-[5px] absolute rounded border w-[80%] bottom-5 left-[10%]">
-                    <div className={`border-2 w-[${percent}%]`}></div>
+                <div className="absolute bottom-0 right-0 m-4 text-sm flex items-center">
+                    <IoMdBookmarks className="mr-2"/>
+                    <h1>{course._count.classes} Courses</h1>
                 </div>
-                <div className="absolute bottom-7 right-[50%] text-sm">{classesCompleted}/{course._count.classes}</div>
             </div>
-            <div className="h-[80px] border-t flex justify-center items-center">
-                <h1 className="text-3xl">{course.title}</h1>
+            <div className="h-[50px] border-t flex justify-center items-center">
+                <h1 className="text-lg">{course.title}</h1>
             </div>
         </div>
     )
