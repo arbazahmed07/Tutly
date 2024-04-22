@@ -12,6 +12,7 @@ const attachmentSchema = z.object({
     message: "Class is required",
   }),
   details: z.string().optional(),
+  dueDate: z.string().optional(),
 });
 
 export const createAttachment = async (data : z.infer<typeof attachmentSchema>) => {
@@ -27,6 +28,7 @@ export const createAttachment = async (data : z.infer<typeof attachmentSchema>) 
       link: data.link,
       attachmentType: data.attachmentType ,
       details: data.details,
+      dueDate: data.dueDate,
     },
   });
 
