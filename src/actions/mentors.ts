@@ -2,14 +2,21 @@ import { db } from "@/lib/db";
 
 // get all mentors for a course
 export const getMentorsByCourseId = async (courseId: string) => {
-  const mentors = await db.course.findUnique({
+  const mentors = await db.assignedMentors.findMany({
     where: {
-      id: courseId,
+      enrolledUser: {
+        course: {
+          id: courseId,
+        },
+      },
     },
-    include: {
-      assignedMentors: {
+    select: {
+      mentor: {
         select: {
-          mentor: true,
+          id: true,
+          name: true,
+          email: true,
+          profile: true,
         },
       },
     },
