@@ -1,5 +1,4 @@
 
-
 import { getClassDetails } from "@/actions/courses"
 
 import YoutubeEmbed from "@/components/videoEmbeds/YoutubeEmbed";
@@ -9,6 +8,7 @@ import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
 import { getUserDoubtsByClassId } from "@/actions/doubts";
 import UserDoubts from "./UserDoubts";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default async function Class({
     params,
@@ -67,45 +67,50 @@ export default async function Class({
                             return (
                                 <div
                                     key={index}
-                                    className="p-3 rounded-lg mb-4 relative hover:bg-primary-900 bg-primary-800"
+                                    className="p-2 rounded-lg mb-4 relative hover:bg-primary-900 bg-primary-800"
                                 >
-                                    <div>
-                                        <div className="">
-                                            <div className="flex justify-between items-center">
-                                                <div className="text-md font-semibold">
-                                                    {attachment.title}
+                                    <div className="flex justify-between items-center">
+                                    
+                                        <div className="text-md font-semibold">
+                                            {attachment.title}
+                                        </div>
+                                        <div className="flex gap-5 items-center text-xs font-medium">
+                                            <div className="text-secondary-300 flex items-center">
+                                                <p className="text-sm">{attachment.attachmentType}</p>
+                                            </div>
+                                            {
+                                                attachment.attachmentType==="ASSIGNMENT"?
+                                                <div>
+                                                    <Link href={`/assignments/${attachment.id}`}  className="flex p-2 bg-secondary-200 items-center rounded-md text-secondary-900">
+                                                     <h1>View Assignment </h1><FaExternalLinkAlt className="ml-2"/>
+                                                    </Link>
+                                                </div>:
+                                                <div>
+                                                    {
+                                                        attachment.link && (
+                                                        <div>
+                                                            <Link href={attachment.link} className="flex p-2 bg-secondary-200 rounded-md items-center text-secondary-900">
+                                                              <h1>Link</h1><FaExternalLinkAlt className="ml-2"/>
+                                                            </Link>
+                                                        </div>
+                                                    )
+                                                    }
                                                 </div>
-                                                <div className="text-sm font-medium">
+                                                
+                                            }
+                                            {
+                                                attachment.attachmentType==="ASSIGNMENT"&&
+                                                <div>
                                                     {attachment?.dueDate
                                                         ? new Date(
                                                             attachment?.dueDate
                                                         ).toLocaleDateString()
                                                         : "Not specified"}
                                                 </div>
-                                            </div>
-                                            <p className="text-sm text-secondary-300">
-                                                <span className="font-bold">Assignment : </span>{attachment.details
-                                                    ? attachment.details.toString()
-                                                    : "No details available"}
-                                            </p>
-                                            <div className="text-secondary-300 flex items-center">
-                                                <p className="mr-2 text-sm font-bold">Attachment Type:</p>
-                                                <p className="text-sm">{attachment.attachmentType}</p>
-                                            </div>
-                                            {attachment.link && (
-                                                <a
-                                                    href={attachment.link}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center no-underline space-y-5 text-blue-600 hover:underline"
-                                                >
-                                                    Link
-                                                    
-                                                </a>
-                                            )}
+                                            }
+                                        </div>
                                         </div>
                                     </div>
-                                </div>
                             );
                         })}
                     </div>
