@@ -6,18 +6,16 @@ export default function AssignmentBoard({ courses, assignments }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   if (courses.length === 0) {
     alert("No courses enrolled!");
     return;
   }
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
+  
   if (!isMounted) {
     return;
-    `1-\
-    `;
   }
 
   return (
