@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function Leaderboard({ assignments, courses }: any) {
+export default function Leaderboard({ submissions, courses }: any) {
   const [users, setUsers] = useState([]);
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
   const router = useRouter();
@@ -30,7 +30,8 @@ export default function Leaderboard({ assignments, courses }: any) {
         })}
       </div>
       <div className="flex flex-col gap-2">
-        {assignments.map((x: any, index: any) => {
+        <pre>{JSON.stringify(submissions)}</pre>
+        {submissions.map((x: any, index: any) => {
           if (x.assignment.class.course.id === currentCourse) {
             return (
               <div className="flex justify-between p-2 px-4 border rounded hover:bg-primary-900" key={index}>

@@ -9,16 +9,18 @@ export default async function getLeaderboardData() {
       return null;
     }
 
-    const enrolledCourses = await getEnrolledCourses()
-    if(!enrolledCourses) return null;
-
-    const points = await db.submission.findMany({
+    const enrolledCourses = await getEnrolledCourses();
+    if (!enrolledCourses) return null;
+//todo:
+    const submissions = await db.submission.findMany({
       where: {
-        user: {
-          course: {
-            some: {
-              id: {
-                in: enrolledCourses.map((course) => course.id),
+        enrolledUser: {
+          user: {
+            course: {
+              some: {
+                id: {
+                  in: enrolledCourses.map((course) => course.id),
+                },
               },
             },
           },
@@ -41,20 +43,18 @@ export default async function getLeaderboardData() {
             },
           },
         },
-
       },
       orderBy: {
         assignment: {
           class: {
             course: {
-              startDate: 'asc', 
+              startDate: "asc",
             },
           },
         },
       },
     });
-    return points
-
+    return submissions;
   } catch (error: any) {
     return null;
   }
