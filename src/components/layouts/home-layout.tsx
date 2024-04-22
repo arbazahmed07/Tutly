@@ -6,7 +6,7 @@ import { RxDashboard } from "react-icons/rx";
 import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
-import { MdOutlineCastForEducation } from "react-icons/md";
+import { FaChalkboardTeacher } from "react-icons/fa";
 import { Suspense,  useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
@@ -19,7 +19,7 @@ const items = [
     },
     {
         name: "Courses",
-        icon: <MdOutlineCastForEducation />,
+        icon: <FaChalkboardTeacher />,
         path: "/courses"
     },
     {

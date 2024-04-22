@@ -25,7 +25,7 @@ const page = async ({ params }: {
                                 <p className="text-gray-600 mb-2">Created At: {new Date(attachment.createdAt).toLocaleString()}</p>
                                 <p className="text-gray-600 mb-2">Updated At: {new Date(attachment.updatedAt).toLocaleString()}</p>
                                 <p className="text-secondary-200 mb-2">Due Date: {attachment?.dueDate ? new Date(attachment?.dueDate).toLocaleDateString() : 'Not specified'}</p>
-                                <p className="text-secondary-200 mb-2">Class Name: {classItem?.class?.title || 'null'}</p>
+                                {/* <p className="text-secondary-200 mb-2">Class Name: {classItem?.class?.title || 'null'}</p> */}
                                 <p className="text-secondary-200 mb-2">Submission Status: {attachment?.submissions.length > 0 ? 'Submitted' : 'Not Submitted'}</p>
                                 {
                                     attachment?.link && (
