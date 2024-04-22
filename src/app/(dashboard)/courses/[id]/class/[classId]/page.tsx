@@ -5,7 +5,6 @@ import { getClassDetails } from "@/actions/courses"
 import YoutubeEmbed from "@/components/videoEmbeds/YoutubeEmbed";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { FaExternalLinkAlt } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
 import { getUserDoubtsByClassId } from "@/actions/doubts";
@@ -41,15 +40,12 @@ export default async function Class({
     }
 
     return (
-        <div className="flex m-8">
-            <div className="flex-grow">
-                <h1>{details?.title}</h1>
+        <div className="flex md:m-5 flex-wrap gap-6">
+            <div className="flex-grow text-secondary-100">
                 {videoId && videoType === "YOUTUBE" && <YoutubeEmbed embedId={videoId} />}
                 {videoId && videoType === "DRIVE" && <DriveEmbed embedId={videoId} />}
-
-                <div className="mt-2 rounded bg-secondary-500 p-4 flex-1">
-                    <div className="text-2xl my-2 flex justify-between items-center">
-                        Attachments
+                <div className="mt-5 rounded bg-secondary-500 p-2 w-full">
+                    <div className="text-xl my-2">
                         <Link href={`/attachments/new?classId=${details?.id}`}>
                             <Button
                                 className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
@@ -65,25 +61,30 @@ export default async function Class({
                             return (
                                 <div
                                     key={index}
-                                    className="p-4 rounded-lg mb-4 relative hover:bg-[#08205e] bg-[#061846]"
+                                    className="p-3 rounded-lg mb-4 relative hover:bg-primary-900 bg-primary-800"
                                 >
-                                    <div className="flex justify-between">
+                                    <div>
                                         <div className="">
-                                            <h3 className="text-xl font-semibold text-gray-500 mb-2">
-                                                {attachment.title}
-                                            </h3>
-                                            <p className="text-gray-300">
-                                                {attachment.details
+                                            <div className="flex justify-between items-center">
+                                                <div className="text-md font-semibold">
+                                                    {attachment.title}
+                                                </div>
+                                                <div className="text-sm font-medium">
+                                                    {attachment?.dueDate
+                                                        ? new Date(
+                                                            attachment?.dueDate
+                                                        ).toLocaleDateString()
+                                                        : "Not specified"}
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-secondary-300">
+                                                <span className="font-bold">Assignment : </span>{attachment.details
                                                     ? attachment.details.toString()
                                                     : "No details available"}
                                             </p>
-                                            <div className="text-gray-300 flex items-center">
-                                                <p className="mr-2">Attachment Type:</p>
-                                                <p>{attachment.attachmentType}</p>
-                                            </div>
-                                            <div className="text-gray-300 flex items-center">
-                                                <p className="mr-2">Class ID:</p>
-                                                <p>{attachment.classId}</p>
+                                            <div className="text-secondary-300 flex items-center">
+                                                <p className="mr-2 text-sm font-bold">Attachment Type:</p>
+                                                <p className="text-sm">{attachment.attachmentType}</p>
                                             </div>
                                             {attachment.link && (
                                                 <a
@@ -92,19 +93,10 @@ export default async function Class({
                                                     rel="noopener noreferrer"
                                                     className="flex items-center no-underline space-y-5 text-blue-600 hover:underline"
                                                 >
-                                                    Link&nbsp;&nbsp;
-                                                    <FaExternalLinkAlt />
+                                                    Link
+                                                    
                                                 </a>
                                             )}
-                                        </div>
-                                        <div className="absolute top-0 right-0 p-3">
-                                            <p className="text-red-700 font-bold">
-                                                {attachment?.dueDate
-                                                    ? new Date(
-                                                        attachment?.dueDate
-                                                    ).toLocaleDateString()
-                                                    : "Not specified"}
-                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -113,7 +105,7 @@ export default async function Class({
                     </div>
                 </div>
             </div>
-            <div className="h-[80vh] ml-2">
+            <div className="block m-auto md:inline md:m-0">
                 <UserDoubts userDoubts={userDoubts} classId={params.classId} />
             </div>
         </div>

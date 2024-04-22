@@ -93,23 +93,23 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h1 className="text-2xl font-bold mb-8">Doubts | Timestamps</h1>
-      <div className={`w-full sm:w-96 border border-secondary-50 rounded-lg ${!doubts && 'hidden p-0 border-none'}  `} >
+    <div className="flex flex-col items-center justify-center bg-primary-800 p-4 md:p-2 rounded-md mb-5">
+      <h1 className="text-xl font-semibold m-5">Ask your Doubts !!</h1>
+      <div className=" w-full">
         {doubts?.map((doubt :any, index:number) => (
-          <div key={index} className="border p-4 my-4 rounded-lg   ">
+          <div key={index} className="border p-3 my-4 rounded-lg ">
             <h2 className="text-xl font-semibold text-secondary-50">{doubt.title}</h2>
             <p className="text-secondary-100">{doubt.description}</p>
             {doubt.response.map((res:any, index :number) => (
-              <div key={index} className="border p-1 my-4 text-wrap overflow-auto rounded-lg flex justify-between items-center">
-                <div className=" ">
-                  <p className=" text-secondary-50">
+              <div key={index} className="border p-1 my-2 text-wrap overflow-auto rounded-lg flex justify-between items-center">
+                <div className="">
+                  <p className=" text-secondary-50 break-words">
                     {res?.description}
                   </p>
                 </div>
-                <div className=" ms-1">
+                <div>
                   <button
-                    className="text-lg p-1  dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mx-2"
+                    className="text-lg p-1 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mx-2"
                     onClick={() => handleDeleteReply(res.id)}
                     >
                     <MdDeleteOutline />
@@ -118,21 +118,20 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
               </div>
             ))}
             <button
-              className="px-3 py-2 text-sm mb-3 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mx-2"
-              hidden={doubt.response?.length === 0}
+              className="px-3 py-2 text-sm mb-3 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mr-2"
               onClick={() => handleDeleteDoubt(doubt.id)}
             >
               Delete
             </button>
             {replyId === doubt.id ? (
-              <div className="flex items-center">
+              <div className="flex items-center mt-1">
                 <input
                   type="text"
                   placeholder="Enter your reply"
                   value={reply}
                   onKeyDown={handleReplyEnterBtn}
                   onChange={(e) => setReply(e.target.value)}
-                  className="w-full sm:w-auto px-4 py-2 border border-secondary-300 rounded mr-2 mb-2 sm:mb-0"
+                  className="w-full sm:w-auto px-4 py-2 border outline-none border-secondary-300 rounded mr-2 mb-2 sm:mb-0"
                 />
                 <button
                   className="px-4 py-2 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  flex items-center justify-start text-white rounded text-sm"
@@ -143,7 +142,7 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
               </div>
             ) : (
               <button
-                className="px-3 py-2 text-sm  dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500 text-white rounded"
+                className="px-3 py-2 mt-1 text-sm  dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500 text-white rounded"
                 onClick={() => setReplyId(doubt.id)}
               >
                 Reply
@@ -152,7 +151,7 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
           </div>
         ))}
       </div>
-      <div className="flex flex-col items-center mt-8">
+      <div className="flex flex-col items-center mt-4">
         <div>
           <input
             type="text"
@@ -160,7 +159,7 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
             value={doubt}
             onChange={(e) => setDoubt(e.target.value)}
             onKeyDown={handleDoubtEnterBtn}
-            className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
+            className="w-full sm:w-96 px-4 py-2 border outline-none border-secondary-300 rounded mb-4"
           />
         </div>
         <div className=" flex w-full flex-row-reverse">
