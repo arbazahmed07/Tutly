@@ -81,7 +81,7 @@ export const getDashboardData = async () => {
     (x: any) => x.enrolledUser.user.id === currentUser.id
   );
 
-  const points = sortedSubmissions[position].totalPoints;
+  const points = sortedSubmissions[position]?.totalPoints;
 
   const assignmentsSubmitted = sortedSubmissions.filter(
     (x: any) => x.enrolledUser.user.id === currentUser.id
