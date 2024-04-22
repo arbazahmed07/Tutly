@@ -56,6 +56,77 @@ export const getEnrolledCourses = async () => {
     })
     return courses;
 }
+export const getEnrolledCoursesById = async (id:string) => {
+    const courses = await db.course.findMany({
+        where: {
+            enrolledUsers: {
+                some: {
+                    userId: id
+                }
+            }
+        },
+        include: {
+            classes: true,
+            createdBy: true,
+            _count: {
+                select: {
+                    classes: true
+                }
+            }
+        }
+    })
+    return courses;
+}
+
+export const getMentorStudents = async () => {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) return null;
+
+    const students = await db.user.findMany({
+        where: {
+            enrolledUsers: {
+                some: {
+                    assignedMentors: {
+                        some: {
+                            mentorId: currentUser.id
+                        }
+                    }
+                }
+            }
+        },
+    })
+
+    return students;
+}
+
+export const getMentorCourses = async () => {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) return null;
+
+    const courses = await db.course.findMany({
+        where: {
+            enrolledUsers: {
+                some: {
+                    assignedMentors: {
+                        some: {
+                            mentorId: currentUser.id
+                        }
+                    }
+                }
+            }
+        },
+        include: {
+            classes: true,
+            createdBy: true,
+            _count: {
+                select: {
+                    classes: true
+                }
+            }
+        }
+    })
+    return courses;
+}
 
 export const getClassDetails = async (id: string) => {
     const classDetails = await db.class.findUnique({
