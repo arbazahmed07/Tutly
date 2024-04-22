@@ -15,9 +15,12 @@ interface Props {
 export default function Sidebar({items,menu,setMenu}:Props) {
     const pathname = usePathname();
     const router=useRouter()
-    const Change=(link:any)=>{
+    const Mobile=(link:any)=>{
         router.push(link);
         setMenu(false)
+    }
+    const Desktop=(link:any)=>{
+        router.push(link);
     }
     return (
         <div className={`${!menu&&"max-sm:hidden"} max-sm:absolute z-40  max-sm:pt-12 bg-background min-h-dvh shadow-xl px-3 pt-3 sticky top-0`}>
@@ -29,9 +32,15 @@ export default function Sidebar({items,menu,setMenu}:Props) {
             {
                 items.map((item)=>{
                     return (
-                        <div onClick={()=>Change(item.path)} key={item.path} className={`${pathname===item.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded p-2 my-2 flex items-center gap-4 cursor-pointer`}>
-                            <div className={`text-2xl px-2`}>{item.icon}</div>
-                            <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
+                        <div>
+                            <div onClick={()=>Mobile(item.path)} key={item.path} className={`${pathname===item.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded md:hidden p-2 my-2 flex items-center gap-4 cursor-pointer`}>
+                                <div className={`text-2xl px-2`}>{item.icon}</div>
+                                <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
+                            </div>
+                            <div onClick={()=>Desktop(item.path)} key={item.path} className={`${pathname===item.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded hidden md:flex p-2 my-2 items-center gap-4 cursor-pointer`}>
+                                <div className={`text-2xl px-2`}>{item.icon}</div>
+                                <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
+                            </div>
                         </div>
                     )
                 })
