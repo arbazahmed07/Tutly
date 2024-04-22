@@ -4,8 +4,10 @@ import { usePathname } from "next/navigation";
 import { MdOndemandVideo } from "react-icons/md";
 import { IoIosArrowBack,IoIosArrowForward } from "react-icons/io";
 import React, { useState } from "react";
+import { MdAddToQueue } from "react-icons/md";
 
-function ClassSidebar({ params, classes }: any) {
+
+function ClassSidebar({ params, classes,currentUser }: any) {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
   
@@ -32,14 +34,18 @@ function ClassSidebar({ params, classes }: any) {
             </Link>
           );
         })}
-        <Link
-          href={`/courses/${params.id}/class/new`}
-          className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded hover:bg-primary-900`}
-        >
-          <MdOndemandVideo />
-          class +
-        </Link>
-          
+        {
+          pathname !== `/courses/${params.id}/class/new` && currentUser?.role==='INSTRUCTOR' && (
+            <Link
+              href={`/courses/${params.id}/class/new`}
+              className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded hover:bg-primary-900`}
+            >
+              <MdAddToQueue />
+              class +
+            </Link>
+          )
+        }
+
         <div
           onClick={() => setOpen(!open)}
           className="absolute right-0 top-[250px] bg-primary-700 py-2 rounded-l-lg cursor-pointer"
