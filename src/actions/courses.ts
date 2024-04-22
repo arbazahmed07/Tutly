@@ -56,6 +56,27 @@ export const getEnrolledCourses = async () => {
     })
     return courses;
 }
+export const getEnrolledCoursesById = async (id:string) => {
+    const courses = await db.course.findMany({
+        where: {
+            enrolledUsers: {
+                some: {
+                    userId: id
+                }
+            }
+        },
+        include: {
+            classes: true,
+            createdBy: true,
+            _count: {
+                select: {
+                    classes: true
+                }
+            }
+        }
+    })
+    return courses;
+}
 
 export const getMentorStudents = async () => {
     const currentUser = await getCurrentUser();
@@ -72,8 +93,9 @@ export const getMentorStudents = async () => {
                     }
                 }
             }
-        }
+        },
     })
+
     return students;
 }
 
