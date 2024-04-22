@@ -3,6 +3,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { ImReply } from "react-icons/im";
+import { TbLocationQuestion } from "react-icons/tb";
+import { MdDeleteOutline } from "react-icons/md";
+
 
 const UserDoubts = ({ userDoubts, classId }:any) => {
   const [doubts, setDoubts] = useState(userDoubts || []);
@@ -77,81 +81,101 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
     }
   }
 
-  return (
-    <div>
-      <h1>Doubts | Timestamps</h1>
-      <div className="w-96 bg-secondary-600 p-4 rounded h-full">
-        {doubts?.map((doubt:any, index:number) => {
-          return (
-            <div key={index} className="border p-4 my-4 rounded-lg">
-              <h2 className="text-xl font-semibold text-secondary-500">
-                {doubt.title}
-              </h2>
-              <p className="text-secondary-300">{doubt.description}</p>
-              {doubt.response.map((res:any, index:number) => {
-                return (
-                  <div key={index} className="border p-4 my-4 rounded-lg">
-                    <p className="text-secondary-300">{res.description}</p>
-                    <button
-                      className="p-2 bg-secondary-500 text-white rounded mx-2"
-                      onClick={() => handleDeleteReply(res.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                );
-              })}
-              <button
-                className="p-2 bg-secondary-500 text-white rounded mx-2"
-                onClick={() => handleDeleteDoubt(doubt.id)}
-              >
-                Delete
-              </button>
+    const handleReplyEnterBtn = (e:any) => {
+    if (e.key === 'Enter') {
+      handleReply(replyId);
+    }
+  };
+  const handleDoubtEnterBtn = (e:any) => {
+    if (e.key === 'Enter') {
+      handleAddDoubt();
+    }
+  };
 
-              {replyId === doubt.id ? (
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Enter your reply"
-                    value={reply}
-                    onChange={(e) => setReply(e.target.value)}
-                  />
-                  <button
-                    className="p-2 bg-secondary-500 text-white rounded"
-                    onClick={() => handleReply(doubt.id)}
-                  >
-                    Add Reply
-                  </button>
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <h1 className="text-2xl font-bold mb-8">Doubts | Timestamps</h1>
+      <div className={`w-full sm:w-96 border border-secondary-50 rounded-lg ${!doubts && 'hidden p-0 border-none'}  `} >
+        {doubts?.map((doubt :any, index:number) => (
+          <div key={index} className="border p-4 my-4 rounded-lg   ">
+            <h2 className="text-xl font-semibold text-secondary-50">{doubt.title}</h2>
+            <p className="text-secondary-100">{doubt.description}</p>
+            {doubt.response.map((res:any, index :number) => (
+              <div key={index} className="border p-1 my-4 text-wrap overflow-auto rounded-lg flex justify-between items-center">
+                <div className=" ">
+                  <p className=" text-secondary-50">
+                    {res?.description}
+                  </p>
                 </div>
-              ) : (
+                <div className=" ms-1">
+                  <button
+                    className="text-lg p-1  dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mx-2"
+                    onClick={() => handleDeleteReply(res.id)}
+                    >
+                    <MdDeleteOutline />
+                  </button>
+                  </div>
+              </div>
+            ))}
+            <button
+              className="px-3 py-2 text-sm mb-3 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mx-2"
+              hidden={doubt.response?.length === 0}
+              onClick={() => handleDeleteDoubt(doubt.id)}
+            >
+              Delete
+            </button>
+            {replyId === doubt.id ? (
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Enter your reply"
+                  value={reply}
+                  onKeyDown={handleReplyEnterBtn}
+                  onChange={(e) => setReply(e.target.value)}
+                  className="w-full sm:w-auto px-4 py-2 border border-secondary-300 rounded mr-2 mb-2 sm:mb-0"
+                />
                 <button
-                  className="p-2 bg-secondary-500 text-white rounded"
-                  onClick={() => {
-                    setReplyId(doubt.id);
-                  }}
+                  className="px-4 py-2 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  flex items-center justify-start text-white rounded text-sm"
+                  onClick={() => handleReply(doubt.id)}
                 >
-                  reply
+                  Reply&nbsp;< ImReply />
                 </button>
-              )}
-            </div>
-          );
-        })}
+              </div>
+            ) : (
+              <button
+                className="px-3 py-2 text-sm  dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500 text-white rounded"
+                onClick={() => setReplyId(doubt.id)}
+              >
+                Reply
+              </button>
+            )}
+          </div>
+        ))}
       </div>
-      <div>
-        <input
-          type="text"
-          placeholder="Enter your doubt"
-          value={doubt}
-          onChange={(e) => setDoubt(e.target.value)}
-        />
-        <button
-          className="p-2 bg-secondary-500 text-white rounded"
-          onClick={handleAddDoubt}
-        >
-          Add Doubt
-        </button>
+      <div className="flex flex-col items-center mt-8">
+        <div>
+          <input
+            type="text"
+            placeholder="Enter your doubt"
+            value={doubt}
+            onChange={(e) => setDoubt(e.target.value)}
+            onKeyDown={handleDoubtEnterBtn}
+            className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
+          />
+        </div>
+        <div className=" flex w-full flex-row-reverse">
+          <div>
+            <button
+              className="px-4 py-2 flex justify-end items-center bg-secondary-400 hover:bg-secondary-500 dark:hover:bg-secondary-700  dark:bg-secondary-800 text-sm rounded"
+              onClick={handleAddDoubt}
+            >
+              Add Doubt&nbsp;<TbLocationQuestion className=" w-5 h-5"  />
+            </button>
+            </div>
+          </div>
       </div>
     </div>
+
   );
 };
 
