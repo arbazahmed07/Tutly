@@ -39,7 +39,6 @@ model User {
 
   account         Account[]
   course          Course[]
-  submissions     submission[]
   enrolledUsers   EnrolledUsers[]
   profile         Profile?
   doubt           Doubt[]
@@ -92,8 +91,10 @@ model EnrolledUsers {
   courseId String?
   course   Course? @relation(fields: [courseId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  submission submission[]
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
 
   @@unique([userId, courseId])
 }
@@ -213,9 +214,9 @@ model Attachment {
 }
 
 model submission {
-  id     String @id @default(uuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  id             String        @id @default(uuid())
+  enrolledUserId String
+  enrolledUser   EnrolledUsers @relation(fields: [enrolledUserId], references: [id])
 
   attachmentId String
   assignment   Attachment @relation(fields: [attachmentId], references: [id])

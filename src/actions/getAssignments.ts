@@ -23,12 +23,12 @@ export const getAllAssignedAssignments = async () => {
             where: {
               attachmentType: "ASSIGNMENT",
             },
-            include:{
+            include: {
               class: true,
               submissions: {
-                where:{
-                  userId: currentUser.id
-                }
+                where: {
+                  enrolledUserId: currentUser.id,
+                },
               },
             },
           },
@@ -39,28 +39,36 @@ export const getAllAssignedAssignments = async () => {
   return coursesWithAssignments;
 };
 
-export const getAssignmentById = async (id: string) => {
+export const getAssignmentDetailsById = async (id: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     return null;
   }
 
-  const assignment = await db.submission.findFirst({
+  const assignment = await db.attachment.findUnique({
     where: {
       id,
-      userId: currentUser.id,
     },
     include: {
-      assignment: true,
-      points: true,
-      user: {
-        select: {
-          course: {
-            select: {
-              id: true,
-              title: true,
+      class: {
+        include: {
+          course: true,
+        },
+      },
+      submissions: {
+        where: {
+          enrolledUserId: currentUser.id,
+        },
+        include: {
+          enrolledUser: {
+            include: {
+              course: true,
+              assignedMentors: true,
+              submission: true,
+              user: true,
             },
           },
+          points: true,
         },
       },
     },

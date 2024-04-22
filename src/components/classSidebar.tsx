@@ -13,7 +13,7 @@ function ClassSidebar({ params, classes }: any) {
       <div
         className={`${
           !open && "hidden"
-        } flex max-sm:absolute flex-col px-4 bg-background items-center py-3 gap-2 shadow-xl min-h-[90vh] relative`}
+        } flex max-sm:absolute flex-col px-4 bg-background h-screen items-center py-3 gap-2 shadow-xl relative`}
       >
         <h1 className="px-4 my-2">{classes[0].course?.title}</h1>
         {classes.map((x: any) => {

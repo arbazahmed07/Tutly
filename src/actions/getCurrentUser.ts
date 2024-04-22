@@ -3,9 +3,6 @@ import authOptions from "@/lib/authOptions";
 import { db } from "@/lib/db";
 
 export default async function getCurrentUser() {
-
-
-  
   try {
     const session = await getServerSession(authOptions);
 
