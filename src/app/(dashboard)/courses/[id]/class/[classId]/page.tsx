@@ -61,6 +61,7 @@ export default async function Class({
                             </Button>
                         </Link>
                     </div>
+                    </div>
                     <div>
                         {details?.attachments?.map((attachment, index) => {
                             return (
