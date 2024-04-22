@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function AssignmentBoard({ courses, assignments }: any) {
-  const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
+  const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   if (courses.length === 0) {
