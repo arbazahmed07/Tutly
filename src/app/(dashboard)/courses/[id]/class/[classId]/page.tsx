@@ -1,5 +1,4 @@
 
-
 import { getClassDetails } from "@/actions/courses"
 
 import YoutubeEmbed from "@/components/videoEmbeds/YoutubeEmbed";
@@ -9,11 +8,12 @@ import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
 import { getUserDoubtsByClassId } from "@/actions/doubts";
 import UserDoubts from "./UserDoubts";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default async function Class({
     params,
 }: {
-    params: { classId: string };
+    params: { classId: string ,id:string };
 }) {
     const userDoubts = await getUserDoubtsByClassId(params.classId);
     const details = await getClassDetails(params.classId);
@@ -22,8 +22,6 @@ export default async function Class({
     const videoLink = details?.video.videoLink;
     const videoType = details?.video.videoType;
     let matchType;
-
-    console.log(details);
     
     switch (videoType) {
         case 'YOUTUBE':
@@ -42,7 +40,6 @@ export default async function Class({
     if (videoLink && match) {
         videoId = match[1];
     }
-
     
     return (
         <div className="flex md:m-5 flex-wrap gap-6">
@@ -50,64 +47,70 @@ export default async function Class({
                 <h1 className="text-3xl font-semibold my-5">{details?.title}</h1>
                 {videoId && videoType === "YOUTUBE" && <YoutubeEmbed embedId={videoId} />}
                 {videoId && videoType === "DRIVE" && <DriveEmbed embedId={videoId} />}
+
                 <div className="mt-5 rounded bg-secondary-500 p-2 w-full  ">
                     <div className=" flex flex-row-reverse w-full">
-                        <div className="text-xl my-2  ">
-                            <Link href={`/attachments/new?classId=${details?.id}`}>
-                                <Button
-                                    className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
-                                    variant={"secondary"}
-                                    >
-                                    Add an assignment&nbsp;
-                                    <FaPlus />
-                                </Button>
-                            </Link>
-                        </div>
+                    <div className="text-xl my-2">
+                        <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
+                            <Button
+                                className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
+                                variant={"secondary"}
+                            >
+                                Add an assignment&nbsp;
+                                <FaPlus />
+                            </Button>
+                        </Link>
+                    </div>
                     </div>
                     <div>
                         {details?.attachments?.map((attachment, index) => {
                             return (
                                 <div
                                     key={index}
-                                    className="p-3 rounded-lg mb-4 relative hover:bg-primary-900 bg-primary-800"
+                                    className="p-2 rounded-lg mb-4 relative hover:bg-primary-900 bg-primary-800"
                                 >
-                                    <div>
-                                        <div className="">
-                                            <div className="flex justify-between items-center">
-                                                <div className="text-md font-semibold">
-                                                    {attachment.title}
+                                    <div className="flex justify-between items-center">
+                                    
+                                        <div className="text-md font-semibold">
+                                            {attachment.title}
+                                        </div>
+                                        <div className="flex gap-5 items-center text-xs font-medium">
+                                            <div className="text-secondary-300 flex items-center">
+                                                <p className="text-sm">{attachment.attachmentType}</p>
+                                            </div>
+                                            {
+                                                attachment.attachmentType==="ASSIGNMENT"?
+                                                <div>
+                                                    <Link href={`/assignments/${attachment.id}`}  className="flex p-2 bg-secondary-200 items-center rounded-md text-secondary-900">
+                                                     <h1>View Assignment </h1><FaExternalLinkAlt className="ml-2"/>
+                                                    </Link>
+                                                </div>:
+                                                <div>
+                                                    {
+                                                        attachment.link && (
+                                                        <div>
+                                                            <Link href={attachment.link} className="flex p-2 bg-secondary-200 rounded-md items-center text-secondary-900">
+                                                              <h1>Link</h1><FaExternalLinkAlt className="ml-2"/>
+                                                            </Link>
+                                                        </div>
+                                                    )
+                                                    }
                                                 </div>
-                                                <div className="text-sm font-medium">
+                                                
+                                            }
+                                            {
+                                                attachment.attachmentType==="ASSIGNMENT"&&
+                                                <div>
                                                     {attachment?.dueDate
                                                         ? new Date(
                                                             attachment?.dueDate
                                                         ).toLocaleDateString()
                                                         : "Not specified"}
                                                 </div>
-                                            </div>
-                                            <p className="text-sm text-secondary-300">
-                                                <span className="font-bold">Assignment : </span>{attachment.details
-                                                    ? attachment.details.toString()
-                                                    : "No details available"}
-                                            </p>
-                                            <div className="text-secondary-300 flex items-center">
-                                                <p className="mr-2 text-sm font-bold">Attachment Type:</p>
-                                                <p className="text-sm">{attachment.attachmentType}</p>
-                                            </div>
-                                            {attachment.link && (
-                                                <a
-                                                    href={attachment.link}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center no-underline space-y-5 text-blue-600 hover:underline"
-                                                >
-                                                    Link
-                                                    
-                                                </a>
-                                            )}
+                                            }
+                                        </div>
                                         </div>
                                     </div>
-                                </div>
                             );
                         })}
                     </div>

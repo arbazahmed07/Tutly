@@ -11,6 +11,7 @@ import { MdAddToQueue } from "react-icons/md";
 function ClassSidebar({ params, classes,currentUser }: any) {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
+  
   return (
     <div className="">
       <div

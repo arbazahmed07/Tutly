@@ -3,7 +3,7 @@
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 
 import {
@@ -33,7 +33,7 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { FaFilePen } from "react-icons/fa6";
-import { useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 
 const formSchema = z.object({
@@ -50,12 +50,39 @@ const formSchema = z.object({
         message: 'class is required'
     }),
     details: z.string(),
+    dueDate: z.string()
 })
 
 const NewAttachmentPage = () => {
 
-    const params = useSearchParams()
-    const classId = params.get('classId')
+    const searchParams = useSearchParams()
+    const courseId = searchParams.get('courseId')
+    const classId = searchParams.get('classId')
+    const pathname = usePathname()
+    const [classes, setClasses] = useState([])
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await axios.get(`/api/classes/getClassesById/${courseId}`)
+            setClasses(response.data)
+            setLoading(false)   
+        }
+        fetchData()
+        
+    }, [courseId])
+
+    // const createQueryString = useCallback(
+    //     (name: string, value: string) => {
+    //         const params = new URLSearchParams(searchParams.toString())
+    //         params.set(name, value)
+
+    //         return params.toString()
+    //     },
+    //     [searchParams]
+    // )
+
+    const router = useRouter()
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -64,7 +91,8 @@ const NewAttachmentPage = () => {
             videoLink: '',
             videoType: '',
             class: '',
-            details: ''
+            details: '',
+            dueDate: ''
         }
     })
 
@@ -74,10 +102,11 @@ const NewAttachmentPage = () => {
 
         const response = await axios.post('/api/attachments/create', {
             title: values.title,
-            classId: classId,
+            classId: values.class,
             link: values.videoLink,
             attachmentType: values.videoType,
-            details: values.details
+            details: values.details,
+            dueDate: new Date(values.dueDate).toISOString()
         })
 
         if (response.status !== 200) {
@@ -91,19 +120,19 @@ const NewAttachmentPage = () => {
     return (
         <div className='h-full w-full  md:flex md:justify-start p-4 md:p-10'>
             <div>
-                <h1 className=' flex items-center md:text-xl'>Create a new assignment!&nbsp;<FaFilePen className='w-5 h-5 ml-4' /></h1>
+                <h1 className=' flex items-center md:text-xl'>Create a new attachment!&nbsp;<FaFilePen className='w-5 h-5 ml-4' /></h1>
                 <Form {...form}>
                     <form action=""
                         onSubmit={form.handleSubmit(onSubmit)}
                         className=' space-y-6 mt-7 w-full '
                     >
-                        <div className='  flex-col items-center justify-between h-full sm:grid sm:grid-cols-4 sm:grid-rows-2 gap-10 '>
+                        <div className='  flex-col items-center h-full sm:grid sm:grid-cols-5 gap-10 '>
                             <div className='mt-5'>
                                 <FormField
                                     name='title'
                                     control={form.control}
                                     render={({ field }) => (
-                                        <FormItem  className='  '>
+                                        <FormItem className='  '>
                                             <FormLabel>Title</FormLabel>
                                             <FormControl>
                                                 <Input className='text-sm' disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
@@ -120,7 +149,7 @@ const NewAttachmentPage = () => {
                                     render={({ field }) => {
                                         return (
                                             <FormItem >
-                                                <FormLabel>Video type</FormLabel>
+                                                <FormLabel>Attachment type</FormLabel>
                                                 <Select
                                                     onValueChange={field.onChange}
                                                     defaultValue={field.value}
@@ -128,11 +157,11 @@ const NewAttachmentPage = () => {
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger>
-                                                            <SelectValue placeholder="Select a type" />
+                                                            <SelectValue placeholder="Select a type"  />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className=' bg-secondary-700 '>
-                                                        <SelectItem className=' hover:bg-secondary-800' value="ASSIGNMENT">Assignment</SelectItem>
+                                                        <SelectItem className=' hover:bg-secondary-800' defaultChecked value="ASSIGNMENT">Assignment</SelectItem>
                                                         <SelectItem className=' hover:bg-secondary-800' value="ZOOM">Zoom</SelectItem>
                                                         <SelectItem className=' hover:bg-secondary-800' value="GITHUB">Github</SelectItem>
                                                         <SelectItem className=' hover:bg-secondary-800' value="OTHERS">Other</SelectItem>
@@ -159,6 +188,21 @@ const NewAttachmentPage = () => {
                                     )}
                                 />
                             </div>
+                            <div className='mt-5' >
+                                <FormField
+                                    name='dueDate'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className=' '>
+                                            <FormLabel>Due Date</FormLabel>
+                                            <FormControl>
+                                                <Input className='text-sm' disabled={isSubmitting} type='date' {...field} />
+                                            </FormControl>
+                                            <FormMessage>{form.formState.errors.dueDate?.message}</FormMessage>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                             <div className='mt-5'>
                                 <FormField
                                     control={form.control}
@@ -171,17 +215,27 @@ const NewAttachmentPage = () => {
                                                     onValueChange={field.onChange}
                                                     defaultValue={field.value}
                                                     value={field.value}
+                                                    disabled={loading}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Select a class" />
                                                         </SelectTrigger>
                                                     </FormControl>
-                                                    <SelectContent className=' bg-secondary-700 '>
-                                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class1">Class - 1</SelectItem>
-                                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class2">Class - 2</SelectItem>
-                                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class3">Class - 3</SelectItem>
-                                                        <SelectItem className=' dark:hover:bg-secondary-800' value="class4">Class - 4</SelectItem>
+                                                    <SelectContent className=' bg-secondary-700 ' >
+                                                        {classes.map((c:any) => (
+                                                            <SelectItem
+                                                                key={c.id}
+                                                                value={c.id}
+                                                                // onClick={() => {
+                                                                //     router.push(pathname + '?' + createQueryString('classId', c.id))
+                                                                // }}
+                                                                className=' hover:bg-secondary-800'
+                                                                defaultChecked={c.id === classId as string}
+                                                            >
+                                                                {c.title}
+                                                            </SelectItem>
+                                                        ))}
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -190,17 +244,29 @@ const NewAttachmentPage = () => {
                                     }}
                                 />
                             </div>
-                            <div className=' col-span-4' >
-                                text field
-                            </div>
                         </div>
+                            <div className=' col-span-5' >
+                                <FormField
+                                    name='details'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className=' '>
+                                            <FormLabel>Details</FormLabel>
+                                            <FormControl>
+                                                <Textarea className='text-sm' disabled={isSubmitting} placeholder='Write some details here...' {...field} />
+                                            </FormControl>
+                                            <FormMessage>{form.formState.errors.details?.message}</FormMessage>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         <div className=' flex items-center gap-x-3'>
                             <Link href={'/'}>
                                 <Button className='bg-red-700' variant={"destructive"} style={{ backgroundColor: '#b91c1c' }} >
                                     Cancel
                                 </Button>
                             </Link>
-                            <Button type='submit' disabled={!isValid || isSubmitting} style={{ border: '2px solid #6b7280' }} >
+                            <Button type='submit' disabled={!isValid || isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
                                 Continue
                             </Button>
                         </div>
