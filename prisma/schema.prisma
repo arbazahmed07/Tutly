@@ -65,6 +65,7 @@ model Course {
   createdById   String
   createdBy     User            @relation(fields: [createdById], references: [id])
   title         String
+  image         String?
   enrolledUsers EnrolledUsers[]
   classes       Class[]
 
@@ -120,6 +121,7 @@ model AssignedMentors {
 model Class {
   id          String       @id @default(uuid())
   title       String       @default("class")
+  folderTitle String?
   video       Video        @relation(fields: [videoId], references: [id])
   attachments Attachment[]
   courseId    String?
