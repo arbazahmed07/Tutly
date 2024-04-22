@@ -1,5 +1,4 @@
 'use client';
-
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -55,20 +54,17 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
                         disabled={!editMode}
                         className="w-full px-4 py-2 mb-2 text-sm rounded border border-blue-200 focus:outline-none focus:border-blue-500"
                     />
-                    <label className="text-sm text-gray-600  ">Created At:</label>
-                    <input
-                        type="text"
-                        value={formatDate(formData?.createdAt.toISOString() || '') || 'null'}
-                        disabled
-                        className="w-full px-4 py-2 text-sm mb-2 rounded  border border-blue-200 focus:outline-none  "
-                    />
-                    <label className="text-sm text-gray-600 ">Updated At:</label>
-                    <input
-                        type="text"
-                        value={formatDate(formData?.updatedAt.toISOString() || '') || 'null'}
-                        disabled
-                        className="w-full px-4 py-2 text-sm mb-2 rounded  border border-blue-200 focus:outline-none "
-                    />
+                    <label className="block mb-1 text-sm">
+                        Email:
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData?.email || ''}
+                            onChange={handleInputChange}
+                            disabled={!editMode}
+                            className="w-full px-4 py-2 mb-2 text-sm rounded border border-blue-200 focus:outline-none focus:border-blue-500"
+                        />
+                    </label>
                 </div>
                 <div className="w-[100%] md:mt-3 md:w-[40%] text-gray-600">
                     <label className="block mb-1 text-sm">
@@ -80,17 +76,6 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
                             onChange={handleInputChange}
                             disabled={!editMode}
                             className="w-full px-4 py-2 rounded border mb-2 border-blue-200 focus:outline-none focus:border-blue-500"
-                        />
-                    </label>
-                    <label className="block mb-1 text-sm">
-                        Email:
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData?.email || ''}
-                            onChange={handleInputChange}
-                            disabled={!editMode}
-                            className="w-full px-4 py-2 mb-2 text-sm rounded border border-blue-200 focus:outline-none focus:border-blue-500"
                         />
                     </label>
                     <label className="block mb-2 text-sm">

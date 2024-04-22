@@ -24,6 +24,10 @@ export default function Leaderboard({ submissions, courses } : any) {
         })}
       </div>
       <div className="flex flex-col gap-2">
+{/* 
+        <pre>
+          {JSON.stringify(submissions, null, 2)}
+        </pre> */}
         {submissions.map((x: any, index: any) => {
           if (x.assignment.class.course.id === currentCourse) {
             return (
