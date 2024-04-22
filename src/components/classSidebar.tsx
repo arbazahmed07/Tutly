@@ -8,6 +8,7 @@ import React, { useState } from "react";
 function ClassSidebar({ params, classes }: any) {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
+  
   return (
     <div className="">
       <div
