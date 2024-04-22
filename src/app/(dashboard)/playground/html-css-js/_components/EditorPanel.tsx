@@ -103,17 +103,17 @@ const EditorPanel = () => {
     <div className="shadow-xl">
       <ThemeSwitcher />
       <div className="flex p-3">
-        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 0 ? 'text-primary-500' : ''}`}
+        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 0 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(0)}
         >
           HTML
         </h1>
-        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 1 ? 'text-primary-500' : ''}`}
+        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 1 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(1)}
         >
           CSS
         </h1>
-        <h1 className={`mr-1 rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 2 ? 'text-primary-500' : ''}`}
+        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 2 ? 'text-primary-500' : ''}`}
           onClick={() => setCurrentTabIndex(2)}
         >
           JS

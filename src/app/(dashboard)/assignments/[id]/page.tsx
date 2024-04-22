@@ -8,11 +8,11 @@ export default async function SubmmitAssignment({
 }) {
   const assignment = await getAssignmentDetailsById(params.id);
   return (
-    <div className="mx-10 my-2">
-      <h1 className="text-center p-2 bg-primary-600 rounded">
+    <div className="mx-2 md:mx-10 my-2">
+      <h1 className="text-center p-2 bg-primary-600 rounded text-sm md:text-lg font-medium">
         Assignment Submission : {assignment?.title}
       </h1>
-      <div className="flex items-center justify-between my-4">
+      <div className="flex items-center justify-between my-4 text-xs md:text-sm font-medium">
         <p className="rounded p-1 px-2 bg-secondary-700">
           # {assignment?.class?.course?.title}
         </p>
@@ -22,13 +22,13 @@ export default async function SubmmitAssignment({
       </div>
 
       <div className="border p-2 my-2 rounded">Details</div>
-      <div className="min-h-[100px]">{`${assignment?.details === null
+      <div className="my-8">{`${assignment?.details === null
           ? "No details given to show"
           : assignment?.details
         }`}</div>
       <div className="flex flex-col my-4 gap-4">
         <div>
-          <a target="_blank" href={`${assignment?.link}`} className="text-sm text-primary-700 font-semibold">{assignment?.link}</a>
+          <a target="_blank" href={`${assignment?.link}`} className="text-sm text-primary-700 font-semibold break-words">{assignment?.link}</a>
         </div>
         <div>
           <Link
