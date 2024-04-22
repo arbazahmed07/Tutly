@@ -42,8 +42,8 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
     };
 
     return (
-        <div className="flex flex-col items-center m-10 font-semibold">
-            <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" width={120} height={120} className="rounded-full bg-slate-300" />
+        <div className="flex flex-col items-center m-5 md:m-10 font-semibold">
+            <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" width={120} height={120} className="rounded-full bg-slate-300 mb-5" />
             <form onSubmit={handleSubmit} className="flex flex-col md:flex-row justify-center md:gap-10">
                 <div className="w-[100%] md:w-[40%] mt-2 text-gray-600">
                     <label className="text-sm text-gray-600">Username:</label>
@@ -70,7 +70,7 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
                         className="w-full px-4 py-2 text-sm mb-2 rounded  border border-blue-200 focus:outline-none "
                     />
                 </div>
-                <div className="w-[100%] md:w-[40%] text-gray-600">
+                <div className="w-[100%] md:mt-3 md:w-[40%] text-gray-600">
                     <label className="block mb-1 text-sm">
                         Name:
                         <input
