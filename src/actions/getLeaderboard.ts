@@ -11,22 +11,15 @@ export default async function getLeaderboardData() {
 
     const enrolledCourses = await getEnrolledCourses();
     if (!enrolledCourses) return null;
-//todo:
     const submissions = await db.submission.findMany({
       where: {
         enrolledUser: {
-          user: {
-            course: {
-              some: {
-                id: {
-                  in: enrolledCourses.map((course) => course.id),
-                },
-              },
-            },
+          courseId: {
+            in: enrolledCourses.map((course) => course.id),
           },
         },
       },
-      include: {
+      select: {
         points: true,
         assignment: {
           select: {
@@ -43,18 +36,35 @@ export default async function getLeaderboardData() {
             },
           },
         },
-      },
-      orderBy: {
-        assignment: {
-          class: {
-            course: {
-              startDate: "asc",
+        enrolledUser: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                image: true,
+              },
             },
           },
         },
       },
     });
-    return submissions;
+
+    const totalPoints = submissions.reduce((acc: any, curr: any) => {
+      const totalPoints = curr.points.reduce(
+        (acc: any, curr: any) => acc + curr.score,
+        0
+      );
+      return [...acc, { ...curr, totalPoints }];
+    }
+    , []);
+
+    const sortedSubmissions = totalPoints.sort(
+      (a: any, b: any) => b.totalPoints - a.totalPoints
+    );
+
+    return sortedSubmissions;
   } catch (error: any) {
     return null;
   }
