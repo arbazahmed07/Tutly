@@ -3,17 +3,17 @@ import getLeaderboardData from "@/actions/getLeaderboard";
 import Leaderboard from "@/components/leaderBoard";
 
 export default async function Page() {
-  const assignments = await getLeaderboardData();
+  const submissions = await getLeaderboardData();
   const courses = await getEnrolledCourses();
   return (
     <div>
       <div>
         {
-          !assignments || !courses ? (
+          !submissions || !courses ? (
             <div>
               No courses enrolled!
             </div>
-          ) : <Leaderboard assignments={assignments} courses={courses} />
+          ) : <Leaderboard submissions={submissions} courses={courses} />
         }
       </div>
     </div>
