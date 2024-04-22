@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
+import { getEnrolledCoursesById } from "./courses";
 
 export const getAllAssignedAssignments = async () => {
   const currentUser = await getCurrentUser();
@@ -38,6 +39,44 @@ export const getAllAssignedAssignments = async () => {
   });
   return coursesWithAssignments;
 };
+
+
+export const getAllAssignedAssignmentsByUserId = async (id :string) => {
+
+  const courses = await getEnrolledCoursesById(id)
+
+  const coursesWithAssignments = await db.course.findMany({
+      where: {
+          enrolledUsers: {
+            some: {
+              userId: id,
+            },
+          },
+        },
+    select: {
+      id: true,
+      classes: {
+        select: {
+          attachments: {
+            where: {
+              attachmentType: "ASSIGNMENT",
+            },
+            include: {
+              class: true,
+              submissions: {
+                where: {
+                  enrolledUserId: id,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return {courses,coursesWithAssignments};
+};
+
 
 export const getAllMentorAssignments = async () => {
   const currentUser = await getCurrentUser();
