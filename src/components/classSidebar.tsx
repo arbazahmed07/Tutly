@@ -9,13 +9,13 @@ function ClassSidebar({ params, classes }: any) {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
   return (
-    <div className="fixed z-50">
+    <div className="">
       <div
         className={`${
           !open && "hidden"
         } flex max-sm:absolute flex-col w-44 px-4 bg-background items-center py-3 gap-2 shadow-xl h-[93vh] relative`}
       >
-        <h1 className="px-4 my-2">{classes[0].course?.title}</h1>
+        <h1 className="px-4 my-2">{classes[0]?.course?.title}</h1>
         {classes.map((x: any) => {
           return (
             <Link
@@ -46,7 +46,7 @@ function ClassSidebar({ params, classes }: any) {
           <IoIosArrowBack />
         </div>
       </div>
-      <div className="fixed">
+      <div className="">
       {!open && (
         <div
           onClick={() => setOpen(!open)}
