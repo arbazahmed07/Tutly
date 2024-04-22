@@ -43,6 +43,11 @@ export default function AssignmentBoard({ courses, assignments }: any) {
               <div key={assignment.id} className="border p-4">
                 <div className="flex items-center px-4 justify-between">
                   <h2>{assignment.title}</h2>
+                  <div>
+                    {
+                      
+                    }
+                  </div>
                   <div className="flex gap-6 items-center">
                     {assignment.dueDate && (
                       <h1 className="rounded-full p-1 px-2 bg-secondary-600">{assignment.dueDate?.toISOString().split("T")[0]}</h1>
