@@ -71,6 +71,6 @@ export default async function getLeaderboardData() {
 }
 
 
-export const getLeaderboardPoints = async () => {
-  const {sortedSubmissions, currentUser, enrolledCourses} = await getLeaderboardData();
-}
+// export const getLeaderboardPoints = async () => {
+//   const {sortedSubmissions, currentUser, enrolledCourses} = await getLeaderboardData();
+// }
