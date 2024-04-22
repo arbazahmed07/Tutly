@@ -89,7 +89,7 @@ export const getDashboardData = async () => {
   // const assignmentsPending = 
 
   return {
-    position,
+    position:position+1,
     points,
     assignmentsSubmitted,
     // assignmentsPending,
