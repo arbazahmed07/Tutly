@@ -16,8 +16,9 @@ export default async function SubmmitAssignment({
         <p className="rounded p-1 px-2 bg-secondary-700">
           # {assignment?.class?.course?.title}
         </p>
-        <div className={`p-1 rounded bg-secondary-700 ${assignment?.dueDate != null && (new Date(assignment?.dueDate) > (new Date())) ? "bg-primary-600" : "bg-secondary-700"}`}>{`${assignment?.dueDate === null ? "No last date" : assignment?.dueDate
-          }`}</div>
+        {assignment?.dueDate != null && <div className={`p-1 px-2 rounded bg-secondary-700 ${(new Date(assignment?.dueDate) > (new Date())) ? "bg-primary-600" : "bg-secondary-700"}`}>
+          Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
+        </div>}
       </div>
 
       <div className="border p-2 my-2 rounded">Details</div>
@@ -25,22 +26,18 @@ export default async function SubmmitAssignment({
           ? "No details given to show"
           : assignment?.details
         }`}</div>
-      <div className="flex gap-8 items-center my-4">
+      <div className="flex flex-col my-4 gap-4">
         <div>
-          <a target="_blank" href={`${assignment?.link}`} className="bg-primary-600 p-2 px-4 text-sm rounded font-semibold">Link</a>
+          <a target="_blank" href={`${assignment?.link}`} className="text-sm text-primary-700 font-semibold">{assignment?.link}</a>
         </div>
         <div>
           <Link
             href={`/playground/html-css-js?attachmentId=${params.id}`}
-            className="bg-primary-600 p-2 text-sm rounded font-semibold"
           >
-            Submit through Playground
+            {assignment?.submissions.length===0?<h1 className="bg-primary-600 inline p-2 text-sm rounded font-semibold">Submit through Playground</h1>:<h1 className="bg-primary-600 p-2 text-sm rounded font-semibold">Submit another response</h1>}
           </Link>
         </div>
       </div>
-
-      data 
-      <pre>{JSON.stringify(assignment, null, 2)}</pre>
     </div>
   );
 }
