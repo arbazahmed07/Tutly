@@ -64,8 +64,13 @@ export default async function getLeaderboardData() {
       (a: any, b: any) => b.totalPoints - a.totalPoints
     );
 
-    return sortedSubmissions;
+    return {sortedSubmissions, currentUser, enrolledCourses};
   } catch (error: any) {
     return null;
   }
+}
+
+
+export const getLeaderboardPoints = async () => {
+  const {sortedSubmissions, currentUser, enrolledCourses} = await getLeaderboardData();
 }
