@@ -89,9 +89,9 @@ const NewAttachmentPage = () => {
 
 
     return (
-        <div className='h-full w-full  md:flex md:justify-start p-10 '>
+        <div className='h-full w-full  md:flex md:justify-start p-4 md:p-10'>
             <div>
-                <h1 className=' flex items-center text-xl'>Create a new assignment!&nbsp;<FaFilePen className='w-5 h-5 ' /></h1>
+                <h1 className=' flex items-center md:text-xl'>Create a new assignment!&nbsp;<FaFilePen className='w-5 h-5 ml-4' /></h1>
                 <Form {...form}>
                     <form action=""
                         onSubmit={form.handleSubmit(onSubmit)}
