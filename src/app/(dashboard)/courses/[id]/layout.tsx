@@ -1,4 +1,5 @@
 import { getCourseClasses } from "@/actions/courses";
+import getCurrentUser from "@/actions/getCurrentUser";
 import ClassSidebar from "@/components/classSidebar";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
@@ -17,10 +18,13 @@ export default async function RootLayout({
     params:any
 }>) {
     const classes = await getCourseClasses(params.id)
+    const currentUser = await getCurrentUser()
+
+
     return (
         <>
             <div className="flex w-full">
-                <ClassSidebar params={params} classes={classes}/>
+                <ClassSidebar params={params} currentUser={currentUser} classes={classes}/>
                 <div className="flex-1">{children}</div>
             </div>
         </>

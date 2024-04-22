@@ -50,17 +50,19 @@ export default async function Class({
                 <h1 className="text-3xl font-semibold my-5">{details?.title}</h1>
                 {videoId && videoType === "YOUTUBE" && <YoutubeEmbed embedId={videoId} />}
                 {videoId && videoType === "DRIVE" && <DriveEmbed embedId={videoId} />}
-                <div className="mt-5 rounded bg-secondary-500 p-2 w-full">
-                    <div className="text-xl my-2">
-                        <Link href={`/attachments/new?classId=${details?.id}`}>
-                            <Button
-                                className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
-                                variant={"secondary"}
-                            >
-                                Add an assignment&nbsp;
-                                <FaPlus />
-                            </Button>
-                        </Link>
+                <div className="mt-5 rounded bg-secondary-500 p-2 w-full  ">
+                    <div className=" flex flex-row-reverse w-full">
+                        <div className="text-xl my-2  ">
+                            <Link href={`/attachments/new?classId=${details?.id}`}>
+                                <Button
+                                    className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
+                                    variant={"secondary"}
+                                    >
+                                    Add an assignment&nbsp;
+                                    <FaPlus />
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
                     <div>
                         {details?.attachments?.map((attachment, index) => {
