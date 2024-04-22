@@ -7,7 +7,7 @@ import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
 import { MdOutlineCastForEducation } from "react-icons/md";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense,  useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
 
