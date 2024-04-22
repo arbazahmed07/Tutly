@@ -34,10 +34,6 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleEditClick = () => {
-        setEditMode(!editMode);
-    };
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log(JSON.stringify(formData, null, 2));
@@ -47,9 +43,9 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
 
     return (
         <div className="flex flex-col items-center m-10 font-semibold">
-            <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" className="w-40 h-40 rounded-full bg-slate-300" />
-            <form onSubmit={handleSubmit} className="flex justify-center gap-10">
-                <div className="w-[40%] mt-2 text-gray-600">
+            <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" width={120} height={120} className="rounded-full bg-slate-300" />
+            <form onSubmit={handleSubmit} className="flex flex-col md:flex-row justify-center md:gap-10">
+                <div className="w-[100%] md:w-[40%] mt-2 text-gray-600">
                     <label className="text-sm text-gray-600">Username:</label>
                     <input
                         type="text"
@@ -74,7 +70,7 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
                         className="w-full px-4 py-2 text-sm mb-2 rounded  border border-blue-200 focus:outline-none "
                     />
                 </div>
-                <div className="w-[40%] mt-3 text-gray-600">
+                <div className="w-[100%] md:w-[40%] text-gray-600">
                     <label className="block mb-1 text-sm">
                         Name:
                         <input
@@ -108,22 +104,6 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
                             className="w-full px-4 py-2  rounded border border-blue-200 focus:outline-none focus:border-blue-500"
                         />
                     </label>
-                    {editMode ? (
-                        <button
-                            type="submit"
-                            className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold py-2 px-3 rounded-lg mt-4 mx-auto block"
-                        >
-                            Save
-                        </button>
-                    ) : (
-                        <button
-                            type="button"
-                            onClick={handleEditClick}
-                            className="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold py-2 px-3 rounded-lg mt-4 mx-auto block"
-                        >
-                            Edit
-                        </button>
-                    )}
                 </div>
             </form>
         </div>
