@@ -17,7 +17,7 @@ export default function Leaderboard({ submissions, courses }: any) {
               }`}
               key={course.id}
             >
-              <h1 className="truncate max-w-xs">{course.title}</h1>
+              <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
             </button>
           );
         })}
@@ -35,8 +35,8 @@ export default function Leaderboard({ submissions, courses }: any) {
                   <Image
                     src={x.enrolledUser.user.image}
                     alt={x.enrolledUser.user.name}
-                    width={40}
-                    height={40}
+                    width={35}
+                    height={35}
                     className="w-10 h-10 rounded-full"
                   />
                   <div className="py-2">
@@ -44,9 +44,8 @@ export default function Leaderboard({ submissions, courses }: any) {
                     <h1 className="text-xs">@{x.enrolledUser.user.username}</h1>
                   </div>
                 </div>
-                <h1>
-                  {x.totalPoints}
-                  points
+                <h1 className="font-medium text-xs md:text-sm">
+                  {x.totalPoints}points
                 </h1>
               </div>
             );

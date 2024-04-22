@@ -3,7 +3,7 @@ import "../../../styles/globals.css"
 const page = () => {
   return (
     <div className="w-full h-[90vh] bg-background text-foreground z-50 flex justify-center items-center">
-      <div className="relative w-full h-20 flex items-center justify-center loading-text text-2xl">
+      <div className="relative w-full h-20 flex items-center justify-center loading-text text-lg">
         <span>C</span>
         <span>O</span>
         <span>M</span>
