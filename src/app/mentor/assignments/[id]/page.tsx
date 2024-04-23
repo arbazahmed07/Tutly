@@ -10,6 +10,7 @@ export default async function mentorAssignments({params}:{
 }) {
   const {courses,coursesWithAssignments} = await getAllAssignedAssignmentsByUserId(params.id)
 
+
   return (
     <div className="mx-14 px-8 py-2 flex flex-col gap-4">
       <h1 className="text-center text-xl font-bold border py-2">ASSIGNMENTS</h1>

@@ -61,7 +61,7 @@ export default async function getLeaderboardData() {
 
     const sortedSubmissions = totalPoints.sort(
       (a: any, b: any) => b.totalPoints - a.totalPoints
-    );
+    ) ;
 
     return { sortedSubmissions, currentUser, enrolledCourses } as any;
   } catch (error: any) {
@@ -81,7 +81,7 @@ export const getDashboardData = async () => {
     (x: any) => x.enrolledUser.user.id === currentUser.id
   );
 
-  const points = sortedSubmissions[position].totalPoints;
+  const points = sortedSubmissions[position]?.totalPoints;
 
   const assignmentsSubmitted = sortedSubmissions.filter(
     (x: any) => x.enrolledUser.user.id === currentUser.id

@@ -13,6 +13,7 @@ export default function AssignmentBoard({ courses, assignments }: any) {
     alert("No courses enrolled!");
     return;
   }
+
   
   if (!isMounted) {
     return;
@@ -30,7 +31,7 @@ export default function AssignmentBoard({ courses, assignments }: any) {
               }`}
               key={course.id}
             >
-               <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
+                <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
             </button>
           );
         })}

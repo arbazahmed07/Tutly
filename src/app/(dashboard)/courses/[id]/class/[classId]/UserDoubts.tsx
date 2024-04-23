@@ -7,8 +7,7 @@ import { ImReply } from "react-icons/im";
 import { TbLocationQuestion } from "react-icons/tb";
 import { MdDeleteOutline } from "react-icons/md";
 
-
-const UserDoubts = ({ userDoubts, classId }:any) => {
+const UserDoubts = ({ userDoubts, classId }: any) => {
   const [doubts, setDoubts] = useState(userDoubts || []);
   const [doubt, setDoubt] = useState<string>("");
   const [reply, setReply] = useState<string>("");
@@ -30,8 +29,7 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
     }
   };
 
-  const handleReply = async (id:string) => {
-
+  const handleReply = async (id: string) => {
     if (!reply) return;
 
     const res = await axios.post("/api/doubts/reply", {
@@ -45,27 +43,25 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
       setReply("");
       setReplyId("");
       setDoubts(
-        doubts.map((d:any) =>
-          d.id === id
-            ? { ...d, response: [...d.response, res.data] }
-            : d
+        doubts.map((d: any) =>
+          d.id === id ? { ...d, response: [...d.response, res.data] } : d
         )
       );
     }
-  }
+  };
 
-  const handleDeleteDoubt = async (id:string) => {
+  const handleDeleteDoubt = async (id: string) => {
     alert("Are you sure you want to delete this doubt?");
     const res = await axios.delete(`/api/doubts/deleteDoubt/${id}`);
     if (res.data.error) {
       toast.error("Failed to delete doubt");
     } else {
       toast.success("Doubt deleted successfully");
-      setDoubts(doubts.filter((d:any) => d.id !== id));
+      setDoubts(doubts.filter((d: any) => d.id !== id));
     }
-  }
+  };
 
-  const handleDeleteReply = async (replyId :string) => {
+  const handleDeleteReply = async (replyId: string) => {
     alert("Are you sure you want to delete this reply?");
     const res = await axios.delete(`/api/doubts/reply/${replyId}`);
     if (res.data.error) {
@@ -73,35 +69,40 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
     } else {
       toast.success("Reply deleted successfully");
       setDoubts(
-        doubts.map((d:any) => ({
+        doubts.map((d: any) => ({
           ...d,
-          response: d.response.filter((r:any) => r.id !== replyId),
+          response: d.response.filter((r: any) => r.id !== replyId),
         }))
       );
     }
-  }
+  };
 
-    const handleReplyEnterBtn = (e:any) => {
-    if (e.key === 'Enter') {
+  const handleReplyEnterBtn = (e: any) => {
+    if (e.key === "Enter") {
       handleReply(replyId);
     }
   };
-  const handleDoubtEnterBtn = (e:any) => {
-    if (e.key === 'Enter') {
+  const handleDoubtEnterBtn = (e: any) => {
+    if (e.key === "Enter") {
       handleAddDoubt();
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-primary-800 p-4 md:p-2 rounded-md mb-5">
+    <div className="flex flex-col items-center justify-centermb-5">
       <h1 className="text-xl font-semibold m-5">Ask your Doubts !!</h1>
-      <div className=" w-full">
-        {doubts?.map((doubt :any, index:number) => (
+      <div className=" w-full bg-secondary-500 h-[70vh]  p-4 md:p-2 rounded-md ">
+        {doubts?.map((doubt: any, index: number) => (
           <div key={index} className="border p-3 my-4 rounded-lg ">
-            <h2 className="text-xl font-semibold text-secondary-50">{doubt.title}</h2>
+            <h2 className="text-xl font-semibold text-secondary-50">
+              {doubt.title}
+            </h2>
             <p className="text-secondary-100">{doubt.description}</p>
-            {doubt.response.map((res:any, index :number) => (
-              <div key={index} className="border p-1 my-2 text-wrap overflow-auto rounded-lg flex justify-between items-center">
+            {doubt.response.map((res: any, index: number) => (
+              <div
+                key={index}
+                className="border p-1 my-2 text-wrap overflow-auto rounded-lg flex justify-between items-center"
+              >
                 <div className="">
                   <p className=" text-secondary-50 break-words">
                     {res?.description}
@@ -111,10 +112,10 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
                   <button
                     className="text-lg p-1 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mx-2"
                     onClick={() => handleDeleteReply(res.id)}
-                    >
+                  >
                     <MdDeleteOutline />
                   </button>
-                  </div>
+                </div>
               </div>
             ))}
             <button
@@ -137,7 +138,8 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
                   className="px-4 py-2 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  flex items-center justify-start text-white rounded text-sm"
                   onClick={() => handleReply(doubt.id)}
                 >
-                  Reply&nbsp;< ImReply />
+                  Reply&nbsp;
+                  <ImReply />
                 </button>
               </div>
             ) : (
@@ -168,13 +170,13 @@ const UserDoubts = ({ userDoubts, classId }:any) => {
               className="px-4 py-2 flex justify-end items-center bg-secondary-400 hover:bg-secondary-500 dark:hover:bg-secondary-700  dark:bg-secondary-800 text-sm rounded"
               onClick={handleAddDoubt}
             >
-              Add Doubt&nbsp;<TbLocationQuestion className=" w-5 h-5"  />
+              Add Doubt&nbsp;
+              <TbLocationQuestion className=" w-5 h-5" />
             </button>
-            </div>
           </div>
+        </div>
       </div>
     </div>
-
   );
 };
 

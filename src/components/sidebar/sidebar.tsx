@@ -27,7 +27,7 @@ export default function Sidebar({items,menu,setMenu}:Props) {
             {
                 items.map((item)=>{
                     return (
-                        <div>
+                      <div>
                             <div onClick={()=>Mobile(item.path)} key={item.path} className={`${pathname===item.path?"bg-blue-600":"hover:bg-blue-500"} m-auto rounded md:hidden px-4 py-3 my-2 flex items-center gap-4 cursor-pointer`}>
                                 <div className={`text-2xl px-2`}>{item.icon}</div>
                                 <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>

@@ -1,14 +1,45 @@
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import React from 'react'
+import {getAllAssignedAssignmentsByUserId} from '@/actions/getAssignments'
+import getCurrentUser from '@/actions/getCurrentUser'
+import { FaExternalLinkAlt } from "react-icons/fa";
+
 
 const page = async ({ params }: {
     params: { id: string }
 }) => {
+
+    const currentUser = await getCurrentUser();
+    const assignments = await getAllAssignedAssignmentsByUserId( currentUser?.id || '')
+    
+    
     return (
-        <div className='m-5'>
+        <div className='m-3'>
             <h1 className='text-center text-xl p-2 bg-secondary-800'>Information About the course</h1>
-            <h1 className=' text-center w-full text-xl my-6'>Select class to watch</h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+                {assignments.coursesWithAssignments?.map(assignment => (
+                    assignment.classes.map(classItem => (
+                        classItem.attachments.map(attachment => (
+                            <div key={attachment?.id} className="bg-primary-900 hover:bg-primary-800 shadow-md rounded-lg p-4">
+                                <h2 className="text-lg font-semibold mb-2">{attachment?.title}</h2>
+                                <p className="text-secondary-200 mb-2">{attachment?.details || 'No Description'} </p>
+                                <p className="text-gray-600 mb-2">Created At: {new Date(attachment.createdAt).toLocaleString()}</p>
+                                <p className="text-gray-600 mb-2">Updated At: {new Date(attachment.updatedAt).toLocaleString()}</p>
+                                <p className="text-secondary-200 mb-2">Due Date: {attachment?.dueDate ? new Date(attachment?.dueDate).toLocaleDateString() : 'Not specified'}</p>
+                                {/* <p className="text-secondary-200 mb-2">Class Name: {classItem?.class?.title || 'null'}</p> */}
+                                <p className="text-secondary-200 mb-2">Submission Status: {attachment?.submissions.length > 0 ? 'Submitted' : 'Not Submitted'}</p>
+                                {
+                                    attachment?.link && (
+                                        <div className=' flex items-center justify-start space-x-2 hover:opacity-90'>
+                                            <a href={attachment?.link } className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">View Assignment</a>
+                                            <FaExternalLinkAlt className='w-3 h-3' />
+                                        </div>
+                                    )
+                                }
+                            </div>
+                        ))
+                    ))
+                ))}
+                </div>
         </div>
     )
 }

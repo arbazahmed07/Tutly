@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/sidebar";
 
@@ -6,38 +6,85 @@ import { RxDashboard } from "react-icons/rx";
 import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
-import { MdOutlineCastForEducation } from "react-icons/md";
-import { Suspense, useEffect, useState } from "react";
+import { FaChalkboardTeacher } from "react-icons/fa";
+import { Suspense,  useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
 
-const items = [
-    {
+export default function HomeLayout({
+  children,
+  currentUser,
+}: {
+  children: React.ReactNode;
+  currentUser: any;
+}) {
+  const [menu, setMenu] = useState<boolean>(true);
+  const pathname = usePathname();
+  const isCoursePage = pathname.startsWith("/courses/");
+  let items;
+
+  const access = currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR";
+  if (access) {
+    items = [
+      {
         name: "Dashboard",
         icon: <RxDashboard />,
-        path: "/"
-    },
-    {
+        path: "/",
+      },
+      {
         name: "Courses",
-        icon: <MdOutlineCastForEducation />,
+        icon: <FaChalkboardTeacher />,
+        path: "/courses",
+      },
+      {
+        name: "Assignments",
+        icon: <MdOutlineAssignment />,
+        path: "/mentor/assignments",
+      },
+      {
+        name: "Leaderboard",
+        icon: <MdOutlineLeaderboard />,
+        path: "/leaderboard",
+      },
+      {
+        name: "Doubts",
+        icon: <TbMessageQuestion />,
+        path: "/mentor/doubts",
+      },
+      {
+        name: "Playgrounds",
+        icon: <MdAirplay />,
+        path: "/playground/html-css-js",
+      },
+    ];
+  } else {
+    items = [
+      {
+        name: "Dashboard",
+        icon: <RxDashboard />,
+        path: "/",
+      },
+      {
+        name: "Courses",
+        icon: <FaChalkboardTeacher />,
         path: "/courses"
     },
     {
         name: "Assignments",
         icon: <MdOutlineAssignment />,
-        path: "/assignments"
-    },
-    {
+        path: "/assignments",
+      },
+      {
         name: "Leaderboard",
         icon: <MdOutlineLeaderboard />,
-        path: "/leaderboard"
-    },
-    {
+        path: "/leaderboard",
+      },
+      {
         name: "Doubts",
         icon: <TbMessageQuestion />,
-        path: "/doubts"
-    },
-    {
+        path: "/doubts",
+      },
+      {
         name: "Playgrounds",
         icon: <MdAirplay />,
         path: "/playground/html-css-js"
