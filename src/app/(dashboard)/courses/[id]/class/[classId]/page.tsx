@@ -40,13 +40,12 @@ export default async function Class({
     }
     
     return (
-        <div className="flex md:m-5 flex-wrap gap-6">
+        <div className="flex md:m-2 flex-wrap gap-6">
             <div className="flex-grow text-secondary-100">
-                <h1 className="text-3xl font-semibold my-5">{details?.title}</h1>
                 {videoId && videoType === "YOUTUBE" && <YoutubeEmbed embedId={videoId} />}
                 {videoId && videoType === "DRIVE" && <DriveEmbed embedId={videoId} />}
 
-                <div className="mt-5 rounded bg-secondary-500 p-2 w-full  ">
+                <div className="mt-5 rounded bg-white p-2 w-full" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
                     <div className=" flex flex-row-reverse w-full">
                     <div className="text-xl my-2"  >
                         <Link hidden={currentUser?.role === 'STUDENT' || currentUser?.role === 'MENTOR' } href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
@@ -65,7 +64,7 @@ export default async function Class({
                             return (
                                 <div
                                     key={index}
-                                    className="p-2 rounded-lg mb-4 relative hover:bg-primary-900 bg-primary-800"
+                                    className="p-2 rounded-lg mb-4 relative hover:bg-blue-500 bg-blue-600"
                                 >
                                     <div className="flex justify-between items-center">
                                     

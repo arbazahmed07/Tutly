@@ -21,9 +21,10 @@ export default function HomeLayout({
   const [menu, setMenu] = useState<boolean>(true);
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
-  let items;
+  const access =
+    currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR";
 
-  const access = currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR";
+  let items;
   if (access) {
     items = [
       {
@@ -67,7 +68,7 @@ export default function HomeLayout({
       {
         name: "Courses",
         icon: <FaChalkboardTeacher />,
-        path: "/courses"
+        path: "/courses",
       },
       {
         name: "Assignments",
