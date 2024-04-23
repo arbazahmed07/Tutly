@@ -83,7 +83,7 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
                         <input
                             type="text"
                             name="role"
-                            value={formData?.role || ''}
+                            value={formData?.role || 'STUDENT'}
                             onChange={handleInputChange}
                             disabled={!editMode}
                             className="w-full px-4 py-2  rounded border border-blue-200 focus:outline-none focus:border-blue-500"

@@ -30,7 +30,7 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
           {!isCoursePage ? <GrMenu className='text-xl' />:< IoMdArrowRoundBack className='text-xl'/>}
         </div>
         <div className='flex gap-3 items-center'>
-          <h1 className="text-sm font-medium">{currentUser.role}</h1>
+          <h1 className="text-sm font-medium">{currentUser?.role}</h1>
           <ThemeSwitch />
           <div className='rounded-full cursor-pointer hover:bg-secondary-800 p-2'><IoMdNotificationsOutline className='text-xl' /></div>
           <UserProfile currentUser={currentUser} />

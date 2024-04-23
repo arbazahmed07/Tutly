@@ -61,7 +61,7 @@ export default async function getLeaderboardData() {
 
     const sortedSubmissions = totalPoints.sort(
       (a: any, b: any) => b.totalPoints - a.totalPoints
-    );
+    ) ;
 
     return { sortedSubmissions, currentUser, enrolledCourses } as any;
   } catch (error: any) {

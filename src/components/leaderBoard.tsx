@@ -1,5 +1,6 @@
 'use client'
 import Image from "next/image";
+<<<<<<< HEAD
 import { useState } from "react";
 import img from '/public/assets/nodata.jpg'
 
@@ -9,6 +10,18 @@ export default function Leaderboard({ submissions, courses }: any) {
   const filteredSubmissions = submissions.filter(
     (x: any) => x.assignment.class.course.id === currentCourse
   );
+=======
+import { useEffect, useState } from "react";
+
+export default function Leaderboard({ submissions, courses } : any) {
+  const [currentCourse, setCurrentCourse] = useState<string>("");
+
+  useEffect(()=>{
+    if(courses.length==0){
+      setCurrentCourse(courses[0].id);
+    }
+  },[])
+>>>>>>> 0ce47afb46ddf32b019f8c4d2ac4c58cf34c5451
 
   return (
     <div className="mx-2 md:mx-14 mt-4 flex flex-col gap-4">

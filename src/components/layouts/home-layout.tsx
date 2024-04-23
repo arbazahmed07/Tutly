@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/sidebar";
 
@@ -11,13 +11,60 @@ import { Suspense,  useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
 
-const items = [
-    {
+export default function HomeLayout({
+  children,
+  currentUser,
+}: {
+  children: React.ReactNode;
+  currentUser: any;
+}) {
+  const [menu, setMenu] = useState<boolean>(true);
+  const pathname = usePathname();
+  const isCoursePage = pathname.startsWith("/courses/");
+  let items;
+
+  const access = currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR";
+  if (access) {
+    items = [
+      {
         name: "Dashboard",
         icon: <RxDashboard />,
-        path: "/"
-    },
-    {
+        path: "/",
+      },
+      {
+        name: "Courses",
+        icon: <FaChalkboardTeacher />,
+        path: "/courses",
+      },
+      {
+        name: "Assignments",
+        icon: <MdOutlineAssignment />,
+        path: "/mentor/assignments",
+      },
+      {
+        name: "Leaderboard",
+        icon: <MdOutlineLeaderboard />,
+        path: "/leaderboard",
+      },
+      {
+        name: "Doubts",
+        icon: <TbMessageQuestion />,
+        path: "/mentor/doubts",
+      },
+      {
+        name: "Playgrounds",
+        icon: <MdAirplay />,
+        path: "/playground/html-css-js",
+      },
+    ];
+  } else {
+    items = [
+      {
+        name: "Dashboard",
+        icon: <RxDashboard />,
+        path: "/",
+      },
+      {
         name: "Courses",
         icon: <FaChalkboardTeacher />,
         path: "/courses"
@@ -25,41 +72,32 @@ const items = [
     {
         name: "Assignments",
         icon: <MdOutlineAssignment />,
-        path: "/assignments"
-    },
-    {
+        path: "/assignments",
+      },
+      {
         name: "Leaderboard",
         icon: <MdOutlineLeaderboard />,
-        path: "/leaderboard"
-    },
-    {
+        path: "/leaderboard",
+      },
+      {
         name: "Doubts",
         icon: <TbMessageQuestion />,
-        path: "/doubts"
-    },
-    {
+        path: "/doubts",
+      },
+      {
         name: "Playgrounds",
         icon: <MdAirplay />,
-        path: "/playground/html-css-js"
-    }
-]
-
-export default function HomeLayout({ children, currentUser }: {
-    children: React.ReactNode,
-    currentUser: any
-}) {
-    const [menu, setMenu] = useState<boolean>(true);
-    const pathname = usePathname();
-    const isCoursePage = pathname.startsWith('/courses/');
-    return (
-        <div className="flex">
-            {!isCoursePage&&<Sidebar items={items} menu={menu} setMenu={setMenu}/>}
-            <div className="w-full">
-                <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
-                <Suspense fallback={<Loading />}>
-                    {children}
-                </Suspense>
-            </div>
-        </div>
-    )
+        path: "/playground/html-css-js",
+      },
+    ];
+  }
+  return (
+    <div className="flex">
+      {!isCoursePage && <Sidebar items={items} menu={menu} setMenu={setMenu} />}
+      <div className="w-full">
+        <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
+        <Suspense fallback={<Loading />}>{children}</Suspense>
+      </div>
+    </div>
+  );
 }

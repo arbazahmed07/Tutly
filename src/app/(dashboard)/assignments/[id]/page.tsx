@@ -1,4 +1,6 @@
 import { getAssignmentDetailsById } from "@/actions/getAssignments";
+import getCurrentUser  from "@/actions/getCurrentUser";
+
 import Link from "next/link";
 
 export default async function SubmmitAssignment({
@@ -7,6 +9,9 @@ export default async function SubmmitAssignment({
   params: { id: string };
 }) {
   const assignment = await getAssignmentDetailsById(params.id);
+  const currentUser = await getCurrentUser();
+  
+  
   return (
     <div className="mx-2 md:mx-10 my-2">
       <h1 className="text-center p-2 bg-primary-600 rounded text-sm md:text-lg font-medium">
@@ -32,6 +37,7 @@ export default async function SubmmitAssignment({
         </div>
         <div>
           <Link
+            hidden= {currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR"}
             href={`/playground/html-css-js?attachmentId=${params.id}`}
           >
             {assignment?.submissions.length===0?<h1 className="bg-primary-600 inline p-2 text-sm rounded font-semibold">Submit through Playground</h1>:<h1 className="bg-primary-600 p-2 text-sm rounded font-semibold">Submit another response</h1>}

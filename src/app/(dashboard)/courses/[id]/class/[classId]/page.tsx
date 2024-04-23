@@ -1,13 +1,10 @@
-
 import { getClassDetails } from "@/actions/courses"
-
+import getCurrentUser from "@/actions/getCurrentUser";
 import YoutubeEmbed from "@/components/videoEmbeds/YoutubeEmbed";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
-import { getUserDoubtsByClassId } from "@/actions/doubts";
-import UserDoubts from "./UserDoubts";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default async function Class({
@@ -15,8 +12,9 @@ export default async function Class({
 }: {
     params: { classId: string ,id:string };
 }) {
-    const userDoubts = await getUserDoubtsByClassId(params.classId);
     const details = await getClassDetails(params.classId);
+    const currentUser = await getCurrentUser();
+
     const YOUTUBE = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const DRIVE = /\/file\/d\/([^\/]+)/;
     const videoLink = details?.video.videoLink;
@@ -50,8 +48,8 @@ export default async function Class({
 
                 <div className="mt-5 rounded bg-secondary-500 p-2 w-full  ">
                     <div className=" flex flex-row-reverse w-full">
-                    <div className="text-xl my-2">
-                        <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
+                    <div className="text-xl my-2"  >
+                        <Link hidden={currentUser?.role === 'STUDENT' || currentUser?.role === 'MENTOR' } href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
                             <Button
                                 className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
                                 variant={"secondary"}
@@ -116,9 +114,7 @@ export default async function Class({
                     </div>
                 </div>
             </div>
-            <div className="block m-auto md:inline md:m-0">
-                <UserDoubts userDoubts={userDoubts} classId={params.classId} />
-            </div>
         </div>
     );
+
 }

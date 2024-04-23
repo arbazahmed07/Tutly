@@ -2,16 +2,17 @@ import getLeaderboardData from "@/actions/getLeaderboard";
 import Leaderboard from "@/components/leaderBoard";
 
 export default async function Page() {
-  const { sortedSubmissions, enrolledCourses }: any = await getLeaderboardData();
+  const data: any = await getLeaderboardData();
 
-  if (!sortedSubmissions || !enrolledCourses) {
+  if (data && data.sortedSubmissions && data.enrolledCourses) {
+
+    const { sortedSubmissions, enrolledCourses } = data;
+
     return (
-      <div>
-        No courses enrolled!
-      </div>
+      <Leaderboard submissions={sortedSubmissions} courses={enrolledCourses} />
     );
+
+  } else {
+    return null;
   }
-  return (
-    <Leaderboard submissions={sortedSubmissions} courses={enrolledCourses} />
-  );
 }
