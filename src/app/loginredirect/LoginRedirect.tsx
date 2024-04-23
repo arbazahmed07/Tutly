@@ -30,8 +30,8 @@ const LoginRedirect = () => {
       if (response?.error) {
         toast.error(response.error);
       } else {
-        toast.success("Redirecting to dashboard...");
-        router.push("/");
+        toast.success("Login Successful...");
+        router.push("/profile/manage-password");
       }
     } catch (error: any) {
       toast.error("An error occurred. Please try again later");
