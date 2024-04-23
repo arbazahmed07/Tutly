@@ -1,6 +1,7 @@
 'use client'
 import Image from "next/image";
 import img from '/public/assets/nodata.jpg'
+import  { useState } from 'react'
 
 export default function Leaderboard({ submissions, courses }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
