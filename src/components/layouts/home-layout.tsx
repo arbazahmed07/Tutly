@@ -7,7 +7,7 @@ import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense,  useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
 
@@ -22,7 +22,9 @@ export default function HomeLayout({
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
   let items;
-  if (currentUser?.role === "MENTOR") {
+
+  const access = currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR";
+  if (access) {
     items = [
       {
         name: "Dashboard",
@@ -65,9 +67,9 @@ export default function HomeLayout({
       {
         name: "Courses",
         icon: <FaChalkboardTeacher />,
-        path: "/courses",
-      },
-      {
+        path: "/courses"
+    },
+    {
         name: "Assignments",
         icon: <MdOutlineAssignment />,
         path: "/assignments",

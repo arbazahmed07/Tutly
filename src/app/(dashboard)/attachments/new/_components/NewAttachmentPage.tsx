@@ -194,7 +194,7 @@ const NewAttachmentPage = () => {
                                     control={form.control}
                                     render={({ field }) => (
                                         <FormItem className=' '>
-                                            <FormLabel>Due Date</FormLabel>
+                                            <FormLabel>Due Date <span className=' text-sm opacity-80'>(optional)</span> </FormLabel>
                                             <FormControl>
                                                 <Input className='text-sm' disabled={isSubmitting} type='date' {...field} />
                                             </FormControl>
