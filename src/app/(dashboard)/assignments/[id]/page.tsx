@@ -38,7 +38,7 @@ export default async function SubmmitAssignment({
         <div>
           <Link
             hidden= {currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR"}
-            href={`/playground/html-css-js?attachmentId=${params.id}`}
+            href={`/playground/html-css-js?assignmentId=${params.id}`}
           >
             {assignment?.submissions.length===0?<h1 className="bg-primary-600 inline p-2 text-sm rounded font-semibold">Submit through Playground</h1>:<h1 className="bg-primary-600 p-2 text-sm rounded font-semibold">Submit another response</h1>}
           </Link>

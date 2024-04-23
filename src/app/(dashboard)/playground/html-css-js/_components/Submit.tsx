@@ -76,7 +76,7 @@ const Submit = ({
             - index.js
           `,
           head: `${user.username}`,
-          base: "main",
+          base: `main`,
           update: true,
           forceFork: false,
           labels: [
@@ -98,9 +98,11 @@ const Submit = ({
             },
           ],
         });
+        console.log(pr);
       toast.dismiss();
       toast.success('Assignment submitted successfully');
     } catch (e) {
+      toast.dismiss();
       toast.error('Error submitting assignment');
     } finally {
       setSubmitting(false);

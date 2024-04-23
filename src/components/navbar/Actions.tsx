@@ -12,7 +12,7 @@ const Actions = ({
 
   const pathname = usePathname();
   const params = useSearchParams();
-  const assignmentId = params.get('attachmentId');
+  const assignmentId = params.get('assignmentId');
 
   useEffect(() => {
     if (!assignmentId) return;

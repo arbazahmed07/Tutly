@@ -1,11 +1,12 @@
 "use client";
 
-import MonacoEditor from '@monaco-editor/react';
 import { useContext } from 'react';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { editorOptions } from './config';
 import { Context } from './context';
 import * as monaco from 'monaco-editor';
+import dynamic from 'next/dynamic';
+const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 import PreviewPanel from './PreviewPanel';
 
 const EditorPanel = () => {
@@ -14,7 +15,6 @@ const EditorPanel = () => {
   const language = currentTabIndex === 0 ? 'html' : currentTabIndex === 1 ? 'css' : 'javascript';
   const handleEditorChange = (value: string | undefined) => {
     if (!value) return;
-
     const newState = {
       ...state,
       [currentTabIndex === 0 ? 'html' : currentTabIndex === 1 ? 'css' : 'js']: value,
@@ -36,7 +36,8 @@ const EditorPanel = () => {
       [
         "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link",
         "meta", "param", "source", "track", "wbr", "circle", "ellipse", "line", "path", "polygon",
-        "polyline", "rect", "stop", "use",
+        "polyline", "rect", "stop", "use", "h1", "h2", "h3", "h4", "h5", "h6", "input",
+        "img", "link", "meta", "area", "base", "col", "command", "embed"
       ].includes(tag);
 
     // when the user enters '>'
