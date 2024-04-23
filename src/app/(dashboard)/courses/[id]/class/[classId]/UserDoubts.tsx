@@ -89,7 +89,7 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-centermb-5">
+    <div className="flex flex-col items-center justify-center mb-5">
       <h1 className="text-xl font-semibold m-5">Ask your Doubts !!</h1>
       <div className=" w-full bg-secondary-500 h-[70vh]  p-4 md:p-2 rounded-md ">
         {doubts?.map((doubt: any, index: number) => (

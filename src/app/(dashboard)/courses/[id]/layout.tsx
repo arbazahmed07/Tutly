@@ -25,7 +25,7 @@ export default async function RootLayout({
         <>
             <div className="flex w-full">
                 <ClassSidebar params={params} currentUser={currentUser} classes={classes}/>
-                <div className="flex-1">{children}</div>
+                <div className=" flex-1">{children}</div>
             </div>
         </>
     );

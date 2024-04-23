@@ -10,6 +10,7 @@ import { FaChalkboardTeacher } from "react-icons/fa";
 import { Suspense,  useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
+import { HiOutlineUserGroup } from "react-icons/hi2";
 
 export default function HomeLayout({
   children,
@@ -51,11 +52,6 @@ export default function HomeLayout({
         icon: <TbMessageQuestion />,
         path: "/mentor/doubts",
       },
-      {
-        name: "Playgrounds",
-        icon: <MdAirplay />,
-        path: "/playground/html-css-js",
-      },
     ];
   } else {
     items = [
@@ -80,9 +76,9 @@ export default function HomeLayout({
         path: "/leaderboard",
       },
       {
-        name: "Doubts",
-        icon: <TbMessageQuestion />,
-        path: "/doubts",
+        name: "Community",
+        icon: < HiOutlineUserGroup/>,
+        path: "/community",
       },
       {
         name: "Playgrounds",
