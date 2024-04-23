@@ -87,17 +87,28 @@ export default function HomeLayout({
       {
         name: "Playgrounds",
         icon: <MdAirplay />,
-        path: "/playground/html-css-js",
-      },
-    ];
-  }
-  return (
-    <div className="flex">
-      {!isCoursePage && <Sidebar items={items} menu={menu} setMenu={setMenu} />}
-      <div className="w-full">
-        <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
-        <Suspense fallback={<Loading />}>{children}</Suspense>
-      </div>
-    </div>
-  );
+        path: "/playground/html-css-js"
+    }
+]
+
+export default function HomeLayout({ children, currentUser }: {
+    children: React.ReactNode,
+    currentUser: any
+}) {
+    const [menu, setMenu] = useState<boolean>(true);
+    const pathname = usePathname();
+    const isCoursePage = pathname.startsWith('/courses/');
+    return (
+        <div className="w-full">
+            <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
+            <div className="flex">
+                {!isCoursePage&&<Sidebar items={items} menu={menu} setMenu={setMenu}/>}
+                <Suspense fallback={<Loading />}>
+                    <div className="w-full">
+                    {children}
+                    </div>
+                </Suspense>
+            </div>
+        </div>
+    )
 }

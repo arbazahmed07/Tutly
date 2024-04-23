@@ -6,6 +6,7 @@ import { GrMenu } from "react-icons/gr";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { usePathname,useRouter } from 'next/navigation';
 import { IoMdArrowRoundBack } from "react-icons/io";
+import Link from 'next/link';
 interface Props {
   // todo: change types
   currentUser?: any;
@@ -18,16 +19,24 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
   const router=useRouter()
   const pathname = usePathname();
   const Back=()=>{
-    setMenu(!menu);
     router.back();
+  }
+  const Menu=()=>{
+    setMenu(!menu);
   }
   const isCoursePage = pathname.startsWith('/courses/');
 
   return (
-    <div className='shadow-md px-2 z-40 sticky top-0 backdrop-blur-3xl'>
+    <div className='shadow-md px-2 z-50 sticky top-0 backdrop-blur-3xl'>
       <div className='flex items-center justify-between p-2'>
-        <div onClick={Back}className='p-2 rounded-full hover:bg-secondary-800 cursor-pointer'>
-          {!isCoursePage ? <GrMenu className='text-xl' />:< IoMdArrowRoundBack className='text-xl'/>}
+        <div className="flex items-center gap-3 text-xl font-semibold">
+          <div className="flex items-center gap-3">
+            <Link href='/' className="hidden md:flex">
+                LMS
+            </Link>
+            {!isCoursePage ? <div onClick={Menu} className='p-2 rounded-full hover:bg-secondary-800 cursor-pointer'><GrMenu className='text-xl' /></div>:
+            <div onClick={Back} className='p-2 rounded-full hover:bg-secondary-800 cursor-pointer'>< IoMdArrowRoundBack className='text-xl'/></div>}
+          </div>
         </div>
         <div className='flex gap-3 items-center'>
           <h1 className="text-sm font-medium">{currentUser?.role}</h1>
