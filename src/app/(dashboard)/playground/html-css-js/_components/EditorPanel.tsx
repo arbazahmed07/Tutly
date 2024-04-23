@@ -8,12 +8,7 @@ import { Context } from './context';
 import * as monaco from 'monaco-editor';
 import PreviewPanel from './PreviewPanel';
 
-const EditorPanel = (
-  { user, assignmentDetails }: {
-    user: any,
-    assignmentDetails: any
-  }
-) => {
+const EditorPanel = () => {
   const { state, dispatch, currentTabIndex, setCurrentTabIndex, theme } = useContext(Context);
   const value = currentTabIndex === 0 ? state.html : currentTabIndex === 1 ? state.css : state.js;
   const language = currentTabIndex === 0 ? 'html' : currentTabIndex === 1 ? 'css' : 'javascript';
@@ -123,7 +118,7 @@ const EditorPanel = (
           JS
         </h1>
         <div className="md:hidden">
-          <PreviewPanel user={user} assignmentDetails={assignmentDetails} />
+          <PreviewPanel />
         </div>
       </div>
       <div className="flex-1 h-full absolute w-full">

@@ -6,11 +6,7 @@ import * as z from "zod";
 const userSchema = z
   .object({
     email: z.string().min(1, "Email is required").email("Invalid email"),
-    oldPassword: z
-      .string()
-      .optional()
-      ,
-
+    oldPassword: z.string().optional(),
     newPassword: z
       .string()
       .min(1, "Password is required")
@@ -83,7 +79,7 @@ export async function POST(req: Request) {
       { message: "User updated successfully" },
       { status: 201 }
     );
-  } catch (error : any) {
+  } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

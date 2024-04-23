@@ -8,18 +8,21 @@ import {
 import { useContext, useState } from "react";
 import toast from 'react-hot-toast';
 import { Context } from "./context";
+import { Button } from "@/components/ui/button";
 const MyOctokit = Octokit.plugin(createPullRequest);
 
 const Submit = ({
   user,
   assignmentDetails,
+  isLoading,
 }: {
   user: any,
   assignmentDetails: any,
+  isLoading?: boolean
 }) => {
-  const [submitting, setSubmitting] = useState(false);
-  const { state } = useContext(Context);
 
+  const [isSubmitting, setSubmitting] = useState(false);
+  const { state } = useContext(Context);
 
   const handleSubmit = async () => {
 
@@ -81,7 +84,6 @@ const Submit = ({
             "assignment-submission",
             assignmentDetails.class.course.title,
             assignmentDetails.title,
-            
           ],
           changes: [
             {
@@ -105,7 +107,9 @@ const Submit = ({
     }
   }
   return (
-    <button disabled={submitting} onClick={handleSubmit} className="text-primary-400 text-sm font-semibold disabled:opacity-50">Submit</button>
+    <Button disabled={isLoading || isSubmitting} className="w-full" variant="outline" onClick={handleSubmit} >
+      Submit
+    </Button>
   )
 }
 
