@@ -6,7 +6,7 @@ export default async function Home() {
   const { position, points, assignmentsSubmitted, assignmentsPending, currentUser } = await getDashboardData();
 
   return (
-    <div className="h-60 bg-primary-600">
+    <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
       <div className="p-10">
         <h1 className="text-secondary-50 font-bold text-2xl">Welcome back {currentUser.name} 👏</h1>
         <p className="text-secondary-50 font-medium text-sm mt-3">Here is your report for { }</p>

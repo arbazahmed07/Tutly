@@ -23,21 +23,16 @@ export default function Sidebar({items,menu,setMenu}:Props) {
         router.push(link);
     }
     return (
-        <div className={`${!menu&&"max-sm:hidden"} max-sm:absolute z-40  max-sm:pt-12 bg-background min-h-dvh shadow-xl px-3 pt-3 sticky top-0`}>
-            <Link href='/'>
-                <div className={`max-sm:hidden text-2xl font-bold mt-2`}>
-                    LMS
-                </div>
-            </Link>
+        <div className={`${!menu&&"max-sm:hidden"} p-3 -mt-3 max-sm:absolute z-40 max-sm:pt-12 min-h-dvh px-2 sticky top-0`} style={{boxShadow:"rgba(0, 0, 0, 0.25) 0px 4px 8px -2px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px, rgba(255, 255, 255, 0.5) 2px 0px 6px -2px"}}>
             {
                 items.map((item)=>{
                     return (
                         <div>
-                            <div onClick={()=>Mobile(item.path)} key={item.path} className={`${pathname===item.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded md:hidden p-2 my-2 flex items-center gap-4 cursor-pointer`}>
+                            <div onClick={()=>Mobile(item.path)} key={item.path} className={`${pathname===item.path?"bg-blue-600":"hover:bg-blue-500"} m-auto rounded md:hidden px-4 py-3 my-2 flex items-center gap-4 cursor-pointer`}>
                                 <div className={`text-2xl px-2`}>{item.icon}</div>
                                 <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
                             </div>
-                            <div onClick={()=>Desktop(item.path)} key={item.path} className={`${pathname===item.path?"bg-primary-700":"hover:bg-primary-900"} m-auto rounded hidden md:flex p-2 my-2 items-center gap-4 cursor-pointer`}>
+                            <div onClick={()=>Desktop(item.path)} key={item.path} className={`${pathname===item.path?"bg-blue-600":"hover:bg-blue-500"} m-auto rounded hidden md:flex px-3 py-3 my-2 items-center gap-4 cursor-pointer`}>
                                 <div className={`text-2xl px-2`}>{item.icon}</div>
                                 <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
                             </div>
