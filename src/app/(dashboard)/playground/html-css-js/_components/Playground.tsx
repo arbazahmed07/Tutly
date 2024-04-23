@@ -39,7 +39,8 @@ const Playground = () => {
     }
     fetch();
   }
-    , []);
+  
+    , [assignmentId]);
 
 
   return (

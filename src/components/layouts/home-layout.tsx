@@ -22,7 +22,7 @@ export default function HomeLayout({
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
   let items;
-  if (currentUser.role === "MENTOR") {
+  if (currentUser?.role === "MENTOR") {
     items = [
       {
         name: "Dashboard",

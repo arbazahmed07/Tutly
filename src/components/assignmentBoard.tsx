@@ -13,6 +13,7 @@ export default function AssignmentBoard({ courses, assignments }: any) {
     alert("No courses enrolled!");
     return;
   }
+
   
   if (!isMounted) {
     return;

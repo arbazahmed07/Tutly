@@ -183,9 +183,9 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
                   <div>{doubt.description}</div>
                 </div>
                 <div className="ml-16 my-1">
-                  {doubt.response.map((res: any) => {
+                  {doubt.response.map((res: any ,index:number) => {
                     return (
-                      <div className="rounded border px-4 my-1 p-2 flex flex-col gap-2">
+                      <div key={index} className="rounded border px-4 my-1 p-2 flex flex-col gap-2">
                         <h1 className="flex items-center text-sm"><ImReply />&nbsp; Reply</h1>
                         <div
                           key={res.id}

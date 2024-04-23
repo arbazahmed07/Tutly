@@ -1,10 +1,16 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Leaderboard({ submissions, courses } : any) {
+  const [currentCourse, setCurrentCourse] = useState<string>("");
 
-  const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
+  useEffect(()=>{
+    if(courses.length==0){
+      setCurrentCourse(courses[0].id);
+    }
+  },[])
+
   return (
     <div className="mx-2 md:mx-14 mt-4 flex flex-col gap-4">
       <h1 className="border text-center p-2">Leaderboard</h1>
