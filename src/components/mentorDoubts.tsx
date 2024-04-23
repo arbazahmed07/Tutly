@@ -8,7 +8,7 @@ import { ImReply } from "react-icons/im";
 
 function MentorDoubts({ courses, doubts: userDoubts }: any) {
   const [isMounted, setIsMounted] = useState(false);
-  const [currentCourse, setCurrentCourse] = useState(courses[0].id);
+  const [currentCourse, setCurrentCourse] = useState(courses[0]?.id);
   const [doubts, setDoubts] = useState<string[]>([]);
   const [doubt, setDoubt] = useState<string>("");
   const [reply, setReply] = useState<string>("");
