@@ -88,20 +88,21 @@ export default function HomeLayout({
       {
         name: "Playgrounds",
         icon: <MdAirplay />,
-        path: "/playground/html-css-js",
-      },
-    ];
+        path: "/playground/html-css-js"
+      }
+    ]
   }
-
   return (
     <div className="w-full">
       <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
       <div className="flex">
         {!isCoursePage && <Sidebar items={items} menu={menu} setMenu={setMenu} />}
         <Suspense fallback={<Loading />}>
-          <div className="w-full">{children}</div>
+          <div className="w-full">
+            {children}
+          </div>
         </Suspense>
       </div>
     </div>
-  );
+  )
 }
