@@ -44,14 +44,13 @@ export default async function Class({
     return (
         <div className="flex md:m-5 flex-wrap gap-6">
             <div className="flex-grow text-secondary-100">
-                <h1 className="text-3xl font-semibold my-5">{details?.title}</h1>
                 {videoId && videoType === "YOUTUBE" && <YoutubeEmbed embedId={videoId} />}
                 {videoId && videoType === "DRIVE" && <DriveEmbed embedId={videoId} />}
 
             </div>
             <div className="block m-auto md:inline md:m-0 md:min-w-96">
 
-            <div className="mt-5 rounded bg-secondary-500 p-2 w-full  h-full">
+            <div className="rounded bg-slate-200 p-2 w-full  h-full">
                 <div className=" flex flex-row  items-center justify-end mb-5">
                     <div className="text-xl my-2">
                         <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
@@ -70,30 +69,28 @@ export default async function Class({
                         return (
                             <div
                                 key={index}
-                                className="py-2 rounded-lg mb-4 relative hover:bg-primary-900 bg-primary-800"
+                                className="py-2 rounded-lg mb-4 relative bg-blue-600"
                                 >
-                                <div className="flex flex-col items-center my-2">
-                                
-                                    <div className="text-md mb-3 font-semibold">
+                                    <div className="flex gap-5 items-center text-sm font-medium p-2">
+                                        <div className="font-semibold">
                                         {attachment.title}
-                                    </div>
-                                    <div className="flex gap-5 items-center text-xs font-medium">
+                                        </div>
                                         <div className="text-secondary-300 flex items-center">
                                             <p className="text-sm">{attachment.attachmentType}</p>
                                         </div>
                                         {
                                             attachment.attachmentType==="ASSIGNMENT"?
                                             <div>
-                                                <Link href={`/assignments/${attachment.id}`}  className="flex p-1.5 bg-secondary-200 items-center rounded-md text-secondary-900">
-                                                    <h1>View </h1><FaExternalLinkAlt className="ml-2 w-3 h-3"/>
+                                                <Link href={`/assignments/${attachment.id}`}>
+                                                    <FaExternalLinkAlt className="ml-2 w-3 h-3"/>
                                                 </Link>
                                             </div>:
                                             <div>
                                                 {
                                                     attachment.link && (
                                                         <div>
-                                                        <Link href={attachment.link} className="flex p-2 bg-secondary-200 rounded-md items-center text-secondary-900">
-                                                            <h1>Link</h1><FaExternalLinkAlt className="ml-2"/>
+                                                        <Link href={attachment.link}>
+                                                           <FaExternalLinkAlt className="ml-2"/>
                                                         </Link>
                                                     </div>
                                                 )
@@ -111,7 +108,6 @@ export default async function Class({
                                                     : "Not specified"}
                                             </div>
                                         }
-                                    </div>
                                     </div>
                                 </div>
                         );
