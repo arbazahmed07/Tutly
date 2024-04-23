@@ -20,7 +20,7 @@ const UserProfile = ({ currentUser }:any) => {
         <div
           ref={componentRef}
           onClick={() => setIsOpen(!isOpen)}
-          className="relative px-1 py-[0.5px] bg-secondary-800 flex items-center gap-3 rounded-full cursor-pointer shadow-md transition"
+          className="relative px-2 py-1 rounded-xl bg-secondary-800 flex items-center gap-2 cursor-pointer shadow-md transition"
         >
           <div className="">
             <Image

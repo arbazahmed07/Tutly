@@ -7,7 +7,7 @@ import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { TbMessageQuestion } from "react-icons/tb";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { Suspense,  useState } from "react";
+import { Suspense, useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
 import { HiOutlineUserGroup } from "react-icons/hi2";
@@ -22,9 +22,10 @@ export default function HomeLayout({
   const [menu, setMenu] = useState<boolean>(true);
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
-  let items;
+  const access =
+    currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR";
 
-  const access = currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR";
+  let items;
   if (access) {
     items = [
       {
@@ -63,9 +64,9 @@ export default function HomeLayout({
       {
         name: "Courses",
         icon: <FaChalkboardTeacher />,
-        path: "/courses"
-    },
-    {
+        path: "/courses",
+      },
+      {
         name: "Assignments",
         icon: <MdOutlineAssignment />,
         path: "/assignments",
@@ -83,17 +84,21 @@ export default function HomeLayout({
       {
         name: "Playgrounds",
         icon: <MdAirplay />,
-        path: "/playground/html-css-js",
-      },
-    ];
+        path: "/playground/html-css-js"
+      }
+    ]
   }
   return (
-    <div className="flex">
-      {!isCoursePage && <Sidebar items={items} menu={menu} setMenu={setMenu} />}
-      <div className="w-full">
-        <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
-        <Suspense fallback={<Loading />}>{children}</Suspense>
+    <div className="w-full">
+      <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
+      <div className="flex">
+        {!isCoursePage && <Sidebar items={items} menu={menu} setMenu={setMenu} />}
+        <Suspense fallback={<Loading />}>
+          <div className="w-full">
+            {children}
+          </div>
+        </Suspense>
       </div>
     </div>
-  );
+  )
 }
