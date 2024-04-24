@@ -26,6 +26,7 @@ export const getUserDoubtsByCourseId = async (courseId: string) => {
 export const getEnrolledCoursesDoubts = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
+  
   const courses = await db.course.findMany({
     where: {
       enrolledUsers:{

@@ -1,6 +1,6 @@
 
 import { getClassDetails } from "@/actions/courses"
-
+import getCurrentUser from "@/actions/getCurrentUser";
 import YoutubeEmbed from "@/components/videoEmbeds/YoutubeEmbed";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -18,6 +18,7 @@ export default async function Class({
     const DRIVE = /\/file\/d\/([^\/]+)/;
     const videoLink = details?.video.videoLink;
     const videoType = details?.video.videoType;
+    const currentUser = await getCurrentUser();
     let matchType;
     
     switch (videoType) {
@@ -49,7 +50,7 @@ export default async function Class({
 
             <div className="rounded bg-slate-200 p-2 w-full  h-full">
                 <div className=" flex flex-row  items-center justify-end mb-5">
-                    <div className="text-xl my-2">
+                    <div hidden={ currentUser?.role === "STUDENT"} className="text-xl my-2">
                         <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
                             <Button
                                 className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
@@ -112,7 +113,6 @@ export default async function Class({
                 </div>
             </div>
             </div>
-            <UserDoubts userDoubts={userDoubts} classId={params.classId} />
         </div>
     );
 }

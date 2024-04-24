@@ -1,10 +1,17 @@
 
 
-const CommunityPage = () => {
+import {getEnrolledCoursesDoubts} from "@/actions/doubts";
+import CommunityForum from "@/components/Community";
+import getCurrentUser from "@/actions/getCurrentUser";
+
+const CommunityPage = async () => {
+
+  const allDoubts = await getEnrolledCoursesDoubts();
+  const currentuser = await getCurrentUser();
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold">Welcome to the Community Page!</h1>
-      <p className="mt-4 text-lg">This is a place where you can connect with other users, ask questions, share resources, and learn from others.</p>
+    <main className="flex flex-col mt-5 items-center justify-center">
+      <CommunityForum allDoubts={allDoubts}  currentUser={currentuser}  />
     </main>
   );
 }
