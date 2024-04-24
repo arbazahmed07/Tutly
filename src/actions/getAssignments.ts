@@ -27,9 +27,14 @@ export const getAllAssignedAssignments = async () => {
             include: {
               class: true,
               submissions: {
-                where: {
-                  enrolledUserId: currentUser.id,
+                where:{
+                  enrolledUser:{
+                    userId : currentUser.id,
+                  }
                 },
+                include:{
+                  points:true
+                }
               },
             },
           },
