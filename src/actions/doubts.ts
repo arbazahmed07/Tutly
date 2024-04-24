@@ -106,6 +106,7 @@ export const createDoubt = async (
   title?: string,
   description?: string
 ) => {
+  
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
   const doubt = await db.doubt.create({

@@ -7,13 +7,11 @@ import Accordion from "./accordion";
 
 export default function CommunityForum({ allDoubts, currentUser }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(allDoubts[0]?.id);
-  const [showReplies, setShowReplies] = useState<any>(false);
   const filteredallDoubts = allDoubts.filter(
     (x: any) => x.id === currentCourse
   );
 
   
-  console.log(filteredallDoubts);
   
 
   return (
@@ -38,7 +36,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
             No doubts are rised in this course
           </div>
         ) : (
-           <Accordion currentUser={currentUser} doubts={filteredallDoubts[0].doubts} />   
+           <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0].doubts} />   
         )}
       </div>
     </div>
