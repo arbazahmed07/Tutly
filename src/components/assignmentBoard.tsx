@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-export default function AssignmentBoard({ courses, assignments }: any) {
+export default function AssignmentBoard({ courses, assignments, userId }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
@@ -14,7 +14,6 @@ export default function AssignmentBoard({ courses, assignments }: any) {
     alert("No courses enrolled!");
     return;
   }
-
 
   if (!isMounted) {
     return;
@@ -47,12 +46,17 @@ export default function AssignmentBoard({ courses, assignments }: any) {
                     <div className="flex gap-4 items-center text-sm">
                       <h2 className="font-medium">{assignment.title}</h2>
                       <button
-                        onClick={() =>
-                          router.push(`/assignments/${assignment.id}`)
+                        onClick={() => {
+                          if (userId) {
+                            router.push(`/assignments/${assignment.id}?userId=${userId}`);
+                          } else {
+                            router.push(`/assignments/${assignment.id}`);
+                          }
+                        }
                         }
                         className="p-2 px-4 bg-blue-500 rounded"
                       >
-                        View
+                        View Details
                       </button>
                     </div>
                     <div className="flex gap-6 items-center text-sm font-medium text-white">
@@ -95,7 +99,6 @@ export default function AssignmentBoard({ courses, assignments }: any) {
                       {assignment.dueDate && (
                         <h1 className="rounded-full p-2 px-3 bg-secondary-600">{assignment.dueDate?.toISOString().split("T")[0]}</h1>
                       )}
-
                     </div>
                   </div>
                 </div>
