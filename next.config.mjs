@@ -14,6 +14,7 @@ const nextConfig = {
     domains:[
       "cdn-icons-png.flaticon.com",
       "png.pngtree.com",
+      "i.postimg.cc",
       "acourseoflove.org"
     ]
   },
