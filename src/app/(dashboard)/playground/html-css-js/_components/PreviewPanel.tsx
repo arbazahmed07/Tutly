@@ -2,19 +2,11 @@
 import { useContext, useState } from 'react';
 import { Context } from './context';
 import { RiFullscreenExitLine } from "react-icons/ri";
-import { useSearchParams } from 'next/navigation';
 import { RxCross2 } from "react-icons/rx";
 import { FaEye } from "react-icons/fa6";
 
-import Submit from './Submit';
 
-const PreviewPanel = ({
-  user,
-  assignmentDetails
-}: {
-  user: any,
-  assignmentDetails: any
-}) => {
+const PreviewPanel = () => {
   const { state } = useContext(Context);
   const srcDoc = state.html + '<style>' + state.css + '</style>' + '<script>' + state.js + '</script>';
 
@@ -32,9 +24,6 @@ const PreviewPanel = ({
       <div className={`hidden md:flex justify-between px-3 items-center p-3`}>
         <h1 className="text-primary-400 text-sm font-semibold">Preview</h1>
         <div className="flex text-primary-400 text-sm font-semibold gap-5">
-          {
-            user && assignmentDetails && <Submit user={user} assignmentDetails={assignmentDetails} />
-          }
           <h1 onClick={handleShow}><RiFullscreenExitLine className="h-5 w-5" /></h1>
         </div>
         {show && (
@@ -65,9 +54,6 @@ const PreviewPanel = ({
       />
       <div className='md:hidden flex items-center'>
         <h1 onClick={handleShow} className="px-1 text-primary-400 text-sm font-semibold"><FaEye className="h-5 w-5 mx-2" /></h1>
-        {
-            user && assignmentDetails && <Submit user={user} assignmentDetails={assignmentDetails} />
-        }
       </div>
       {show &&
         <div className="md:hidden fixed z-50 inset-0 overflow-y-auto">

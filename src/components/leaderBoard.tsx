@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import img from '/public/assets/nodata.jpg'
+import { FaCrown } from "react-icons/fa6";
 import  { useState } from 'react'
 
 export default function Leaderboard({ submissions, courses }: any) {
@@ -11,8 +11,11 @@ export default function Leaderboard({ submissions, courses }: any) {
   );
 
   return (
-    <div className="mx-2 md:mx-14 mt-4 flex flex-col gap-4">
-      <h1 className="border text-center p-2 font-semibold text-lg">Leaderboard</h1>
+    <div className="mx-2 md:mx-14 mt-1 flex flex-col gap-4">
+      <div className="flex flex-col font-bold text-center">
+        <FaCrown className="h-20 w-20 m-auto"/>
+        <h1>Leaderboard</h1>
+      </div>
       <div className="flex gap-3">
         {courses?.map((course: any) => (
           <button

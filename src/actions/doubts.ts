@@ -1,16 +1,17 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
+import { getMentorCourses } from "./courses";
 
-//get all doubts exist in all classes
-export const getAllDoubts = async () => {
+export const getUserDoubtsByCourseId = async (courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-
-  
   const doubts = await db.doubt.findMany({
+    where: {
+      courseId: courseId,
+    },
     include: {
       user: true,
-      class: true,
+      course: true,
       response: {
         include: {
           user: true,
@@ -19,164 +20,88 @@ export const getAllDoubts = async () => {
     },
   });
   return doubts;
+};
+
+//get all doubts based on enrolled courses for user
+export const getEnrolledCoursesDoubts = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+  const courses = await db.course.findMany({
+    where: {
+      enrolledUsers:{
+        some:{
+          userId:currentUser.id
+        }
+      }
+    },
+    include:{
+      doubts:{
+        include:{
+          user:true,
+          response:{
+            include:{
+              user:true
+            }
+          }
+        }
+      }
+    }
+  });
+  return courses;
 }
-//for user doubts in class tab
-export const getUserDoubtsByClassId = async (classId: string) => {
+
+//get all doubts based on created courses for user (instructor)
+export const getCreatedCoursesDoubts = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-  const doubts = await db.doubt.findMany({
-    where: {
-      classId: classId,
-      userId: currentUser.id,
+  const courses = await db.course.findMany({
+    where:{
+      createdById:currentUser.id
     },
-    include: {
-      user: true,
-      class: true,
-      response: {
-        include: {
-          user: true,
-        },
-      },
-    },
+    include:{
+      doubts:{
+        include:{
+          user:true,
+          response:{
+            include:{
+              user:true
+            }
+          }
+        }
+      }
+    }
   });
-  return doubts;
-};
+  return courses;
+}
 
-//for instructor to display all user douts in class tab
-export const getAllDoubtsByClassId = async (classId: string) => {
-  const doubts = await db.doubt.findMany({
-    where: {
-      classId: classId,
-    },
-    include: {
-      user: true,
-      class: true,
-      response: {
-        include: {
-          user: true,
-        },
-      },
-    },
-  });
-  return doubts;
-};
-
-//for mentor to display all assigned users douts in class tab
-export const getAllDoubtsByClassIdForMentor = async (classId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const doubts = await db.doubt.findMany({
-    where: {
-      classId: classId,
-      user: {
-        assignedMentors: {
-          some: {
-            mentorId: currentUser.id,
-          },
-        },
-      },
-    },
-    include: {
-      user: true,
-      class: true,
-      response: {
-        include: {
-          user: true,
-        },
-      },
-    },
-  });
-  return doubts;
-};
-
-// get all doubts for mentor
+//get all doubts for mentor
 export const getAllDoubtsForMentor = async () => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const doubts = await db.doubt.findMany({
-    where: {
-      user: {
-        enrolledUsers: {
-          some: {
-            assignedMentors: {
-              some: {
-                mentorId: currentUser.id,
-              },
-            },
-          },
-        },
-      },
+  const mentorCourses = await getMentorCourses();
+  if (!mentorCourses) return null;
+  const courses = await db.course.findMany({
+    where:{
+      id:{
+        in:mentorCourses.map((course)=>course.id)
+      }
     },
-    include: {
-      user: true,
-      class: true,
-      response: {
-        include: {
-          user: true,
-        },
-      },
-    },
+    include:{
+      doubts:{
+        include:{
+          user:true,
+          response:{
+            include:{
+              user:true
+            }
+          }
+        }
+      }
+    }
   });
-  return doubts;
-};
+  return courses;
+}
 
-//get all doubts for instructor in a course
-export const getAllDoubtsByCourseId = async (courseId: string) => {
-  const doubts = await db.doubt.findMany({
-    where: {
-      class: {
-        courseId: courseId,
-      },
-    },
-    include: {
-      user: true,
-      class: true,
-      response: {
-        include: {
-          user: true,
-        },
-      },
-    },
-  });
-  return doubts;
-};
-
-//get all doubts for mentor in a course
-export const getAllDoubtsByCourseIdForMentor = async (courseId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const doubts = await db.doubt.findMany({
-    where: {
-      class: {
-        courseId: courseId,
-      },
-      user: {
-        assignedMentors: {
-          some: {
-            mentorId: currentUser.id,
-          },
-        },
-      },
-    },
-    include: {
-      user: true,
-      class: true,
-      response: {
-        include: {
-          user: true,
-        },
-      },
-    },
-  });
-  return doubts;
-};
-
-//for user doubts in doubt tab
 export const createDoubt = async (
-  classId: string,
+  courseId: string,
   title?: string,
   description?: string
 ) => {
@@ -184,14 +109,14 @@ export const createDoubt = async (
   if (!currentUser) return null;
   const doubt = await db.doubt.create({
     data: {
-      classId: classId,
+      courseId: courseId,
       userId: currentUser.id,
       title: title,
       description: description,
     },
     include: {
       user: true,
-      class: true,
+      course: true,
       response: {
         include: {
           user: true,
@@ -228,7 +153,7 @@ export const deleteDoubt = async (doubtId: string) => {
     },
     include: {
       user: true,
-      class: true,
+      course: true,
       response: {
         include: {
           user: true,
@@ -247,7 +172,7 @@ export const deleteAnyDoubt = async (doubtId: string) => {
     },
     include: {
       user: true,
-      class: true,
+      course: true,
       response: {
         include: {
           user: true,

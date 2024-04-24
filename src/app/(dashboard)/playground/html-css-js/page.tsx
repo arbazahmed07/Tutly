@@ -1,9 +1,5 @@
 import React from 'react'
-import dynamic from 'next/dynamic'
-
-const Playground = dynamic(() => import('./_components/Playground'), {
-  ssr: false,
-})
+import Playground from './_components/Playground'
 
 const page = () => {
   return (

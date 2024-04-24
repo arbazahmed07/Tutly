@@ -1,12 +1,13 @@
 "use client"
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import UserProfile from './UserProfile';
 import ThemeSwitch from './ThemeSwitch';
 import { GrMenu } from "react-icons/gr";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import { usePathname,useRouter } from 'next/navigation';
+import { usePathname,useRouter, useSearchParams } from 'next/navigation';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import Link from 'next/link';
+import Actions from './Actions';
 interface Props {
   // todo: change types
   currentUser?: any;
@@ -38,6 +39,7 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
             <div onClick={Back} className='p-2 rounded-full hover:bg-secondary-800 cursor-pointer'>< IoMdArrowRoundBack className='text-xl'/></div>}
           </div>
         </div>
+        <Actions currentUser={currentUser} />
         <div className='flex gap-3 items-center'>
           <h1 className="text-sm font-medium">{currentUser?.role}</h1>
           <ThemeSwitch />
