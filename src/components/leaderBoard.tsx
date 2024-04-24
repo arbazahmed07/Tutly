@@ -14,14 +14,14 @@ export default function Leaderboard({ submissions, courses }: any) {
     <div className="mx-2 md:mx-14 mt-1 flex flex-col gap-4">
       <div className="flex flex-col text-center">
         <FaCrown className="h-20 w-20 m-auto text-yellow-400"/>
-        <h1 className="text-xl font-bold">Leaderboard</h1>
+        <h1 className="text-2xl font-semibold text-yellow-300">Leaderboard</h1>
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-3 mt-4">
         {courses?.map((course: any) => (
           <button
             onClick={() => setCurrentCourse(course.id)}
             className={`rounded p-2 w-20 sm:w-auto ${
-              currentCourse === course.id && "border"
+              currentCourse === course.id && "bg-neutral-500"
             }`}
             key={course.id}
           >
@@ -31,8 +31,10 @@ export default function Leaderboard({ submissions, courses }: any) {
       </div>
       <div className="flex flex-col gap-2">
         {filteredSubmissions.length === 0 ? (
-          <div className="p-4 border rounded text-center">
-            No submissions available for this course
+          <div className="p-4 mt-6 font-semibold text-center">
+            <Image src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png" height={300} 
+            className="m-auto " width={300} alt=""/>
+            <h1>No submissions available for this course</h1>
           </div>
         ) : (
           filteredSubmissions.map((x: any, index: any) => (

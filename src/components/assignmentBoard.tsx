@@ -28,7 +28,7 @@ export default function AssignmentBoard({ courses, assignments }: any) {
             <button
               onClick={() => setCurrentCourse(course.id)}
               className={`rounded p-2 w-20 sm:w-auto ${
-                currentCourse === course.id && "border"
+                currentCourse === course.id && "bg-neutral-500"
               }`}
               key={course.id}
             >
@@ -42,7 +42,7 @@ export default function AssignmentBoard({ courses, assignments }: any) {
         return couse.classes.map((cls: any) => {
           return cls.attachments.map((assignment: any) => {
             return (
-              <div key={assignment.id} className="border p-1 md:p-2">
+              <div key={assignment.id} className="border rounded-lg p-1 md:p-3">
                 <div className="flex items-center p-2 md:p-0 md:px-4 justify-around md:justify-between">
                   <div className="flex flex-col md:flex-row items-center justify-between w-full">
                     <div className="flex gap-4 items-center text-sm">
@@ -56,10 +56,10 @@ export default function AssignmentBoard({ courses, assignments }: any) {
                         View
                       </button>
                     </div>
-                    <div className="flex gap-3 items-center text-sm font-medium">
+                    <div className="flex gap-6 items-center text-sm font-medium text-white">
                       {
                           assignment.submissions.length===0?
-                          <div className="flex gap-4 itens-center">
+                          <div className="flex gap-6 itens-center">
                             {
                               (assignment.dueDate &&  currentTime< new Date(assignment.dueDate))?
                               <div className="rounded-full p-2 px-3 bg-secondary-600">not submitted</div>:
@@ -72,15 +72,15 @@ export default function AssignmentBoard({ courses, assignments }: any) {
                               assignment.submissions.map((eachSubmission :any)=>{
                                 if(eachSubmission.points.length===0) {
                                   return(
-                                    <div className="flex gap-4 items-center">
-                                      <div>{eachSubmission.submissionLink}</div>
+                                    <div className="flex gap-6 items-center">
+                                      <div className="text-blue-500">{eachSubmission.submissionLink}</div>
                                       <div className="rounded-full p-2 px-3 bg-yellow-600">Under review</div>
                                     </div>
                                   )
                                 }else {
                                   return(
-                                    <div className="flex gap-3 items-center">
-                                      <div>{eachSubmission.submissionLink}</div>
+                                    <div className="flex gap-6 items-center">
+                                      <div className="text-blue-400">{eachSubmission.submissionLink}</div>
                                       <div className="rounded-full p-2 px-3 bg-green-600">Reviewed</div>
                                     </div>
                                   )
