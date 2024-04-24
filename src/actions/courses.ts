@@ -122,7 +122,7 @@ export const getMentorCourses = async () => {
                 select: {
                     classes: true
                 }
-            }
+            }, 
         }
     })
     return courses;

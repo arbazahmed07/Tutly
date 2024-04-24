@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
-import { getUserDoubtsByClassId } from "@/actions/doubts";
-import UserDoubts from "./UserDoubts";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default async function Class({
@@ -15,7 +13,6 @@ export default async function Class({
 }: {
     params: { classId: string ,id:string };
 }) {
-    const userDoubts = await getUserDoubtsByClassId(params.classId);
     const details = await getClassDetails(params.classId);
     const YOUTUBE = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const DRIVE = /\/file\/d\/([^\/]+)/;
