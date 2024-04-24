@@ -53,6 +53,11 @@ export default function HomeLayout({
         icon: <TbMessageQuestion />,
         path: "/mentor/doubts",
       },
+      {
+        name: "Community",
+        icon: < HiOutlineUserGroup/>,
+        path: "/community",
+      },
     ];
   } else {
     items = [
