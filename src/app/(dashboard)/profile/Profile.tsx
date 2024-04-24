@@ -25,33 +25,20 @@ const formatDate = (e: string) => {
 
 const UserProfile = ({ currentUser }: { currentUser: any }) => {
     const router = useRouter();
-    const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState(currentUser);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log(JSON.stringify(formData, null, 2));
-        // You can add logic here to send the updated data to the server
-        setEditMode(false);
-    };
 
     return (
-        <div className="flex flex-col items-center m-5 md:m-10 font-semibold">
+        <div className="flex flex-col items-center m-5 md:m-10 font-semibold dark:text-white">
             <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" width={120} height={120} className="rounded-full bg-slate-300 mb-5" />
-            <form onSubmit={handleSubmit} className="flex flex-col md:flex-row justify-center md:gap-10">
-                <div className="w-[100%] md:w-[40%] mt-2 text-gray-600">
-                    <label className="text-sm text-gray-600">Username:</label>
+            <form   className="flex flex-col md:flex-row justify-center md:gap-10 dark:text-white">
+                <div className="w-[100%] md:w-[40%] mt-2 dark:text-white">
+                    <label className="text-sm  dark:text-secondary-50">Username:</label>
                     <input
                         type="text"
                         name="username"
+                        disabled
                         value={formData?.username || ''}
-                        onChange={handleInputChange}
-                        disabled={!editMode}
                         className="w-full px-4 py-2 mb-2 text-sm rounded border border-blue-200 focus:outline-none focus:border-blue-500"
                     />
                     <label className="block mb-1 text-sm">
@@ -59,38 +46,41 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
                         <input
                             type="email"
                             name="email"
+                            disabled
                             value={formData?.email || ''}
-                            onChange={handleInputChange}
-                            disabled={!editMode}
                             className="w-full px-4 py-2 mb-2 text-sm rounded border border-blue-200 focus:outline-none focus:border-blue-500"
                         />
                     </label>
                 </div>
-                <div className="w-[100%] md:mt-3 md:w-[40%] text-gray-600">
+                <div className="w-[100%] md:mt-3 md:w-[40%] dark:text-white">
                     <label className="block mb-1 text-sm">
                         Name:
                         <input
                             type="text"
                             name="name"
+                            disabled
                             value={formData?.name || 'null'}
-                            onChange={handleInputChange}
-                            disabled={!editMode}
                             className="w-full px-4 py-2 rounded border mb-2 border-blue-200 focus:outline-none focus:border-blue-500"
                         />
                     </label>
-                    <label className="block mb-2 text-sm">
+                    <label className="block mb-2 text-sm dark:text-white">
                         Role:
                         <input
                             type="text"
                             name="role"
+                            disabled
                             value={formData?.role || 'STUDENT'}
-                            onChange={handleInputChange}
-                            disabled={!editMode}
                             className="w-full px-4 py-2  rounded border border-blue-200 focus:outline-none focus:border-blue-500"
                         />
                     </label>
                 </div>
             </form>
+
+            <div className="mt-5 flex flex-row-reverse justify-end  items-center  cursor-pointer bg-primary-500 hover:bg-primary-600 px-3 py-2 rounded-lg" >
+                <button  onClick={() => router.push('/profile/manage-password')} className="text-white " >
+                    Manage Password
+                </button>
+            </div>
         </div>
     );
 }
