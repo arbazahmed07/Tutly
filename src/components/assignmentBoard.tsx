@@ -6,6 +6,7 @@ export default function AssignmentBoard({ courses, assignments }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  const currentTime=new Date();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -41,29 +42,58 @@ export default function AssignmentBoard({ courses, assignments }: any) {
         return couse.classes.map((cls: any) => {
           return cls.attachments.map((assignment: any) => {
             return (
-              <div key={assignment.id} className="border p-1 md:p-4">
+              <div key={assignment.id} className="border p-1 md:p-2">
                 <div className="flex items-center p-2 md:p-0 md:px-4 justify-around md:justify-between">
-                  <div className="flex flex-col md:flex-row gap-4  items-center justify-between w-full">
-                    <div className="flex gap-10 items-center text-sm">
+                  <div className="flex flex-col md:flex-row items-center justify-between w-full">
+                    <div className="flex gap-4 items-center text-sm">
                       <h2 className="font-medium">{assignment.title}</h2>
                       <button
                         onClick={() =>
                           router.push(`/assignments/${assignment.id}`)
                         }
-                        className="p-2 px-4 bg-primary-500 rounded"
+                        className="p-2 px-4 bg-blue-500 rounded"
                       >
                         View
                       </button>
                     </div>
-                    <div className="flex gap-4 items-center text-sm font-medium">
+                    <div className="flex gap-3 items-center text-sm font-medium">
+                      {
+                          assignment.submissions.length===0?
+                          <div className="flex gap-4 itens-center">
+                            {
+                              (assignment.dueDate &&  currentTime< new Date(assignment.dueDate))?
+                              <div className="rounded-full p-2 px-3 bg-secondary-600">not submitted</div>:
+                              <div className="rounded-full p-2 px-3 bg-red-600">not submitted</div>
+                            }
+                          </div>
+                          :
+                          <div>
+                            {
+                              assignment.submissions.map((eachSubmission :any)=>{
+                                if(eachSubmission.points.length===0) {
+                                  return(
+                                    <div className="flex gap-4 items-center">
+                                      <div>{eachSubmission.submissionLink}</div>
+                                      <div className="rounded-full p-2 px-3 bg-yellow-600">Under review</div>
+                                    </div>
+                                  )
+                                }else {
+                                  return(
+                                    <div className="flex gap-3 items-center">
+                                      <div>{eachSubmission.submissionLink}</div>
+                                      <div className="rounded-full p-2 px-3 bg-green-600">Reviewed</div>
+                                    </div>
+                                  )
+                                }
+                              })
+                            } 
+                          </div>
+                  
+                      }
                       {assignment.dueDate && (
                           <h1 className="rounded-full p-2 px-3 bg-secondary-600">{assignment.dueDate?.toISOString().split("T")[0]}</h1>
                         )}
-                      <h1 className="rounded-full p-2 px-3 bg-secondary-600">
-                        {assignment.submissions.length === 0
-                          ? "not submitted"
-                          : "submitted"}
-                      </h1>
+
                     </div>
                   </div>
                 </div>

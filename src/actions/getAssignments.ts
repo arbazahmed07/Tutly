@@ -43,7 +43,7 @@ export const getAllAssignedAssignments = async () => {
 
 export const getAllAssignedAssignmentsByUserId = async (id :string) => {
 
-  const courses = await getEnrolledCoursesById(id)
+  const courses = await getEnrolledCoursesById(id);
 
   const coursesWithAssignments = await db.course.findMany({
       where: {
@@ -64,10 +64,15 @@ export const getAllAssignedAssignmentsByUserId = async (id :string) => {
             include: {
               class: true,
               submissions: {
-                where: {
-                  enrolledUserId: id,
+                where:{
+                  enrolledUser:{
+                    userId : id
+                  }
                 },
-              },
+                include:{
+                  points:true
+                }
+              } 
             },
           },
         },
