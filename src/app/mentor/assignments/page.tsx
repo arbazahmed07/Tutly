@@ -2,9 +2,8 @@ import { getMentorStudents } from "@/actions/courses";
 import Link from "next/link";
 
 
-export default async function mentorAssignments(a: any) {
+export default async function mentorAssignments() {
   const students = await getMentorStudents();
-
   if (!students) return;
 
   return (

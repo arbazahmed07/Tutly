@@ -6,7 +6,7 @@ export default function AssignmentBoard({ courses, assignments }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
-  const currentTime=new Date();
+  const currentTime = new Date();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -15,7 +15,7 @@ export default function AssignmentBoard({ courses, assignments }: any) {
     return;
   }
 
-  
+
   if (!isMounted) {
     return;
   }
@@ -27,12 +27,11 @@ export default function AssignmentBoard({ courses, assignments }: any) {
           return (
             <button
               onClick={() => setCurrentCourse(course.id)}
-              className={`rounded p-2 w-20 sm:w-auto ${
-                currentCourse === course.id && "bg-neutral-500"
-              }`}
+              className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "bg-neutral-500"
+                }`}
               key={course.id}
             >
-                <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
+              <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
             </button>
           );
         })}
@@ -58,41 +57,44 @@ export default function AssignmentBoard({ courses, assignments }: any) {
                     </div>
                     <div className="flex gap-6 items-center text-sm font-medium text-white">
                       {
-                          assignment.submissions.length===0?
+                        assignment.submissions.length === 0 ?
                           <div className="flex gap-6 itens-center">
                             {
-                              (assignment.dueDate &&  currentTime< new Date(assignment.dueDate))?
-                              <div className="rounded-full p-2 px-3 bg-secondary-600">not submitted</div>:
-                              <div className="rounded-full p-2 px-3 bg-red-600">not submitted</div>
+                              (assignment.dueDate && currentTime < new Date(assignment.dueDate)) ?
+                                <div className="rounded-full p-2 px-3 bg-secondary-600">not submitted</div> :
+                                <div className="rounded-full p-2 px-3 bg-red-600">not submitted</div>
                             }
                           </div>
                           :
                           <div>
                             {
-                              assignment.submissions.map((eachSubmission :any)=>{
-                                if(eachSubmission.points.length===0) {
-                                  return(
-                                    <div className="flex gap-6 items-center">
-                                      <div className="text-blue-500">{eachSubmission.submissionLink}</div>
-                                      <div className="rounded-full p-2 px-3 bg-yellow-600">Under review</div>
+                              assignment.submissions.map((eachSubmission: any, index: number) => {
+                                if (eachSubmission.points.length === 0) {
+                                  return (
+                                    <div className="flex gap-6 items-center" key={index}>
+                                      <a target="_blank" href={eachSubmission.submissionLink}>
+                                        <div className="rounded-full p-2 px-3 bg-yellow-600 hover:bg-yellow-500">Under review</div>
+                                      </a>
                                     </div>
                                   )
-                                }else {
-                                  return(
-                                    <div className="flex gap-6 items-center">
-                                      <div className="text-blue-400">{eachSubmission.submissionLink}</div>
-                                      <div className="rounded-full p-2 px-3 bg-green-600">Reviewed</div>
+                                } else {
+                                  return (
+                                    <div className="flex gap-6 items-center" key={index}>
+                                      <a target="_blank" href={eachSubmission.submissionLink}>
+                                        <div className="rounded-full p-2 px-3 bg-green-600 hover:bg-green-500">Reviewed</div>
+                                      </a>
+
                                     </div>
                                   )
                                 }
                               })
-                            } 
+                            }
                           </div>
-                  
+
                       }
                       {assignment.dueDate && (
-                          <h1 className="rounded-full p-2 px-3 bg-secondary-600">{assignment.dueDate?.toISOString().split("T")[0]}</h1>
-                        )}
+                        <h1 className="rounded-full p-2 px-3 bg-secondary-600">{assignment.dueDate?.toISOString().split("T")[0]}</h1>
+                      )}
 
                     </div>
                   </div>

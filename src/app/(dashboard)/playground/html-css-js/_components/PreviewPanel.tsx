@@ -67,7 +67,7 @@ const PreviewPanel = () => {
               sandbox="allow-scripts"
               width="100%"
               height="100%"
-              className="h-[93vh] bg-primary-50"
+              className="h-[93vh] bg-primary-50 p-0 box-border "
             />
           </div>
         </div>
