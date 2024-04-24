@@ -1,6 +1,25 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 
+//get all doubts exist in all classes
+export const getAllDoubts = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  
+  const doubts = await db.doubt.findMany({
+    include: {
+      user: true,
+      class: true,
+      response: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  });
+  return doubts;
+}
 //for user doubts in class tab
 export const getUserDoubtsByClassId = async (classId: string) => {
   const currentUser = await getCurrentUser();
@@ -251,3 +270,4 @@ export const deleteResponse = async (responseId: string) => {
   });
   return response;
 };
+

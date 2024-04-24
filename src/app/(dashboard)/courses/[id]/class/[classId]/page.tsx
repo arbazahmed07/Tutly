@@ -119,6 +119,7 @@ export default async function Class({
                 </div>
             </div>
             </div>
+            <UserDoubts userDoubts={userDoubts} classId={params.classId} />
         </div>
     );
 }
