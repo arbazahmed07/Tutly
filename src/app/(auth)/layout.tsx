@@ -4,11 +4,21 @@ interface AuthLayoutProps {
 }
 
 const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
-  return <div className='flex h-screen w-full justify-center bg-secondary-800 items-center'>
-    <div className='p-7 m-2 md:p-10 sm:w-[400px] rounded-lg shadow-[0_20px_20px_20px_rgba(0,0,0,0.1)]'>
+  return <div className='relative h-screen w-full bg-white'>
+  <div className='absolute top-0 left-0 w-full h-full overflow-hidden'>
+    <div className='absolute w-48 h-48 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full -left-24 -top-24 transform rotate-45'></div>
+  </div>
+  <div className='absolute bottom-0 right-0 w-full h-full overflow-hidden'>
+    <div className='absolute w-48 h-48 bg-gradient-to-l from-blue-500 via-purple-500 to-pink-500 rounded-full -right-24 -bottom-24 transform rotate-45'></div>
+  </div>
+  <div className='flex justify-center items-center h-full'>
+    <div className='relative z-10 p-7 m-2 md:p-10 sm:w-[400px] rounded-lg bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg shadow-lg'>
       {children}
     </div>
-  </div>;
+  </div>
+</div>
+
+
 };
 
 export default AuthLayout;

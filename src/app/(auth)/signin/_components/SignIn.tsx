@@ -43,21 +43,21 @@ const SignIn = () => {
           <input
             type="text"
             placeholder="Username"
-            className="border border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg"
+            className="border bg-white border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg"
             {...register("username", { required: true })}
           />
           {errors.username && <p className="text-sm font-medium">* Username is required</p>}
           <input
             type="password"
             placeholder="Password"
-            className="border border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg"
+            className="border bg-white border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg"
             {...register("password", { required: true, minLength: 8 })}
           />
           {errors.password && <p className="text-sm font-medium">* Password must have more than 8 characters</p>}
-          <button
+          <button 
             type="submit"
             disabled={loading}
-            className="bg-primary-800 text-secondary-100 p-2 text-sm rounded-lg font-medium"
+            className="bg-blue-600 text-secondary-100 p-2 text-sm rounded-lg font-medium"
           >
             Sign In
           </button>
