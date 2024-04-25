@@ -106,7 +106,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
     
     const handleEscKeyDown = (e : any) => {
       if (e.key === 'Escape') {
-        setShow(false); 
+        setShow(false);
       }
     };
 
