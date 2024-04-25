@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import axios from "axios";
 
 export default function AssignmentPage({
 
@@ -23,9 +24,17 @@ export default function AssignmentPage({
   const handleEdit = (index: number) => {
     setEditingIndex(index);
     const submission = assignment?.submissions[index];
-    const rValue = submission && submission.points.find((point: any) => point.category === "RESPOSIVENESS");
-    const sValue = submission && submission.points.find((point: any) => point.category === "STYLING");
-    const oValue = submission && submission.points.find((point: any) => point.category === "OTHER");
+    const rValue =
+      submission &&
+      submission.points.find(
+        (point: any) => point.category === "RESPOSIVENESS"
+      );
+    const sValue =
+      submission &&
+      submission.points.find((point: any) => point.category === "STYLING");
+    const oValue =
+      submission &&
+      submission.points.find((point: any) => point.category === "OTHER");
     setEditedScores({
       responsiveness: rValue ? rValue.score : 0,
       styling: sValue ? sValue.score : 0,
@@ -33,20 +42,43 @@ export default function AssignmentPage({
     });
   };
 
-  const handleSave = (index: number) => {
+  const handleSave = async (index: number) => {
+    // to do
+    await axios.post("/api/points", {
+      submissionId:assignment.submissions[index].id,
+      score: editedScores.responsiveness,
+      category: "RESPOSIVENESS"
+    });
+    await axios.post("/api/points", {
+      submissionId:assignment.submissions[index].id,
+      score: editedScores.styling,
+      category: "STYLING" 
+    });
+    await axios.post("/api/points", {
+      submissionId:assignment.submissions[index].id,
+      score: editedScores.other,
+      category: "OTHER"
+    });
     setEditingIndex(-1);
     console.log("Edited Scores for submission", index + 1, ":", editedScores);
   };
 
   const calculateTotalScore = () => {
     return assignment?.submissions.reduce((total: number, submission: any) => {
-      const rValue = submission.points.find((point: any) => point.category === "RESPOSIVENESS")?.score || 0;
-      const sValue = submission.points.find((point: any) => point.category === "STYLING")?.score || 0;
-      const oValue = submission.points.find((point: any) => point.category === "OTHER")?.score || 0;
+      const rValue =
+        submission.points.find(
+          (point: any) => point.category === "RESPOSIVENESS"
+        )?.score || 0;
+      const sValue =
+        submission.points.find((point: any) => point.category === "STYLING")
+          ?.score || 0;
+      const oValue =
+        submission.points.find((point: any) => point.category === "OTHER")
+          ?.score || 0;
       return total + rValue + sValue + oValue;
     }, 0);
   };
-  
+
   return (
     <div className="mx-2 md:mx-10 my-2 relative">
       <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 rounded text-sm md:text-lg font-medium">
@@ -59,10 +91,11 @@ export default function AssignmentPage({
         </p>
         {assignment?.dueDate != null && (
           <div
-            className={`p-1 px-2 rounded bg-secondary-700 ${new Date(assignment?.dueDate) > new Date()
+            className={`p-1 px-2 rounded bg-secondary-700 ${
+              new Date(assignment?.dueDate) > new Date()
                 ? "bg-primary-600"
                 : "bg-secondary-700"
-              }`}
+            }`}
           >
             Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
           </div>
@@ -105,6 +138,7 @@ export default function AssignmentPage({
           </Link>
         </div>
         <div className="overflow-x-auto">
+          <h1 className="p-2 rounded border text-white my-2">Submissions</h1>
           <table className="min-w-full divide-y divide-gray-200 text-center">
             <thead className="bg-secondary-300 text-secondary-700">
               <tr>
@@ -175,10 +209,8 @@ export default function AssignmentPage({
 
                 return (
                   <tr key={index}>
-
                     <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                     <td className={`${currentUser?.role === "STUDENT"&&"hidden"} px-6 py-4 whitespace-nowrap`}>
-
                       <a
                         target="_blank"
                         href={submission.submissionLink}

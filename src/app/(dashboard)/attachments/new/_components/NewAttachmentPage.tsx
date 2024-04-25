@@ -106,7 +106,7 @@ const NewAttachmentPage = () => {
             link: values.videoLink,
             attachmentType: values.videoType,
             details: values.details,
-            dueDate: new Date(values.dueDate).toISOString() || undefined
+            dueDate: values?.dueDate!="" ? new Date(values.dueDate).toISOString() : undefined
         })
 
         if (response.status !== 200) {
@@ -114,6 +114,7 @@ const NewAttachmentPage = () => {
             return
         }
         toast.success('attachment created')
+        router.push(`/courses/${courseId}/class/${classId}`)
     }
 
 
