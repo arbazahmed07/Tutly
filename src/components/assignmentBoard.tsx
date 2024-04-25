@@ -46,19 +46,6 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
                   <div className="flex flex-col md:flex-row items-center justify-between w-full">
                     <div className="flex gap-4 items-center text-sm">
                       <h2 className="font-medium">{assignment.title}</h2>
-                      <button
-                        onClick={() => {
-                          if (userId) {
-                            router.push(`/assignments/${assignment.id}?userId=${userId}`);
-                          } else {
-                            router.push(`/assignments/${assignment.id}`);
-                          }
-                        }
-                        }
-                        className="p-2 px-4 bg-blue-500 rounded"
-                      >
-                        View Details
-                      </button>
                     </div>
                     <div className="flex gap-6 items-center text-sm font-medium text-white">
                       {
@@ -100,6 +87,19 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
                       {assignment.dueDate && (
                         <h1 className="rounded-full p-2 px-3 bg-secondary-600">{assignment.dueDate?.toISOString().split("T")[0]}</h1>
                       )}
+                      <button
+                        onClick={() => {
+                          if (userId) {
+                            router.push(`/assignments/${assignment.id}?userId=${userId}`);
+                          } else {
+                            router.push(`/assignments/${assignment.id}`);
+                          }
+                        }
+                        }
+                        className="p-2 px-4 bg-blue-500 rounded"
+                      >
+                        View Details
+                      </button>
                     </div>
                   </div>
                 </div>
