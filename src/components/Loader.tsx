@@ -1,12 +1,13 @@
 
-import React from 'react';
+import React, { Suspense } from 'react';
 
 const Loader = () => {
     return (
-        <div className="flex justify-center items-center h-screen">
-            <div className="loader"></div>
-        </div>
-        
+        <Suspense>
+            <div className="flex justify-center items-center h-screen">
+                <div className="loader"></div>
+            </div>
+        </Suspense>
     )
 }
 

@@ -114,6 +114,7 @@ const NewAttachmentPage = () => {
             return
         }
         toast.success('attachment created')
+        router.push(`/courses/${courseId}/class/${classId}`)
     }
 
 

@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import NewCoursePage from './_components/NewAttachmentPage'
 
 const page = async () => {
 
   return (
-    <NewCoursePage />
+    <Suspense fallback={<div>Loading...</div>}>
+      <NewCoursePage />
+    </Suspense>
   )
 }
 

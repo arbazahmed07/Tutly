@@ -3,7 +3,11 @@
 import Split from 'react-split';
 import "@/styles/react-split.css"
 import PreviewPanel from './PreviewPanel';
-import EditorPanel from './EditorPanel';
+import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
+const EditorPanel = dynamic(() => import('./EditorPanel'),{
+  ssr: false
+}); 
 
 const Playground = () => {
   return (
@@ -13,7 +17,9 @@ const Playground = () => {
       minSize={300}
     >
       <div className='h-full relative'>
-        <EditorPanel />
+        <Suspense fallback={<div>Loading...</div>}>
+          <EditorPanel />
+        </Suspense>
       </div>
       <PreviewPanel />
     </Split>

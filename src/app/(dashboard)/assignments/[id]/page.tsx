@@ -1,5 +1,3 @@
-import { useState } from "react";
-import Link from "next/link";
 import { getAssignmentDetailsByUserId } from "@/actions/assignments";
 import getCurrentUser from "@/actions/getCurrentUser";
 import AssignmentPage from "./AssignmentPage";

@@ -1,10 +1,8 @@
 "use client";
-import Assignments from "@/app/(dashboard)/assignments/page";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { MdOutlineSportsScore } from "react-icons/md";
-export default async function AssignmentBoard({ courses, assignments, userId }: any) {
+export default function AssignmentBoard({ courses, assignments, userId }: any) {
   let total=0
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);

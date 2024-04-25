@@ -41,7 +41,7 @@ const Submit = ({
     try {
       setSubmitting(true);
         toast.loading('Submitting assignment');
-        const submission = await axios.post(`/api/assignment/${assignmentDetails.id}/submit`, {
+        const submission = await axios.post(`/api/assignment/submit`, {
           assignmentDetails,
           files,
         });

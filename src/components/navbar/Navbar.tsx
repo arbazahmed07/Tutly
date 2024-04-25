@@ -1,5 +1,5 @@
 "use client";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, Suspense, useEffect, useState } from "react";
 import UserProfile from "./UserProfile";
 import ThemeSwitch from "./ThemeSwitch";
 import { GrMenu } from "react-icons/gr";
@@ -51,7 +51,9 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
             </Link>
           </div>
         </div>
-        <Actions currentUser={currentUser} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Actions currentUser={currentUser} />
+        </Suspense>
         <div className="flex gap-3 items-center">
           <h1 className="text-sm font-medium">{currentUser?.role}</h1>
           <ThemeSwitch />
