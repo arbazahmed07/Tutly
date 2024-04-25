@@ -18,7 +18,6 @@ export default async function SubmmitAssignment({
   const userId = (searchParams?.userId as string) || currentUser.id;
   const assignment = await getAssignmentDetailsByUserId(params.id, userId);
 
-
   return(
     <AssignmentPage assignment={assignment} currentUser={currentUser} params={params}/>
   );
