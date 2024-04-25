@@ -8,8 +8,8 @@ function AddCourse() {
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [courseTitle, setCourseTitle] = useState<string>("");
     const handleSubmit = async () => {
-    const newCourse = await createCourse({ title: courseTitle })
-        setOpenPopup(!openPopup);
+      //    const newCourse = await createCourse({ title: courseTitle })
+      // setOpenPopup(!openPopup);
     };
   return (
     <>
