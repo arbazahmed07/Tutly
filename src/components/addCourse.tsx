@@ -1,5 +1,6 @@
 "use client";
 import { createCourse } from "@/actions/courses";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoMdCloseCircle } from "react-icons/io";
@@ -8,8 +9,11 @@ function AddCourse() {
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [courseTitle, setCourseTitle] = useState<string>("");
     const handleSubmit = async () => {
-      //    const newCourse = await createCourse({ title: courseTitle })
-      // setOpenPopup(!openPopup);
+    const newCourse = await axios.post("/api/course/create",{
+    title:courseTitle,
+    isPublished:true,
+    })
+      setOpenPopup(!openPopup);
     };
   return (
     <>
