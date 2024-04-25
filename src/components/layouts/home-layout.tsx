@@ -48,11 +48,11 @@ export default function HomeLayout({
         icon: <MdOutlineLeaderboard />,
         path: access==1?"/mentor/leaderboard":"/instructor/leaderboard",
       },
-      {
-        name: "Doubts",
-        icon: <TbMessageQuestion />,
-        path: "/mentor/doubts",
-      },
+      // {
+      //   name: "Doubts",
+      //   icon: <TbMessageQuestion />,
+      //   path: "/mentor/doubts",
+      // },
       {
         name: "Community",
         icon: < HiOutlineUserGroup/>,

@@ -130,6 +130,40 @@ export const getAllMentorAssignments = async () => {
   return coursesWithAssignments;
 };
 
+export const getAllCreatedAssignments = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+
+  const coursesWithAssignments = await db.course.findMany({
+    where: {
+      createdById:currentUser.id
+    },
+    select: {
+      id: true,
+      classes: {
+        select: {
+          attachments: {
+            where: {
+              attachmentType: "ASSIGNMENT",
+            },
+            include: {
+              class: true,
+              submissions: {
+                where: {
+                  enrolledUserId: currentUser.id,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return coursesWithAssignments;
+};
+
 export const getAssignmentDetailsByUserId = async (id:string,userId:string) => {
   const assignment = await db.attachment.findUnique({
     where: {

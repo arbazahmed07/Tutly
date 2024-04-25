@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AssignmentBoard({ courses, assignments, userId }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
@@ -10,10 +11,10 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  if (courses.length === 0) {
-    alert("No courses enrolled!");
-    return;
-  }
+  // if (courses.length === 0) {
+  //   toast.error("No courses created yet!");
+  //   return;
+  // }
 
   if (!isMounted) {
     return;
