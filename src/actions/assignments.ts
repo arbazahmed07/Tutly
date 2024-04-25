@@ -130,12 +130,7 @@ export const getAllMentorAssignments = async () => {
   return coursesWithAssignments;
 };
 
-export const getAssignmentDetailsById = async (id: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    return null;
-  }
-
+export const getAssignmentDetailsByUserId = async (id:string,userId:string) => {
   const assignment = await db.attachment.findUnique({
     where: {
       id,
@@ -148,15 +143,14 @@ export const getAssignmentDetailsById = async (id: string) => {
       },
       submissions: {
         where: {
-          enrolledUserId: currentUser.id,
+          enrolledUser:{
+            userId: userId,
+          }
         },
         include: {
           enrolledUser: {
             include: {
-              course: true,
-              assignedMentors: true,
               submission: true,
-              user: true,
             },
           },
           points: true,
@@ -166,3 +160,14 @@ export const getAssignmentDetailsById = async (id: string) => {
   });
   return assignment;
 };
+
+
+// export const submitAssignment = async (assignmentId: string, userId: string, link: string) => {
+//   const submission = await db.submission.create({
+//     data: {
+//       enrolledUserId: userId,
+//       submissionLink: link,
+//     },
+//   });
+//   return submission;
+// }

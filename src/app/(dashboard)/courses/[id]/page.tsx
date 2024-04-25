@@ -1,6 +1,7 @@
-import React from "react";
-import { getAllAssignedAssignmentsByUserId } from "@/actions/getAssignments";
-import getCurrentUser from "@/actions/getCurrentUser";
+
+import React from 'react'
+import { getAllAssignedAssignmentsByUserId } from '@/actions/assignments'
+import getCurrentUser from '@/actions/getCurrentUser'
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 const page = async ({ params }: { params: { id: string } }) => {
