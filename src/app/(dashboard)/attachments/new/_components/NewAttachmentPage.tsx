@@ -106,7 +106,7 @@ const NewAttachmentPage = () => {
             link: values.videoLink,
             attachmentType: values.videoType,
             details: values.details,
-            dueDate: new Date(values.dueDate).toISOString() || undefined
+            dueDate: values?.dueDate!="" ? new Date(values.dueDate).toISOString() : undefined
         })
 
         if (response.status !== 200) {

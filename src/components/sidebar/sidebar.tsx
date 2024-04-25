@@ -22,7 +22,7 @@ export default function Sidebar({items,menu,setMenu}:Props) {
         router.push(link);
     }
     return (
-        <div className={`${!menu&&"max-sm:hidden"} p-3 -mt-3 max-sm:absolute z-40 max-sm:pt-12 min-h-dvh px-2 sticky top-0`} style={{boxShadow:"rgba(0, 0, 0, 0.25) 0px 4px 8px -2px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px, rgba(255, 255, 255, 0.5) 2px 0px 6px -2px"}}>
+        <div className={`${!menu&&"max-sm:hidden"} p-3 -mt-3 max-sm:absolute z-40 max-sm:pt-12 min-h-dvh px-2 sticky top-0 shadow-sm shadow-blue-800/40`}>
             {
                 items.map((item)=>{
                     return (

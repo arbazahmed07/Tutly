@@ -47,7 +47,7 @@ export default function Leaderboard({ submissions, courses }: any) {
         {courses?.map((course: any) => (
           <button
             onClick={() => setCurrentCourse(course.id)}
-            className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "bg-neutral-500"}`}
+            className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "border rounded"}`}
             key={course.id}
           >
             <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
