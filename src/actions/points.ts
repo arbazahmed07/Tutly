@@ -3,10 +3,11 @@ import { db } from "@/lib/db";
 export const updatePoints = async (
   submissionId: string,
   score: number,
-  category: any
+  category: "RESPOSIVENESS"|"OTHER"|"STYLING"
 ) => {
   const submission = await db.point.upsert({
     where: {
+      submissionId:submissionId,
       submissionId_category: {
         submissionId,
         category,
