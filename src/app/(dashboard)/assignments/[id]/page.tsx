@@ -1,6 +1,5 @@
 import { getAssignmentDetailsByUserId } from "@/actions/getAssignments";
 import getCurrentUser from "@/actions/getCurrentUser";
-
 import Link from "next/link";
 
 export default async function SubmmitAssignment({
@@ -16,6 +15,7 @@ export default async function SubmmitAssignment({
   }
   const userId = searchParams?.userId as string || currentUser.id;
   const assignment = await getAssignmentDetailsByUserId(params.id,userId);
+
 
   return (
     <div className="mx-2 md:mx-10 my-2">
@@ -48,6 +48,36 @@ export default async function SubmmitAssignment({
             {assignment?.submissions.length === 0 ? <h1 className="bg-blue-600 inline p-2 text-sm rounded font-semibold">Submit through Playground</h1> : <h1 className="bg-primary-600 p-2 text-sm rounded font-semibold">Submit another response</h1>}
           </Link>
         </div>
+        <table className="border-collapse border border-gray-400">
+          <thead>
+            <tr>
+              <th className="border border-gray-400 px-4 py-2">Submission Id</th>  
+              <th className="border border-gray-400 px-4 py-2">Responsiveness</th>
+              <th className="border border-gray-400 px-4 py-2">Styling</th>
+              <th className="border border-gray-400 px-4 py-2">Others</th>  
+              <th className="border border-gray-400 px-4 py-2">Overall score</th>
+            </tr>
+          </thead>
+          <tbody>
+              {assignment?.submissions.map((assign:any, index:number) => (
+                <tr key={index}>
+                  <td className="border border-gray-400 px-4 py-2">{assign.enrolledUser.submission[0].id}</td>
+                  <td className="border border-gray-400">
+                      <input title="" placeholder="Responsiveness" readOnly={currentUser.role ==="STUDENT"}/>
+                  </td>
+                  <td className="border border-gray-400">
+                      <input title="" placeholder="Styling"  readOnly={currentUser.role === 'STUDENT'}/>
+                  </td>
+                  <td className="border border-gray-400">
+                      <input title="" placeholder="Others" readOnly={currentUser.role === 'STUDENT'}/>
+                  </td>
+                  <td className="border border-gray-400">
+                      
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
         <pre className="bg-secondary-700 p-2 rounded text-wrap">
           {JSON.stringify(assignment, null, 2)}
         </pre>
