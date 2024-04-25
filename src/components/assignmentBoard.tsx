@@ -1,9 +1,11 @@
 "use client";
+import Assignments from "@/app/(dashboard)/assignments/page";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-export default function AssignmentBoard({ courses, assignments, userId }: any) {
+import { MdOutlineSportsScore } from "react-icons/md";
+export default async function AssignmentBoard({ courses, assignments, userId }: any) {
+  let total=0
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
@@ -72,10 +74,12 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
                                 } else {
                                   return (
                                     <div className="flex gap-6 items-center" key={index}>
-                                      <a target="_blank" href={eachSubmission.submissionLink}>
-                                        <div className="rounded-full p-2 px-3 bg-green-600 hover:bg-green-500">Reviewed</div>
-                                      </a>
-
+                                      <div className="rounded-full p-2 px-3 bg-green-600 hover:bg-green-500">
+                                        {eachSubmission.points.forEach((point:any)=>{
+                                          total += point.score;
+                                        })}
+                                        {total} <MdOutlineSportsScore />
+                                      </div>
                                     </div>
                                   )
                                 }
@@ -88,6 +92,7 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
                         <h1 className="rounded-full p-2 px-3 bg-secondary-600">{assignment.dueDate?.toISOString().split("T")[0]}</h1>
                       )}
                       <button
+                      title="btn"
                         onClick={() => {
                           if (userId) {
                             router.push(`/assignments/${assignment.id}?userId=${userId}`);
