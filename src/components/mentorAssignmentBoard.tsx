@@ -23,7 +23,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
             <button
               onClick={() => setCurrentCourse(course.id)}
               className={`rounded p-2 w-20 sm:w-auto ${
-                currentCourse === course.id && "bg-neutral-500"
+                currentCourse === course.id && "border rounded"
               }`}
               key={course.id}
             >
@@ -63,7 +63,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
                   </div>
                   <div
                     onClick={() => router.push(`${role==="INSTRUCTOR"?`/instructor/assignments/${student.id}`:`/mentor/assignments/${student.id}`}`)}
-                    className="bg-slate-500 p-2 text-sm font-medium rounded-lg cursor-pointer"
+                    className="bg-primary-700 p-2 text-sm font-medium rounded-lg cursor-pointer"
                   >
                     Assignments
                   </div>
