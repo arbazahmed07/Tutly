@@ -66,19 +66,20 @@ export default async function AssignmentBoard({ courses, assignments, userId }: 
                                 if (eachSubmission.points.length === 0) {
                                   return (
                                     <div className="flex gap-6 items-center" key={index}>
-                                      <a target="_blank" href={eachSubmission.submissionLink}>
                                         <div className="rounded-full p-2 px-3 bg-yellow-600 hover:bg-yellow-500">Under review</div>
-                                      </a>
                                     </div>
                                   )
                                 } else {
                                   return (
                                     <div className="flex gap-6 items-center" key={index}>
-                                      <div className="rounded-full p-2 px-3 bg-green-600 hover:bg-green-500">
+                                      <div className="rounded-full p-2 px-3 bg-green-600 flex items-center">
                                         {eachSubmission.points.forEach((point:any)=>{
                                           total += point.score;
                                         })}
-                                        {total} <MdOutlineSportsScore />
+                                        <h1>
+                                          Score : {total}
+                                        </h1>
+                                        <MdOutlineSportsScore className="inline h-5 w-5"/>
                                       </div>
                                     </div>
                                   )

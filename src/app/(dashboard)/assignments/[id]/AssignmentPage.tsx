@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-
 export default async function AssignmentPage({
   params,
   currentUser,
@@ -96,11 +95,7 @@ export default async function AssignmentPage({
             )}
           </Link>
         </div>
-
         <div className="overflow-x-auto">
-          <h1 className="p-2 rounded border text-white my-2">
-            Submissions
-          </h1>
           <table className="min-w-full divide-y divide-gray-200 text-center">
             <thead className="bg-secondary-300 text-secondary-700">
               <tr>
@@ -112,7 +107,7 @@ export default async function AssignmentPage({
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+                  className={`${currentUser?.role === "STUDENT"&&"hidden"} px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                 >
                   Submission Link
                 </th>
@@ -171,7 +166,7 @@ export default async function AssignmentPage({
                 return (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className={`${currentUser?.role === "STUDENT"&&"hidden"} px-6 py-4 whitespace-nowrap`}>
                       <a
                         target="_blank"
                         href={submission.submissionLink}
