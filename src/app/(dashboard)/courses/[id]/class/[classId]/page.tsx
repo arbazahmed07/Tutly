@@ -47,9 +47,9 @@ export default async function Class({
             </div>
 
             <div className="w-full md:m-0 md:w-96">
-                <div className="rounded-xl p-2 w-full h-full bg-slate-800">
+                <div className="rounded-xl p-2 w-full h-full dark:bg-slate-800 bg-slate-500">
                     <div className=" flex flex-row  items-center justify-end mb-5">
-                        <div hidden={ currentUser?.role === "STUDENT"} className="text-xl my-2">
+                        <div hidden={ currentUser?.role === "STUDENT" || currentUser?.role === "MENTOR" } className="text-xl my-2">
                             <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
                                 <Button
                                     className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
@@ -62,13 +62,18 @@ export default async function Class({
                         </div>
                     </div>
                     <div>
-                        <div className="border-b-2 border-secondary-400 flex items-center justify-between">
+                        <div className="border-b-2 font-semibold border-secondary-400  flex items-center justify-between">
                             <h4 className="ms-8 ">Title</h4>
                             <h4 className="ms-10">Type</h4>
                             <h4 className="ms-8">Link</h4>
                             <h4>Due Date</h4>
                         </div>
                         <div className="mt-3"></div>
+                        {
+                            details?.attachments?.length === 0 && (
+                                <div className="text-center text-lg mt-5 text-secondary-300">No assignments</div>
+                            )
+                        }
                         {details?.attachments?.map((attachment, index) => {
                             return (
                                 <div

@@ -124,7 +124,7 @@ const authOptions: AuthOptions = {
                 },
                 data: {
                   email: user.email,
-                  name: user.name,
+                  // name: user.name,
                   image: user.image,
                   emailVerified: new Date(),
                 },

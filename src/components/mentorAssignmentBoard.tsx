@@ -3,15 +3,15 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-function MentorAssignmentBoard({ students, courses, role }: any) {
-  const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
+function MentorAssignmentBoard({ courses, students, role }: any) {
+  const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
+  
   if (!isMounted) {
     return;
   }
@@ -48,7 +48,7 @@ function MentorAssignmentBoard({ students, courses, role }: any) {
                 <div className="p-1 flex justify-between items-center">
                   <div className="flex gap-5 items-center">
                     <Image
-                      src={student.image}
+                      src={student?.image || "/images/placeholder.jpg"}
                       height={40}
                       width={40}
                       alt=""
