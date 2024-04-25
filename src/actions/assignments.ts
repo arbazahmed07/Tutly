@@ -160,3 +160,14 @@ export const getAssignmentDetailsByUserId = async (id:string,userId:string) => {
   });
   return assignment;
 };
+
+
+// export const submitAssignment = async (assignmentId: string, userId: string, link: string) => {
+//   const submission = await db.submission.create({
+//     data: {
+//       enrolledUserId: userId,
+//       submissionLink: link,
+//     },
+//   });
+//   return submission;
+// }

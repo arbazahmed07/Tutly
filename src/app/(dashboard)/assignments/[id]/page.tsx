@@ -1,4 +1,4 @@
-import { getAssignmentDetailsByUserId } from "@/actions/getAssignments";
+import { getAssignmentDetailsByUserId } from "@/actions/assignments";
 import getCurrentUser from "@/actions/getCurrentUser";
 import Link from "next/link";
 
@@ -14,7 +14,7 @@ export default async function SubmmitAssignment({
     return null;
   }
   const userId = searchParams?.userId as string || currentUser.id;
-  const assignment = await getAssignmentDetailsByUserId(params.id,userId);
+  const assignment = await getAssignmentDetailsByUserId(params.id, userId);
 
 
   return (

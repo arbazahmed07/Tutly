@@ -1,5 +1,5 @@
 import { getEnrolledCourses } from "@/actions/courses";
-import { getAllAssignedAssignments } from "@/actions/getAssignments";
+import { getAllAssignedAssignments } from "@/actions/assignments";
 import AssignmentBoard from "@/components/assignmentBoard";
 import Loader from "@/components/Loader";
 import { Suspense } from "react";
@@ -15,7 +15,7 @@ export default async function Assignments() {
       {
         !assignments ? <div className="text-center">No Attachments found!</div> :
           <Suspense fallback={<Loader />}>
-            <AssignmentBoard courses={courses} assignments={assignments}/>
+            <AssignmentBoard courses={courses} assignments={assignments} />
           </Suspense>
       }
     </div>
