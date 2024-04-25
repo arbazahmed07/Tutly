@@ -136,14 +136,17 @@ export const getEnrolledStudents = async () => {
   return students;
 };
 
-export const createCourse = async ({ title,isPublished }: { title: string;isPublished:boolean }) => {
+export const createCourse = async ({ title,isPublished,image }: { title: string;isPublished:boolean,image:string }) => {
+  
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
+
   const newCourse = await db.course.create({
     data: {
       title: title,
       createdById: currentUser.id,
       isPublished,
+      image ,
       enrolledUsers:{
         create:{
           userId:currentUser.id
