@@ -62,6 +62,13 @@ export default async function Class({
                         </div>
                     </div>
                     <div>
+                        <div className="border-b-2 border-secondary-400 flex items-center justify-between">
+                            <h4 className="ms-8 ">Title</h4>
+                            <h4 className="ms-10">Type</h4>
+                            <h4 className="ms-8">Link</h4>
+                            <h4>Due Date</h4>
+                        </div>
+                        <div className="mt-3"></div>
                         {details?.attachments?.map((attachment, index) => {
                             return (
                                 <div
