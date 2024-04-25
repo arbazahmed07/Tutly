@@ -3,11 +3,21 @@ import CourseCard from "@/components/courseCard";
 import img from '/public/assets/notEnrolled.png'
 import { BsDropbox } from "react-icons/bs";
 import Image from "next/image";
+import Link from "next/link";
 
 export default async function Courses() {
     const courses = await getEnrolledCourses();
     return (
         <div>
+            <div className="  flex flex-row-reverse items-center mt-5 mx-5">
+                <div className=" inline p-3 rounded-lg  bg-blue-600 hover:bg-blue-700 font-medium ">
+                    <button className=""> 
+                        <Link href='/courses/new'>
+                            Create a new course
+                        </Link>
+                    </button>
+                </div>
+            </div>
             {/* <pre>{JSON.stringify(courses, null, 2)}</pre> */}
             {
                 courses?.length === 0 ? <div className="text-center text-2xl font-bold">
