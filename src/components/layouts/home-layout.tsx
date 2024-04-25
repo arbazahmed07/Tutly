@@ -11,6 +11,7 @@ import { Suspense, useState } from "react";
 import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
 import { HiOutlineUserGroup } from "react-icons/hi2";
+import { BsPersonRaisedHand } from "react-icons/bs";
 
 export default function HomeLayout({
   children,
@@ -57,6 +58,11 @@ export default function HomeLayout({
         name: "Community",
         icon: < HiOutlineUserGroup/>,
         path: "/community",
+      },
+      {
+        name: "Attendance",
+        icon: < BsPersonRaisedHand/>,
+        path: "/attendance",
       },
     ];
   } else {
