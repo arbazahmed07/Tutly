@@ -140,6 +140,9 @@ export const createResponse = async (doubtId: string, description: string) => {
       userId: currentUser.id,
       description: description,
     },
+    include: {
+      user : true
+    }
   });
   return response;
 };
@@ -187,12 +190,10 @@ export const deleteAnyDoubt = async (doubtId: string) => {
 
 //for user to delete his own response
 export const deleteResponse = async (responseId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
+
   const response = await db.response.delete({
     where: {
       id: responseId,
-      userId: currentUser.id,
     },
   });
   return response;
