@@ -166,9 +166,9 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
       const addDoubtRef = useRef( null );
       
     return (
-        <div className="h-60  bg-gradient-to-l sm:min-w-[800px] px-7 ">
+        <div className="h-60  bg-gradient-to-l sm:min-w-[800px] px-7">
             <div className="flex justify-center md:mt-8 gap-10">
-                <div className="flex flex-col items-center text-sm font-medium ">
+                <div className="flex flex-col items-center text-sm font-medium">
                   <div className=' w-full flex flex-row-reverse  '>
                     <button onClick={()=> {handleShow() ;setOpenAccordion(-1);   }} className="py-3 px-4 rounded-md mt-3 bg-blue-600 hover:bg-blue-700">Ask your Doubt</button>
                   </div>
@@ -188,7 +188,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                     )}
                 </div>
             </div>
-            <div id="accordion-color" data-accordion="collapse" className="my-10 mb-10 md:mt-16 cursor-pointer  " >
+            <div id="accordion-color" data-accordion="collapse" className="my-10 mb-10 md:mt-16 cursor-pointer" >
             {QA.map((qa : any, index : number) => ( 
                 <div key={index} className="relative cursor-pointer mb-1">
                 <div className={`flex items-center justify-between w-full p-3 font-medium gap-3 rounded-t-lg ${openAccordion === index ? 'bg-gradient-to-r from-sky-400 to-blue-500 text-white' : 'bg-slate-200 text-zinc-500 shadow-3xl'}`} >
@@ -200,7 +200,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                           <div className='relative'>  
                                 <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute -left-3 -top-3 transform -rotate-45' />
                                 <Image src={qa.user?.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
-                          </div>
+                          </div>  
                         }
                         {qa.user.role === 'INSTRUCTOR' && 
                           <div className='relative'>
@@ -298,7 +298,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                     )
                 }
                 {openAccordion === index && qa.response.length > 0 && (
-                    <div className="absolute top-full left-0 z-50 w-full bg-white shadow-lg p-3 ">
+                    <div className="top-full left-0 z-50 w-full bg-white shadow-lg p-3 ">
                     {qa.response.map((r : any, responseIndex : number) => (
                         <div key={responseIndex} className="flex items-center justify-between space-x-2 mt-3 bg-secondary-400 p-4 rounded-lg hover:bg-secondary-500 ">
                             <div className='flex items-center space-x-5'>                                

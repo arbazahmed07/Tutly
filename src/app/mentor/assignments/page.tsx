@@ -1,6 +1,4 @@
 import { getMentorCourses, getMentorStudents } from "@/actions/courses";
-import Link from "next/link";
-import Image from "next/image";
 import MentorAssignmentBoard from "@/components/mentorAssignmentBoard";
 
 export default async function mentorAssignments() {
