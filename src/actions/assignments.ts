@@ -27,14 +27,14 @@ export const getAllAssignedAssignments = async () => {
             include: {
               class: true,
               submissions: {
-                where:{
-                  enrolledUser:{
-                    userId : currentUser.id,
-                  }
+                where: {
+                  enrolledUser: {
+                    userId: currentUser.id,
+                  },
                 },
-                include:{
-                  points:true
-                }
+                include: {
+                  points: true,
+                },
               },
             },
           },
@@ -45,19 +45,17 @@ export const getAllAssignedAssignments = async () => {
   return coursesWithAssignments;
 };
 
-
-export const getAllAssignedAssignmentsByUserId = async (id :string) => {
-
+export const getAllAssignedAssignmentsByUserId = async (id: string) => {
   const courses = await getEnrolledCoursesById(id);
 
   const coursesWithAssignments = await db.course.findMany({
-      where: {
-          enrolledUsers: {
-            some: {
-              userId: id,
-            },
-          },
+    where: {
+      enrolledUsers: {
+        some: {
+          userId: id,
         },
+      },
+    },
     select: {
       id: true,
       classes: {
@@ -69,24 +67,23 @@ export const getAllAssignedAssignmentsByUserId = async (id :string) => {
             include: {
               class: true,
               submissions: {
-                where:{
-                  enrolledUser:{
-                    userId : id
-                  }
+                where: {
+                  enrolledUser: {
+                    userId: id,
+                  },
                 },
-                include:{
-                  points:true
-                }
-              } 
+                include: {
+                  points: true,
+                },
+              },
             },
           },
         },
       },
     },
   });
-  return {courses,coursesWithAssignments};
+  return { courses, coursesWithAssignments };
 };
-
 
 export const getAllMentorAssignments = async () => {
   const currentUser = await getCurrentUser();
@@ -102,7 +99,7 @@ export const getAllMentorAssignments = async () => {
             some: {
               mentorId: currentUser.id,
             },
-          }
+          },
         },
       },
     },
@@ -129,6 +126,7 @@ export const getAllMentorAssignments = async () => {
   });
   return coursesWithAssignments;
 };
+
 
 export const getAllCreatedAssignments = async () => {
   const currentUser = await getCurrentUser();
@@ -177,9 +175,9 @@ export const getAssignmentDetailsByUserId = async (id:string,userId:string) => {
       },
       submissions: {
         where: {
-          enrolledUser:{
+          enrolledUser: {
             userId: userId,
-          }
+          },
         },
         include: {
           enrolledUser: {
@@ -194,14 +192,3 @@ export const getAssignmentDetailsByUserId = async (id:string,userId:string) => {
   });
   return assignment;
 };
-
-
-// export const submitAssignment = async (assignmentId: string, userId: string, link: string) => {
-//   const submission = await db.submission.create({
-//     data: {
-//       enrolledUserId: userId,
-//       submissionLink: link,
-//     },
-//   });
-//   return submission;
-// }

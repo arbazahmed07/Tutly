@@ -15,14 +15,14 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
   
 
   return (
-    <div className="mx-2 md:mx-14 mt-4 flex flex-col gap-4 w-full px-3">
-      <h1 className="border-b-2 text-center p-2 font-semibold text-lg">Community Forum</h1>
+    <div className="mx-2 md:mx-14 flex flex-col gap-4 w-full px-3">
+      <h1 className="text-center p-2 text-2xl font-semibold">Community Forum</h1>
       <div className="flex gap-3">
         {allDoubts?.map((course: any) => (
           <button 
             onClick={() => setCurrentCourse(course.id)}
             className={`rounded p-2 w-20 sm:w-auto ${
-              currentCourse === course.id && "border"
+              currentCourse === course.id && "bg-neutral-500"
             }`}
             key={course.id}
           >
