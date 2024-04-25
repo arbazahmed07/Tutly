@@ -169,7 +169,7 @@ model Response {
   description String?
   user        User    @relation(fields: [userId], references: [id])
   userId      String
-  doubt       Doubt   @relation(fields: [doubtId], references: [id], onDelete: Cascade)
+  doubt       Doubt   @relation(fields: [doubtId], references: [id],onDelete: Cascade)
   doubtId     String
 
   createdAt DateTime @default(now())

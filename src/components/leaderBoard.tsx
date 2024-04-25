@@ -4,7 +4,7 @@ import { FaCrown } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 
 export default function Leaderboard({ submissions, courses }: any) {
-  const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
+  const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
 
   useEffect(() => {

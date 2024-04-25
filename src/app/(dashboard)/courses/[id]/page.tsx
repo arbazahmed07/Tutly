@@ -22,14 +22,19 @@ const page = async ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="m-3">
-      <h1 className="text-xl font-medium p-2">Information About the course</h1>
+      <h1 className="text-xl border-b-2 font-medium p-2">Information About the course</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 p-2">
+        {
+          assignments.coursesWithAssignments?.length === 0 && (
+            <div className=" text-xl mt-5  dark:text-secondary-300">No assignments yet...</div>
+          )
+        }
         {assignments.coursesWithAssignments?.map((assignment) =>
           assignment.classes.map((classItem) =>
             classItem.attachments.map((attachment) => (
               <div
                 key={attachment?.id}
-                className="bg-secondary-800 text-slate-400 rounded-lg p-4"
+                className="bg-secondary-800  text-slate-400 rounded-lg p-4"
                 style={{
                   boxShadow:
                     "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
