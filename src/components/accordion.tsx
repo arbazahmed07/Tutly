@@ -180,8 +180,8 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                             <form  className="mt-2" onSubmit={ handleSubmit} onKeyDown={handleEscKeyDown}>
 
                               <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e)=>handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block p-2.5 w-full rounded-lg outline-none bg-white border-2 text-secondary-950 "></textarea>
-                              <button type="submit" className="px-6 py-2 bg-blue-500 rounded-md mt-3 mr-4">Submit</button>
-                              <button type="button" onClick={()=>setShow(false)} className="px-6 py-2 bg-blue-500 rounded-md mt-3">Cancel</button>
+                              <button type="button" onClick={()=>setShow(false)} className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-md mt-3  mr-4">Cancel</button>
+                              <button type="submit" className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-md mt-3">Submit</button>
                             </form>
                           </div>
                         </div>
@@ -226,7 +226,6 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                           <p className="text-sm text-gray-800 flex justify-start items-center font-bold">{qa.response.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
                           <div className="p-2 font-bold  flex items-center justify-start rounded text-sm"
                           >
-
                             {openAccordion === index ? <IoIosArrowUp onClick={() => toggleAccordion(index)} className=' cursor-pointer'  /> : <IoIosArrowDown onClick={() => toggleAccordion(index)} className=' cursor-pointer' />}
                           </div>
                         {
@@ -248,11 +247,11 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                 }
                               }
                               onChange={(e) => setReply(e.target.value)}
-                              className="w-full sm:w-auto px-4 py-2 bg-white border-r-2 outline-none sm:mb-0 rounded-l-lg"
+                              className="w-full sm:w-auto px-4 py-2 bg-white text-zinc-500  border-r-2 outline-none sm:mb-0 rounded-l-lg"
                             />
                             <button
                               title="btn"
-                              className="p-3"
+                              className="p-3 text-zinc-500"
                               onClick={() => handleReply(qa.id)}
                             >
                               <BsFillSendArrowUpFill />
@@ -278,9 +277,9 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                         )
                         }
                       </div>
-                      <div>
+                      <div hidden ={currentUser.role !== 'INSTRUCTOR' && qa.user.role === 'INSTRUCTOR'}>
                             <button
-                              hidden = {currentUser.role === 'STUDENT'}
+                              hidden = {currentUser.role === 'STUDENT' }
                               className="p-1 mr-2"
                               onClick={() => handleDeleteDoubt(qa.id)}
                               >
@@ -328,14 +327,13 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                     <p className="text-sm font-medium ">{r.description}</p>
                                 </div>
                             </div>
-                            <div>
+                            <div hidden={ r.user.role==='INSTRUCTOR' } >
                                 {
-                                  (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR' ) && 
-                                  <button onClick={() => handleDeleteReply(r.id) }>
+                                  (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR' )  && 
+                                  <button onClick={() => handleDeleteReply(r.id)  }>
                                       <MdDelete className='cursor-pointer w-5 h-5 text-red-700 hover:text-red-600'  />
                                   </button>
-                                 }
-                                 
+                                }
                             </div>
                         </div>
                     ))}
