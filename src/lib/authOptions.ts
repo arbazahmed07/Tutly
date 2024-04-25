@@ -123,7 +123,7 @@ const authOptions: AuthOptions = {
                   id: existingUser.id,
                 },
                 data: {
-                  email: user.email,
+                  email: user.email?.toLowerCase(),
                   // name: user.name,
                   image: user.image,
                   emailVerified: new Date(),
@@ -135,7 +135,7 @@ const authOptions: AuthOptions = {
             await prisma.user.create({
               data: {
                 username: user.email?.split("@")[0].toUpperCase(),
-                email: user.email,
+                email: user.email?.toLowerCase(),
                 name: user.name,
                 image: user.image,
                 emailVerified: new Date(),
