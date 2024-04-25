@@ -9,7 +9,7 @@ import { PiUserListFill } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
 import { BsFillSendArrowUpFill } from "react-icons/bs";
 import { ImReply } from "react-icons/im";
-import { MdCancelScheduleSend } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
 import { PiCrown } from "react-icons/pi";
 import { PiCrownSimpleFill } from "react-icons/pi";
 
@@ -160,7 +160,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
         const formattedDate = `${day}/${month}/${year}`;
         const formattedTime = `${hour}:${minute} ${ampm}`;
       
-        return `${formattedDate} || ${formattedTime}`;
+        return `${formattedDate}ㅤ${formattedTime}`; 
       }
       
       const addDoubtRef = useRef( null );
@@ -191,53 +191,45 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
             <div id="accordion-color" data-accordion="collapse" className="my-10 mb-10 md:mt-16 cursor-pointer  " >
             {QA.map((qa : any, index : number) => ( 
                 <div key={index} className="relative cursor-pointer mb-1">
-                <div className={`flex items-center justify-between w-full p-3 font-medium gap-3 rounded-t-xl ${openAccordion === index ? 'bg-blue-600' : 'bg-slate-400'}`} >
-                    <div className='flex justify-start items-center space-x-2 relative'> 
+                <div className={`flex items-center justify-between w-full p-3 font-medium gap-3 rounded-t-lg ${openAccordion === index ? 'bg-gradient-to-r from-sky-400 to-blue-500 text-white' : 'bg-slate-200 text-zinc-500 shadow-3xl'}`} >
+                    <div className='flex justify-start items-center space-x-5 ml-2 relative'> 
                         {qa.user.role === 'STUDENT' &&
                             <Image src={qa.user?.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
                         }
                         {qa.user.role === 'MENTOR' && 
                           <div className='relative'>  
-                                <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 w-6 h-6 absolute -left-4 -top-4 transform -rotate-45' />
+                                <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute -left-3 -top-3 transform -rotate-45' />
                                 <Image src={qa.user?.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
                           </div>
                         }
                         {qa.user.role === 'INSTRUCTOR' && 
                           <div className='relative'>
-                                <FaCrown className='text-red-500 hover:text-red-600 drop-shadow-sm shadow-red-500 w-6 h-6 absolute -left-4 -top-4 transform -rotate-45' />
+                                <FaCrown className='text-red-500 hover:text-red-600 drop-shadow-sm shadow-red-500 absolute -left-3 -top-3 transform -rotate-45' />
                                 <Image src={qa.user.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
                           </div>
                         }
                         <div className=" flex flex-col justify-start">
                             <div className="flex justify-start items-center space-x-2">
-                                <p className="text-sm    text-secondary-900 ">{qa.user?.name} </p>
-                                <p className='text-sm '>{formatDateTime(qa.createdAt)}</p>
+                                <p className="text-xs font-semibold text-secondary-900 ">{qa.user?.name} </p>
+                                <p className='text-xs font-medium'>{formatDateTime(qa.createdAt)}</p>
                             </div>                
                             <div className='flex justify-start'>
-                                <p className='text-mefdium font-medium'>{qa.description}</p>
+                                <p className='text-xs font-medium mt-2'>{qa.description}</p>
                             </div>                
                         </div>
                     </div>
                     <div className="flex space-x-3 items-center">
                       <div className='flex justify-start items-center space-x-3' >
                           <p className="text-sm text-gray-800 flex justify-start items-center font-bold">{qa.response.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
-                          <div className="p-2 dark:bg-secondary-900 font-bold dark:hover:bg-secondary-800 bg-secondary-400 hover:bg-secondary-500  flex items-center justify-start text-white rounded text-sm"
+                          <div className="p-2 font-bold  flex items-center justify-start rounded text-sm"
                           >
 
                             {openAccordion === index ? <IoIosArrowUp onClick={() => toggleAccordion(index)} className=' cursor-pointer'  /> : <IoIosArrowDown onClick={() => toggleAccordion(index)} className=' cursor-pointer' />}
                           </div>
-                          <div>
-                            <button
-                              hidden = {currentUser.role === 'STUDENT'}
-                              className="p-1 text-sm   dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mr-2"
-                              onClick={() => handleDeleteDoubt(qa.id)}
-                              >
-                              <MdDelete className='cursor-pointer  w-5 h-5 text-red-700 hover:text-red-600' />
-                            </button>
-                          </div>
                         {
                         replyId === qa.id ? (
-                          <div className="flex items-center mt-1 space-x-4">
+                          <div className="flex items-center">
+                            <div className="flex items-center border-2 border-secondary-300 bg-white rounded-lg">
                             <input
                               type="text"
                               placeholder="Enter your reply"
@@ -253,35 +245,44 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                 }
                               }
                               onChange={(e) => setReply(e.target.value)}
-                              className="w-full sm:w-auto px-4 py-2 border outline-none border-secondary-300 rounded mr-2 mb-2 sm:mb-0"
+                              className="w-full sm:w-auto px-4 py-2 bg-white border-r-2 outline-none sm:mb-0 rounded-l-lg"
                             />
                             <button
                               title="btn"
-                              className="p-2 dark:bg-secondary-900 dark:hover:bg-secondary-800 bg-secondary-400 hover:bg-secondary-500  flex items-center justify-start text-white rounded text-sm"
+                              className="p-3"
                               onClick={() => handleReply(qa.id)}
                             >
                               <BsFillSendArrowUpFill />
                             </button>
-
+                          </div>
                             <button
                               title="btn"
-                              className="p-2 dark:bg-secondary-900 dark:hover:bg-secondary-800 bg-secondary-400 hover:bg-secondary-500  flex items-center justify-start text-white rounded text-sm"
+                              className="p-2"
                               onClick={() => setReplyId('')}
                             >
-                              <MdCancelScheduleSend />
+                              <RxCross2 className="h-6 w-6"/>
                             </button>
 
                           </div>
                         ) : (
                           <button
                             title="btn"
-                            className="p-1 mt-1 text-sm  dark:bg-secondary-900 dark:hover:bg-secondary-800 bg-secondary-400 hover:bg-secondary-500 text-white rounded"
+                            className="p-1"
                             onClick={() => setReplyId(qa.id)}
                           >
-                            <ImReply className='cursor-pointer  w-5 h-5  ' />
+                            <ImReply className='cursor-pointer' />
                           </button>
                         )
                         }
+                      </div>
+                      <div>
+                            <button
+                              hidden = {currentUser.role === 'STUDENT'}
+                              className="p-1 mr-2"
+                              onClick={() => handleDeleteDoubt(qa.id)}
+                              >
+                              <MdDelete className='cursor-pointer  w-5 h-5 text-red-600' />
+                            </button>
                       </div>
                     </div>
                 </div>
@@ -299,20 +300,20 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                 {openAccordion === index && qa.response.length > 0 && (
                     <div className="absolute top-full left-0 z-50 w-full bg-white shadow-lg p-3 ">
                     {qa.response.map((r : any, responseIndex : number) => (
-                        <div key={responseIndex} className="flex items-center justify-between space-x-2 mt-3 bg-secondary-400 p-2 rounded-lg hover:bg-secondary-500 ">
-                            <div className='flex items-center space-x-2'>                                
+                        <div key={responseIndex} className="flex items-center justify-between space-x-2 mt-3 bg-secondary-400 p-4 rounded-lg hover:bg-secondary-500 ">
+                            <div className='flex items-center space-x-5'>                                
                                 {r.user?.role === 'STUDENT' &&
                                     <Image src={r.user.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
                                 }
                                 {r.user?.role === 'MENTOR' && 
                                     <div className='relative'>
-                                        <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 w-6 h-6 absolute -left-4 -top-4 transform -rotate-45' />
+                                        <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute -left-3 -top-3 transform -rotate-45' />
                                         <Image src={r.user.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
                                     </div>
                                 }
                                 {r.user?.role === 'INSTRUCTOR' && 
                                     <div className='relative'>
-                                        <PiCrownSimpleFill className='text-red-400 hover:text-red-500 drop-shadow-sm shadow-red-500 w-6 h-6 absolute -left-4 -top-4 transform -rotate-45' />
+                                        <PiCrownSimpleFill className='text-red-400 hover:text-red-500 drop-shadow-sm shadow-red-500 absolute -left-3 -top-3 transform -rotate-45' />
                                         <Image src={r.user.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
                                     </div>
                                 }
