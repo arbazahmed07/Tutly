@@ -2,178 +2,190 @@ import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 
 export const getAllCourses = async () => {
-    try {
-        const courses = await db.course.findMany({
-            where: {},
-            include: {
-                _count: {
-                    select: {
-                        classes: true
-                    }
-                }
-            }
-        });
-        return courses;
-    } catch (e) {
-        console.log("error while fetching courses :", e);
-    }
-}
+  try {
+    const courses = await db.course.findMany({
+      where: {},
+      include: {
+        _count: {
+          select: {
+            classes: true,
+          },
+        },
+      },
+    });
+    return courses;
+  } catch (e) {
+    console.log("error while fetching courses :", e);
+  }
+};
 
 export const getCourseClasses = async (id: string) => {
-    const classes = await db.class.findMany({
-        where: {
-            courseId: id
-        },
-        include: {
-            course: true,
-            video: true,
-            attachments: true,            
-        }
-    })
-    return classes;
-}
+  const classes = await db.class.findMany({
+    where: {
+      courseId: id,
+    },
+    include: {
+      course: true,
+      video: true,
+      attachments: true,
+    },
+  });
+  return classes;
+};
 
 export const getEnrolledCourses = async () => {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) return null;
-    const courses = await db.course.findMany({
-        where: {
-            enrolledUsers: {
-                some: {
-                    userId: currentUser.id
-                }
-            }
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+  const courses = await db.course.findMany({
+    where: {
+      enrolledUsers: {
+        some: {
+          userId: currentUser.id,
         },
-        include: {
-            classes: true,
-            createdBy: true,
-            _count: {
-                select: {
-                    classes: true
-                }
-            }
-        }
-    })
-    return courses;
-}
+      },
+    },
+    include: {
+      classes: true,
+      createdBy: true,
+      _count: {
+        select: {
+          classes: true,
+        },
+      },
+    },
+  });
+  return courses;
+};
 
 export const getCreatedCourses = async () => {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) return null;
-    const courses = await db.course.findMany({
-        where: {
-            createdById:currentUser.id
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+  const courses = await db.course.findMany({
+    where: {
+      createdById: currentUser.id,
+    },
+    include: {
+      classes: true,
+      createdBy: true,
+      _count: {
+        select: {
+          classes: true,
         },
-        include: {
-            classes: true,
-            createdBy: true,
-            _count: {
-                select: {
-                    classes: true
-                }
-            }
-        }
-    })
-    return courses;
-}
+      },
+    },
+  });
+  return courses;
+};
 
-export const getEnrolledCoursesById = async (id:string) => {
-    const courses = await db.course.findMany({
-        where: {
-            enrolledUsers: {
-                some: {
-                    userId: id
-                }
-            }
+export const getEnrolledCoursesById = async (id: string) => {
+  const courses = await db.course.findMany({
+    where: {
+      enrolledUsers: {
+        some: {
+          userId: id,
         },
-        include: {
-            classes: true,
-            createdBy: true,
-            _count: {
-                select: {
-                    classes: true
-                }
-            }
-        }
-    })
-    return courses;
-}
+      },
+    },
+    include: {
+      classes: true,
+      createdBy: true,
+      _count: {
+        select: {
+          classes: true,
+        },
+      },
+    },
+  });
+  return courses;
+};
 
 export const getMentorStudents = async () => {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) return null;
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
 
-    const students = await db.user.findMany({
-        where: {
-            enrolledUsers: {
-                some: {
-                    assignedMentors: {
-                        some: {
-                            mentorId: currentUser.id
-                        }
-                    }
-                }
-            }
+  const students = await db.user.findMany({
+    where: {
+      enrolledUsers: {
+        some: {
+          assignedMentors: {
+            some: {
+              mentorId: currentUser.id,
+            },
+          },
         },
-        include: {
-            course:true
-        }
-    })
+      },
+    },
+    include: {
+      course: true,
+    },
+  });
 
-    return students;
-}
+  return students;
+};
 
 export const getEnrolledStudents = async () => {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) return null;
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
 
-    const students = await db.user.findMany({
-        include:{
-            course:true
-        }
-    })
+  const students = await db.user.findMany({
+    include: {
+      course: true,
+    },
+  });
 
-    return students;
-}
+  return students;
+};
+
+export const createCourse = async ({ title }: { title: string }) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+  const newCourse = await db.course.create({
+    data: {
+      title: title,
+      createdById: currentUser.id,
+    },
+  });
+  return newCourse;
+};
 
 export const getMentorCourses = async () => {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) return null;
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
 
-    const courses = await db.course.findMany({
-        where: {
-            enrolledUsers: {
-                some: {
-                    assignedMentors: {
-                        some: {
-                            mentorId: currentUser.id
-                        }
-                    }
-                }
-            }
+  const courses = await db.course.findMany({
+    where: {
+      enrolledUsers: {
+        some: {
+          assignedMentors: {
+            some: {
+              mentorId: currentUser.id,
+            },
+          },
         },
-        include: {
-            classes: true,
-            createdBy: true,
-            _count: {
-                select: {
-                    classes: true
-                }
-            }, 
-        }
-    })
-    return courses;
-}
+      },
+    },
+    include: {
+      classes: true,
+      createdBy: true,
+      _count: {
+        select: {
+          classes: true,
+        },
+      },
+    },
+  });
+  return courses;
+};
 
 export const getClassDetails = async (id: string) => {
-    const classDetails = await db.class.findUnique({
-        where: {
-            id: id
-        },
-        include: {
-            video: true,
-            attachments: true
-        }
-    });
-    return classDetails;
-}
+  const classDetails = await db.class.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      video: true,
+      attachments: true,
+    },
+  });
+  return classDetails;
+};
