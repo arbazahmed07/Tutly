@@ -10,7 +10,7 @@ const CommunityPage = async () => {
   const currentuser = await getCurrentUser();
 
   return (
-    <main className="flex flex-col mt-5 items-center justify-center">
+    <main className="flex flex-col m-10 mt-2 items-center justify-center">
       <CommunityForum allDoubts={allDoubts}  currentUser={currentuser}  />
     </main>
   );

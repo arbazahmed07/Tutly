@@ -41,13 +41,13 @@ export default function Leaderboard({ submissions, courses }: any) {
     <div className="mx-2 md:mx-14 mt-1 flex flex-col gap-4">
       <div className="flex flex-col text-center">
         <FaCrown className="h-20 w-20 m-auto text-yellow-400" />
-        <h1 className="text-xl font-bold">Leaderboard</h1>
+        <h1 className="text-2xl font-semibold text-yellow-300">Leaderboard</h1>
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-3 mt-4">
         {courses?.map((course: any) => (
           <button
             onClick={() => setCurrentCourse(course.id)}
-            className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "border"}`}
+            className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "bg-neutral-500"}`}
             key={course.id}
           >
             <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
@@ -56,10 +56,14 @@ export default function Leaderboard({ submissions, courses }: any) {
       </div>
       <div className="flex flex-col gap-2">
         {leaderboardData.length === 0 ? (
-          <div className="p-4 border rounded text-center">No submissions available for this course</div>
+          <div className="p-4 mt-6 font-semibold text-center">
+          <Image src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png" height={300} 
+          className="m-auto " width={300} alt=""/>
+          <h1>No submissions available for this course</h1>
+        </div>
         ) : (
           leaderboardData.map((data: any, index: number) => (
-            <div className="flex justify-between items-center p-2 px-4 rounded hover:bg-blue-500" key={index}>
+            <div className="flex justify-between items-center p-2 px-4 rounded bg-gradient-to-r hover:from-blue-600 hover:to-sky-500" key={index}>
               <div className="flex gap-3 md:gap-10 items-center">
                 <h1>{index + 1}</h1>
                 <Image
