@@ -1,9 +1,17 @@
-import React from 'react'
+import getLeaderboardData, { getInstructorLeaderboardData } from "@/actions/getLeaderboard";
+import Leaderboard from "@/components/leaderBoard";
 
-function instructorLeaderboard() {
-  return (
-    <div>instructorLeaderboard</div>
-  )
+export default async function instructorLeaderboard() {
+  const data = await getInstructorLeaderboardData();
+  if (data && data.sortedSubmissions && data.createdCourses) {
+
+    const { sortedSubmissions, createdCourses } = data;
+
+    return (
+      <Leaderboard submissions={sortedSubmissions} courses={createdCourses} />
+    );
+
+  } else {
+    return null;
+  }
 }
-
-export default instructorLeaderboard

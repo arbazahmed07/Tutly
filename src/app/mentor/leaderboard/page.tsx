@@ -1,9 +1,19 @@
-import React from 'react'
+import { getMentorCourses } from "@/actions/courses";
+import { getMentorLeaderboardData } from "@/actions/getLeaderboard";
+import Leaderboard from "@/components/leaderBoard";
 
-function mentorLeaderboard() {
-  return (
-    <div>mentorLeaderboard</div>
-  )
+export default async function mentorLeaderboard() {
+  const data = await getMentorLeaderboardData();
+  <pre>{JSON.stringify(data,null,2)}</pre>
+  if (data && data.sortedSubmissions && data.createdCourses) {
+
+    const { sortedSubmissions, createdCourses } = data;
+
+    return (
+      <Leaderboard submissions={sortedSubmissions} courses={createdCourses} />
+    );
+
+  } else {
+    return null;
+  }
 }
-
-export default mentorLeaderboard
