@@ -1,8 +1,5 @@
 'use client'
-import Image from "next/image";
 import  { useState } from 'react'
-import { FaAngleDown } from "react-icons/fa";
-import { FaAngleUp } from "react-icons/fa";
 import Accordion from "./accordion";
 
 export default function CommunityForum({ allDoubts, currentUser }: any) {
@@ -20,23 +17,23 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
       <div className="flex gap-3">
         {allDoubts?.map((course: any) => (
           <button 
-            onClick={() => setCurrentCourse(course.id)}
-            className={`rounded p-2 w-20 sm:w-auto ${
-              currentCourse === course.id && "bg-neutral-500"
+          onClick={() => setCurrentCourse(course.id)}
+          className={`rounded p-2 w-20 sm:w-auto ${
+              currentCourse === course?.id && "bg-neutral-500"
             }`}
-            key={course.id}
-          >
+            key={course?.id}
+            >
             <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
           </button>
         ))}
       </div>
       <div className="flex flex-col gap-2 mb-6 min-h-screen">
-        {filteredallDoubts.length === 0 ? (
+        {filteredallDoubts?.length === 0 ? (
           <div className="p-4 border rounded text-center">
             No doubts are rised in this course
           </div>
         ) : (
-           <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0].doubts} />   
+            <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0].doubts} />   
         )}
       </div>
     </div>
