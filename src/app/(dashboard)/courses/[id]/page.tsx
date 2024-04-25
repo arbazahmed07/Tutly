@@ -50,11 +50,11 @@ const page = async ({ params }: { params: { id: string } }) => {
                       ? new Date(attachment?.dueDate).toLocaleDateString()
                       : "Not specified"}
                       {"  "}
-                      <div className={`rounded-full px-2 text-white ${attachment?.submissions.length > 0
+                      {currentUser?.role==="STUDENT"&&<div className={`rounded-full px-2 text-white ${attachment?.submissions.length > 0
                     ? "bg-green-600"
                     : "bg-red-600"}`}>{attachment?.submissions.length > 0
                         ? <h1>submitted</h1>
-                        : <h1>not submitted</h1>}</div>
+                        : <h1>not submitted</h1>}</div>}
                   </p>
                 </div>
                 <p className="mb-2">
