@@ -197,7 +197,10 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                             <Image src={qa.user?.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
                         }
                         {qa.user.role === 'MENTOR' && 
-                            <Image src={qa.user?.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50 ring ring-offset-1 ring-yellow-600" />
+                          <div className='relative'>
+                                <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 w-6 h-6 absolute -left-4 -top-4 transform -rotate-45' />
+                                <Image src={qa.user.image} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
+                          </div>
                         }
                         <div className=" flex flex-col justify-start">
                             <div className="flex justify-start items-center space-x-2">

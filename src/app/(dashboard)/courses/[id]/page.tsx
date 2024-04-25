@@ -11,6 +11,16 @@ const page = async ({ params }: {
     const currentUser = await getCurrentUser();
     const assignments = await getAllAssignedAssignmentsByUserId( currentUser?.id || '')
     
+    const maxWords = 50;
+    function truncateText(text : string ) {
+        const words = text.split(/\s+/);
+        if (words.length <= maxWords) {
+          return text;
+        }
+        const truncatedText = words.slice(0, maxWords).join(' ');
+        return truncatedText + '...';
+      }
+      
     
     return (
         <div className='m-3'>
@@ -21,7 +31,7 @@ const page = async ({ params }: {
                         classItem.attachments.map(attachment => (
                             <div key={attachment?.id} className="bg-white text-slate-500 rounded-lg p-4" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
                                 <h2 className="text-lg text-blue-600 font-semibold mb-2">{attachment?.title}</h2>
-                                <p className=" mb-2">{attachment?.details || 'No Description'} </p>
+                                <p className="mb-2">{truncateText(attachment?.details || 'No Description')}</p>
                                 <p className=" mb-2"><span className="font-semibold">Created At:</span> {new Date(attachment.createdAt).toLocaleString()}</p>
                                 <p className="mb-2"><span className="font-semibold">Updated At:</span> {new Date(attachment.updatedAt).toLocaleString()}</p>
                                 <p className="mb-2"><span className="font-semibold">Due Date:</span> {attachment?.dueDate ? new Date(attachment?.dueDate).toLocaleDateString() : 'Not specified'}</p>
