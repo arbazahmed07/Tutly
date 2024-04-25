@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export default async function AssignmentPage({
+export default function AssignmentPage({
   params,
   currentUser,
   assignment,
@@ -11,33 +11,41 @@ export default async function AssignmentPage({
   currentUser: any;
   assignment: any;
 }) {
-  const [openPopup, setOpenPopup] = useState(false);
   const [editIndex, setEditIndex] = useState(-1);
-  // const [editingIndex, setEditingIndex] = useState(-1);
-  // const [editedScores, setEditedScores] = useState({
-  //   responsiveness: 0,
-  //   styling: 0,
-  //   other: 0,
-  // });
+  const [editingIndex, setEditingIndex] = useState(-1);
+  const [editedScores, setEditedScores] = useState({
+    responsiveness: 0,
+    styling: 0,
+    other: 0,
+  });
 
-  // const handleEdit = (index: number) => {
-  //   setEditingIndex(index);
-  //   const submission = assignment?.submissions[index];
-  //   const rValue = submission && submission.points.find((point) => point.category === "RESPOSIVENESS");
-  //   const sValue = submission && submission.points.find((point) => point.category === "STYLING");
-  //   const oValue = submission && submission.points.find((point) => point.category === "OTHER");
-  //   setEditedScores({
-  //     responsiveness: rValue ? rValue.score : 0,
-  //     styling: sValue ? sValue.score : 0,
-  //     other: oValue ? oValue.score : 0,
-  //   });
-  // };
+  const handleEdit = (index: number) => {
+    setEditingIndex(index);
+    const submission = assignment?.submissions[index];
+    const rValue = submission && submission.points.find((point: any) => point.category === "RESPOSIVENESS");
+    const sValue = submission && submission.points.find((point: any) => point.category === "STYLING");
+    const oValue = submission && submission.points.find((point: any) => point.category === "OTHER");
+    setEditedScores({
+      responsiveness: rValue ? rValue.score : 0,
+      styling: sValue ? sValue.score : 0,
+      other: oValue ? oValue.score : 0,
+    });
+  };
 
-  // const handleSave = (index: number) => {
-  //   setEditingIndex(-1);
-  //   console.log("Edited Scores for submission", index + 1, ":", editedScores);
-  // };
+  const handleSave = (index: number) => {
+    setEditingIndex(-1);
+    console.log("Edited Scores for submission", index + 1, ":", editedScores);
+  };
 
+  const calculateTotalScore = () => {
+    return assignment?.submissions.reduce((total: number, submission: any) => {
+      const rValue = submission.points.find((point: any) => point.category === "RESPOSIVENESS")?.score || 0;
+      const sValue = submission.points.find((point: any) => point.category === "STYLING")?.score || 0;
+      const oValue = submission.points.find((point: any) => point.category === "OTHER")?.score || 0;
+      return total + rValue + sValue + oValue;
+    }, 0);
+  };
+  
   return (
     <div className="mx-2 md:mx-10 my-2 relative">
       <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 rounded text-sm md:text-lg font-medium">
@@ -50,11 +58,10 @@ export default async function AssignmentPage({
         </p>
         {assignment?.dueDate != null && (
           <div
-            className={`p-1 px-2 rounded bg-secondary-700 ${
-              new Date(assignment?.dueDate) > new Date()
+            className={`p-1 px-2 rounded bg-secondary-700 ${new Date(assignment?.dueDate) > new Date()
                 ? "bg-primary-600"
                 : "bg-secondary-700"
-            }`}
+              }`}
           >
             Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
           </div>
@@ -140,12 +147,14 @@ export default async function AssignmentPage({
                 >
                   Total
                 </th>
-                {currentUser.role==="MENTOR"||currentUser.role==="INSTRUCTOR"&&<th
-                  scope="col"
-                  className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                >
-                  Actions
-                </th>}
+                {currentUser.role !== "STUDENT" && (
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -160,7 +169,6 @@ export default async function AssignmentPage({
                   (point: any) => point.category === "OTHER"
                 );
 
-                // Calculate total score
                 const totalScore = [rValue, sValue, oValue].reduce(
                   (acc, currentValue) => {
                     return acc + (currentValue ? currentValue.score : 0);
@@ -170,7 +178,9 @@ export default async function AssignmentPage({
 
                 return (
                   <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {index + 1}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <a
                         target="_blank"
@@ -181,28 +191,86 @@ export default async function AssignmentPage({
                       </a>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {rValue ? rValue.score : "-"}
+                      {editingIndex === index ? (
+                        <input
+                          type="number"
+                          value={editedScores.responsiveness}
+                          onChange={(e) => {
+                            const newScore = parseInt(e.target.value);
+                            setEditedScores((prevScores) => ({
+                              ...prevScores,
+                              responsiveness: newScore,
+                            }));
+                            const newTotalScore = calculateTotalScore();
+                            console.log("New Total Score:", newTotalScore);
+                          }}
+                          className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                        />
+                      ) : (
+                        rValue?.score
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {sValue ? sValue.score : "-"}
+                      {editingIndex === index ? (
+                        <input
+                          type="number"
+                          value={editedScores.styling}
+                          onChange={(e) => {
+                            const newScore = parseInt(e.target.value);
+                            setEditedScores((prevScores) => ({
+                              ...prevScores,
+                              styling: newScore,
+                            }));
+                          }}
+                          className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                        />
+                      ) : (
+                        sValue?.score
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {oValue ? oValue.score : "-"}
+                      {editingIndex === index ? (
+                        <input
+                          type="number"
+                          value={editedScores.other}
+                          onChange={(e) => {
+                            const newScore = parseInt(e.target.value);
+                            setEditedScores((prevScores) => ({
+                              ...prevScores,
+                              other: newScore,
+                            }));
+                          }}
+                          className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                        />
+                      ) : (
+                        oValue?.score
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {totalScore}
                     </td>
-                    {currentUser.role==="MENTOR"||currentUser.role==="INSTRUCTOR"&&<td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => {
-                          // setOpenPopup(!openPopup);
-                          // setEditIndex(index);
-                        }}
-                        className="text-blue-600 font-semibold"
-                      >
-                        Edit
-                      </button>
-                    </td>}
+                    {currentUser.role !== "STUDENT" && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {editingIndex === index ? (
+                          <button
+                            onClick={() => handleSave(index)}
+                            className="text-blue-600 font-semibold"
+                          >
+                            Save
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setEditIndex(index);
+                              handleEdit(index);
+                            }}
+                            className="text-blue-600 font-semibold"
+                          >
+                            Edit
+                          </button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 );
               })}
