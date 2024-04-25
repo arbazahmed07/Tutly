@@ -58,7 +58,7 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
                             }
                           </div>
                           :
-                          <div>
+                          <div className="flex gap-2">
                             {
                               assignment.submissions.map((eachSubmission: any, index: number) => {
                                 if (eachSubmission.points.length === 0) {
