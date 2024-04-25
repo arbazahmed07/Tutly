@@ -1,15 +1,11 @@
 "use client"
 
-import { Octokit } from "@octokit/core";
-import {
-  createPullRequest,
-  DELETE_FILE,
-} from "octokit-plugin-create-pull-request";
+
 import { useContext, useState } from "react";
 import toast from 'react-hot-toast';
 import { Context } from "./context";
 import { Button } from "@/components/ui/button";
-const MyOctokit = Octokit.plugin(createPullRequest);
+import axios from "axios";
 
 const Submit = ({
   user,
@@ -44,61 +40,11 @@ const Submit = ({
     };
     try {
       setSubmitting(true);
-      const octokit = new MyOctokit({
-        auth: process.env.NEXT_PUBLIC_GITHUB_PAT,
-      });
-      toast.loading('Submitting assignment');
-      const pr = await octokit
-        .createPullRequest({
-          owner: "WebWizards-Git",
-          repo: "LMS-DATA",
-          title: `${assignmentDetails.title} submission by ${user.username}`,
-          body: `
-          # Assignment submission by ${user.username}
-
-          ## User Details:
-          - Name: ${user.name}
-          - Email: ${user.email}
-          - Username: ${user.username}
-
-          ## Assignment Id: ${assignmentDetails.id}
-          ## Submitted by: ${user.username}
-
-          ## Submission Details:
-          - Assignment Title: ${assignmentDetails.title}
-          - Course: ${assignmentDetails.class.course.title}
-          - Class: ${assignmentDetails.class.title}
-          - Due Date: ${assignmentDetails.dueDate}
-          - Submission Date: ${new Date().toISOString()}
-          - Submission Files:
-            - index.html
-            - index.css
-            - index.js
-          `,
-          head: `${user.username}`,
-          base: `main`,
-          update: true,
-          forceFork: false,
-          labels: [
-            user.username,
-            "assignment-submission",
-            assignmentDetails.class.course.title,
-            assignmentDetails.title,
-          ],
-          changes: [
-            {
-              files,
-              commit:
-                `submitted assignment ${assignmentDetails.id} by ${user.username}`,
-              author: {
-                name: user.name,
-                email: user.email,
-                date: new Date().toISOString(),
-              }
-            },
-          ],
+        toast.loading('Submitting assignment');
+        const submission = await axios.post(`/api/assignment/${assignmentDetails.id}/submit`, {
+          assignmentDetails,
+          files,
         });
-        console.log(pr);
       toast.dismiss();
       toast.success('Assignment submitted successfully');
     } catch (e) {
