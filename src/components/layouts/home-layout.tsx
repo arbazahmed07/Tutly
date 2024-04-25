@@ -23,8 +23,7 @@ export default function HomeLayout({
   const [menu, setMenu] = useState<boolean>(true);
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
-  const access =
-    currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR";
+  const access = currentUser?.role === "MENTOR" ? 1:currentUser?.role === "INSTRUCTOR"&&2;
 
   let items;
   if (access) {
@@ -42,18 +41,18 @@ export default function HomeLayout({
       {
         name: "Assignments",
         icon: <MdOutlineAssignment />,
-        path: "/mentor/assignments",
+        path: access==1?"/mentor/assignments":"/instructor/assignments",
       },
       {
         name: "Leaderboard",
         icon: <MdOutlineLeaderboard />,
-        path: "/leaderboard",
+        path: access==1?"/mentor/leaderboard":"/instructor/leaderboard",
       },
-      {
-        name: "Doubts",
-        icon: <TbMessageQuestion />,
-        path: "/mentor/doubts",
-      },
+      // {
+      //   name: "Doubts",
+      //   icon: <TbMessageQuestion />,
+      //   path: "/mentor/doubts",
+      // },
       {
         name: "Community",
         icon: < HiOutlineUserGroup/>,

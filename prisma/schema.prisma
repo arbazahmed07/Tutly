@@ -232,6 +232,7 @@ model submission {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
 }
 
 enum pointCategory {
