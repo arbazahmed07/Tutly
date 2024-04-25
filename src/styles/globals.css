@@ -104,11 +104,11 @@ html.dark {
 }
 
 .loader {
-  width: 50px;
+  width: 65px;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 8px solid #0000;
-  border-right-color: #ffa50097;
+  border: 10px solid #0000;
+  border-right-color: #5606e197;
   position: relative;
   animation: l24 1s infinite linear;
 }
@@ -117,7 +117,7 @@ html.dark {
 .loader:after {
   content: "";
   position: absolute;
-  inset: -8px;
+  inset: -10px;
   border-radius: 50%;
   border: inherit;
   animation: inherit;

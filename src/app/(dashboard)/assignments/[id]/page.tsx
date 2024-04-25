@@ -35,20 +35,24 @@ export default async function SubmmitAssignment({
       <div className="my-8">{`${assignment?.details === null
         ? "No details given to show"
         : assignment?.details
-        }`}</div>
+        }`}
+      </div>
       <div className="flex flex-col my-4 gap-4">
         <div>
           <a target="_blank" href={`${assignment?.link}`} className="text-sm text-blue-400 fo4t-semibold break-words">{assignment?.link}</a>
         </div>
-        <div>
+        <div className="mt-2">
           <Link
             hidden={currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR"}
             href={`/playground/html-css-js?assignmentId=${params.id}`}
           >
-            {assignment?.submissions.length === 0 ? <h1 className="bg-blue-600 inline p-2 text-sm rounded font-semibold">Submit through Playground</h1> : <h1 className="bg-primary-600 p-2 text-sm rounded font-semibold">Submit another response</h1>}
+            {assignment?.submissions.length === 0 ? 
+            <h1 className="bg-blue-600 hover:bg-primary-700 inline py-3  px-3 text-medium rounded font-semibold">Submit through Playground</h1> 
+            : <h1 className="bg-primary-600 inline py-3 hover:bg-primary-700 px-3 text-medium rounded font-semibold ">Submit another response</h1>
+            }
           </Link>
         </div>
-        <table className="border-collapse border border-gray-400">
+        <table className="border-collapse border mt-3 border-gray-400">
           <thead>
             <tr>
               <th className="border border-gray-400 px-4 py-2">Submission Id</th>  

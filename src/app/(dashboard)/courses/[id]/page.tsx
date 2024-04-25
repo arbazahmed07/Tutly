@@ -53,7 +53,7 @@ const page = async ({ params }: { params: { id: string } }) => {
                   </p>
                 </div>
                 <p className="mb-2">
-                  {truncateText(attachment?.details || "No Description")}
+                  {truncateText(attachment?.details ? attachment?.details.slice(0, 200) + '...' : null  || "No Description")}
                 </p>
                 {/* <p className="text-secondary-200 mb-2">Class Name: {classItem?.class?.title || 'null'}</p> */}
                 {attachment?.link && (
