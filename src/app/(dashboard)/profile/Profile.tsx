@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FaCrown } from "react-icons/fa";
 
 const formatDate = (e: string) => {
     const date = new Date(e);
@@ -30,7 +31,16 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
 
     return (
         <div className="flex flex-col items-center m-5 md:m-10 font-semibold dark:text-white">
-            <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" width={120} height={120} className="rounded-full bg-slate-300 mb-5" />
+                <div className='relative'>  
+                    {currentUser.role === 'MENTOR' && 
+                     <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute h-16 w-16 -left-9 -top-9 transform -rotate-45' />
+                    }
+                    {currentUser.role === 'INSTRUCTOR' && 
+                     <FaCrown className='text-red-400 hover:text-red-500 drop-shadow-sm shadow-yellow-500 absolute h-16 w-16 -left-9 -top-9 transform -rotate-45' />
+                    }
+                    <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" width={120} height={120} className="rounded-full bg-slate-300 mb-5" />
+                </div>  
+    
             <form   className="flex flex-col md:flex-row justify-center md:gap-10 dark:text-white">
                 <div className="w-[100%] md:w-[40%] mt-2 dark:text-white">
                     <label className="text-sm  dark:text-secondary-50">Username:</label>
@@ -38,6 +48,7 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
                         type="text"
                         name="username"
                         disabled
+                        title="name"
                         value={formData?.username || ''}
                         className="w-full px-4 py-2 mb-2 text-sm rounded border border-blue-200 focus:outline-none focus:border-blue-500"
                     />

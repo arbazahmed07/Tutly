@@ -178,6 +178,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                           <div className="p-5" onKeyDown={handleEscKeyDown}>
                             <h3 className="text-lg font-bold  text-secondary-700">Enter your doubt here</h3>
                             <form  className="mt-2" onSubmit={ handleSubmit} onKeyDown={handleEscKeyDown}>
+
                               <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e)=>handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block p-2.5 w-full rounded-lg outline-none bg-white border-2 text-secondary-950 "></textarea>
                               <button type="submit" className="px-6 py-2 bg-blue-500 rounded-md mt-3 mr-4">Submit</button>
                               <button type="button" onClick={()=>setShow(false)} className="px-6 py-2 bg-blue-500 rounded-md mt-3">Cancel</button>
@@ -199,12 +200,14 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                         {qa.user.role === 'MENTOR' && 
                           <div className='relative'>  
                                 <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute -left-3 -top-3 transform -rotate-45' />
+
                                 <Image src={qa.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
                           </div>  
                         }
                         {qa.user.role === 'INSTRUCTOR' && 
                           <div className='relative'>
                                 <FaCrown className='text-red-500 hover:text-red-600 drop-shadow-sm shadow-red-500 absolute -left-3 -top-3 transform -rotate-45' />
+
                                 <Image src={qa.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
                           </div>
                         }
