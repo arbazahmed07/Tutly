@@ -45,7 +45,7 @@ export const getAllAssignedAssignments = async () => {
   return coursesWithAssignments;
 };
 
-export const getAllAssignedAssignmentsByUserId = async (id: string) => {
+  export const getAllAssignedAssignmentsByUserId = async (id: string) => {
   const courses = await getEnrolledCoursesById(id);
 
   const coursesWithAssignments = await db.course.findMany({
@@ -192,3 +192,38 @@ export const getAssignmentDetailsByUserId = async (id:string,userId:string) => {
   });
   return assignment;
 };
+
+export const getAllAssignmentsByCourseId = async (id: string) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+
+  const coursesWithAssignments = await db.course.findMany({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      classes: {
+        select: {
+          attachments: {
+            where: {
+              attachmentType: "ASSIGNMENT",
+            },
+            include: {
+              class: true,
+              submissions: {
+                where: {
+                  enrolledUserId: currentUser.id,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return coursesWithAssignments;
+}

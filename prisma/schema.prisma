@@ -68,6 +68,7 @@ model Course {
   image         String?
   enrolledUsers EnrolledUsers[]
   classes       Class[]
+  attachments   Attachment[]
   doubts        Doubt[]
 
   startDate DateTime  @default(now())
@@ -218,11 +219,13 @@ model Attachment {
   link           String?
   submissions    submission[]
   classId        String?
-  dueDate        DateTime?
   class          Class?         @relation(fields: [classId], references: [id])
+  courseId       String?
+  course         Course?        @relation(fields: [courseId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  dueDate   DateTime?
 }
 
 model submission {
