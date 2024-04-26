@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import type { Metadata } from "next";
 import HomeLayout from "@/components/layouts/home-layout";
 import getCurrentUser from "@/actions/getCurrentUser";
+import CrispChatIntegration from "@/components/crisp";
 
 export const metadata: Metadata = {
   title: "LMS",
@@ -17,6 +18,7 @@ export default async function RootLayout({
   return (
     <HomeLayout currentUser={currentUser}>
       {children}
+      <CrispChatIntegration />
     </HomeLayout>
   );
 }
