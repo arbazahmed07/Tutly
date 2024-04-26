@@ -33,9 +33,9 @@ const AttendancePage = async () => {
       <p className="text-lg">Monitor your mentees attendance here</p>
       <div className="border my-8">
         {
-          students.map((student)=>{
+          students.map((student,index)=>{
             return (
-              <div>
+              <div key={index}>
                 <h1>{student.Name.split(" ")[0]}</h1>
               </div>
             )
