@@ -104,7 +104,7 @@ export default function HomeLayout({
         <div className="flex">
           {!isCoursePage && <Sidebar items={items} menu={menu} setMenu={setMenu} />}
           <Suspense fallback={<Loading />}>
-            <div className="w-full">
+            <div className={`w-full ${menu?"pl-48":"pl-20" }`}>
               {children}
             </div>
           </Suspense>
