@@ -60,7 +60,7 @@ export default async function Home() {
             <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
               <MdOutlineNoteAlt className="m-auto h-24 w-24 text-blue-400"/>
               <p className="text-primary-600 font-bold pt-2">{mcourses?.length}</p>
-              <h1 className="p-1 text-sm font-bold">No of courses present</h1>   
+              <h1 className="p-1 text-sm font-bold">No of courses mentoring</h1>   
             </div>
             <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
                 <SiTicktick className="m-auto h-20 w-20 text-blue-400 my-2"/>
