@@ -169,7 +169,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
         <div className="h-60  bg-gradient-to-l sm:min-w-[800px] px-7">
             <div className="flex justify-center md:mt-8 gap-10">
                 <div className="flex flex-col items-center text-sm font-medium">
-                  <div className=' w-full flex flex-row-reverse  '>
+                  <div className=' w-full flex flex-row-reverse'>
                     <button onClick={()=> {handleShow() ;setOpenAccordion(-1);   }} className="py-3 px-4 rounded-md mt-3 bg-blue-600 hover:bg-blue-700">Ask your Doubt</button>
                   </div>
                     {show && (
@@ -189,10 +189,10 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                     )}
                 </div>
             </div>
-            <div id="accordion-color" data-accordion="collapse" className="my-10 mb-10 md:mt-16 cursor-pointer" >
+            <div id="accordion-color" data-accordion="collapse" className="mt-16 cursor-pointer" >
             {QA.map((qa : any, index : number) => ( 
-                <div key={index} className="relative cursor-pointer mb-1">
-                <div className={`flex items-center justify-between w-full p-3 font-medium gap-3 rounded-t-lg ${openAccordion === index ? 'bg-gradient-to-r from-sky-400 to-blue-500 text-white' : 'bg-slate-200 text-zinc-500 shadow-3xl'}`} >
+                <div key={index} className={`relative cursor-pointer mb-1 ${openAccordion === index ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white" :"bg-slate-200 text-zinc-500 shadow-3xl"}`}>
+                <div className="flex items-center justify-between w-full p-3 font-medium gap-3 rounded-t-lg" >
                     <div className='flex justify-start items-center space-x-5 ml-2 relative'> 
                         {qa.user.role === 'STUDENT' &&
                             <Image src={qa.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
@@ -217,7 +217,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                 <p className='text-xs font-medium'>{formatDateTime(qa.createdAt)}</p>
                             </div>                
                             <div className='flex justify-start'>
-                                <p className='text-xs font-medium mt-2'>{qa.description}</p>
+                                <p className='text-xs font-medium mt-2'>{qa.user?.username}</p>
                             </div>                
                         </div>
                     </div>
@@ -291,7 +291,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                 {
                     openAccordion === index &&  qa.response.length === 0 && (
                       <div className='absolute top-full left-0 z-50  w-full bg-white shadow-lg p-3'>
-                        <div className="flex justify-center items-center  space-x-2 mt-3 bg-secondary-300 p-2 rounded-lg hover:bg-secondary-400">
+                        <div className="flex justify-center items-center  space-x-2 mt-3 bg-secondary-200 p-2 rounded-lg hover:bg-secondary-300">
                           <div className='flex items-center space-x-2'>
                             <p className="text-medium text-gray-800 flex justify-start items-center font-bold">No responses</p>
                           </div>
@@ -302,7 +302,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                 {openAccordion === index && qa.response.length > 0 && (
                     <div className="top-full left-0 z-50 w-full bg-white shadow-lg p-3 ">
                     {qa.response.map((r : any, responseIndex : number) => (
-                        <div key={responseIndex} className="flex items-center justify-between space-x-2 mt-3 bg-secondary-400 p-4 rounded-lg hover:bg-secondary-500 ">
+                        <div key={responseIndex} className="flex items-center justify-between space-x-2 mt-3 bg-zinc-200 p-4 rounded-lg hover:bg-zinc-300 ">
                             <div className='flex items-center space-x-5'>                                
                                 {r.user?.role === 'STUDENT' &&
                                     <Image src={r.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
@@ -339,6 +339,12 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                     ))}
                     </div>
                 )}
+                  <div>
+                    <h1 className="mx-4 p-3 text-sm font-medium text-justify">
+                    {qa.description}
+                    </h1>
+                  </div>
+                
                 </div>
             ))}
             </div>
