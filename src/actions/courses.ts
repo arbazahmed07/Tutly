@@ -128,8 +128,18 @@ export const getEnrolledStudents = async () => {
   if (!currentUser) return null;
 
   const students = await db.user.findMany({
+    where:{
+      enrolledUsers:{
+        some:{
+          course:{
+            createdById:currentUser.id
+          }
+        }
+      }
+    },
     include: {
       course: true,
+      enrolledUsers:true
     },
   });
 

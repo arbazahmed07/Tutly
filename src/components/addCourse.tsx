@@ -65,12 +65,12 @@ function AddCourse() {
             </div>
           </div>
           {openPopup && (
-            <div className="absolute top-[200px] left-[45%] min-w-[300px] space-y-5 bg-secondary-500 p-4 rounded-lg">
+            <div className="absolute top-[150px] left-[40%] min-w-[400px] space-y-5 bg-black p-4 rounded-lg">
               <div
                 onClick={() => setOpenPopup(!openPopup)}
                 className="absolute right-2 top-2 cursor-pointer text-md"
               >
-                <IoMdCloseCircle />
+                <IoMdCloseCircle className="h-7 w-7"/>
               </div>
               <div className="mb-4">
                 <h1 className="text-md text-center my-4">ADD NEW COURSE</h1>
@@ -113,7 +113,7 @@ function AddCourse() {
                 onChange={(e) => setImg(e.target.value)}
                 type="text"
                 className="rounded p-2 bg-background block m-auto w-full"
-                placeholder="Image Link"
+                placeholder="Paste image link here"
               />
               <button
                 disabled={text === "Creating..."}

@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdOutlineSportsScore } from "react-icons/md";
 export default function AssignmentBoard({ courses, assignments, userId }: any) {
-  let total=0
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
@@ -27,7 +26,7 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
           return (
             <button
               onClick={() => setCurrentCourse(course.id)}
-              className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "bg-neutral-500"
+              className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "border rounded"
                 }`}
               key={course.id}
             >
@@ -68,6 +67,7 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
                                     </div>
                                   )
                                 } else {
+                                  let total=0
                                   return (
                                     <div className="flex gap-6 items-center" key={index}>
                                       <div className="rounded-full p-2 px-3 bg-green-600 flex items-center">
@@ -112,6 +112,9 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
           });
         });
       })}
+      <pre>
+        {JSON.stringify(assignments,null,2)}
+      </pre>
     </div>
   );
 }
