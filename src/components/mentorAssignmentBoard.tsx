@@ -16,7 +16,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
     return;
   }
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pt-5">
       <div className="flex gap-3">
         {courses?.map((course: any) => {
           return (
@@ -37,7 +37,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
       {students &&
         students.map((student: any, index: number) => {
           let flag;
-          if (pathname.startsWith("/instructor/")) flag = true;
+          if (pathname.startsWith("/instructor/") ||pathname.startsWith("/mentor/") ) flag = true;
           else flag = student.course.find((x: any) => x.id === currentCourse);
           if (flag) {
             return (
