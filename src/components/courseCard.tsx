@@ -30,7 +30,7 @@ export default function CourseCard({ course, percent, classesCompleted }: any) {
                         )
                     }
                 </div>
-                <div className="absolute bottom-0 right-0 m-3 text-xs flex items-center text-secondary-950 bg-secondary-400 p-1 rounded-md">
+                <div className="absolute bottom-0 right-0 m-3 text-xs flex items-center text-secondary-50 bg-blue-600 p-1 rounded-md">
                     <IoMdBookmarks className="mr-1"/>
                     <h1 className="text-xs font-medium">{course._count.classes} Classes</h1>
                 </div>
