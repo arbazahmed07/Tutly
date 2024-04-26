@@ -28,6 +28,7 @@ export const getCourseClasses = async (id: string) => {
       course: true,
       video: true,
       attachments: true,
+      Folder: true,
     },
   });
   return classes;
