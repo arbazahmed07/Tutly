@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { FaSearch } from "react-icons/fa";
 
 function MentorAssignmentBoard({ courses, students, role }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
@@ -19,8 +20,8 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
   }
 
   const filteredStudents = students.filter((student: any) =>
-    student.enrolledUsers.some((x: any) => x.courseId === currentCourse) &&
-    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+    student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
+    (student.name.toLowerCase().includes(searchQuery.toLowerCase())||student.username.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   return (
@@ -41,14 +42,15 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
             </button>
           ))}
         </div>
-        <div>
+        <div className="flex items-center bg-secondary-200 border text-black rounded">
           <input
             title="input"
-            className="p-3 outline-none text-sm font-medium rounded bg-zinc-500"
+            className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
             placeholder="Search here"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <FaSearch className="h-5 w-5 m-2"/>
         </div>
       </div>
       {filteredStudents.length > 0 ? (
