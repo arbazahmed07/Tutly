@@ -15,17 +15,18 @@ export default auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isAdminRoute = nextUrl.pathname.startsWith("/admin");
+  const isInstructorRoute = nextUrl.pathname.startsWith("/instructor");
+  const isMentorRoute = nextUrl.pathname.startsWith("/mentor");
 
   if (isApiAuthRoute) {
-    return null;
+    return;
   }
 
   if (isAuthRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
-    return null;
+    return;
   }
 
   if (!isLoggedIn && !isPublicRoute) {
@@ -41,7 +42,19 @@ export default auth((req) => {
     );
   }
 
-  return null;
+  if (isLoggedIn && (isInstructorRoute && req.auth?.user.role!=="INSTRUCTOR")) {
+    return Response.redirect(new URL("/error", nextUrl));
+  }
+
+  if (isLoggedIn && (isMentorRoute && req.auth?.user.role!=="MENTOR")) {
+    return Response.redirect(new URL("/error", nextUrl));
+  }
+
+  if (isLoggedIn && isPublicRoute) {
+    return Response.redirect(new URL(NEXT_PUBLIC_SIGN_IN_URL, nextUrl));
+  }
+
+  return;
 });
 
 export const config = {
