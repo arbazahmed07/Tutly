@@ -12,7 +12,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
   
 
   return (
-    <div className="mx-14 flex flex-col gap-4 w-full px-3 pb-20">
+    <div className="mx-14 flex flex-col gap-4 w-full px-3">
       <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg">Community Forum</h1>
       <div className="flex gap-3">
         {allDoubts?.map((course: any) => (

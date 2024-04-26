@@ -46,19 +46,19 @@ function AddCourse() {
             </div>
           </div>
           {openPopup && (
-            <div className="absolute top-[200px] left-[45%] min-w-[300px] space-y-5 bg-secondary-500 p-4 rounded-lg">
+            <div className="absolute top-[200px] left-[40%] min-w-[400px] space-y-5 bg-black p-4 rounded-lg">
               <div
                 onClick={() => setOpenPopup(!openPopup)}
                 className="absolute right-2 top-2 cursor-pointer text-md"
               >
-                <IoMdCloseCircle />
+                <IoMdCloseCircle className="h-7 w-7"/>
               </div>
               <div className="mb-4">
                 <h1 className="text-md text-center my-4">ADD NEW COURSE</h1>
                 <input
                   onChange={(e) => setCourseTitle(e.target.value)}
                   type="text"
-                  className="rounded p-2 bg-background block m-auto w-full mb-4"
+                  className="rounded p-4 bg-background block m-auto w-full mb-4"
                   placeholder="Title"
                   />
               </div>
@@ -93,12 +93,12 @@ function AddCourse() {
               <input
                 onChange={(e) => setImg(e.target.value)}
                 type="text"
-                className="rounded p-2 bg-background block m-auto w-full"
-                placeholder="Image Link"
+                className="rounded p-4 bg-background block m-auto w-full"
+                placeholder="Paste image link here"
               />
               <button
                 onClick={handleSubmit}
-                className="rounded bg-primary-500 p-2 block m-auto my-3 w-full"
+                className="rounded bg-primary-500 p-4 block m-auto my-3 w-full"
               >
                 Create
               </button>
