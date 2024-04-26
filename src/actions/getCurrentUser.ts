@@ -1,10 +1,9 @@
-import { getServerSession } from "next-auth";
-import authOptions from "@/lib/authOptions";
 import { db } from "@/lib/db";
+import { auth } from "@/auth";
 
 export default async function getCurrentUser() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session?.user?.username) return null;
 
@@ -13,7 +12,7 @@ export default async function getCurrentUser() {
         username: session.user.username
       },
     });
-
+    
     if (!currentUser) {
       throw new Error("Not signed in");
     }

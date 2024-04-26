@@ -128,8 +128,18 @@ export const getEnrolledStudents = async () => {
   if (!currentUser) return null;
 
   const students = await db.user.findMany({
+    where:{
+      enrolledUsers:{
+        some:{
+          course:{
+            createdById:currentUser.id
+          }
+        }
+      }
+    },
     include: {
       course: true,
+      enrolledUsers:true
     },
   });
 
@@ -140,6 +150,11 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
   
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
+
+  if(!title.trim() || title==="" )
+  {
+    return null;
+  }
 
   const newCourse = await db.course.create({
     data: {

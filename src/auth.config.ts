@@ -1,27 +1,18 @@
-import { AuthOptions } from "next-auth";
-import bcrypt from "bcrypt";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials"
 import prisma from "@/lib/db";
 import { randomUUID } from "crypto";
+import {type NextAuthConfig } from "next-auth";
+import bcrypt from "bcryptjs";
 
-const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  pages: {
-    signIn: "/signin",
-  },
-  session: {
-    strategy: "jwt",
-  },
-  secret: process.env.NEXTAUTH_SECRET as string,
+export default {
   providers: [
-    GoogleProvider({
+    Google({
       clientId: process.env.NEXTAUTH_GOOGLE_ID as string,
       clientSecret: process.env.NEXTAUTH_GOOGLE_SECRET as string,
       allowDangerousEmailAccountLinking: true,
     }),
-    CredentialsProvider({
+    Credentials({
       id: "credentials",
       name: "Credentials",
       credentials: {
@@ -38,9 +29,13 @@ const authOptions: AuthOptions = {
 
         const { username, password, tokenId } = credentials;
 
+        if (tokenId && !username) {
+          throw new Error("Username is required");
+        }
+
         const user = await prisma.user.findUnique({
           where: {
-            username: username.toUpperCase(),
+            username: (username as string).toUpperCase(),
           },
         });
 
@@ -72,7 +67,7 @@ const authOptions: AuthOptions = {
           if (!user.password) {
             throw new Error("User has not set a password");
           }
-
+          //@ts-ignore
           const valid = await bcrypt.compare(password, user.password);
 
           if (!valid) {
@@ -109,7 +104,7 @@ const authOptions: AuthOptions = {
                   expires_at: account.expires_at,
                   id_token: account.id_token,
                   scope: account.scope,
-                  session_state: account.session_state,
+                  session_state: account.session_state as string,
                   token_type: account.token_type,
                   user: {
                     connect: {
@@ -155,16 +150,17 @@ const authOptions: AuthOptions = {
     async jwt({ token, user, account, profile }) {
       if (user) {
         token.username = user.username;
+        //@ts-ignore
+        token.role = user.role as Role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
         session.user.username = token.username;
+        session.user.role = token.role;
       }
       return session;
     },
   },
-};
-
-export default authOptions;
+} satisfies NextAuthConfig;

@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 function MentorAssignmentBoard({ courses, students, role }: any) {
-  const [currentCourse, setCurrentCourse] = useState<string>(courses[0].id);
+  const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -34,14 +34,12 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
           );
         })}
       </div>
-      {students &&
-        students.map((student: any, index: number) => {
-          let flag;
-          if (pathname.startsWith("/instructor/") ||pathname.startsWith("/mentor/") ) flag = true;
-          else flag = student.course.find((x: any) => x.id === currentCourse);
-          if (flag) {
+      {students.length>0&&
+        students.filter((student:any) => 
+          student.enrolledUsers.find((x:any) => x.courseId === currentCourse)
+        ).map((student: any, index: number) => {
             return (
-              <div
+              <div  
                 key={index}
                 className={`${index < students.length - 1 && "border-b pb-3"}`}
               >
@@ -70,7 +68,6 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
                 </div>
               </div>
             );
-          }
         })}
     </div>
   );

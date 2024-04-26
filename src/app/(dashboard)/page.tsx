@@ -1,8 +1,10 @@
 import { getDashboardData,getMentorLeaderboardData } from "@/actions/getLeaderboard";
 import Image from "next/image";
+import { MdOutlineNoteAlt } from "react-icons/md";
+import { PiStudentBold } from "react-icons/pi";
+import { SiGoogleclassroom } from "react-icons/si";
 import { getMentorStudents,getMentorCourses, getAllCourses,getEnrolledStudents } from "@/actions/courses";
 export default async function Home() {
-
   const data = await getDashboardData();
   const mstudents = await getMentorStudents()
   const mcourses=await getMentorCourses()
@@ -72,17 +74,17 @@ export default async function Home() {
           currentUser?.role==="INSTRUCTOR"&&
           <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
             <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
-              <Image src="https://png.pngtree.com/png-clipart/20210312/original/pngtree-game-score-wood-sign-style-png-image_6072790.png" alt="" height={100} width={110} className="m-auto" />
+              <MdOutlineNoteAlt className="m-auto h-24 w-24 text-zinc-500"/>
                <p className="text-primary-600 font-bold pt-2">{created?.length}</p>
               <h1 className="p-1 text-sm font-bold">No of courses created</h1>
             </div>
             <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-              <Image src="https://cdn-icons-png.flaticon.com/512/3150/3150115.png" alt="" height={100} width={110} className="m-auto" />
+              <SiGoogleclassroom className="m-auto h-24 w-24 text-zinc-500"/>
               <p className="text-primary-600 font-bold pt-2">{total}</p>
               <h1 className="p-1 text-sm font-bold">Total no of classes uploaded</h1>
             </div>
             <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-              <Image src="https://png.pngtree.com/png-clipart/20210312/original/pngtree-game-score-wood-sign-style-png-image_6072790.png" alt="" height={100} width={110} className="m-auto" />
+              <PiStudentBold  className="m-auto h-24 w-24 text-zinc-500"/>
               <p className="text-primary-600 font-bold pt-2">{students?.length}</p>
               <h1 className="p-1 text-sm font-bold">Total no of students</h1>
             </div>

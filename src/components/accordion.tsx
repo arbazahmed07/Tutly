@@ -189,8 +189,8 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                 </div>
             <div id="accordion-color" data-accordion="collapse" className="mt-10 cursor-pointer" >
             {QA.map((qa : any, index : number) => ( 
-                <div key={index} className={`relative cursor-pointer mb-1 ${openAccordion === index ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white" :"bg-slate-200 text-zinc-500 shadow-3xl"}`}>
-                <div className="flex items-center justify-between w-full p-3 font-medium gap-3 rounded-t-lg" >
+                <div key={index} className={`relative cursor-pointer mb-1`}>
+                <div className={`flex items-center justify-between w-full p-3 font-medium gap-3 rounded-t-lg ${openAccordion === index ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white" :"bg-slate-200 text-zinc-500 shadow-3xl"}`} >
                     <div className='flex justify-start items-center space-x-5 ml-2 relative'> 
                         {qa.user.role === 'STUDENT' &&
                             <Image src={qa.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
@@ -297,8 +297,8 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                       </div>
                     )
                 }
-                  <div className="bg-slate-400">  
-                    <h1 className="mx-4 rounded-md p-3 text-sm font-medium text-justify text-white">
+                  <div className="text-zinc-500 bg-black bg-opacity-20">   
+                   <h1 className="mx-4 rounded-md p-3 text-sm font-medium text-justify">
                     {qa.description}
                     </h1>
                   </div>

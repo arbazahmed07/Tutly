@@ -104,7 +104,7 @@ html.dark {
 }
 
 .loader {
-  width: 65px;
+  width: 50px;
   aspect-ratio: 1;
   border-radius: 50%;
   border: 10px solid #0000;
