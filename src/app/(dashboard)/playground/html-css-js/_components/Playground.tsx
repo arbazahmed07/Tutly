@@ -1,5 +1,4 @@
 "use client"
-
 import Split from 'react-split';
 import "@/styles/react-split.css"
 import PreviewPanel from './PreviewPanel';
