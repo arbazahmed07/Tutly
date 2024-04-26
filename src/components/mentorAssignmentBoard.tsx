@@ -53,8 +53,12 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
           <FaSearch className="h-5 w-5 m-2"/>
         </div>
       </div>
+
       {filteredStudents.length > 0 ? (
-        filteredStudents.map((student: any, index: number) => (
+        filteredStudents
+           .filter((student: any) =>
+            student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
+          ).map((student: any, index: number) => (
           <div
             key={index}
             className={`${index < filteredStudents.length - 1 && "border-b pb-3"}`}

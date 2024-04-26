@@ -8,7 +8,7 @@ export async function GET(request: NextRequest, { params }: { params: {courseId:
             return {
                 id: c.id,
                 title: c.title,
-                folderTitle: c.folderTitle,
+                folderTitle: c.Folder?.title,
             };
         }
         );

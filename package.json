@@ -32,7 +32,7 @@
     "next": "^14.2.3",
     "next-auth": "^5.0.0-beta.17",
     "next-themes": "^0.3.0",
-    "npm": "^10.5.2",
+    "npm": "^10.6.0",
     "octokit": "^3.2.0",
     "octokit-plugin-create-pull-request": "^5.1.1",
     "react": "^18",
@@ -45,9 +45,9 @@
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^9.0.1",
     "xlsx": "^0.18.5",
-    "zod": "^3.22.5",
-    "zustand": "^4.5.2"
+    "zod": "^3.22.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -55,6 +55,7 @@
     "@types/node": "^20",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.8",
     "eslint": "^8",
     "eslint-config-next": "14.2.1",
     "html-loader": "^5.0.0",

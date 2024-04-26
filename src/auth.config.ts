@@ -1,9 +1,9 @@
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials"
 import prisma from "@/lib/db";
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 import {type NextAuthConfig } from "next-auth";
-import bcrypt from "bcryptjs";
+import bcryptjs from "bcryptjs";
 
 export default {
   providers: [
@@ -58,7 +58,7 @@ export default {
               id: user.id,
             },
             data: {
-              oneTimePassword: randomUUID(),
+              oneTimePassword: uuidv4(),
             },
           });
 
@@ -67,8 +67,7 @@ export default {
           if (!user.password) {
             throw new Error("User has not set a password");
           }
-          //@ts-ignore
-          const valid = await bcrypt.compare(password, user.password);
+          const valid = await bcryptjs.compare(password as string, user.password);
 
           if (!valid) {
             throw new Error("Invalid username or password");
@@ -134,7 +133,7 @@ export default {
                 name: user.name,
                 image: user.image,
                 emailVerified: new Date(),
-                oneTimePassword: randomUUID(),
+                oneTimePassword: uuidv4(),
               },
             });
             return true;
