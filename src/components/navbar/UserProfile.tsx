@@ -33,7 +33,7 @@ const UserProfile = ({ currentUser }:any) => {
           </div>
           {isOpen?<FaCaretUp/>:<FaCaretDown />}
           {isOpen && (
-            <div className="absolute rounded-lg bg-primary-900 shadow-md min-w-max overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
+            <div className="absolute rounded-lg bg-blue-600 shadow-md min-w-max overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
               <div className="  ">
                 <MenuItem
                   onClick={() => {
