@@ -8,7 +8,6 @@ export default async function getLeaderboardData() {
     if (!currentUser) {
       return null;
     }
-
     const enrolledCourses = await getEnrolledCourses();
     if (!enrolledCourses) return null;
     const submissions = await db.submission.findMany({

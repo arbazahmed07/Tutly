@@ -5,7 +5,6 @@ import { PiStudentBold } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
 import { getMentorStudents,getMentorCourses, getAllCourses,getEnrolledStudents } from "@/actions/courses";
 export default async function Home() {
-
   const data = await getDashboardData();
   const mstudents = await getMentorStudents()
   const mcourses=await getMentorCourses()
