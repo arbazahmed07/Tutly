@@ -59,7 +59,7 @@ function AddCourse() {
                 "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
             }}
           >
-            <div className="text-center">
+            <div className="text-center hover:opacity-90 cursor-pointer">
               <FaPlus className="text-6xl" />
               <h1>Add</h1>
             </div>

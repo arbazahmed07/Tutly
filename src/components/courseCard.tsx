@@ -12,12 +12,23 @@ export default function CourseCard({ course, percent, classesCompleted }: any) {
                     {course && course.image && (
                         <Image 
                             src={course.image} 
-                            alt="..." 
+                            alt="course image" 
                             layout="fill" 
                             className="rounded-t-lg"
                             objectFit="cover"  
                         />
                     )}
+                    {
+                        !course.image && (
+                            <Image 
+                                src="https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg" 
+                                alt="Default Image" 
+                                layout="fill" 
+                                className="rounded-t-lg"
+                                objectFit="cover"
+                                />
+                        )
+                    }
                 </div>
                 <div className="absolute bottom-0 right-0 m-3 text-xs flex items-center text-secondary-950 bg-secondary-400 p-1 rounded-md">
                     <IoMdBookmarks className="mr-1"/>
