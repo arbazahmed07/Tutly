@@ -7,6 +7,7 @@ import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { Link2 } from "lucide-react";
 
 export default async function Class({
     params,
@@ -61,67 +62,53 @@ export default async function Class({
                             </Link>
                         </div>
                     </div>
-                    <div>
-                        <div className="border-b-2 font-semibold border-secondary-400  flex items-center justify-between">
-                            <h4 className="ms-8 ">Title</h4>
-                            <h4 className="ms-10">Type</h4>
-                            <h4 className="ms-8">Link</h4>
-                            <h4>Due Date</h4>
-                        </div>
-                        <div className="mt-3"></div>
-                        {
-                            details?.attachments?.length === 0 && (
-                                <div className="text-center text-lg mt-5 text-secondary-300">No assignments</div>
-                            )
-                        }
-                        {details?.attachments?.map((attachment, index) => {
-                            return (
-                                <div
-                                    key={index}
-                                    className="py-2 rounded-lg mb-4 relative bg-blue-600"
-                                >
-                                    <div className="flex gap-5 items-center text-sm font-medium p-2">
-                                        <div className="font-semibold">
-                                            {attachment.title}
+                    <table className="border-collapse w-full">
+                        <thead className="mb-4">
+                            <tr className="border-b-2 font-semibold border-secondary-400">
+                            <th className="px-4 py-2">Title</th>
+                            <th className="px-4 py-2">Link</th>
+                            <th className="px-4 py-2">Due Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {details?.attachments?.length === 0 ? (
+                                <tr>
+                                    <td className="text-center text-lg py-4" colSpan={4}>No assignments</td>
+                                </tr>
+                            ) : (
+                            details?.attachments?.map((attachment, index) => (
+                                <tr key={index} className="bg-blue-600">
+                                <td className="px-4 py-2">
+                                    <div className="  font-semibold">
+                                        {attachment.title}
+                                        <div className=" font-normal text-2xs text-secondary-300">
+                                            Type : {attachment.attachmentType.toLocaleLowerCase() }   
                                         </div>
-                                        <div className="text-secondary-300 flex items-center">
-                                            <p className="text-sm">{attachment.attachmentType}</p>
-                                        </div>
-                                        {
-                                            attachment.attachmentType === "ASSIGNMENT" ?
-                                                <div>
-                                                    <Link href={`/assignments/${attachment.id}`}>
-                                                        <FaExternalLinkAlt className="ml-2 w-3 h-3" />
-                                                    </Link>
-                                                </div> :
-                                                <div>
-                                                    {
-                                                        attachment.link && (
-                                                            <div>
-                                                                <Link href={attachment.link}>
-                                                                    <FaExternalLinkAlt className="ml-2" />
-                                                                </Link>
-                                                            </div>
-                                                        )
-                                                    }
-                                                </div>
-
-                                        }
-                                        {
-                                            attachment.attachmentType === "ASSIGNMENT" &&
-                                            <div>
-                                                {attachment?.dueDate
-                                                    ? new Date(
-                                                        attachment?.dueDate
-                                                    ).toLocaleDateString()
-                                                    : "Not specified"}
-                                            </div>
-                                        }
                                     </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                </td>
+                                <td className="px-4 py-2 text-center">
+                                    {attachment.attachmentType === "ASSIGNMENT" ? (
+                                    <Link href={`/assignments/${attachment.id}`}>
+                                        <FaExternalLinkAlt className="w-3 h-3 mr-1" />
+                                    </Link>
+                                    ) : attachment.link ? (
+                                    <Link href={attachment.link} className="text-sm">
+                                        <FaExternalLinkAlt className="w-3 h-3 mr-1" />
+                                    </Link>
+                                    ) : 'No link '}
+                                </td>
+                                <td className="px-4 py-2 text-center">
+                                    {attachment.attachmentType === "ASSIGNMENT" &&
+                                    attachment.dueDate ? (
+                                    new Date(attachment.dueDate).toLocaleDateString()
+                                    ) : 'null'}
+                                </td>
+                                </tr>
+                            ))
+                            )}
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </div>
