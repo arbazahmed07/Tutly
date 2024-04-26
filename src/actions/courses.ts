@@ -117,6 +117,7 @@ export const getMentorStudents = async () => {
     },
     include: {
       course: true,
+      enrolledUsers:true
     },
   });
 
@@ -196,6 +197,9 @@ export const getMentorCourses = async () => {
           classes: true,
         },
       },
+      enrolledUsers:{
+        
+      }
     },
   });
   return courses;

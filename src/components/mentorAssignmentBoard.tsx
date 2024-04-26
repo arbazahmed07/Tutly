@@ -7,11 +7,10 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  
+
   if (!isMounted) {
     return;
   }
@@ -34,12 +33,15 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
           );
         })}
       </div>
-      {students.length>0&&
-        students.filter((student:any) => 
-          student.enrolledUsers.find((x:any) => x.courseId === currentCourse)
-        ).map((student: any, index: number) => {
+
+      {students.length > 0 &&
+        students
+          .filter((student: any) =>
+            student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
+          )
+          .map((student: any, index: number) => {
             return (
-              <div  
+              <div
                 key={index}
                 className={`${index < students.length - 1 && "border-b pb-3"}`}
               >
@@ -60,7 +62,15 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
                     </div>
                   </div>
                   <div
-                    onClick={() => router.push(`${role==="INSTRUCTOR"?`/instructor/assignments/${student.id}`:`/mentor/assignments/${student.id}`}`)}
+                    onClick={() =>
+                      router.push(
+                        `${
+                          role === "INSTRUCTOR"
+                            ? `/instructor/assignments/${student.id}`
+                            : `/mentor/assignments/${student.id}`
+                        }`
+                      )
+                    }
                     className="bg-primary-700 p-2 text-sm font-medium rounded-lg cursor-pointer"
                   >
                     Assignments
@@ -68,7 +78,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
                 </div>
               </div>
             );
-        })}
+          })}
     </div>
   );
 }
