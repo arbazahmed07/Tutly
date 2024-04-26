@@ -46,7 +46,7 @@ function AddCourse() {
             </div>
           </div>
           {openPopup && (
-            <div className="absolute top-[200px] left-[40%] min-w-[400px] space-y-5 bg-black p-4 rounded-lg">
+            <div className="absolute top-[150px] left-[40%] min-w-[400px] space-y-5 bg-black p-4 rounded-lg">
               <div
                 onClick={() => setOpenPopup(!openPopup)}
                 className="absolute right-2 top-2 cursor-pointer text-md"
@@ -58,7 +58,7 @@ function AddCourse() {
                 <input
                   onChange={(e) => setCourseTitle(e.target.value)}
                   type="text"
-                  className="rounded p-4 bg-background block m-auto w-full mb-4"
+                  className="rounded p-2 bg-background block m-auto w-full mb-4"
                   placeholder="Title"
                   />
               </div>
@@ -93,12 +93,12 @@ function AddCourse() {
               <input
                 onChange={(e) => setImg(e.target.value)}
                 type="text"
-                className="rounded p-4 bg-background block m-auto w-full"
+                className="rounded p-2 bg-background block m-auto w-full"
                 placeholder="Paste image link here"
               />
               <button
                 onClick={handleSubmit}
-                className="rounded bg-primary-500 p-4 block m-auto my-3 w-full"
+                className="rounded bg-primary-500 p-2 block m-auto my-3 w-full"
               >
                 Create
               </button>

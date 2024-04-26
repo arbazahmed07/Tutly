@@ -15,7 +15,9 @@ const nextConfig = {
       "cdn-icons-png.flaticon.com",
       "png.pngtree.com",
       "i.postimg.cc",
-      "acourseoflove.org"
+      "acourseoflove.org",
+      "www.google.com"
+
     ]
   },
 };

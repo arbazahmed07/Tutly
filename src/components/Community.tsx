@@ -19,7 +19,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
           <button 
           onClick={() => setCurrentCourse(course.id)}
           className={`rounded p-2 w-20 sm:w-auto ${
-              currentCourse === course?.id && "bg-neutral-500"
+              currentCourse === course?.id && "border rounded"
             }`}
             key={course?.id}
             >
