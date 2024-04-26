@@ -22,6 +22,7 @@ export default function AssignmentPage({
   });
 
   const handleEdit = (index: number) => {
+    setEditingIndex(index);
     const submission = assignment?.submissions[index];
     const rValue =
       submission &&
