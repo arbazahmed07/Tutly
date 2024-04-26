@@ -3,7 +3,6 @@ import getCurrentUser from "@/actions/getCurrentUser";
 import ClassSidebar from "@/components/classSidebar";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Classes",
@@ -25,7 +24,7 @@ export default async function RootLayout({
         <>
             <div className="flex w-full">
                 <ClassSidebar params={params} currentUser={currentUser} classes={classes}/>
-                <div className=" flex-1">{children}</div>
+                <div className="flex-1">{children}</div>
             </div>
         </>
     );

@@ -11,7 +11,6 @@ export default async function Courses() {
   const currentUser = await getCurrentUser();
   return (
     <div>
-      {/* <pre>{JSON.stringify(courses, null, 2)}</pre> */}
       {courses?.length === 0 ? (
         <div className="text-center text-2xl font-bold">
           <div className=" mt-3 flex items-center justify-center space-y-3">

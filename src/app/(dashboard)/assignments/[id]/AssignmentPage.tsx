@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function AssignmentPage({
 
@@ -13,7 +14,6 @@ export default function AssignmentPage({
   currentUser: any;
   assignment: any;
 }) {
-  const [editIndex, setEditIndex] = useState(-1);
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedScores, setEditedScores] = useState({
     responsiveness: 0,
@@ -43,12 +43,13 @@ export default function AssignmentPage({
   };
 
   const handleSave = async (index: number) => {
-    // to do
-    await axios.post("/api/points", {
-      submissionId:assignment.submissions[index].id,
-      score: editedScores.responsiveness,
-      category: "RESPOSIVENESS"
-    });
+    try{
+      toast.loading("Updating Scores...")
+      await axios.post("/api/points", {
+        submissionId:assignment.submissions[index].id,
+        score: editedScores.responsiveness,
+        category: "RESPOSIVENESS"
+      });
     await axios.post("/api/points", {
       submissionId:assignment.submissions[index].id,
       score: editedScores.styling,
@@ -59,24 +60,13 @@ export default function AssignmentPage({
       score: editedScores.other,
       category: "OTHER"
     });
+    toast.dismiss()
+  }catch{
+    toast.error("Failed to save scores")
+  }finally{
+    toast.success("Scores saved successfully")
     setEditingIndex(-1);
-    console.log("Edited Scores for submission", index + 1, ":", editedScores);
-  };
-
-  const calculateTotalScore = () => {
-    return assignment?.submissions.reduce((total: number, submission: any) => {
-      const rValue =
-        submission.points.find(
-          (point: any) => point.category === "RESPOSIVENESS"
-        )?.score || 0;
-      const sValue =
-        submission.points.find((point: any) => point.category === "STYLING")
-          ?.score || 0;
-      const oValue =
-        submission.points.find((point: any) => point.category === "OTHER")
-          ?.score || 0;
-      return total + rValue + sValue + oValue;
-    }, 0);
+  }
   };
 
   return (
@@ -131,7 +121,7 @@ export default function AssignmentPage({
                 Submit through Playground
               </button>
             ) : (
-              <button className="bg-primary-600 p-2 text-sm rounded font-semibold">
+              <button className="bg-primary-600 p-2 text-sm rounded font-semibold text-white">
                 Submit another response
               </button>
             )}
@@ -153,6 +143,12 @@ export default function AssignmentPage({
                   className={`${currentUser?.role === "STUDENT"&&"hidden"} px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                 >
                   Submission Link
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+                >
+                  Submission Date
                 </th>
                 <th
                   scope="col"
@@ -220,6 +216,9 @@ export default function AssignmentPage({
                       </a>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
+                      {submission.submissionDate.toISOString().split("T")[0] || "NA"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {editingIndex === index ? (
                         <input
                           type="number"
@@ -230,13 +229,12 @@ export default function AssignmentPage({
                               ...prevScores,
                               responsiveness: newScore,
                             }));
-                            const newTotalScore = calculateTotalScore();
-                            console.log("New Total Score:", newTotalScore);
+
                           }}
                           className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                         />
                       ) : (
-                        rValue?.score
+                        rValue?.score || "NA"
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -254,7 +252,7 @@ export default function AssignmentPage({
                           className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                         />
                       ) : (
-                        sValue?.score
+                        sValue?.score || "NA"
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -272,11 +270,11 @@ export default function AssignmentPage({
                           className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                         />
                       ) : (
-                        oValue?.score
+                        oValue?.score || "NA"
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {totalScore}
+                      {(rValue?.score || sValue?.score || oValue?.score) ? totalScore : "NA"}
                     </td>
                     {currentUser.role !== "STUDENT" && (
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -290,7 +288,6 @@ export default function AssignmentPage({
                         ) : (
                           <button
                             onClick={() => {
-                              setEditIndex(index);
                               handleEdit(index);
                             }}
                             className="text-blue-600 font-semibold"

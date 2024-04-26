@@ -12,11 +12,11 @@ function ClassSidebar({ params, classes,currentUser }: any) {
   const pathname = usePathname();
   
   return (
-    <div className="">
+    <div className="relative">
       <div
         className={`${
           !open && "hidden"
-        } flex max-sm:absolute flex-col w-44 px-2 bg-background items-center py-3 gap-2 h-dvh shadow-xl relative`}
+        } max-sm:absolute sticky sm:top-10 flex flex-col w-44 px-2 bg-background items-center py-3 gap-2 h-dvh shadow-xl`}
       >
         <Link href={`/courses/${params.id}`} className=" cursor-pointer">
           <h1 className="p-3 text-sm font-medium border-b-2">{classes[0]?.course?.title}</h1>
