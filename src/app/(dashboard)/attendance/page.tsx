@@ -7,19 +7,18 @@ import toast from "react-hot-toast";
 const AttendancePage = () => {
   const [fileData, setFileData] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>();
-  const students = [
-    {
-      "Name": "23071A67H4 (RIDA ALMAS MUJAHID)",
-      "JoinTime": "04/26/2024 06:37:06 PM",
-      "LeaveTime": "04/26/2024 08:26:28 PM",
-      "Duration": 110,
-    },
-    // Add more sample data if needed
-  ];
+  // const students = [
+  //   {
+  //     "Name": "23071A67H4 (RIDA ALMAS MUJAHID)",
+  //     "JoinTime": "04/26/2024 06:37:06 PM",
+  //     "LeaveTime": "04/26/2024 08:26:28 PM",
+  //     "Duration": 110,
+  //   },
+  // ];
 
-  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
 
-  const handleStudentClick = (student) => {
+  const handleStudentClick = (student :any) => {
     setSelectedStudent(student);
   };
 
@@ -41,9 +40,8 @@ const AttendancePage = () => {
         const worksheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[worksheetName];
         const data = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-        //converts the date to string
         data.forEach((row: any) => {
-          _.forIn(row, (value: any, key) => {
+          _.forIn(row, (value: any, key:any) => {
             if (value instanceof Date) {
               row[key] = value.toISOString().split("T")[0];
             }
@@ -64,8 +62,7 @@ const AttendancePage = () => {
     }
   };
 
-  // Step 1: Aggregate attendance details for students with the same first 10 characters of their names
-  const aggregatedStudents = fileData.reduce((acc, student) => {
+  const aggregatedStudents = fileData.reduce((acc:any , student:any) => {
     const firstTenCharsName = String(student.Name).substring(0, 10);
     if (!acc[firstTenCharsName]) {
       acc[firstTenCharsName] = {
@@ -92,8 +89,7 @@ const AttendancePage = () => {
     return acc;
   }, {});
 
-  // Sort aggregated students by name
-  const sortedAggregatedStudents = Object.values(aggregatedStudents).sort((a, b) => {
+  const sortedAggregatedStudents = Object.values(aggregatedStudents).sort((a:any, b:any) => {
     const nameA = String(a.Name).toUpperCase();
     const nameB = String(b.Name).toUpperCase();
     if (nameA < nameB) {
@@ -155,7 +151,7 @@ const AttendancePage = () => {
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
           <div className="bg-white text-gray-700 p-4 rounded-md w-[60%]">
             <h2 className="text-lg font-semibold mb-2">
-              Attendance Details for {selectedStudent.Name as string}
+              Attendance Details for {String(selectedStudent?.Name)}
             </h2>
             <table className="w-full">
               <thead>
@@ -167,7 +163,7 @@ const AttendancePage = () => {
                 </tr>
               </thead>
               <tbody>
-                {selectedStudent?.Joins.map((join:any, index:number) => (
+                {selectedStudent.Joins.map((join:any, index:number) => (
                   <tr key={index}>
                     <td className="border px-4 py-2">{join.ActualName}</td>
                     <td className="border px-4 py-2">{join.JoinTime}</td>
