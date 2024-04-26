@@ -126,10 +126,10 @@ export default function AssignmentPage({
               </button>
             )}
           </Link>
+          <button className="p-2 inline rounded border text-white">Submissions</button>
         </div>
         <div className="overflow-x-auto">
-          <button className="p-2 rounded border text-white my-2">Submissions</button>
-          <table className="min-w-full divide-y divide-gray-200 text-center">
+          <table className="text-center">
             <thead className="bg-secondary-300 text-secondary-700">
               <tr>
                 <th
