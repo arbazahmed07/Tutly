@@ -6,6 +6,11 @@ export async function POST(request: NextRequest) {
 
     try {
         const course = await createCourse({title,isPublished,image})
+    
+        if (!course ) {
+            return NextResponse.json({ error: "Failed to add newClass" }, { status: 400 });
+        }
+        
         return NextResponse.json(course);
     } catch (e :any) {
         return NextResponse.json({ error: e.message }, { status: 400 });

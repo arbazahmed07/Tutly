@@ -151,6 +151,11 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
+  if(!title.trim() || title==="" )
+  {
+    return null;
+  }
+
   const newCourse = await db.course.create({
     data: {
       title: title,

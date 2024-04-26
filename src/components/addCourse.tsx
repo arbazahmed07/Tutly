@@ -1,10 +1,9 @@
 "use client";
-import { createCourse } from "@/actions/courses";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import toast from "react-hot-toast";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import { FaPlus } from "react-icons/fa6";
 import { IoMdCloseCircle } from "react-icons/io";
 
 function AddCourse() {
@@ -12,36 +11,56 @@ function AddCourse() {
   const [courseTitle, setCourseTitle] = useState<string>("");
   const [img, setImg] = useState<string>("");
   const [isPublished, setIsPublished] = useState<boolean>(false);
+  const [text, setText] = useState<string>("Create");
   const router = useRouter()
 
   const handleSubmit = async () => {
-    const res = await axios.post("/api/course/create",{
+
+    try
+    {
+        const res = await axios.post("/api/course/create",{
           title:courseTitle,
           isPublished:isPublished,
-          image : img
-        })
-          setOpenPopup(!openPopup);
+            image : img
+          })
+            setOpenPopup(!openPopup);
 
-    if (res.data.error) {
+      if (res.data.error || res.data.error === "Failed to add new Class" || res.data === null) {
+          toast.error("Failed to add newClass");
+        } else {
+          toast.success("new Class added successfully");
+          setText("Create");
+          setCourseTitle("");
+          setImg("");
+          setIsPublished(false);
+          router.refresh()
+          setOpenPopup(!openPopup);
+      }
+      }catch(e)
+      {
         toast.error("Failed to add newClass");
-    } else {
-        toast.success("newClass added successfully");
+        setText("Create");
+        setCourseTitle("");
+        setImg("");
+        setIsPublished(false);
         router.refresh()
-    }
-    };
+        setOpenPopup(!openPopup);
+        
+      };
+  };
         
       return (
         <>
           <div
             onClick={() => setOpenPopup(!openPopup)}
-            className="rounded-lg border cursor-pointer m-5 flex flex-col items-center justify-center"
+            className="rounded-lg border cursor-pointer m-5 flex flex-col items-center justify-center h-[200] "
             style={{
               boxShadow:
                 "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
             }}
           >
             <div className="text-center">
-              <IoIosAddCircleOutline className="text-6xl" />
+              <FaPlus className="text-6xl" />
               <h1>Add</h1>
             </div>
           </div>
@@ -97,10 +116,21 @@ function AddCourse() {
                 placeholder="Paste image link here"
               />
               <button
-                onClick={handleSubmit}
-                className="rounded bg-primary-500 p-2 block m-auto my-3 w-full"
+                disabled={text === "Creating..."}
+                onClick={()=>{handleSubmit();setText("Creating...") }}
+                className="rounded-md flex justify-center items-center disabled:bg-secondary-800 disabled:cursor-not-allowed bg-primary-500 hover:bg-primary-600 p-2  my-3 w-full"
               >
-                Create
+                {text}
+                &nbsp;
+                {
+                  text === "Creating..." ? (
+                    <div className="animate-spin">
+                      <FaPlus />
+                    </div>
+                  ):(
+                    <FaPlus />
+                  )
+                }
               </button>
             </div>
           )}

@@ -36,11 +36,12 @@ function ClassSidebar({ params, classes,currentUser }: any) {
             </Link>
           );
         })}
+        <div className="flex-grow"></div> 
         {
-          pathname !== `/courses/${params.id}/class/new` && currentUser?.role==='INSTRUCTOR' && (
+          pathname !== `/courses/${params.id}/class/new` && currentUser?.role === 'INSTRUCTOR' && (
             <Link
               href={`/courses/${params.id}/class/new`}
-              className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded hover:bg-blue-500`}
+              className={`px-6 py-2 mb-12 flex items-center gap-2 cursor-pointer rounded hover:bg-blue-500`}
             >
               <MdAddToQueue />
               class +
@@ -56,17 +57,18 @@ function ClassSidebar({ params, classes,currentUser }: any) {
         </div>
       </div>
       <div className="">
-      {!open && (
-        <div
-          onClick={() => setOpen(!open)}
-          className="fixed left-0 top-[300px] bg-blue-500 py-2 rounded-r-lg cursor-pointer"
-        >
-          <IoIosArrowForward />
-        </div>
-      )}
-    </div>
+        {!open && (
+          <div
+            onClick={() => setOpen(!open)}
+            className="fixed left-0 top-[300px] bg-blue-500 py-2 rounded-r-lg cursor-pointer"
+          >
+            <IoIosArrowForward />
+          </div>
+        )}
+      </div>
     </div>
   );
+
 }
 
 export default ClassSidebar;
