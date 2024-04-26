@@ -51,8 +51,12 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
           />
         </div>
       </div>
+
       {filteredStudents.length > 0 ? (
-        filteredStudents.map((student: any, index: number) => (
+        filteredStudents
+           .filter((student: any) =>
+            student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
+          ).map((student: any, index: number) => (
           <div
             key={index}
             className={`${index < filteredStudents.length - 1 && "border-b pb-3"}`}
