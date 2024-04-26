@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { getAllAssignedAssignmentsByUserId } from '@/actions/assignments'
+import { getAllAssignmentsByCourseId } from '@/actions/assignments';
 import getCurrentUser from '@/actions/getCurrentUser'
 import { FaExternalLinkAlt } from "react-icons/fa";
 
@@ -9,6 +10,8 @@ const page = async ({ params }: { params: { id: string } }) => {
   const assignments = await getAllAssignedAssignmentsByUserId(
     currentUser?.id || ""
   );
+
+  const courseAssignments = await getAllAssignmentsByCourseId(params.id);
 
   const maxWords = 50;
   function truncateText(text: string) {
@@ -23,13 +26,15 @@ const page = async ({ params }: { params: { id: string } }) => {
   return (
     <div className="m-3">
       <h1 className="text-xl border-b-2 font-medium p-2">Information About the course</h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 p-2">
         {
-          assignments.coursesWithAssignments?.length === 0 && (
+          courseAssignments && courseAssignments[0]?.classes?.length === 0 && (
             <div className=" text-xl mt-5  dark:text-secondary-300">No assignments yet...</div>
           )
         }
-        {assignments.coursesWithAssignments?.map((assignment) =>
+        
+        {courseAssignments?.map((assignment) =>
           assignment.classes.map((classItem) =>
             classItem.attachments.map((attachment) => (
               <div
