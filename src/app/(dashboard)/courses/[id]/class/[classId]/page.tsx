@@ -52,7 +52,7 @@ export default async function Class({
                         <div hidden={ currentUser?.role === "STUDENT" || currentUser?.role === "MENTOR" } className="text-xl my-2">
                             <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
                                 <Button
-                                    className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
+                                    className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-600"
                                     variant={"secondary"}
                                 >
                                     Add an assignment&nbsp;
