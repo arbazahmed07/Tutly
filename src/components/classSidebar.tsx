@@ -1,16 +1,38 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MdOndemandVideo } from "react-icons/md";
-import { IoIosArrowBack,IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import React, { useState } from "react";
 import { MdAddToQueue } from "react-icons/md";
 
-
-function ClassSidebar({ params, classes,currentUser }: any) {
+function ClassSidebar({ params, classes, currentUser }: any) {
+  const [openFolders, setOpenFolders] = useState<string[]>([]);
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
-  
+
+  const toggleFolder = (folderId: string) => {
+    if (openFolders.includes(folderId)) {
+      setOpenFolders(openFolders.filter((id) => id !== folderId));
+    } else {
+      setOpenFolders([...openFolders, folderId]);
+    }
+  };
+
+  const groupedClasses: { [key: string]: any[] } = {};
+  const classesWithoutFolders: any[] = [];
+  classes.forEach((classItem: any) => {
+    if (classItem.folderId) {
+      if (!groupedClasses[classItem.folderId]) {
+        groupedClasses[classItem.folderId] = [];
+      }
+      groupedClasses[classItem.folderId].push(classItem);
+    } else {
+      classesWithoutFolders.push(classItem);
+    }
+  });
+
   return (
     <div className="relative">
       <div
@@ -18,36 +40,69 @@ function ClassSidebar({ params, classes,currentUser }: any) {
           !open && "hidden"
         } max-sm:absolute sticky sm:top-10 flex flex-col w-44 px-2 bg-background items-center py-3 gap-2 h-dvh shadow-xl`}
       >
-        <Link href={`/courses/${params.id}`} className=" cursor-pointer">
-          <h1 className="p-3 text-sm font-medium border-b-2">{classes.course?.title}</h1>
+        <Link href={`/courses/${params.id}`} className="cursor-pointer">
+          <h1 className="p-3 text-sm font-medium border-b-2">
+            {classes[0]?.course?.title}
+          </h1>
         </Link>
-        {classes.classes.map((x: any) => {
-          return (
-            <Link
-              key={x.id}
-              href={`/courses/${params.id}/class/${x.id}`}
-              className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-500 ${
-                pathname === `/courses/${params.id}/class/${x.id}` &&
-                "bg-sky-500"
-              }`}
-            >
-              <MdOndemandVideo />
-              {x.title}
-            </Link>
-          );
+        {Object.keys(groupedClasses).map((folderId: string) => {
+          const folder = classes.find((c: any) => c.folderId === folderId)?.Folder;
+          if (folder) {
+            return (
+              <div key={folder.id}>
+                <h2
+                  onClick={() => toggleFolder(folder.id)}
+                  className="px-6 py-2 cursor-pointer text-sm font-medium text-gray-500 hover:text-gray-700"
+                >
+                  {folder.title}
+                </h2>
+                {openFolders.includes(folder.id) && (
+                  <div className="ml-4">
+                    {groupedClasses[folderId].map((classItem: any) => (
+                      <Link
+                        key={classItem.id}
+                        href={`/courses/${params.id}/class/${classItem.id}`}
+                        className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-500 ${
+                          pathname ===
+                          `/courses/${params.id}/class/${classItem.id}` &&
+                          "bg-sky-500"
+                        }`}
+                      >
+                        <MdOndemandVideo />
+                        {classItem.title}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
         })}
-        <div className="flex-grow"></div> 
-        {
-          pathname !== `/courses/${params.id}/class/new` && currentUser?.role === 'INSTRUCTOR' && (
-            <Link
-              href={`/courses/${params.id}/class/new`}
-              className={`px-6 py-2 mb-12 flex items-center gap-2 cursor-pointer rounded hover:bg-blue-500`}
-            >
-              <MdAddToQueue />
-              class +
-            </Link>
-          )
-        }
+        {classesWithoutFolders.map((classItem: any) => (
+          <Link
+            key={classItem.id}
+            href={`/courses/${params.id}/class/${classItem.id}`}
+            className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-500 ${
+              pathname ===
+              `/courses/${params.id}/class/${classItem.id}` &&
+              "bg-sky-500"
+            }`}
+          >
+            <MdOndemandVideo />
+            {classItem.title}
+          </Link>
+        ))}
+        <div className="flex-grow"></div>
+        {pathname !== `/courses/${params.id}/class/new` &&
+        currentUser?.role === "INSTRUCTOR" && (
+          <Link
+            href={`/courses/${params.id}/class/new`}
+            className={`px-6 py-2 mb-16 flex items-center gap-2 cursor-pointer rounded-xl bg-gray-800 hover:bg-sky-500`}
+          >
+            <MdAddToQueue />
+            Add Class
+          </Link>
+        )}
 
         <div
           onClick={() => setOpen(!open)}
@@ -68,7 +123,6 @@ function ClassSidebar({ params, classes,currentUser }: any) {
       </div>
     </div>
   );
-
 }
 
 export default ClassSidebar;
