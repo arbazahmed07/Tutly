@@ -1,4 +1,6 @@
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import { IState } from "./PlaygroundContext";
+import { Languages } from "@/components/editor/Languages";
 
 export type EditorTheme = 'light' | 'dark';
 
@@ -85,8 +87,20 @@ const cssDefaultTemplate: string = `h1 {
 const jsDefaultTemplate: string = `console.log('Hello World');
 `;
 
-export const defaultState = {
-  html: htmlDefaultTemplate,
-  css: cssDefaultTemplate,
-  js: jsDefaultTemplate,
-};
+export const defaultState : IState[] = [
+  {
+    code: htmlDefaultTemplate,
+    filePath: 'index.html',
+    language: Languages[0],
+  },
+  {
+    code: cssDefaultTemplate,
+    filePath: 'styles.css',
+    language: Languages[1],
+  },
+  {
+    code: jsDefaultTemplate,
+    filePath: 'script.js',
+    language: Languages[2],
+  },
+];

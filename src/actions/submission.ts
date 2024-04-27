@@ -1,5 +1,6 @@
 
 import { Octokit } from "@octokit/core";
+import { v4 as uuidv4 } from 'uuid';
 import {
   createPullRequest,
   DELETE_FILE,
@@ -19,6 +20,7 @@ export const createSubmission = async (
   const octokit = new MyOctokit({
     auth: process.env.GITHUB_PAT,
   });
+  const submissionId = uuidv4();
   const pr = await octokit.createPullRequest({
     owner: "WebWizards-Git",
     repo: "LMS-DATA",
@@ -32,6 +34,7 @@ export const createSubmission = async (
       - Username: ${user.username}
 
       ## Assignment Id: ${assignmentDetails.id}
+      ## Submission Id: ${submissionId}
       ## Submitted by: ${user.username}
 
       ## Submission Details:
@@ -45,7 +48,7 @@ export const createSubmission = async (
         - index.css
         - index.js
       `,
-    head: `${user.username}-${assignmentDetails.title}-${assignmentDetails.id}`,
+    head: `${user.username?.trim()}-submissionId-${submissionId}`,
     base: `main`,
     update: true,
     forceFork: false,
@@ -61,7 +64,7 @@ export const createSubmission = async (
         commit: `submitted assignment ${assignmentDetails.id} by ${user.username}`,
         author: {
           name: user.name as string,
-          email: user.email as string,
+          email: "udaysagar.mail@gmail.com",
           date: new Date().toISOString(),
         },
       },
@@ -86,6 +89,7 @@ export const createSubmission = async (
 
   const submission = await db.submission.create({
     data: {
+      id: submissionId,
       attachmentId: assignmentDetails.id,
       submissionLink: prUrl,
       enrolledUserId: enrolledUser.id,
