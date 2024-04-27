@@ -1,14 +1,16 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
-function MentorAssignmentBoard({ courses, students, role }: any) {
+function MentorAssignmentBoard({ courses, points, students, role }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [Unreviewed, setUnreviewed] = useState<boolean>(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -42,6 +44,11 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
             </button>
           ))}
         </div>
+        <div>
+            <button onClick={()=>{setUnreviewed(true)}} className=" p-2 bg-primary-600 rounded-lg hover:bg-primary-700">
+              Unreviewed
+            </button>
+        </div>
         <div className="flex items-center bg-secondary-200 border text-black rounded">
           <input
             title="input"
@@ -53,13 +60,56 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
           <FaSearch className="h-5 w-5 m-2"/>
         </div>
       </div>
-
-      {filteredStudents.length > 0 ? (
-        filteredStudents
-           .filter((student: any) =>
+      {
+        Unreviewed ? (
+          filteredStudents
+            .filter((student: any) =>
             student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
           ).map((student: any, index: number) => (
           <div
+            
+            key={index}
+            className={`${index < filteredStudents.length - 1 && "border-b pb-3"}`}
+          >
+            <div className="p-1 flex justify-between items-center">
+              <div className="flex gap-5 items-center">
+                <Image
+                  src={student?.image || "/images/placeholder.jpg"}
+                  height={40}
+                  width={40}
+                  alt=""
+                  className="rounded-full"
+                />
+                <div>
+                  <h1 className="text-sm font-medium">{student.name}</h1>
+                  <h1 className="text-xs font-medium">{student.username}</h1>
+                </div>
+              </div>
+              <div
+                onClick={() =>
+                  router.push(
+                    `${
+                      role === "INSTRUCTOR"
+                        ? `/instructor/assignments/${student.id}`
+                        : `/mentor/assignments/${student.id}`
+                    }`
+                  )
+                }
+                className="bg-primary-700 p-2 text-sm font-medium rounded-lg cursor-pointer"
+              >
+                Assignments
+              </div>
+            </div>
+          </div>
+        ))
+        ) :
+      filteredStudents.length > 0 ? (
+        filteredStudents
+            .filter((student: any) =>
+            student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
+          ).map((student: any, index: number) => (
+          <div
+            
             key={index}
             className={`${index < filteredStudents.length - 1 && "border-b pb-3"}`}
           >
@@ -97,6 +147,8 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
       ) : (
         <div className="text-sm font-medium">No students found</div>
       )}
+
+      {/* <div>{JSON.stringify(points,null,2)}</div> */}
     </div>
   );
 }

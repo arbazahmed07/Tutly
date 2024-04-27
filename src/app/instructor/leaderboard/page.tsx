@@ -1,4 +1,4 @@
-import getLeaderboardData, { getInstructorLeaderboardData } from "@/actions/getLeaderboard";
+import  { getInstructorLeaderboardData } from "@/actions/getLeaderboard";
 import Leaderboard from "@/components/leaderBoard";
 
 export default async function instructorLeaderboard() {
