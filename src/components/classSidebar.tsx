@@ -7,7 +7,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import React, { useState } from "react";
 import { MdAddToQueue } from "react-icons/md";
 
-function ClassSidebar({ params, classes, currentUser }: any) {
+function ClassSidebar({ params, classes,title, currentUser }: any) {
   const [openFolders, setOpenFolders] = useState<string[]>([]);
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
@@ -42,7 +42,7 @@ function ClassSidebar({ params, classes, currentUser }: any) {
       >
         <Link href={`/courses/${params.id}`} className="cursor-pointer">
           <h1 className="p-3 text-sm font-medium border-b-2">
-            {classes[0]?.course?.title}
+            {title}
           </h1>
         </Link>
         {Object.keys(groupedClasses).map((folderId: string) => {
@@ -52,7 +52,7 @@ function ClassSidebar({ params, classes, currentUser }: any) {
               <div key={folder.id}>
                 <h2
                   onClick={() => toggleFolder(folder.id)}
-                  className="px-6 py-2 cursor-pointer text-sm font-medium text-gray-500 hover:text-gray-700"
+                  className="px-6 py-2 cursor-pointer text-sm font-medium text-gray-400 hover:text-gray-500"
                 >
                   {folder.title}
                 </h2>
