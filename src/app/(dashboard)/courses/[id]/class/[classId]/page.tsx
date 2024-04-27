@@ -74,7 +74,7 @@ export default async function Class({
                             </tr>
                             ) : (
                             details?.attachments?.map((attachment, index) => (
-                            <tr className="bg-blue-500 text-center">   
+                            <tr className="bg-blue-500 text-center" key={index}>   
                                 <td className="px-4 py-2">
                                     <div className="font-semibold">
                                         {attachment.title}
