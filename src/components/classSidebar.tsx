@@ -6,6 +6,8 @@ import { MdOndemandVideo } from "react-icons/md";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import React, { useState } from "react";
 import { MdAddToQueue } from "react-icons/md";
+import { FaFolder } from "react-icons/fa6";
+import { FaFolderOpen } from "react-icons/fa6";
 
 function ClassSidebar({ params, classes,title, currentUser }: any) {
   const [openFolders, setOpenFolders] = useState<string[]>([]);
@@ -52,9 +54,16 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
               <div key={folder.id}>
                 <h2
                   onClick={() => toggleFolder(folder.id)}
-                  className="px-6 py-2 cursor-pointer text-sm font-medium text-gray-400 hover:text-gray-500"
+                  className="flex items-center justify-start px-6 py-2 cursor-pointer text-sm font-medium text-gray-400 hover:text-gray-300"
                 >
-                  {folder.title}
+                  {
+                    openFolders.includes(folder.id) ? 
+                      <FaFolderOpen className=" w-4 h-4" />
+                      : 
+                      <FaFolder className=" w-4 h-4" />
+                  }
+                  
+                  &nbsp; {folder.title}
                 </h2>
                 {openFolders.includes(folder.id) && (
                   <div className="ml-4">

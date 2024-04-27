@@ -16,8 +16,8 @@ const nextConfig = {
       "png.pngtree.com",
       "i.postimg.cc",
       "acourseoflove.org",
-      "www.google.com"
-
+      "www.google.com",
+      "images.unsplash.com"
     ]
   },
 };
