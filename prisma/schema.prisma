@@ -44,7 +44,7 @@ model User {
   doubt           Doubt[]
   response        Response[]
   assignedMentors AssignedMentors[]
-  Attendence      Attendence[]
+  Attendence      Attendance[]
 }
 
 model Profile {
@@ -128,7 +128,7 @@ model Class {
   courseId    String?
   course      Course?      @relation(fields: [courseId], references: [id])
   videoId     String
-  Attendence  Attendence[]
+  Attendence  Attendance[]
 
   folderId  String?
   Folder    Folder?  @relation(fields: [folderId], references: [id])
@@ -145,11 +145,11 @@ model Folder {
   updatedAt DateTime @updatedAt
 }
 
-model Attendence {
+model Attendance {
   id String @id @default(uuid())
 
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [username])
 
   classId String
   class   Class  @relation(fields: [classId], references: [id])
