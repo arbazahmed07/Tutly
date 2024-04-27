@@ -1,15 +1,10 @@
-
 import React from 'react'
-import { getAllAssignedAssignmentsByUserId } from '@/actions/assignments'
 import { getAllAssignmentsByCourseId } from '@/actions/assignments';
 import getCurrentUser from '@/actions/getCurrentUser'
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const currentUser = await getCurrentUser();
-  const assignments = await getAllAssignedAssignmentsByUserId(
-    currentUser?.id || ""
-  );
 
   const courseAssignments = await getAllAssignmentsByCourseId(params.id);
 
