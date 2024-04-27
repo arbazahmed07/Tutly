@@ -4,6 +4,7 @@ import * as XLSX from "xlsx";
 import _ from "lodash";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { join } from "path";
 
 const AttendanceClient = ({ courses }: any) => {
   const [fileData, setFileData] = useState<any>([]);
@@ -14,7 +15,6 @@ const AttendanceClient = ({ courses }: any) => {
   const [openClasses, setOpenClasses] = useState<boolean>(false);
   const [users, setUsers] = useState<any>([]);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
-
 
   useEffect(() => {
     if (!currentCourse) {
@@ -175,23 +175,11 @@ const AttendanceClient = ({ courses }: any) => {
       student.Name = student.Name.replace(from, to);
     });
   };
-  // submit attendance
-  const submitAttendance=async()=>{
-    try{
-      const res=await axios.post("/api/attendance",{
-        classId:currentClass?.id,
-        data:presentStudents
-      })
-      toast.success("Attendance submitted successfully")
-    }catch(e:any){
-      toast.error(e.message)
-    }
-  }
   return (
     <div className="p-4 text-center ">
       <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
       <h1 className="text-center text-lg">Monitor your mentees attendance</h1>
-      <div className="flex justify-between items-end w-[80%] m-auto mt-8">
+      <div className="flex justify-between w-[80%] m-auto mt-8">
         <div className="flex gap-2 items-center">
           <div className="relative">
             {!currentCourse ? (
@@ -270,8 +258,7 @@ const AttendanceClient = ({ courses }: any) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-4 flex-col">
-          <button onClick={submitAttendance} className="rounded bg-secondary-500 p-2">Submit attendance</button>
+        <div>
           <input
             type="file"
             className="bg-primary-600 rounded cursor-pointer w-60 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out"
@@ -284,7 +271,6 @@ const AttendanceClient = ({ courses }: any) => {
             }}
           />
         </div>
-        
       </div>
 
       {/* Present Students Table */}
