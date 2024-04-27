@@ -7,6 +7,7 @@ import { MdDelete } from "react-icons/md";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { MdOutlineEdit } from "react-icons/md";
 
 
 export default function CourseCard({ course,currentUser }: any) {
@@ -95,7 +96,7 @@ export default function CourseCard({ course,currentUser }: any) {
                     <h1 className="text-sm">{course?.title}</h1>
                 </div>
                 <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
-                    <TiEdit className=" w-5 h-5 cursor-pointer"  />
+                    <MdOutlineEdit className=" w-5 h-5 cursor-pointer"  />
                 </button>
             </div>
                 {
