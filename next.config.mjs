@@ -16,6 +16,7 @@ const nextConfig = {
       "png.pngtree.com",
       "i.postimg.cc",
       "acourseoflove.org",
+      "img.freepik.com",
       "www.google.com",
       "images.unsplash.com"
     ]
