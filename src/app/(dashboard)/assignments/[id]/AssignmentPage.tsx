@@ -92,7 +92,7 @@ export default function AssignmentPage({
         )}
       </div>
       <span className="block mt-5">
-            <button className="p-2 rounded bg-orange-500 text-white">Details</button>
+            Details : 👇
       </span>
       <div className="my-5">
         {assignment?.details || "No details given to show"}
@@ -118,7 +118,7 @@ export default function AssignmentPage({
             href={`/playground/html-css-js?assignmentId=${params.id}`}
           >
             {assignment?.submissions.length === 0 ? (
-              <button className="bg-blue-600 inline p-2 text-sm rounded font-semibold">
+              <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
                 Submit through Playground
               </button>
             ) : (
@@ -127,8 +127,8 @@ export default function AssignmentPage({
               </button>
             )}
           </Link>
-          <span className="block mt-5">
-            <button className="p-2 rounded bg-orange-500 text-white">Submissions</button>
+          <span className="block mt-5 text-white">
+            Submissions : 👇
           </span>
         </div>
         <div className="overflow-x-auto">

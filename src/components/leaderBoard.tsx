@@ -64,21 +64,25 @@ export default function Leaderboard({ submissions, courses }: any) {
         ) : (
           leaderboardData.map((data: any, index: number) => (
             <div className={`flex justify-between items-center p-2 px-4 border-b-2 bg-gradient-to-r hover:from-blue-600 hover:to-sky-500`} key={index}>
-              <div className="flex gap-3 md:gap-10 items-center">
-                <h1>{index + 1}</h1>
-                <Image
-                  src={data?.image||'/images/placeholder.jpg'} 
-                  alt={`User ${index + 1}`}
-                  width={35}
-                  height={35}
-                  className="w-10 h-10 rounded-full"
-                />
-                <div className="py-2">
-                  <h1 className="text-sm font-medium">{data.name}</h1>
-                  <h1 className="text-xs">@{data.username}</h1>
+              {data.totalPoints!==0&&
+              <div>
+                <div className="flex gap-3 md:gap-10 items-center">
+                  <h1>{index + 1}</h1>
+                  <Image
+                    src={data?.image||'/images/placeholder.jpg'} 
+                    alt={`User ${index + 1}`}
+                    width={35}
+                    height={35}
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <div className="py-2">
+                    <h1 className="text-sm font-medium">{data.name}</h1>
+                    <h1 className="text-xs">@{data.username}</h1>
+                  </div>
                 </div>
+                <h1 className="font-medium text-xs md:text-sm">{data.totalPoints} points</h1>
               </div>
-              <h1 className="font-medium text-xs md:text-sm">{data.totalPoints} points</h1>
+            }
             </div>
           ))
         )}
