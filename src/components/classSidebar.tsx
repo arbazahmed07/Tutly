@@ -42,11 +42,13 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
           !open && "hidden"
         } max-sm:absolute sticky sm:top-10 flex flex-col w-44 px-2 bg-background items-center py-3 gap-2 h-dvh shadow-xl`}
       >
-        <Link href={`/courses/${params.id}`} className="cursor-pointer">
-          <h1 className="p-3 text-sm font-medium border-b-2">
-            {title}
-          </h1>
-        </Link>
+        <div className=" flex items-center justify-center">
+          <Link href={`/courses/${params.id}`} className="cursor-pointer">
+            <h1 className="p-3 text-sm font-medium border-b-2">
+              {title}
+            </h1>
+          </Link>
+        </div>
         {Object.keys(groupedClasses).map((folderId: string) => {
           const folder = classes.find((c: any) => c.folderId === folderId)?.Folder;
           if (folder) {

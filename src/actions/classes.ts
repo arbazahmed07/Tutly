@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import * as z from "zod";
+import getCurrentUser from "./getCurrentUser";
 
 // Define the schema for class data
 const classSchema = z.object({
@@ -93,3 +94,56 @@ export const createClass = async (data: any) => {
     throw new Error("Failed to create class. Please try again later.");
   }
 };
+
+export const updateClass = async (classId: string, data: any) => {
+  const currentUser = await getCurrentUser();
+  if(currentUser?.role !== "INSTRUCTOR"){  
+    throw new Error("You are not authorized to update this class.");
+  }
+
+  const { classTitle, videoLink, videoType } = classSchema.parse(data);
+
+  try {
+    const myClass = await db.class.update({
+      where: {
+        id: classId,
+      },
+      data: {
+        title: classTitle,
+        video: {
+          update: {
+            videoLink: videoLink,
+            videoType: videoType,
+          },
+        },
+      },
+    });
+
+    return myClass;
+  } catch (error) {
+    console.error("Error updating class:", error);
+    throw new Error("Failed to update class. Please try again later.");
+  }
+};
+
+
+export const deleteClass = async (classId: string) => {
+  const currentUser = await getCurrentUser();
+  if(currentUser?.role !== "INSTRUCTOR"){  
+    throw new Error("You are not authorized to delete this class.");
+  }
+
+  try {
+    const res = await db.class.delete({
+      where: {
+        id: classId,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting class:", error);
+    throw new Error("Failed to delete class. Please try again later.");
+  }
+
+  return { success: true };
+  
+}
