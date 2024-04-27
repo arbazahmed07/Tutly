@@ -3,16 +3,15 @@ const { PrismaClient } = require("@prisma/client");
 const db = new PrismaClient();
 
 async function main() {
-  const students = await db.class.update({
-    where: { id: "" },
-    data: {
-      students: {
-        createMany: {
-          data: [],
-        },
-      },
-    },
-  });
+  const students = await db.user.findMany({
+    select:{
+      name:true,
+      username:true,
+      email:true,
+      password:true,
+
+    }
+  })
   console.log({ students });
 }
 main()

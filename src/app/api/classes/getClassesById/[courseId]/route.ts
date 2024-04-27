@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest, { params }: { params: {courseId: string }}) {
     try {
         const myClass = await getCourseClasses(params.courseId);
-        const classes = myClass.map((c) => {
+
+        const classes = myClass?.map((c) => {
             return {
                 id: c.id,
                 title: c.title,
