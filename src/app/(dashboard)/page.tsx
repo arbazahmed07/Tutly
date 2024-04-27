@@ -146,6 +146,7 @@ export default async function Home() {
         }
       }
     }
+
     return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
