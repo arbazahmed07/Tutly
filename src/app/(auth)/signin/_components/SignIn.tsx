@@ -24,7 +24,7 @@ const SignIn = () => {
       });
       toast.dismiss();
       if (response?.error) {
-        toast.error(response.error);
+       toast.error("Invalid username or password");
       } else{
         toast.success("Redirecting to dashboard...");
         router.push("/");
