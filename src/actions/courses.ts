@@ -254,6 +254,7 @@ export const getClassDetails = async (id: string) => {
     include: {
       video: true,
       attachments: true,
+      Folder: true,
     },
   });
   return classDetails;

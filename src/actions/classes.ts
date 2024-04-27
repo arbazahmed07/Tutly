@@ -95,18 +95,43 @@ export const createClass = async (data: any) => {
   }
 };
 
-export const updateClass = async (classId: string, data: any) => {
+export const updateClass = async (data: any) => {
   const currentUser = await getCurrentUser();
   if(currentUser?.role !== "INSTRUCTOR"){  
     throw new Error("You are not authorized to update this class.");
   }
 
-  const { classTitle, videoLink, videoType } = classSchema.parse(data);
+  const { classTitle,videoLink, videoType,folderId,folderName } = classSchema.parse(data);
+
+  let newFolderId = undefined;
+
+  if(folderId && folderName){
+    const res = await db.folder.update({
+      where: {
+        id: folderId,
+      },
+      data: {
+        title: folderName,
+      },
+    });
+    newFolderId = folderId;
+  } else if(folderName){
+    const res = await db.folder.create({
+      data: {
+        title: folderName,
+      },
+    });
+    newFolderId = res.id;
+  } else {
+    newFolderId = folderId;
+  }
+
+    console.log("newFolderId",newFolderId);
 
   try {
     const myClass = await db.class.update({
       where: {
-        id: classId,
+        id:data.classId as string,
       },
       data: {
         title: classTitle,
@@ -114,6 +139,11 @@ export const updateClass = async (classId: string, data: any) => {
           update: {
             videoLink: videoLink,
             videoType: videoType,
+          },
+        },
+        Folder: {
+          connect: {
+            id: newFolderId as string,
           },
         },
       },
