@@ -30,7 +30,7 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
 
 
     return (
-        <div className="flex flex-col items-center m-5 md:m-10 font-semibold dark:text-white">
+        <div className="flex flex-col items-center m-5 mt-12 md:mt-20 font-semibold dark:text-white">
                 <div className='relative'>  
                     {currentUser.role === 'MENTOR' && 
                      <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute h-16 w-16 -left-9 -top-9 transform -rotate-45' />

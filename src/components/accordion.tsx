@@ -166,7 +166,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
       const addDoubtRef = useRef( null );
       
     return (
-        <div className="bg-gradient-to-l sm:min-w-[800px] px-7"> 
+        <div className="bg-gradient-to-l w-full md:min-w-[800px]"> 
                 <div className="flex flex-col items-center text-sm font-medium">
                   <div className=' w-full flex flex-row-reverse'>
                     <button onClick={()=> {handleShow() ;setOpenAccordion(-1);   }} className="py-3 px-4 rounded-md mt-3 bg-blue-600 hover:bg-blue-700">
@@ -194,7 +194,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
             <div id="accordion-color" data-accordion="collapse" className="mt-10 cursor-pointer" >
             {QA.map((qa : any, index : number) => ( 
                 <div key={index} className={`relative cursor-pointer mb-1 ${openAccordion === index ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white" :"bg-slate-200 text-zinc-500 shadow-3xl"}`}>
-                <div className={`flex items-center justify-between w-full p-3 font-medium gap-3 rounded-t-lg`} >
+                <div className={`flex items-center justify-between w-full p-3 flex-wrap font-medium gap-3 rounded-t-lg`} >
                     <div className='flex justify-start items-center space-x-5 ml-2 relative'> 
                         {qa.user.role === 'STUDENT' &&
                             <Image src={qa.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
@@ -221,17 +221,46 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                 <p className='text-xs font-medium mt-2'>{qa.user?.username}</p>
                             </div>                
                         </div>
+                        <div>
+                          <p className="text-sm text-gray-800 flex md:hidden ml-5 justify-end items-center font-bold">{qa.response.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
+                        </div>
                     </div>
-                    <div className="flex space-x-3 items-center">
-                      <div className='flex justify-start items-center space-x-3' >
-                          <p className="text-sm text-gray-800 flex justify-start items-center font-bold">{qa.response.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
+                    <div className="flex space-x-2 items-center">
+                      <div className='flex justify-start items-center space-x-2' >
+                          <p className="text-sm text-gray-800 hidden md:flex justify-start items-center font-bold">{qa.response.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
                           <div className="p-2 font-bold  flex items-center justify-start rounded text-sm"
                           >
                             {openAccordion === index ? <IoIosArrowUp onClick={() => toggleAccordion(index)} className=' cursor-pointer'  /> : <IoIosArrowDown onClick={() => toggleAccordion(index)} className=' cursor-pointer' />}
                           </div>
+                          <div className="flex md:hidden items-center border-2 border-secondary-300 bg-white rounded-lg">
+                            <input
+                              type="text"
+                              placeholder="Enter your reply"
+                              value={reply}
+                              onKeyDown={
+                                (e) => {
+                                  if (e.key === 'Enter') {
+                                    handleReplyEnterBtn(qa.id);
+                                  }
+                                  if (e.key === 'Escape') {
+                                    setReplyId('');
+                                  }
+                                }
+                              }
+                              onChange={(e) => setReply(e.target.value)}
+                              className="w-full sm:w-auto px-3 py-2 bg-white text-zinc-500  border-r-2 outline-none sm:mb-0 rounded-l-lg"
+                            />
+                            <button
+                              title="btn"
+                              className="p-3 text-zinc-500"
+                              onClick={() => handleReply(qa.id)}
+                            >
+                              <BsFillSendArrowUpFill />
+                            </button>
+                          </div>
                         {
                         replyId === qa.id ? (
-                          <div className="flex items-center">
+                          <div className="hidden md:flex items-center">
                             <div className="flex items-center border-2 border-secondary-300 bg-white rounded-lg">
                             <input
                               type="text"
@@ -248,7 +277,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                 }
                               }
                               onChange={(e) => setReply(e.target.value)}
-                              className="w-full sm:w-auto px-4 py-2 bg-white text-zinc-500  border-r-2 outline-none sm:mb-0 rounded-l-lg"
+                              className="w-full sm:w-auto px-3 py-2 bg-white text-zinc-500  border-r-2 outline-none sm:mb-0 rounded-l-lg"
                             />
                             <button
                               title="btn"

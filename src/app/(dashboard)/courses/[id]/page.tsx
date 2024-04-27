@@ -21,7 +21,7 @@ const page = async ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="m-3">
-      <h1 className="text-xl border-b-2 font-medium p-2">Information About the course</h1>
+      <h1 className="text-lg text-center md:text-xl border-b-2 font-medium p-2">Information About the course</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 p-2 mt-3">
         {

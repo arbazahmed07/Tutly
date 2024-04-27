@@ -36,7 +36,7 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
   });
 
   return (
-    <div className="relative">
+    <div className="relative z-10">
       <div
         className={`${
           !open && "hidden"

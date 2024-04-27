@@ -10,10 +10,6 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  // if (courses.length === 0) {
-  //   toast.error("No courses created yet!");
-  //   return;
-  // }
 
   if (!isMounted) {
     return;
@@ -21,12 +17,12 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         {courses?.map((course: any) => {
           return (
             <button
               onClick={() => setCurrentCourse(course.id)}
-              className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "border rounded"
+              className={`rounded p-2 sm:w-auto ${currentCourse === course.id && "border rounded"
                 }`}
               key={course.id}
             >
@@ -41,12 +37,12 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
           return cls.attachments.map((assignment: any) => {
             return (
               <div key={assignment.id} className="border rounded-lg p-1 md:p-3">
-                <div className="flex items-center p-2 md:p-0 md:px-4 justify-around md:justify-between">
-                  <div className="flex flex-col md:flex-row items-center justify-between w-full">
-                    <div className="flex gap-4 items-center text-sm">
-                      <h2 className="font-medium">{assignment.title}</h2>
+                <div className="flex items-center p-2 md:p-0 md:px-4 justify-around md:justify-between flex-wrap">
+                  <div className="flex md:flex-row items-center justify-between w-full flex-wrap">
+                    <div className="text-sm">
+                      <h2 className="flex-1 font-medium m-2">{assignment.title}</h2>
                     </div>
-                    <div className="flex gap-6 items-center text-sm font-medium text-white">
+                    <div className="flex gap-3 md:gap-6 items-center text-sm font-medium text-white flex-wrap">
                       {
                         assignment.submissions.length === 0 ?
                           <div className="flex gap-6 itens-center">
@@ -81,11 +77,7 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
                               })
                             }
                           </div>
-
                       }
-                      {assignment.dueDate && (
-                        <h1 className="rounded-full p-2 px-3 bg-secondary-600">{assignment.dueDate?.toISOString().split("T")[0]}</h1>
-                      )}
                       <button
                       title="btn"
                         onClick={() => {

@@ -2,11 +2,11 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IoMdBookmarks, IoMdCloseCircle } from "react-icons/io";
-import { TiEdit } from "react-icons/ti";
-import { MdDelete } from "react-icons/md";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { MdOutlineEdit } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
 
 
 export default function CourseCard({ course,currentUser }: any) {
@@ -52,7 +52,7 @@ export default function CourseCard({ course,currentUser }: any) {
 
     
     return (    
-        <div hidden={!course.isPublished && currentUser?.role !== 'INSTRUCTOR' } key={course.id} className="rounded-lg border m-3 w-[280px]" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
+        <div hidden={!course.isPublished && currentUser?.role !== 'INSTRUCTOR' } key={course.id} className="rounded-lg border m-3 w-full sm:w-[280px]" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
             <div className="h-[150px]  relative text-secondary-700 bg-white rounded-t-lg cursor-pointer" onClick={() => router.push(`/courses/${course.id}`) }>
                 <div className="h-full w-full relative">
                     {course && course.image && (
@@ -95,73 +95,77 @@ export default function CourseCard({ course,currentUser }: any) {
                     <h1 className="text-sm">{course?.title}</h1>
                 </div>
                 <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
-                    <TiEdit className=" w-5 h-5 cursor-pointer"  />
+                    <MdOutlineEdit className=" w-5 h-5 cursor-pointer"  />
                 </button>
             </div>
                 {
                 openPopup
                     && (
-                <div className="absolute z-50 top-[150px] left-[40%] min-w-[400px] space-y-5 bg-black p-4 rounded-lg">
-                    <div
-                        onClick={() => setOpenPopup(!openPopup)}
-                        className="absolute right-2 top-2 cursor-pointer text-md"
-                    >
-                        <IoMdCloseCircle className="h-7 w-7"/>
-                    </div>
-                <div className="mb-4">
-                    <h1 className="text-md text-center my-4">ADD NEW COURSE</h1>
-                    <input
-                    onChange={(e) => setCourseTitle(e.target.value)}
-                    value={courseTitle}
-                    type="text"
-                    className="rounded p-2 bg-background block m-auto w-full mb-4"
-                    placeholder="Title"
-                    />
-                </div>
-                <label className="" htmlFor="publish">Publish:</label>
-                    <div className=" space-x-5 flex items-center">
-                        <div className=" flex justify-start items-center">
-                        <input
-                            type="radio"
-                            id="yes"
-                            name="publish"
-                            // value={isPublished.toString()}
-                            checked={isPublished === true}
-                            className=" w-4 h-4 mr-1"
-                            onChange={(e) => setIsPublished(e.target.value === 'true')}
+                        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30 backdrop-filter backdrop-blur-sm">
+                        <div className="relative min-w-[300px] sm:min-w-[400px] max-w-[80%] bg-zinc-400 p-4 rounded-lg">
+                          <div
+                            onClick={() => setOpenPopup(!openPopup)}
+                            className="absolute top-2 right-2 cursor-pointer text-white"
+                          >
+                            <RxCross2 className="h-7 w-7"/>
+                          </div>
+                          <div className="mb-4">
+                            <h1 className="text-lg font-semibold text-center my-4 text-white">ADD NEW COURSE</h1>
+                            <input
+                              onChange={(e) => setCourseTitle(e.target.value)}
+                              value={courseTitle}
+                              type="text"
+                              className="rounded p-2 outline-none block m-auto w-full mb-4 text-white bg-background"
+                              placeholder="Title"
                             />
-                        <label htmlFor="yes">Yes</label>
+                          </div>
+                          <label className="text-white" htmlFor="publish">Publish:</label>
+                          <div className="space-x-5 flex items-center text-white">
+                            <div className="flex justify-start items-center">
+                              <input
+                                type="radio"
+                                id="yes"
+                                name="publish"
+                                value="true"
+                                checked={isPublished === true}
+                                className="w-4 h-4 mr-1"
+                                onChange={(e) => setIsPublished(e.target.value === 'true')}
+                              />
+                              <label htmlFor="yes">Yes</label>
+                            </div>
+                            <div className="flex justify-start items-center">
+                              <input
+                                type="radio"
+                                id="no"
+                                name="publish"
+                                value="false"
+                                checked={isPublished === false}
+                                className="w-4 h-4 mr-1"
+                                onChange={(e) => setIsPublished(e.target.value === 'true')}
+                              />
+                              <label htmlFor="no">No</label>
+                            </div>
+                          </div>
+                          {isPublished}
+                          <input
+                            onChange={(e) => setImg(e.target.value)}
+                            value={img ? img : ''}
+                            type="text" 
+                            className="rounded p-2 my-3 outline-none block m-auto w-full text-white bg-background"
+                            placeholder="Paste image link here"
+                          />
+                          <button
+                            disabled={text === "Modify..."}
+                            onClick={() => {handleEditCourse(course.id); setText("Modifying...")}}
+                            className="rounded-md flex justify-center items-center disabled:bg-secondary-800 disabled:cursor-not-allowed bg-primary-500 hover:bg-primary-600 p-2 my-3 w-full text-white"
+                          >
+                            {text}
+
+                          </button>
                         </div>
-                        <div className=" flex justify-start items-center">
-                        <input
-                            type="radio"
-                            id="no"
-                            name="publish"
-                            // value={isPublished.toString()}
-                            checked={isPublished === false}
-                            className=" w-4 h-4 mr-1"
-                            onChange={(e) => setIsPublished(e.target.value === 'true')}
-                            />
-                        <label htmlFor="no" className=" text-lg">No</label>
-                        </div>
-                    </div>
-                <input
-                    value={img ? img : '' }
-                    onChange={(e) => setImg(e.target.value)}
-                    type="text"
-                    className="rounded p-2 bg-background block m-auto w-full"
-                    placeholder="Paste image link here"
-                />
-                <button
-                    disabled={text === "Modify..."}
-                    onClick={()=>{handleEditCourse(course.id);setText("Modifying...") }}
-                    className="rounded-md flex justify-center items-center disabled:bg-secondary-800 disabled:cursor-not-allowed bg-primary-500 hover:bg-primary-600 p-2  my-3 w-full"
-                >
-                    {text}
-                    
-                </button>
-                </div>
-            )}
+                      </div>
+                       
+            )}  
         </div>
     )
 }
