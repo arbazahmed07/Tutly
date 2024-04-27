@@ -62,19 +62,19 @@ export default async function Class({
                         </div>
                     </div>  
                     <table className="border-collapse w-full">  
-                        <thead className="mb-4 border-b-2 font-semibold border-secondary-400">
+                        <thead className="mb-4 border-b font-semibold">
                             <th className="px-4 py-2">Title</th>
                             <th className="px-4 py-2">Link</th>
                             <th className="px-4 py-2">Due Date</th>
                         </thead>
                         <tbody>
                             {details?.attachments?.length === 0 ? (
-                             <tr className="bg-blue-500 text-center ">
+                             <tr className="bg-blue-500 text-center">
                                 <td className="text-center text-lg py-4" colSpan={4}>No assignments</td>
                             </tr>
                             ) : (
                             details?.attachments?.map((attachment, index) => (
-                            <tr className="bg-blue-500 text-center" key={index}>   
+                            <tr className="bg-blue-500 border-b" key={index}>   
                                 <td className="px-4 py-2">
                                     <div className="font-semibold">
                                         {attachment.title}
@@ -94,7 +94,7 @@ export default async function Class({
                                     </Link>
                                     ) : 'No link '}
                                 </td>
-                                <td className="px-4 py-2">
+                                <td className="px-4 py-2  text-center">
                                     {attachment.attachmentType === "ASSIGNMENT" &&
                                     attachment.dueDate ? (
                                     new Date(attachment.dueDate).toLocaleDateString()

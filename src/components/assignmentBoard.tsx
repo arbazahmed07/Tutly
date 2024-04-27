@@ -10,10 +10,6 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  // if (courses.length === 0) {
-  //   toast.error("No courses created yet!");
-  //   return;
-  // }
 
   if (!isMounted) {
     return;
@@ -21,12 +17,12 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         {courses?.map((course: any) => {
           return (
             <button
               onClick={() => setCurrentCourse(course.id)}
-              className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "border rounded"
+              className={`rounded p-2 sm:w-auto ${currentCourse === course.id && "border rounded"
                 }`}
               key={course.id}
             >

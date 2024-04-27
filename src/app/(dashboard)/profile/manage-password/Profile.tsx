@@ -75,49 +75,49 @@ const Profile = ({ currentUser } :any) => {
     }
   }
   return (
-    <div className="flex justify-center items-center w-full h-[80vh]">
-      <div className="max-w-[600px] p-5 m-auto">
+    <div className="flex justify-center items-center h-[85vh]">
+      <div className="p-5 m-auto bg-slate-300 text-secondary-800 rounded-lg">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-3">
-            <div className="flex gap-2 sm:gap-6 flex-wrap sm:flex-nowrap ">
-              <label className="text-lg font-medium  w-full sm:w-[35%] ">Email</label> <span className="font-bold hidden sm:block">:</span>
+          <div className="flex flex-col gap-2 md:w-[25vw]">
+            <div>
+              <label className="w-full block mb-1">Email</label>
               <input
                 type="email"
                 placeholder="Email"
-                className="border border-gray-300 px-2 py-1 rounded-lg bg-slate-400/40 w-full sm:w-auto"
+                className="border border-gray-300 outline-none px-3 py-2 rounded-md bg-slate-400/40 w-full"
                 value={email}
                 disabled
               />
             </div>
             {currentUser?.password && (
-              <div className="flex gap-2 sm:gap-6 flex-wrap sm:flex-nowrap ">
-                <label className="text-lg font-medium w-full sm:w-[35%]  ">Old Password <a onClick={handleForgotPassword} className="text-xs text-blue-500 hover:cursor-pointer hover:text-red-700">forgot?</a> </label> <span className="font-bold hidden sm:block">:</span>
+              <div>
+                <label className="w-full block mb-1">Old Password <a onClick={handleForgotPassword} className="text-xs text-blue-500 hover:cursor-pointer hover:text-red-700">forgot?</a> </label>
                 <input
                   type="password"
                   placeholder="Old Password"
-                  className="border border-gray-300 px-2 py-1 rounded-lg w-full sm:w-auto"
+                  className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full"
                   {...register("oldPassword")}
                 />
               </div>
             )}
-            <div className="flex gap-2 sm:gap-6 flex-wrap sm:flex-nowrap ">
-              <label className="text-lg font-medium w-full sm:w-[35%]  ">New Password</label> <span className="font-bold hidden sm:block">:</span>
+            <div>
+              <label className="w-full block mb-1">New Password</label>
               <input
                 type="password"
                 placeholder="New Password"
-                className="border border-gray-300 px-2 py-1 rounded-lg w-full sm:w-auto"
+                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full"
                 {...register("newPassword", { required: true, minLength: 8 })}
               />
             </div>
             {errors.newPassword?.type == "required" && <span className="text-red-500">Password is required</span>}
             {errors.newPassword?.type == "minLength" && <span className="text-red-500">Password must have more than 8 characters</span>}
-            <div className="flex gap-2 sm:gap-6 flex-wrap sm:flex-nowrap ">
+            <div>
 
-              <label className="text-lg font-medium w-full sm:w-[35%]  ">Confirm Password</label> <span className="font-bold hidden sm:block">:</span>
+              <label className="w-full block mb-1">Confirm Password</label>
               <input
                 type="password"
                 placeholder="Confirm Password"
-                className="border border-gray-300 px-2 py-1 rounded-lg w-full sm:w-auto"
+                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full"
 
                 {...register("confirmPassword", { required: true, minLength: 8 })}
               />
@@ -127,7 +127,7 @@ const Profile = ({ currentUser } :any) => {
 
             <button
               type="submit"
-              className="bg-gray-950 hover:bg-gray-800 text-white text-sm font-semibold py-2 px-3 rounded-lg mt-4"
+              className="bg-gray-950 hover:bg-gray-800 text-white text-sm font-semibold p-3 rounded-md mt-4"
             >
               Update
             </button>
