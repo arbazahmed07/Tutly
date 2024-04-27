@@ -1,7 +1,7 @@
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials"
 import prisma from "@/lib/db";
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from 'uuid';
 import {type NextAuthConfig } from "next-auth";
 import bcryptjs from "bcryptjs";
 
@@ -58,7 +58,7 @@ export default {
               id: user.id,
             },
             data: {
-              oneTimePassword: randomUUID(),
+              oneTimePassword: uuidv4(),
             },
           });
 
@@ -133,7 +133,7 @@ export default {
                 name: user.name,
                 image: user.image,
                 emailVerified: new Date(),
-                oneTimePassword: randomUUID(),
+                oneTimePassword: uuidv4(),
               },
             });
             return true;

@@ -1,47 +1,187 @@
-import { pastMeetingParticipantsReport } from "@/app/zoom/zoomReportHelper";
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import * as XLSX from "xlsx";
+import _ from "lodash";
+import toast from "react-hot-toast";
 
-const AttendancePage = async () => {
-  const students = [
-    {
-      "Name":"23071A67H4 (RIDA ALMAS MUJAHID)",
-      
-      "JoinTime":"04/26/2024 06:37:06 PM",
-      "Leave Time":"04/26/2024 08:26:28 PM",
-      "Duration":"110"
-    },
-    {
-      "Name":"23071A6769",
-      "JoinTime":"04/26/2024 06:37:06 PM",
-      "Leave Time":"04/26/2024 06:38:33 PM",
-      "Duration":"2"
-    },
-    {
-      "Name":"PULIVARTHI SARAYU",
-      "JoinTime":"04/26/2024 06:38:46 PM",
-      "Leave Time":"04/26/2024 06:38:59 PM",
-      "Duration":"1"
-    },
-  ]
-  // const report = await pastMeetingParticipantsReport()
+const AttendancePage = () => {
+  const [fileData, setFileData] = useState<any>([]);
+  const [selectedFile, setSelectedFile] = useState<any>();
+  // const students = [
+  //   {
+  //     "Name": "23071A67H4 (RIDA ALMAS MUJAHID)",
+  //     "JoinTime": "04/26/2024 06:37:06 PM",
+  //     "LeaveTime": "04/26/2024 08:26:28 PM",
+  //     "Duration": 110,
+  //   },
+  // ];
+
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+
+  const handleStudentClick = (student :any) => {
+    setSelectedStudent(student);
+  };
+
+  const handleClosePopup = () => {
+    setSelectedStudent(null);
+  };
+
+  const onSelectFile = (file: Blob) => {
+    setSelectedFile(file);
+    try {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const result = (e.target as FileReader).result;
+        const workbook = XLSX.read(result, {
+          type: "binary",
+          cellDates: true,
+        });
+        const worksheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[worksheetName];
+        const data = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+        data.forEach((row: any) => {
+          _.forIn(row, (value: any, key:any) => {
+            if (value instanceof Date) {
+              row[key] = value.toISOString().split("T")[0];
+            }
+          });
+        });
+        console.log(data);
+        console.log(file);
+
+        setFileData(data);
+      };
+      reader.onerror = () => {
+        throw new Error("Error in reading file");
+      };
+
+      reader.readAsBinaryString(file);
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  const aggregatedStudents = fileData.reduce((acc:any , student:any) => {
+    const firstTenCharsName = String(student.Name).substring(0, 10);
+    if (!acc[firstTenCharsName]) {
+      acc[firstTenCharsName] = {
+        Name: student.Name,
+        Joins: [
+          {
+            JoinTime: student.JoinTime,
+            LeaveTime: student.LeaveTime,
+            ActualName: student.Name,
+            Duration: parseInt(student.Duration),
+          },
+        ],
+        Duration: parseInt(student.Duration),
+      };
+    } else {
+      acc[firstTenCharsName].Joins.push({
+        JoinTime: student.JoinTime,
+        LeaveTime: student.LeaveTime,
+        ActualName: student.Name,
+        Duration: parseInt(student.Duration),
+      });
+      acc[firstTenCharsName].Duration += parseInt(student.Duration);
+    }
+    return acc;
+  }, {});
+
+  const sortedAggregatedStudents = Object.values(aggregatedStudents).sort((a:any, b:any) => {
+    const nameA = String(a.Name).toUpperCase();
+    const nameB = String(b.Name).toUpperCase();
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
+
   return (
     <div className="p-4 text-center ">
-      {/* <pre>{JSON.stringify(report,null,2)}</pre> */}
+      <input
+        type="file"
+        accept=".csv, .xlsx"
+        onChange={(e) => {
+          const files = e.target.files;
+          if (files && files.length > 0) {
+            onSelectFile(files[0]);
+          }
+        }}
+      />
+      {selectedFile && (
+        <p className="text-sm text-gray-700">
+          {selectedFile.name} - {(selectedFile.size / 1024).toFixed(2)} KB
+        </p>
+      )}
       <div className="">
-        <h1 className="text-4xl mt-4  font-semibold mb-4">Attendance Page</h1>
+        <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance Page</h1>
       </div>
       <p className="text-lg">Monitor your mentees attendance here</p>
-      <div className="border my-8">
-        {
-          students.map((student)=>{
-            return (
-              <div>
-                <h1>{student.Name.split(" ")[0]}</h1>
-              </div>
-            )
-          })
-        }
-      </div>
+      <table className="w-[80%] m-auto mt-10">
+        <thead>
+          <tr className="border-b">
+            <th>index</th>
+            <th className="py-2">Name</th>
+            <th>Duration</th>
+            <th>Date</th>
+            <th>Times Joined</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedAggregatedStudents.map((student:any, index) => (
+            <tr key={index} onClick={() => handleStudentClick(student)}>
+              <td>{index+1}</td>
+              <td className="py-2 cursor-pointer">
+                {String(student?.Name).substring(0, 10).toUpperCase()}
+              </td>
+              <td>{student.Duration}</td>
+              <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
+              <td>{student.Joins.length}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {selectedStudent && (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white text-gray-700 p-4 rounded-md w-[60%]">
+            <h2 className="text-lg font-semibold mb-2">
+              Attendance Details for {String(selectedStudent?.Name)}
+            </h2>
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th className="border px-4 py-2">Actual Name</th>
+                  <th className="border px-4 py-2">Join Time</th>
+                  <th className="border px-4 py-2">Leave Time</th>
+                  <th className="border px-4 py-2">Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedStudent.Joins.map((join:any, index:number) => (
+                  <tr key={index}>
+                    <td className="border px-4 py-2">{join.ActualName}</td>
+                    <td className="border px-4 py-2">{join.JoinTime}</td>
+                    <td className="border px-4 py-2">{join.LeaveTime}</td>
+                    <td className="border px-4 py-2">{join.Duration}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button
+              className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleClosePopup}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
