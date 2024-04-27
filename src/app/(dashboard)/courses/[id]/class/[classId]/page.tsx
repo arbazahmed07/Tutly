@@ -48,8 +48,8 @@ export default async function Class({
             </div>
 
             <div className="w-full md:m-0 md:w-96">
-                <div className="rounded-xl p-2 w-full h-full dark:bg-neutral-500 bg-slate-500">
-                    <div className=" flex flex-row  items-center justify-end mb-5">
+                <div className="rounded-xl p-2 w-full h-full bg-slate-800">
+                    <div className=" flex flex-row  items-center justify-end ">
                         <div hidden={ currentUser?.role === "STUDENT" || currentUser?.role === "MENTOR" } className="text-xl my-2">
                             <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`}>
                                 <Button
