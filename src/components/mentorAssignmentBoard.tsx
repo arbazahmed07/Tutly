@@ -23,6 +23,7 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
 
   const filteredStudents = students.filter((student: any) =>
     student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
+    // student.role==="STUDENT" &&
     (student.name.toLowerCase().includes(searchQuery.toLowerCase())||student.username.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
@@ -127,20 +128,27 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
                   <h1 className="text-xs font-medium">{student.username}</h1>
                 </div>
               </div>
-              <div
-                onClick={() =>
-                  router.push(
-                    `${
-                      role === "INSTRUCTOR"
-                        ? `/instructor/assignments/${student.id}`
-                        : `/mentor/assignments/${student.id}`
-                    }`
-                  )
-                }
-                className="bg-primary-700 p-2 text-sm font-medium rounded-lg cursor-pointer"
-              >
-                Assignments
-              </div>
+              {
+                student?.role==='STUDENT'?
+                <div
+                  onClick={() =>
+                    router.push(
+                      `${
+                        role === "INSTRUCTOR"
+                          ? `/instructor/assignments/${student.id}`
+                          : `/mentor/assignments/${student.id}`
+                      }`
+                    )
+                  }
+                  className="bg-primary-700 p-2 text-sm font-medium rounded-lg cursor-pointer"
+                >
+                  Assignments
+                </div>:
+                <div className="text-sm font-medium">
+                  {student?.role}
+                </div>
+
+              }
             </div>
           </div>
         ))
