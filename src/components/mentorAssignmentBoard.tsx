@@ -46,7 +46,7 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
             </button>
           ))}
         </div>
-        <div>
+        <div hidden>
           <div className="flex items-center">
             <input
               type="radio"
