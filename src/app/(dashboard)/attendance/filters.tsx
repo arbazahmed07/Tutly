@@ -1,25 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import _ from "lodash";
 import toast from "react-hot-toast";
-import Filters from "./filters";
+import axios from "axios";
 
-const AttendanceClient = ({courses}:any) => {
+const AttendanceClient = ({ courses }: any) => {
   const [fileData, setFileData] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [currentCourse, setCurrentCourse] = useState<any>(null);
   const [currentClass, setCurrentClass] = useState<any>(null);
-  // const students = [
-  //   {
-  //     "Name": "23071A67H4 (RIDA ALMAS MUJAHID)",
-  //     "JoinTime": "04/26/2024 06:37:06 PM",
-  //     "LeaveTime": "04/26/2024 08:26:28 PM",
-  //     "Duration": 110,
-  //   },
-  // ];
-
+  const [openCourses, setOpenCourses] = useState<boolean>(false);
+  const [openClasses, setOpenClasses] = useState<boolean>(false);
+  const [users, setUsers] = useState<any>([]);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await axios.post("/api/course/students", {
+        courseId: currentCourse.id,
+      });
+      setUsers(res.data);
+    };
+    fetch();
+  }, [currentCourse]);
 
   const handleStudentClick = (student: any) => {
     setSelectedStudent(student);
@@ -50,8 +54,6 @@ const AttendanceClient = ({courses}:any) => {
             }
           });
         });
-        console.log(data);
-        console.log(file);
 
         setFileData(data);
       };
@@ -105,33 +107,108 @@ const AttendanceClient = ({courses}:any) => {
       return 0;
     }
   );
-//   return <pre>{JSON.stringify(courses,null,2)}</pre>
+
+  // Modify the sortedAggregatedStudents array to include information about presence
+  const modifiedAggregatedStudents = sortedAggregatedStudents.map(
+    (student: any) => {
+      const matchedUser = users.find(
+        (user: any) => user.username === student.Name
+      );
+      if (matchedUser) {
+        return {
+          ...student,
+          Present: true,
+          Username: matchedUser.username,
+          ActualName: matchedUser.name,
+        };
+      } else {
+        return {
+          ...student,
+          Present: false,
+          Username: null,
+          ActualName: null,
+        };
+      }
+    }
+  );
+
+  // Separate present and absent students
+  const combinedStudents = modifiedAggregatedStudents.map((student: any) => ({
+    ...student,
+    Name: student.ActualName ? student.ActualName : student.Username,
+  }));
+
+  const presentStudents = combinedStudents.filter(
+    (student: any) => student.Present
+  );
+  const absentStudents = combinedStudents.filter(
+    (student: any) => !student.Present
+  );
+
+  // Separate users not present in attendance data
+  const randomUsers = users.filter(
+    (user: any) =>
+      !combinedStudents.some((student: any) => student.Name === user.username)
+  );
+
   return (
     <div className="p-4 text-center ">
-      {/* {selectedFile && (
-        <p className="text-sm text-gray-500">
-          {selectedFile.name} - {(selectedFile.size / 1024).toFixed(2)} KB
-        </p>
-      )} */}
       <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
       <h1 className="text-center text-lg">Monitor your mentees attendance</h1>
       <div className="flex justify-between w-[80%] m-auto mt-8">
         <div className="flex gap-2 items-center">
-          <select name="" id="" className="p-2 rounded outline-none">
-            <option disabled value="">select course</option>
-            {
-                courses.length===0?<option value="">null</option>:
-                courses.map((course:any)=>{
-                    return <option onClick={()=>setCurrentCourse(course.id)} key={course.id} value={currentCourse}>{course.title}</option>
-                })
-            }
-          </select>
-          <select name="" id="" className="p-2 rounded outline-none">
-            {
-                currentCourse==null?<option value="">null</option>:
-                <div>have</div>
-            }
-          </select>
+          <div className="relative">
+            <h1
+              onClick={() => setOpenCourses(!openCourses)}
+              className="px-2 py-1 rounded bg-black cursor-pointer"
+            >
+              select course
+            </h1>
+            <div className="flex flex-col absolute bg-gray-600 w-full">
+              {openCourses &&
+                (courses.length === 0 ? (
+                  <h1>no courses</h1>
+                ) : (
+                  courses.map((course: any) => {
+                    return (
+                      <h1
+                        onClick={() => setCurrentCourse(course)}
+                        className="border-b p-1 cursor-pointer"
+                        key={course.id}
+                      >
+                        {course.title}
+                      </h1>
+                    );
+                  })
+                ))}
+            </div>
+          </div>
+          <div className="relative">
+            <h1
+              onClick={() => setOpenClasses(!openClasses)}
+              className="px-2 py-1 rounded bg-black cursor-pointer"
+            >
+              select class
+            </h1>
+            <div className="flex flex-col absolute bg-gray-600 w-full">
+              {openClasses &&
+                (!currentCourse ? (
+                  <h1>select course</h1>
+                ) : (
+                  currentCourse.classes.map((x: any) => {
+                    return (
+                      <h1
+                        onClick={() => setCurrentClass(x)}
+                        className="border-b p-1 cursor-pointer"
+                        key={x.id}
+                      >
+                        {x.title}
+                      </h1>
+                    );
+                  })
+                ))}
+            </div>
+          </div>
         </div>
         <div>
           <input
@@ -140,30 +217,62 @@ const AttendanceClient = ({courses}:any) => {
             accept=".csv, .xlsx"
             onChange={(e) => {
               const files = e.target.files;
-              if (files && files.length > 0) {
-                onSelectFile(files[0]);
-              }
+              !currentClass
+                ? toast.error("select class")
+                : files && files.length > 0 && onSelectFile(files[0]);
             }}
           />
         </div>
       </div>
+
+      {/* Present Students Table */}
       <table className="w-[80%] m-auto mt-10">
         <thead>
           <tr className="border-b">
             <th>index</th>
             <th className="py-2">Name</th>
+            <th>Username</th>
             <th>Duration</th>
             <th>Date</th>
             <th>Times Joined</th>
           </tr>
         </thead>
         <tbody>
-          {sortedAggregatedStudents.map((student: any, index) => (
+          {presentStudents.map((student: any, index) => (
             <tr key={index} onClick={() => handleStudentClick(student)}>
               <td>{index + 1}</td>
-              <td className="py-2 cursor-pointer">
-                {String(student?.Name).substring(0, 10).toUpperCase()}
+              <td className="py-2 cursor-pointer">{student.ActualName}</td>
+              <td>{student.Username}</td>
+              <td>{student.Duration}</td>
+              <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
+              <td>{student.Joins.length}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Absent Students Table */}
+      <table className="w-[80%] m-auto mt-10">
+        <thead>
+          <tr className="border-b">
+            <th>index</th>
+            <th className="py-2 text-start pl-10 max-w-52 text-pretty">
+              1st Join Name
+            </th>
+            <th className="py-2">Joined Name(10 chars)</th>
+            <th>Duration</th>
+            <th>Date</th>
+            <th>Times Joined</th>
+          </tr>
+        </thead>
+        <tbody>
+          {absentStudents.map((student: any, index) => (
+            <tr key={index} onClick={() => handleStudentClick(student)}>
+              <td>{index + 1}</td>
+              <td className="text-start pl-10 max-w-52 text-pretty">
+                {student.Joins[0].ActualName}
               </td>
+              <td>{student.Joins[0].ActualName.substring(0, 10)}</td>
               <td>{student.Duration}</td>
               <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
               <td>{student.Joins.length}</td>
