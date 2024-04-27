@@ -50,11 +50,7 @@ export default function AssignmentBoard({ courses, assignments, userId }: any) {
                       {
                         assignment.submissions.length === 0 ?
                           <div className="flex gap-6 itens-center">
-                            {
-                              (assignment.dueDate && currentTime < new Date(assignment.dueDate)) ?
-                                <div className="rounded-full p-2 px-3 bg-secondary-600">not submitted</div> :
-                                <div className="rounded-full p-2 px-3 bg-red-600">not submitted</div>
-                            }
+                            <div className="rounded-full p-2 px-3 bg-secondary-600">not submitted</div>
                           </div>
                           :
                           <div className="flex gap-2">
