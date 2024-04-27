@@ -43,7 +43,7 @@ const UserProfile = ({ currentUser }:any) => {
                 />
                 <hr />
                 <MenuItem
-                  onClick={() => signOut({ callbackUrl: NEXT_PUBLIC_SIGN_IN_URL })}
+                  onClick={() => {signOut({ callbackUrl: NEXT_PUBLIC_SIGN_IN_URL });localStorage.clear();}}
                   label="SignOut"
                 />
               </div>
