@@ -9,10 +9,9 @@ export const postAttendance = async ({classId,data}: {
     if (!currentUser) {
         throw new Error("You must be logged in to attend a class");
     }
-    const ParsedData = JSON.parse(JSON.stringify(data));
     const postAttendance = await db.attendance.createMany({
         data: [
-            ...ParsedData.map((student) => ({
+            ...data.map((student:any) => ({
                 classId,
                 userId: student.Username,
                 attendedDuration:student.Duration
