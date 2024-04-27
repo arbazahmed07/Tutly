@@ -224,6 +224,7 @@ export default function AssignmentPage({
                     <td className="px-6 py-4 whitespace-nowrap">
                       {editingIndex === index ? (
                         <input
+                          title="null"
                           type="number"
                           value={editedScores.responsiveness}
                           onChange={(e) => {
@@ -243,6 +244,7 @@ export default function AssignmentPage({
                     <td className="px-6 py-4 whitespace-nowrap">
                       {editingIndex === index ? (
                         <input
+                          title="null"
                           type="number"
                           value={editedScores.styling}
                           onChange={(e) => {
@@ -261,6 +263,7 @@ export default function AssignmentPage({
                     <td className="px-6 py-4 whitespace-nowrap">
                       {editingIndex === index ? (
                         <input
+                          title="null"
                           type="number"
                           value={editedScores.other}
                           onChange={(e) => {
