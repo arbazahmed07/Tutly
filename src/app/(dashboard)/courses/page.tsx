@@ -23,6 +23,7 @@ export default async function Courses() {
               className="m-auto w-[50%] h-[50%]"
             />
           </div>
+          {currentUser?.role === "INSTRUCTOR" && <AddCourse/>}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 md:gap-2 m-2 md:m-6">
