@@ -2,6 +2,7 @@ import React from 'react'
 import { getAllAssignmentsByCourseId } from '@/actions/assignments';
 import getCurrentUser from '@/actions/getCurrentUser'
 import { FaExternalLinkAlt } from "react-icons/fa";
+import Link from 'next/link';
 
 const page = async ({ params }: { params: { id: string } }) => {
   const currentUser = await getCurrentUser();
@@ -22,7 +23,7 @@ const page = async ({ params }: { params: { id: string } }) => {
     <div className="m-3">
       <h1 className="text-xl border-b-2 font-medium p-2">Information About the course</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 p-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 p-2 mt-3">
         {
           courseAssignments && courseAssignments[0]?.classes?.length === 0 && (
             <div className=" text-xl mt-5  dark:text-secondary-300">No assignments yet...</div>
@@ -34,35 +35,38 @@ const page = async ({ params }: { params: { id: string } }) => {
             classItem.attachments.map((attachment) => (
               <div
                 key={attachment?.id}
-                className="bg-secondary-800  text-slate-400 rounded-lg p-4"
+                className="text-zinc-600 rounded-lg p-4 bg-slate-300"
                 style={{
                   boxShadow:
                     "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
                 }}
               >
-                <div className="flex justify-between">
-                  <h2 className="text-lg text-blue-600 font-semibold mb-2">
+                <div className="flex justify-between items-center mb-2">
+                  <Link href={`/assignments/${attachment.id}`} className=" text-base text-blue-600 font-semibold">
                     {attachment?.title}
-                  </h2>
-                  <p className="mb-2 flex gap-2 items-center">
+                  </Link>
+                  <p className="flex gap-2 items-center text-sm font-medium">
                     {/* <span className="font-semibold">Due Date:</span>{" "} */}
                     {attachment?.dueDate
-                      ? new Date(attachment?.dueDate).toLocaleDateString()
-                      : "Not specified"}
+                      &&new Date(attachment?.dueDate).toLocaleDateString()
+                    }
                       {"  "}
-                      {currentUser?.role==="STUDENT"&&<div className={`rounded-full px-2 text-white ${attachment?.submissions.length > 0
-                    ? "bg-green-600"
-                    : "bg-red-600"}`}>{attachment?.submissions.length > 0
-                        ? <h1>submitted</h1>
-                        : <h1>not submitted</h1>}</div>}
+                      {currentUser?.role==="STUDENT"&&
+                      <div className="text-white">
+                        { 
+                          attachment?.submissions.length > 0
+                          ? <h1 className="bg-green-500 rounded-lg px-3 ml-1 py-1">submitted</h1>
+                          : <h1 className="bg-red-500 rounded-lg px-3 ml-1 py-1">not submitted</h1>
+                        }
+                      </div>}
                   </p>
                 </div>
-                <p className="mb-2">
+                <p className="mb-2 text-sm font-semibold mt-2">
                   {truncateText(attachment?.details ? attachment?.details.slice(0, 200) + '...' : null  || "No Description")}
                 </p>
                 {/* <p className="text-secondary-200 mb-2">Class Name: {classItem?.class?.title || 'null'}</p> */}
                 {attachment?.link && (
-                  <div className=" flex items-center justify-start space-x-2 hover:opacity-90">
+                  <div className=" flex items-center text-sm justify-start space-x-2 hover:opacity-90">
                     <a
                       href={attachment?.link}
                       className="text-blue-600 hover:underline"
