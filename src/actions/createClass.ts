@@ -1,36 +1,95 @@
 import { db } from "@/lib/db";
 import * as z from "zod";
 
+// Define the schema for class data
 const classSchema = z.object({
-    classTitle: z.string().trim().min(1, {
-        message: "Title is required",
-    }),
-    videoLink: z.string().trim().min(1,),
-    VideoType: z.enum(["DRIVE", "YOUTUBE", "ZOOM"]),
-    courseId : z.string().trim().min(1,),
+  classTitle: z.string().trim().min(1, {
+    message: "Title is required",
+  }),
+  videoLink: z.string().trim().min(1),
+  videoType: z.enum(["DRIVE", "YOUTUBE", "ZOOM"]),
+  courseId: z.string().trim().min(1),
+  folderId: z.string().optional(),
+  folderName: z.string().optional(),
 });
 
-console.log("Creating class");
+export const createClass = async (data: any) => {
+  const { classTitle, videoLink, videoType, courseId, folderId, folderName } =
+    classSchema.parse(data);
 
+  let myClass;
 
-export const createClass = async (data : z.infer<typeof classSchema>) => {
-
-    const myclass = await db.class.create({
+  try {
+    // If folderId is provided, connect to the existing folder
+    if (folderId) {
+      myClass = await db.class.create({
         data: {
-            title: data.classTitle,
-            video: {
-                create: {
-                    videoLink: data.videoLink,
-                    videoType: data.VideoType,
-                },
+          title: classTitle,
+          video: {
+            create: {
+              videoLink: videoLink,
+              videoType: videoType,
             },
-            course: {
-                connect: {
-                    id: data.courseId,
-                },
+          },
+          course: {
+            connect: {
+              id: courseId,
             },
+          },
+          Folder: {
+            connect: {
+              id: folderId,
+            },
+          },
         },
-    });
+      });
+    }
+    // If folderName is provided, create a new folder
+    else if (folderName) {
+      myClass = await db.class.create({
+        data: {
+          title: classTitle,
+          video: {
+            create: {
+              videoLink: videoLink,
+              videoType: videoType,
+            },
+          },
+          course: {
+            connect: {
+              id: courseId,
+            },
+          },
+          Folder: {
+            create: {
+              title: folderName,
+            },
+          },
+        },
+      });
+    }
+    else {
+      myClass = await db.class.create({
+        data: {
+          title: classTitle,
+          video: {
+            create: {
+              videoLink: videoLink,
+              videoType: videoType,
+            },
+          },
+          course: {
+            connect: {
+              id: courseId,
+            },
+          },
+        },
+      });
+    }
 
-    return myclass;
+    return myClass;
+  } catch (error) {
+    console.error("Error creating class:", error);
+    throw new Error("Failed to create class. Please try again later.");
+  }
 };
