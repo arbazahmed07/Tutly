@@ -53,10 +53,10 @@ function AddCourse() {
         <>
           <div
             onClick={() => setOpenPopup(!openPopup)}
-            className="rounded-lg border cursor-pointer m-3 flex flex-col items-center justify-center w-[280px] h-[200px]"
+            className="rounded-lg border cursor-pointer hover:opacity-85 m-3 flex flex-col items-center justify-center w-[280px] h-[200px]"
           > 
-            <div className="text-center hover:opacity-85 cursor-pointer  ">
-              <FaPlus className="text-6xl" />
+            <div className="text-center cursor-pointer  ">
+              <FaPlus className="text-5xl" />
               <h1 className="text-xl mt-3">Add</h1>
             </div>
           </div>

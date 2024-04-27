@@ -78,14 +78,14 @@ export default function CourseCard({ course,currentUser }: any) {
                     <div>
                         {
                             course.isPublished === false && currentUser?.role === 'INSTRUCTOR' && (
-                                <div className="absolute top-0 right-0 m-3 text-xs flex border border-zinc-950 items-center text-secondary-50 bg-red-600 p-1 rounded-md">
+                                <div className="absolute top-0 right-0 m-3 text-xs flex border border-zinc-950 items-center text-secondary-50 bg-red-500 p-1 rounded-md">
                                     <h1 className="text-xs font-medium">Draft</h1>
                                 </div>
                             )
                         }
                     </div>
                 </div>
-                <div className="absolute bottom-0 right-0 m-3 text-xs flex items-center text-secondary-50 border border-zinc-950 bg-blue-600 p-1 rounded-md">
+                <div className="absolute bottom-0 right-0 m-3 text-xs flex items-center text-secondary-50 border border-zinc-950 bg-blue-500 p-1 rounded-md">
                     <IoMdBookmarks className="mr-1"/>
                     <h1 className="text-xs font-medium">{course._count.classes} Classes</h1>
                 </div>
