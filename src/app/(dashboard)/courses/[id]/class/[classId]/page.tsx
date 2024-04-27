@@ -6,11 +6,13 @@ import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { RiEdit2Fill } from "react-icons/ri";
+import { MdDelete } from "react-icons/md";
+import DeleteClass from "@/components/DeleteClass";
 
-export default async function Class({
-params,
-}: {
-params: { classId: string; id: string };
+
+export default async function Class({ params, }: {
+    params: { classId: string; id: string };
 }) {
 const details = await getClassDetails(params.classId);
 const YOUTUBE =
@@ -45,7 +47,21 @@ return (
             <div className="flex flex-row items-center justify-end"></div>
             <div>
                 <div className=" flex justify-between items-center w-full mb-2">
-                    <p className="text-2xl font-semibold text-primary-100">{details?.title}</p>
+                    <div className="flex justify-start items-center space-x-5">
+                        <p className="text-2xl font-semibold text-primary-100">{details?.title}</p>
+                        {
+                            currentUser?.role ==='INSTRUCTOR' && details && 
+                            <div>
+                                <Link href={`/courses/${params.id}/class/${params.classId}/edit`} >
+                                    <button >
+                                        <RiEdit2Fill className=" w-5 h-5" />
+                                    </button>
+                                </Link>
+                            <DeleteClass classId={params.classId} courseId={params.id} />
+                            </div>
+                        }
+
+                    </div>
                     <p className="text-lg text-neutral-300">{String(details?.createdAt.toDateString())}</p>
                 </div>
                 <div className="flex-1  text-secondary-100">
