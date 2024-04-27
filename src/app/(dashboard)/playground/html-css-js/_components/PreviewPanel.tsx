@@ -1,14 +1,17 @@
 "use client";
-import { useContext, useState } from 'react';
-import { Context } from './context';
+import { useState } from 'react';
 import { RiFullscreenExitLine } from "react-icons/ri";
 import { RxCross2 } from "react-icons/rx";
 import { FaEye } from "react-icons/fa6";
+import usePlaygroundContext from '@/hooks/usePlaygroundContext';
 
 
 const PreviewPanel = () => {
-  const { state } = useContext(Context);
-  const srcDoc = state.html + '<style>' + state.css + '</style>' + '<script>' + state.js + '</script>';
+  const { files } = usePlaygroundContext();
+
+
+  const srcDoc = `<html>${files[0].code}</html> <style>${files[1].code}</style> <script>${files[2].code}</script>`;
+  
 
   const [show, setShow] = useState(false);
   function handleShow() {

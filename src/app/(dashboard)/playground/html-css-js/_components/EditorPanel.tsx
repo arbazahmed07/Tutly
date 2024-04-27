@@ -1,27 +1,41 @@
 "use client";
 
-import { useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { editorOptions } from './config';
-import { Context } from './context';
 import * as monaco from 'monaco-editor';
 import dynamic from 'next/dynamic';
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 import PreviewPanel from './PreviewPanel';
+import usePlaygroundContext from '@/hooks/usePlaygroundContext';
+import { Languages } from '@/components/editor/Languages';
 
 const EditorPanel = () => {
-  const { state, dispatch, currentTabIndex, setCurrentTabIndex, theme } = useContext(Context);
-  const value = currentTabIndex === 0 ? state.html : currentTabIndex === 1 ? state.css : state.js;
-  const language = currentTabIndex === 0 ? 'html' : currentTabIndex === 1 ? 'css' : 'javascript';
-  const handleEditorChange = (value: string | undefined) => {
-    if (!value) return;
-    const newState = {
-      ...state,
-      [currentTabIndex === 0 ? 'html' : currentTabIndex === 1 ? 'css' : 'js']: value,
-    };
 
-    dispatch(newState);
-  }
+  const { files, setFiles, currentFileIndex, setCurrentFileIndex, theme } = usePlaygroundContext();
+  const { code, language } = files[currentFileIndex];
+  const [value, setValue] = useState(code);
+
+  useEffect(() => {
+    if (files.length === 0) {
+      setFiles([
+        { filePath: 'index.html', code: '', language: Languages[0] },
+        { filePath: 'styles.css', code: '', language: Languages[1] },
+        { filePath: 'script.js', code: '', language: Languages[2] },
+      ]);
+    }
+  }, []);
+
+  useEffect(() => {
+    setValue(files[currentFileIndex].code);
+  }, [currentFileIndex]);
+
+  const handleEditorChange = (value: string) => {
+    setValue(value);
+    const newFiles = [...files];
+    newFiles[currentFileIndex].code = value;
+    setFiles(newFiles);
+  };
 
   // enable auto closing tags ref:https://github.com/microsoft/monaco-editor/issues/221#issuecomment-1625456462 
   const handleAutoClosingTags = (event: any, editor: monaco.editor.IStandaloneCodeEditor) => {
@@ -103,18 +117,18 @@ const EditorPanel = () => {
     <div className="shadow-xl">
       <ThemeSwitcher />
       <div className="flex p-3">
-        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 0 ? 'text-primary-500' : ''}`}
-          onClick={() => setCurrentTabIndex(0)}
+        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentFileIndex === 0 ? 'text-primary-500' : ''}`}
+          onClick={() => setCurrentFileIndex(0)}
         >
           HTML
         </h1>
-        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 1 ? 'text-primary-500' : ''}`}
-          onClick={() => setCurrentTabIndex(1)}
+        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentFileIndex === 1 ? 'text-primary-500' : ''}`}
+          onClick={() => setCurrentFileIndex(1)}
         >
           CSS
         </h1>
-        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentTabIndex === 2 ? 'text-primary-500' : ''}`}
-          onClick={() => setCurrentTabIndex(2)}
+        <h1 className={`rounded px-1 md:px-4 cursor-pointer text-sm font-semibold ${currentFileIndex === 2 ? 'text-primary-500' : ''}`}
+          onClick={() => setCurrentFileIndex(2)}
         >
           JS
         </h1>
@@ -128,9 +142,10 @@ const EditorPanel = () => {
           theme={theme === 'dark' ? 'vs-dark' : ''}
           height="100%"
           defaultLanguage="html"
-          language={language}
+          language={language.value}
+          path={files[currentFileIndex].filePath}
           value={value}
-          onChange={(value) => handleEditorChange(value)}
+          onChange={(value) => handleEditorChange(value || '')}
           onMount={(editor, monaco) => {
             editor.onKeyDown((event) => {
               handleAutoClosingTags(event, editor);
