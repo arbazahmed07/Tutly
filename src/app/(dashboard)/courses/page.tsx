@@ -10,6 +10,7 @@ export default async function Courses() {
   const courses = await getEnrolledCourses();
   const currentUser = await getCurrentUser();
   return (
+
     <div>
       {courses?.length === 0 || ( courses && courses[0].isPublished === false) ? (
         <div  className="text-center text-2xl font-bold" >
@@ -28,7 +29,7 @@ export default async function Courses() {
           {currentUser?.role === "INSTRUCTOR" && <AddCourse/>}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 md:gap-2 m-2 md:m-6">
+        <div className="flex flex-wrap">  
           {courses?.map(async (course) => {
             const classesCompleted = 0;
             let percent;
