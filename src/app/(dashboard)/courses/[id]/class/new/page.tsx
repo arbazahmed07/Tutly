@@ -68,7 +68,7 @@ const NewClass = () => {
   };
 
   return (
-    <div className="mt-8">
+    <div className="m-5 md:mt-20">
       <div className="flex flex-col items-center">
         <select
           value={videoType}
@@ -118,7 +118,7 @@ const NewClass = () => {
         )}
         <Button
           disabled={!videoLink || !classTitle || !videoType || textValue === 'Creating Class'}
-          className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
+          className="flex justify-between items-center bg-secondary-700 z-0 hover:bg-secondary-800"
           onClick={handleCreateClass}
         >
           {textValue}

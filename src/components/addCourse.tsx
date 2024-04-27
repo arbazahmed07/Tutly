@@ -53,11 +53,7 @@ function AddCourse() {
         <>
           <div
             onClick={() => setOpenPopup(!openPopup)}
-            className="rounded-lg border cursor-pointer m-3 flex flex-col items-center justify-center w-full sm:w-[280px] h-[200px]"
-            style={{
-              boxShadow:
-                "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
-            }}
+            className="rounded-lg border cursor-pointer m-3 flex flex-col items-center justify-center w-full sm:w-[280px] h-[200px] shadow-lg"
           > 
             <div className="text-center cursor-pointer  ">
               <FaPlus className="text-5xl" />

@@ -29,7 +29,7 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
   ) : filteredStudents;
 
   return (
-    <div className="flex flex-col gap-4 p-2   md:pt-5">
+    <div className="flex flex-col gap-4 p-2 md:pt-5">
       <div className="flex justify-between gap-3 flex-wrap items-center">
         <div className="flex gap-3 flex-wrap items-center">
           {courses?.map((course: any) => (
