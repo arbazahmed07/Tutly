@@ -18,19 +18,19 @@ const NewClass = () => {
   const router = useRouter();
   const params = useParams();
 
-//  useEffect(() => {
-//    const fetchFolders = async () => {
-//      try {
-//        const res = await axios.get(`/api/folders/${params.id}`);
-//        setFolders(res.data);
-//      } catch (error) {
-//        console.error('Error fetching folders:', error);
-//        toast.error('Failed to fetch folders');
-//      }
-//    };
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const res = await axios.get(`/api/course/${params.id}/folders`);
+        setFolders(res.data);
+      } catch (error) {
+        console.error('Error fetching folders:', error);
+        toast.error('Failed to fetch folders');
+      }
+    };
 
-//    fetchFolders();
-//  }, [params.id]);
+    fetchFolders();
+  }, [params.id]);
 
   const handleCreateClass = async () => {
     if (!videoLink.trim() || !classTitle.trim() || !videoType) {
@@ -44,7 +44,7 @@ const NewClass = () => {
         classTitle,
         videoLink,
         videoType,
-        folderId: selectedFolder!="new" ? selectedFolder : undefined,
+        folderId: selectedFolder != "new" ? selectedFolder : undefined,
         courseId: params.id,
         folderName: selectedFolder ? undefined : folderName.trim() || undefined,
       });
@@ -100,7 +100,7 @@ const NewClass = () => {
         >
           <option value="">Select Folder (Optional)</option>
           <option value="new">New Folder</option>
-          {folders.map((folder:any) => (
+          {folders.map((folder: any) => (
             <option key={folder.id} value={folder.id}>
               {folder.title}
             </option>

@@ -38,6 +38,19 @@ export const getCourseClasses = async (id: string) => {
   return classes;
 };
 
+export const foldersByCourseId = async (id: string) => {
+  const folders = await db.folder.findMany({
+    where: {
+      Class:{
+        some:{
+          courseId:id
+        }
+      }
+    },
+  });
+  return folders;
+}
+
 export const getEnrolledCourses = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
