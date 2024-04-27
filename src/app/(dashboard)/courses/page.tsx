@@ -10,7 +10,7 @@ export default async function Courses() {
   const courses = await getEnrolledCourses();
   const currentUser = await getCurrentUser();
   return (
-    <div>
+    <div className="">
       {courses?.length === 0 ? (
         <div className="text-center text-2xl font-bold">
           <div className=" mt-3 flex items-center justify-center space-y-3">
@@ -25,7 +25,7 @@ export default async function Courses() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 md:gap-2 m-2 md:m-6">
+        <div className="flex flex-wrap">  
           {courses?.map(async (course) => {
             const classesCompleted = 0;
             let percent;
