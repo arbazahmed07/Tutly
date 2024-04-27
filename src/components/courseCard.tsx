@@ -94,7 +94,7 @@ export default function CourseCard({ course,currentUser }: any) {
                 <div onClick={() => router.push(`/courses/${course.id}`) } className=" cursor-pointer" > 
                     <h1 className="text-sm">{course?.title}</h1>
                 </div>
-                <button onClick={()=>setOpenPopup(true)}>
+                <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
                     <TiEdit className=" w-5 h-5 cursor-pointer"  />
                 </button>
             </div>
