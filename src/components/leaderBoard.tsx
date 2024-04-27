@@ -9,15 +9,7 @@ export default function Leaderboard({ submissions, courses }: any) {
 
   useEffect(() => {
     const filteredSubmissions = submissions.filter(
-<<<<<<< HEAD
-<<<<<<< HEAD
       (x: any) => x?.assignment?.class?.course?.id === currentCourse
-=======
-      (x: any) => x.assignment.class.course?.id === currentCourse
->>>>>>> 18426fc14047267374d6afe3f0022f4b3b669796
-=======
-      (x: any) => x?.assignment?.class?.course?.id === currentCourse
->>>>>>> 3fb5fe0f048c4344d9aa7734aca18b79cc1853a7
     );
 
     const leaderboardMap = new Map();
@@ -71,9 +63,9 @@ export default function Leaderboard({ submissions, courses }: any) {
         </div>
         ) : (
           leaderboardData.map((data: any, index: number) => (
-            <div className={`flex justify-between items-center p-2 px-4 border-b-2 bg-gradient-to-r hover:from-blue-600 hover:to-sky-500`} key={index}>
+            <div className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:from-blue-600 hover:to-sky-500`} key={index}>
               {data.totalPoints!==0&&
-              <div>
+              <div className="flex justify-between items-center">
                 <div className="flex gap-3 md:gap-10 items-center">
                   <h1>{index + 1}</h1>
                   <Image
@@ -88,7 +80,9 @@ export default function Leaderboard({ submissions, courses }: any) {
                     <h1 className="text-xs">@{data.username}</h1>
                   </div>
                 </div>
-                <h1 className="font-medium text-xs md:text-sm">{data.totalPoints} points</h1>
+                <div>
+                  <h1 className="font-medium text-xs md:text-sm">{data.totalPoints} points</h1>
+                </div>
               </div>
             }
             </div>

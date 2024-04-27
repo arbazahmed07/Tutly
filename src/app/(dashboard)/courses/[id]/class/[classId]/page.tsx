@@ -61,7 +61,7 @@ export default async function Class({
                             </Link>
                         </div>
                     </div>  
-                    <table className="border-collapse w-full">  
+                    <table className="border-collapse">  
                         <thead className="mb-4 border-b-2 font-semibold border-secondary-400">
                             <th className="px-4 py-2">Title</th>
                             <th className="px-4 py-2">Link</th>
