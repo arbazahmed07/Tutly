@@ -9,7 +9,7 @@ export default function Leaderboard({ submissions, courses }: any) {
 
   useEffect(() => {
     const filteredSubmissions = submissions.filter(
-      (x: any) => x.assignment.class.course.id === currentCourse
+      (x: any) => x.assignment.class.course?.id === currentCourse
     );
 
     const leaderboardMap = new Map();

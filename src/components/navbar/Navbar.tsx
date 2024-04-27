@@ -17,6 +17,8 @@ interface Props {
 
 const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
   const router = useRouter();
+  const roles = ["INSTRUCTOR", "STUDENT","MENTOR"];
+
   const pathname = usePathname();
   const Back = () => {
     router.back();
@@ -55,7 +57,11 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
           <Actions currentUser={currentUser} />
         </Suspense>
         <div className="flex gap-3 items-center">
-          <h1 className="text-sm font-medium">{currentUser?.role}</h1>
+          <h1 className="text-sm font-medium">
+            {
+              currentUser?.role
+            }
+          </h1>
           <ThemeSwitch />
           <div className="rounded-full cursor-pointer hover:bg-secondary-800 p-2">
             <IoMdNotificationsOutline className="text-xl" />

@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
@@ -11,7 +10,6 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [Unreviewed, setUnreviewed] = useState<boolean>(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     setIsMounted(true);
@@ -23,9 +21,12 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
 
   const filteredStudents = students.filter((student: any) =>
     student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
-    // student.role==="STUDENT" &&
     (student.name.toLowerCase().includes(searchQuery.toLowerCase())||student.username.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  const filteredStudentsWithPoints = Unreviewed ? filteredStudents.filter((student: any) =>
+    !points.sortedSubmissions.some((submission: any) => submission.enrolledUser.user.id === student.id && submission.totalPoints > 0)
+  ) : filteredStudents;
 
   return (
     <div className="flex flex-col gap-4 pt-5">
@@ -45,11 +46,42 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
             </button>
           ))}
         </div>
-        {/* <div>
-            <button onClick={()=>{setUnreviewed(true)}} className=" p-2 bg-primary-600 rounded-lg hover:bg-primary-700">
+        <div>
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="unreviewed"
+              name="reviewStatus"
+              checked={Unreviewed}
+              onChange={() => setUnreviewed(true)}
+              className="hidden"
+            />
+            <label
+              htmlFor="unreviewed"
+              className={`cursor-pointer p-2 bg-primary-600 rounded-lg hover:bg-primary-700 ${
+                Unreviewed && "bg-primary-700"
+              }`}
+            >
               Unreviewed
-            </button>
-        </div> */}
+            </label>
+            <input
+              type="radio"
+              id="all"
+              name="reviewStatus"
+              checked={!Unreviewed}
+              onChange={() => setUnreviewed(false)}
+              className="hidden"
+            />
+            <label
+              htmlFor="all"
+              className={`cursor-pointer p-2 bg-primary-600 rounded-lg hover:bg-primary-700 ${
+                !Unreviewed && "bg-primary-700"
+              }`}
+            >
+              All
+            </label>
+          </div>
+        </div>
         <div className="flex items-center bg-secondary-200 border text-black rounded">
           <input
             title="input"
@@ -62,15 +94,15 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
         </div>
       </div>
       {
-      filteredStudents.length > 0 ? (
-        filteredStudents
+      filteredStudentsWithPoints.length > 0 ? (
+        filteredStudentsWithPoints
             .filter((student: any) =>
             student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
           ).map((student: any, index: number) => (
           <div
-            
+            hidden = {student.role==='INSTRUCTOR' || student.role==='MENTOR'}
             key={index}
-            className={`${index < filteredStudents.length - 1 && "border-b pb-3"}`}
+            className={`${index < filteredStudentsWithPoints.length - 1 && "border-b pb-3"}`}
           >
             <div className="p-1 flex justify-between items-center">
               <div className="flex gap-5 items-center">
@@ -87,7 +119,7 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
                 </div>
               </div>
               {
-                student?.role==='STUDENT'?
+                student?.role==='STUDENT' &&
                 <div
                   onClick={() =>
                     router.push(
@@ -101,11 +133,7 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
                   className="bg-primary-700 p-2 text-sm font-medium rounded-lg cursor-pointer"
                 >
                   Assignments
-                </div>:
-                <div className="text-sm font-medium">
-                  {student?.role}
                 </div>
-
               }
             </div>
           </div>
@@ -113,9 +141,6 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
       ) : (
         <div className="text-sm font-medium">No students found</div>
       )}
-
-      {/* <div>{JSON.stringify(points,null,2)}</div>
-      <div className=" mt-5">{JSON.stringify(students,null,2)}</div> */}
     </div>
   );
 }
