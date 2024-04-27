@@ -15,13 +15,22 @@ export default async function Home() {
 
   if(!data) return;
   let total=0
-
+  let count=0
   const { position , points, assignmentsSubmitted, assignmentsPending, currentUser } = data;
   if (created) {
     for (const courses of created) {
         total += courses?._count.classes || 0;
     }
   }
+  if(students)
+    {
+      for (const student of students) {
+          if(student?.role==='STUDENT')
+            {
+              count+=1;
+            }
+      }
+    }
 
   return (
     <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
@@ -84,7 +93,7 @@ export default async function Home() {
             </div>
             <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
               <PiStudentBold  className="m-auto h-24 w-24 text-blue-400"/>
-              <p className="text-primary-600 font-bold pt-2">{students?.length}</p>
+              <p className="text-primary-600 font-bold pt-2">{count}</p>
               <h1 className="p-1 text-sm font-bold">Total no of students</h1>
             </div>
           </div>
