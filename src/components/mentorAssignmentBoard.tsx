@@ -30,8 +30,8 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
 
   return (
     <div className="flex flex-col gap-4 p-2   md:pt-5">
-      <div className="flex justify-between flex-wrap">
-        <div className="flex gap-3 flex-wrap">
+      <div className="flex justify-between gap-3 flex-wrap items-center">
+        <div className="flex gap-3 flex-wrap items-center">
           {courses?.map((course: any) => (
             <button
               onClick={() => setCurrentCourse(course.id)}
@@ -46,7 +46,7 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
             </button>
           ))}
         </div>
-        <div className="flex items-center mt-3 m-auto md:m-0 md:mt-0 bg-secondary-200 border text-black rounded">
+        <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
           <input
             title="input"
             className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
