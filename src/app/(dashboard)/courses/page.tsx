@@ -31,16 +31,11 @@ export default async function Courses() {
       ) : (
         <div className="flex flex-wrap">  
           {courses?.map(async (course) => {
-            const classesCompleted = 0;
-            let percent;
-            if (course._count.classes == 0) percent = 0;
-            else percent = (classesCompleted * 100) / course._count.classes;
             return (
               <CourseCard
+                currentUser = {currentUser}
                 key={course.id}
                 course={course}
-                percent={percent}
-                classesCompleted={classesCompleted}
               />
             );
           })}

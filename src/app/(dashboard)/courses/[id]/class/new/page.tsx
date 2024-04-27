@@ -46,7 +46,7 @@ const NewClass = () => {
         videoType,
         folderId: selectedFolder != "new" ? selectedFolder : undefined,
         courseId: params.id,
-        folderName: selectedFolder ? undefined : folderName.trim() || undefined,
+        folderName: selectedFolder=="new" ? folderName.trim() : undefined,
       });
 
       if (res.data.error) {
@@ -63,6 +63,7 @@ const NewClass = () => {
       toast.error('Failed to add new class');
     } finally {
       setTextValue('Create Class');
+      router.refresh();
     }
   };
 

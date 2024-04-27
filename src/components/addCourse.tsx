@@ -59,9 +59,9 @@ function AddCourse() {
                 "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
             }}
           > 
-            <div className="text-center hover:opacity-85 cursor-pointer  ">
-              <FaPlus className="text-6xl" />
-              <h1 className="text-2xl mt-3">Add</h1>
+            <div className="text-center cursor-pointer  ">
+              <FaPlus className="text-5xl" />
+              <h1 className="text-xl mt-3">Add</h1>
             </div>
           </div>
           {openPopup && (
