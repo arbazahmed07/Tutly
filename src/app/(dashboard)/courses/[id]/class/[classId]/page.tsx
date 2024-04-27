@@ -7,7 +7,6 @@ import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import DriveEmbed from "@/components/videoEmbeds/DriveEmbed";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { Link2 } from "lucide-react";
 
 export default async function Class({
     params,
