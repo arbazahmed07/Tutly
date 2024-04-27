@@ -10,19 +10,23 @@ export default async function Courses() {
   const courses = await getEnrolledCourses();
   const currentUser = await getCurrentUser();
   return (
-    <div className="">
-      {courses?.length === 0 ? (
-        <div className="text-center text-2xl font-bold">
-          <div className=" mt-3 flex items-center justify-center space-y-3">
-            No Courses enrolled &nbsp; <BsDropbox className=" w-7 h-7" />
+
+    <div>
+      {courses?.length === 0 || ( courses && courses[0].isPublished === false) ? (
+        <div  className="text-center text-2xl font-bold" >
+          <div hidden= {currentUser?.role === 'INSTRUCTOR'} >
+            <div className=" mt-3 flex items-center justify-center space-y-3">
+              No Courses enrolled &nbsp; <BsDropbox className=" w-7 h-7" />
+            </div>
+            <div className="text-center  w-full flex flex-1 mt-10">
+              <Image
+                src={img}
+                alt="unenrolled.png"
+                className="m-auto w-[50%] h-[50%]"
+                />
+            </div>
           </div>
-          <div className="text-center  w-full flex flex-1 mt-10">
-            <Image
-              src={img}
-              alt="unenrolled.png"
-              className="m-auto w-[50%] h-[50%]"
-            />
-          </div>
+          {currentUser?.role === "INSTRUCTOR" && <AddCourse/>}
         </div>
       ) : (
         <div className="flex flex-wrap">  

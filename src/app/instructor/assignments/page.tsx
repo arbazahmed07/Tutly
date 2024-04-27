@@ -1,13 +1,15 @@
 import { getCreatedCourses, getEnrolledStudents } from '@/actions/courses'
 import getCurrentUser from '@/actions/getCurrentUser';
+import Loader from '@/components/Loader';
 import MentorAssignmentBoard from '@/components/mentorAssignmentBoard';
-import { Loader } from 'lucide-react'
 import React, { Suspense } from 'react'
+import { getInstructorLeaderboardData } from '@/actions/getLeaderboard';
 
  async function instructorAssignments() {
   const courses = await getCreatedCourses();
   const students = await getEnrolledStudents();
   const currentUser = await getCurrentUser();
+  const points = await getInstructorLeaderboardData();
   if(!currentUser || !courses || !students ) return <div className="text-center">Sign in to view assignments!</div>
 
   return (
@@ -16,7 +18,7 @@ import React, { Suspense } from 'react'
       {
         courses===null||courses.length===0 ? <div className="text-center">No courses created yet!</div> :
           <Suspense fallback={<Loader />}>
-            <MentorAssignmentBoard courses={courses} students={students} role={currentUser.role} />
+            <MentorAssignmentBoard courses={courses} points = {points} students={students} role={currentUser.role} />
           </Suspense>
       }
     </div>

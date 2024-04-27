@@ -169,7 +169,11 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
         <div className="bg-gradient-to-l sm:min-w-[800px] px-7"> 
                 <div className="flex flex-col items-center text-sm font-medium">
                   <div className=' w-full flex flex-row-reverse'>
-                    <button onClick={()=> {handleShow() ;setOpenAccordion(-1);   }} className="py-3 px-4 rounded-md mt-3 bg-blue-600 hover:bg-blue-700">Ask your Doubt</button>
+                    <button onClick={()=> {handleShow() ;setOpenAccordion(-1);   }} className="py-3 px-4 rounded-md mt-3 bg-blue-600 hover:bg-blue-700">
+                      {
+                        currentUser.role === 'STUDENT' ? "Ask a Doubt" : "Raise a Query"
+                      }
+                    </button>
                   </div>
                     {show && (
                       <div ref = {addDoubtRef} className="fixed z-10 inset-0 overflow-y-auto bg-secondary-900 bg-opacity-70 flex items-center justify-center">
@@ -205,7 +209,6 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                         {qa.user.role === 'INSTRUCTOR' && 
                           <div className='relative'>
                                 <FaCrown className='text-red-500 hover:text-red-600 drop-shadow-sm shadow-red-500 absolute -left-3 -top-3 transform -rotate-45' />
-
                                 <Image src={qa.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
                           </div>
                         }

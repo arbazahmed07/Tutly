@@ -20,6 +20,12 @@ export const getAllCourses = async () => {
 };
 
 export const getCourseClasses = async (id: string) => {
+  const course = await db.course.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
   const classes = await db.class.findMany({
     where: {
       courseId: id,
@@ -31,7 +37,7 @@ export const getCourseClasses = async (id: string) => {
       Folder: true,
     },
   });
-  return classes;
+  return {classes,course};
 };
 
 export const getEnrolledCourses = async () => {
