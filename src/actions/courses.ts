@@ -191,6 +191,37 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
   return newCourse;
 };
 
+export const deleteCourse = async (id: string) => {
+  const course = await db.course.delete({
+    where: {
+      id: id,
+    },
+  });
+  return course;
+}
+
+export const updateCourse = async ({ id, title, isPublished,image }: { id: string; title: string; isPublished:boolean,image:string }) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  if(!title.trim() || title==="" )
+  {
+    return null;
+  }
+
+  const course = await db.course.update({
+    where: {
+      id: id,
+    },
+    data: {
+      title: title,
+      isPublished,
+      image,
+    },
+  });
+  return course;
+}
+
 export const getMentorCourses = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;

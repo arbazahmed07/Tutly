@@ -1,13 +1,15 @@
 'use client'
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IoMdBookmarks } from "react-icons/io";
-import Image from "next/image";
+import { TiEdit } from "react-icons/ti";
+import { MdDelete } from "react-icons/md";
 
-export default function CourseCard({ course, percent, classesCompleted }: any) {
+export default function CourseCard({ course,currentUser }: any) {
     const router = useRouter();
     return (    
-        <div hidden={!course.isPublished} key={course.id} onClick={() => router.push(`/courses/${course.id}`) } className="rounded-lg border cursor-pointer m-3 w-[280px]" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
-            <div className="h-[150px]  relative text-secondary-700 bg-white rounded-t-lg">
+        <div hidden={!course.isPublished && currentUser.role !== 'INSTRUCTOR' } key={course.id} className="rounded-lg border m-3 w-[280px]" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
+            <div className="h-[150px]  relative text-secondary-700 bg-white rounded-t-lg cursor-pointer" onClick={() => router.push(`/courses/${course.id}`) }>
                 <div className="h-full w-full relative">
                     {course && course.image && (
                         <Image 
@@ -29,14 +31,29 @@ export default function CourseCard({ course, percent, classesCompleted }: any) {
                                 />
                         )
                     }
+                    <div>
+                        {
+                            course.isPublished === false && currentUser?.role === 'INSTRUCTOR' && (
+                                <div className="absolute top-0 right-0 m-3 text-xs flex items-center text-secondary-50 bg-red-600 p-1 rounded-md">
+                                    <h1 className="text-xs font-medium">Draft</h1>
+                                </div>
+                            )
+                        }
+                    </div>
                 </div>
                 <div className="absolute bottom-0 right-0 m-3 text-xs flex items-center text-secondary-50 bg-blue-600 p-1 rounded-md">
                     <IoMdBookmarks className="mr-1"/>
                     <h1 className="text-xs font-medium">{course._count.classes} Classes</h1>
                 </div>
             </div>
-            <div className="h-[50px] border-t flex justify-center items-center">
-                <h1 className="text-sm">{course?.title}</h1>
+            <div className="h-[50px] border-t flex justify-between px-2 items-center">
+                <div onClick={() => router.push(`/courses/${course.id}`) } className=" cursor-pointer" > 
+                    <h1 className="text-sm">{course?.title}</h1>
+                </div>
+                <div className=" flex-row-reverse justify-start items-center flex gap-3">
+                    <TiEdit className=" w-5 h-5 cursor-pointer" />
+                    <MdDelete className="w-5 h-5 cursor-pointer text-red-600" />
+                </div>
             </div>
         </div>
     )

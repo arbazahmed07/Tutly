@@ -16,3 +16,19 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: e.message }, { status: 400 });
     }
 }
+
+export async function DELETE (request: NextRequest) {
+    const {id} = await request.json();
+
+    try {
+        const course = await deleteCourse(id)
+    
+        if (!course ) {
+            return NextResponse.json({ error: "Failed to delete course" }, { status: 400 });
+        }
+        
+        return NextResponse.json(course);
+    } catch (e :any) {
+        return NextResponse.json({ error: e.message }, { status: 400 });
+    }
+}
