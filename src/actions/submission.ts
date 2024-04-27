@@ -45,7 +45,7 @@ export const createSubmission = async (
         - index.css
         - index.js
       `,
-    head: `${user.username}-${assignmentDetails.title}`,
+    head: `${user.username}-${assignmentDetails.title}-${assignmentDetails.id}`,
     base: `main`,
     update: true,
     forceFork: false,
