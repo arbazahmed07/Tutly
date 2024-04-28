@@ -36,14 +36,14 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
             {!isCoursePage ? (
               <div
                 onClick={Menu}
-                className="p-2 rounded-full hover:bg-secondary-800 cursor-pointer"
+                className="p-2 rounded-full dark:hover:bg-secondary-800 hover:bg-neutral-300 cursor-pointer"
               >
                 <GrMenu className="text-xl" />
               </div>
             ) : (
               <div
                 onClick={Back}
-                className="p-2 rounded-full hover:bg-secondary-800 cursor-pointer"
+                className="p-2 rounded-full dark:hover:bg-secondary-800 hover:bg-neutral-300 cursor-pointer"
               >
                 <IoMdArrowRoundBack className="text-xl" />
               </div>
@@ -63,7 +63,7 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
             }
           </h1>
           <ThemeSwitch />
-          <div className="rounded-full cursor-pointer hover:bg-secondary-800 p-2">
+          <div className="rounded-full cursor-pointer dark:hover:bg-secondary-800 hover:bg-neutral-300 p-2">
             <IoMdNotificationsOutline className="text-xl" />
           </div>
           <UserProfile currentUser={currentUser} />

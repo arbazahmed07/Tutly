@@ -20,7 +20,7 @@ const UserProfile = ({ currentUser }:any) => {
         <div
           ref={componentRef}
           onClick={() => setIsOpen(!isOpen)}
-          className="relative px-2 py-1 rounded-xl bg-secondary-800 flex items-center gap-2 cursor-pointer shadow-md transition"
+          className="relative px-2 py-1 rounded-xl dark:bg-secondary-800 flex items-center gap-2 cursor-pointer shadow-md transition"
         >
           <div className="">
             <Image
@@ -33,7 +33,7 @@ const UserProfile = ({ currentUser }:any) => {
           </div>
           {isOpen?<FaCaretUp/>:<FaCaretDown />}
           {isOpen && (
-            <div className="absolute rounded-lg bg-blue-600 shadow-md min-w-max overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
+            <div className="absolute rounded-lg text-white bg-blue-500 shadow-md min-w-max overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
               <div className="  ">
                 <MenuItem
                   onClick={() => {

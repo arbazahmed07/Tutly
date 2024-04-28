@@ -71,20 +71,20 @@ export default function AssignmentPage({
 
   return (
     <div className="mx-2 md:mx-10 my-2 relative">
-      <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 rounded text-sm md:text-lg font-medium">
+      <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 text-white rounded text-sm md:text-lg font-medium">
         Assignment Submission : {assignment?.title}
       </h1>
 
       <div className="flex items-center justify-between my-4 text-xs md:text-sm font-medium">
-        <p className="rounded p-1 px-2 bg-secondary-700">
+        <p className="rounded p-1 px-2 bg-secondary-500 text-white">
           # {assignment?.class?.course?.title}
         </p>
         {assignment?.dueDate != null && (
           <div
-            className={`p-1 px-2 rounded bg-secondary-700 ${
+            className={`p-1 px-2 rounded text-white ${
               new Date(assignment?.dueDate) > new Date()
                 ? "bg-primary-600"
-                : "bg-secondary-700"
+                : "bg-secondary-500"
             }`}
           >
             Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
@@ -127,7 +127,7 @@ export default function AssignmentPage({
               </button>
             )}
           </Link>
-          <span className="block mt-5 text-white">
+          <span className="block mt-5 dark:text-white">
             Submissions : 👇
           </span>
         </div>

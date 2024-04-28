@@ -139,7 +139,7 @@ const EditClass = () => {
                         )}
                         <Button
                             disabled={!videoLink || !classTitle || !videoType || textValue === 'Creating Class'}
-                            className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
+                            className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800 text-white"
                             onClick={handleEditClass}
                         >
                             {textValue}
@@ -156,7 +156,7 @@ const EditClass = () => {
                     : (
                         <div className="flex flex-col items-center">
                             <Button
-                                className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800"
+                                className="flex justify-between items-center bg-secondary-700 text-white hover:bg-secondary-800"
                                 onClick={() => { setShowForm(true), handleGetDetails() }}
                             >
                                 Modify Class

@@ -13,11 +13,11 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg">Community Forum</h1>
+      <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg text-white">Community Forum</h1>
       <div className="flex gap-3">
         {allDoubts?.map((course: any) => (
           <button
-          hidden={course.isPublished === false}
+          hidden={course.isPublished === false} 
           onClick={() => setCurrentCourse(course.id)}
           className={`rounded p-2 w-20 sm:w-auto ${
               currentCourse === course?.id && "border rounded"

@@ -60,7 +60,7 @@ return (
                     <div>
                         <div className=" flex justify-between items-center w-full mb-2">
                             <div className="flex justify-start items-center space-x-5">
-                                <p className="text-xl font-semibold text-primary-100">{details?.title}</p>
+                                <p className="text-xl font-semibold">{details?.title}</p>
                                 {
                                     currentUser?.role ==='INSTRUCTOR' && details && 
                                     <div className="flex gap-3 items-center">
@@ -87,11 +87,11 @@ return (
                 </div>
             </div>
             <div className="w-full md:m-0 md:w-96 pb-4">
-                <div className="rounded-xl p-2 w-full h-full bg-slate-800" hidden={!details}>
+                <div className="rounded-xl p-2 w-full h-full" hidden={!details}>
                     <div className=" w-full flex flex-row-reverse items-center">
                         <div hidden={currentUser?.role === "STUDENT" || currentUser?.role === "MENTOR" || !details} className="text-xl my-2">
                             <Link  href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`} >
-                                <Button className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-600"
+                                <Button className="flex justify-between items-center bg-secondary-700 text-white hover:bg-secondary-600"
                                 variant={"secondary"} >
                                 Add an assignment&nbsp;
                                 <FaPlus />
@@ -105,7 +105,7 @@ return (
                     <th className="px-4 py-2">Link</th>
                     <th className="px-4 py-2">Due Date</th>
                     </thead>
-                    <tbody>
+                    <tbody className="text-white">
                     {details?.attachments?.length === 0 ? (
                         <tr className="bg-blue-500 text-center">
                         <td className="text-center text-lg py-4" colSpan={4}>

@@ -5,6 +5,17 @@ import _ from "lodash";
 import toast from "react-hot-toast";
 import axios from "axios";
 
+interface Student {
+  Name: string;
+  username: string;
+  JoinTime: string;
+  LeaveTime: string;
+  Duration: string;
+  UserEmail: string;
+  RecordingDisclaimerResponse: string;
+  InWaitingRoom: string;
+}
+
 const AttendanceClient = ({ courses }: any) => {
   const [fileData, setFileData] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>();
@@ -14,7 +25,6 @@ const AttendanceClient = ({ courses }: any) => {
   const [openClasses, setOpenClasses] = useState<boolean>(false);
   const [users, setUsers] = useState<any>([]);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
-
 
   useEffect(() => {
     if (!currentCourse) {
@@ -40,50 +50,48 @@ const AttendanceClient = ({ courses }: any) => {
   const onSelectFile = (file: Blob) => {
     setSelectedFile(file);
     try {
-        const reader = new FileReader();
+      const reader = new FileReader();
 
-        reader.onload = (e) => {
-            const result = (e.target as FileReader).result;
-            const workbook = XLSX.read(result, {
-                type: "binary",
-                cellDates: true,
-            });
-            const worksheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[worksheetName];
+      reader.onload = (e) => {
+        const result = (e.target as FileReader).result;
+        const workbook = XLSX.read(result, {
+          type: "binary",
+          cellDates: true,
+        });
+        const worksheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[worksheetName];
 
-            const data = XLSX.utils.sheet_to_json(worksheet, {
-                defval: "",
-                range: { s: { c: 0, r: 3 }, e: { c: 6, r: 10000 } },
-            });
+        const data = XLSX.utils.sheet_to_json(worksheet, {
+          defval: "",
+          range: { s: { c: 0, r: 3 }, e: { c: 6, r: 10000 } },
+        });
 
-            const modifiedData = data.map((row: any) => ({
-                Name: row["Name (Original Name)"],
-                JoinTime: row["Join Time"],
-                LeaveTime: row["Leave Time"],
-                Duration: row["Duration (Minutes)"],
-                UserEmail: row["User Email"],
-                RecordingDisclaimerResponse: row["Recording Disclaimer Response"],
-                InWaitingRoom: row["In Waiting Room"],
-            }));
+        const modifiedData = data.map((row: any) => ({
+          Name: row["Name (Original Name)"],
+          username: String(row["Name (Original Name)"]).substring(0, 10),
+          JoinTime: row["Join Time"],
+          LeaveTime: row["Leave Time"],
+          Duration: row["Duration (Minutes)"],
+          UserEmail: row["User Email"],
+          RecordingDisclaimerResponse: row["Recording Disclaimer Response"],
+          InWaitingRoom: row["In Waiting Room"],
+        }));
+        setFileData(modifiedData);
+      };
+      reader.onerror = () => {
+        throw new Error("Error in reading file");
+      };
 
-            console.log(modifiedData);
-
-            setFileData(modifiedData);
-        };
-        reader.onerror = () => {
-            throw new Error("Error in reading file");
-        };
-
-        reader.readAsBinaryString(file);
+      reader.readAsText(file);
     } catch (e: any) {
-        toast.error(e.message);
+      toast.error(e.message);
     }
-};
+  };
 
-  const aggregatedStudents = fileData.reduce((acc: any, student: any) => {
-    const firstTenCharsName = String(student.Name).substring(0, 10);
-    if (!acc[firstTenCharsName]) {
-      acc[firstTenCharsName] = {
+  const aggregatedStudents = fileData.reduce((acc: any, student: Student) => {
+    const { username } = student;
+    if (!acc[username]) {
+      acc[username] = {
         Name: student.Name,
         Joins: [
           {
@@ -94,52 +102,52 @@ const AttendanceClient = ({ courses }: any) => {
           },
         ],
         Duration: parseInt(student.Duration),
+        username: student.username
       };
     } else {
-      acc[firstTenCharsName].Joins.push({
+      acc[username].Joins.push({
         JoinTime: student.JoinTime,
         LeaveTime: student.LeaveTime,
         ActualName: student.Name,
         Duration: parseInt(student.Duration),
       });
-      acc[firstTenCharsName].Duration += parseInt(student.Duration);
+      acc[username].Duration += parseInt(student.Duration);
     }
     return acc;
   }, {});
 
   const sortedAggregatedStudents = Object.values(aggregatedStudents).sort(
-    (a: any, b: any) => {
-      const nameA = String(a.Name).toUpperCase();
-      const nameB = String(b.Name).toUpperCase();
-      if (nameA < nameB) {
+    (a: any, b: any ) => {
+      const usernameA = String(a.username).toUpperCase();
+      const usernameB = String(b.username).toUpperCase();
+      if (usernameA < usernameB) {
         return -1;
       }
-      if (nameA > nameB) {
+      if (usernameA > usernameB) {
         return 1;
       }
       return 0;
     }
   );
 
-  // Modify the sortedAggregatedStudents array to include information about presence
   const modifiedAggregatedStudents = sortedAggregatedStudents.map(
     (student: any) => {
       const matchedUser = users.find(
-        (user: any) => user.username === student.Name
+        (user: any) => user.username === student.username
       );
       if (matchedUser) {
         return {
           ...student,
           Present: true,
-          Username: matchedUser.username,
+          username: matchedUser.username,
           ActualName: matchedUser.name,
         };
       } else {
         return {
           ...student,
           Present: false,
-          Username: null,
-          ActualName: null,
+          username: student.username || "",
+          ActualName: student.Name || "",
         };
       }
     }
@@ -148,60 +156,31 @@ const AttendanceClient = ({ courses }: any) => {
   // Separate present and absent students
   const combinedStudents = modifiedAggregatedStudents.map((student: any) => ({
     ...student,
-    Name: student.ActualName ? student.ActualName : student.Username,
+    Name: student.ActualName,
+    username: student.username,
   }));
 
-  let presentStudents = combinedStudents.filter(
+  const presentStudents = combinedStudents.filter(
     (student: any) => student.Present
   );
-
-  useEffect(() => {
-    //UPON CHNAGE FILE DATA IT SHOULD RE EVALUATE PRESENT AND ABSENT
-    presentStudents = combinedStudents.filter(
-      (student: any) => student.Present
-    );
-
-    absentStudents = combinedStudents.filter(
-      (student: any) => !student.Present
-    );
-  }, [fileData]);
-
-  let absentStudents = combinedStudents.filter(
+  const absentStudents = combinedStudents.filter(
     (student: any) => !student.Present
   );
 
-  // Separate users not present in attendance data
-  const randomUsers = users.filter(
-    (user: any) =>
-      !combinedStudents.some((student: any) => student.Name === user.username)
-  );
-
   // edit student join name
-  const [joinName, setJoinName] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [openEditName, setOpenEditName] = useState<number>(0);
-  const handleEditName = (from: any, to: any) => {
+  const handleEditUsername = (from: any, to: any) => {
     fileData.map((student: any) => {
-      student.Name = student.Name.replace(from, to);
+      student.username = student.username.replace(from, to);
     });
   };
-  // submit attendance
-  const submitAttendance=async()=>{
-    try{
-      const res=await axios.post("/api/attendance",{
-        classId:currentClass?.id,
-        data:presentStudents
-      })
-      toast.success("Attendance submitted successfully")
-    }catch(e:any){
-      toast.error(e.message)
-    }
-  }
   return (
-    <div className="p-2 md:p-4 text-center ">
+    <div className="p-4 text-center ">
       <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
       <h1 className="text-center text-lg">Monitor your mentees attendance</h1>
-      <div className="flex justify-between items-end m-auto mt-8">
-        <div className="flex gap-2 items-center flex-wrap">
+      <div className="flex justify-between w-[80%] m-auto mt-8">
+        <div className="flex gap-2 items-center">
           <div className="relative">
             {!currentCourse ? (
               <h1
@@ -279,8 +258,7 @@ const AttendanceClient = ({ courses }: any) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-4 flex-col">
-          <button onClick={submitAttendance} className="rounded bg-secondary-500 p-2">Submit attendance</button>
+        <div>
           <input
             type="file"
             className="bg-primary-600 rounded cursor-pointer w-60 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out"
@@ -293,7 +271,6 @@ const AttendanceClient = ({ courses }: any) => {
             }}
           />
         </div>
-        
       </div>
 
       {/* Present Students Table */}
@@ -321,16 +298,15 @@ const AttendanceClient = ({ courses }: any) => {
                   <td className="py-2 pl-10 text-start">
                     {student.ActualName}
                   </td>
-                  <td>{student.Username}</td>
+                  <td>{student.username}</td>
                   <td>
                     <p
-                      className={`p-1 m-auto w-10 rounded ${
-                        student.Duration < 30
-                          ? "bg-red-500"
-                          : student.Duration < 90
+                      className={`p-1 m-auto w-10 rounded ${student.Duration < 30
+                        ? "bg-red-500"
+                        : student.Duration < 90
                           ? "bg-blue-500"
                           : "bg-green-500"
-                      }`}
+                        }`}
                     >
                       {student.Duration}
                     </p>
@@ -341,7 +317,7 @@ const AttendanceClient = ({ courses }: any) => {
               ))}
               {users.map((student: any, index: number) => {
                 const userInPresentStudents = presentStudents.find(
-                  (x) => x.Username === student.username
+                  (x) => x.username === student.username
                 );
                 if (!userInPresentStudents)
                   return (
@@ -366,7 +342,7 @@ const AttendanceClient = ({ courses }: any) => {
                 <th className="py-2 text-start pl-10 max-w-52 text-pretty">
                   Joined Name
                 </th>
-                <th className="py-2">Username</th>
+                <th className="py-2">username</th>
                 <th>Duration</th>
                 <th>Date</th>
                 <th>Times Joined</th>
@@ -375,41 +351,43 @@ const AttendanceClient = ({ courses }: any) => {
               </tr>
             </thead>
             <tbody>
-              {absentStudents.map((student: any, index) => (
+              {absentStudents.map((student: {
+                Name: string;
+                Joins: { ActualName: string; JoinTime: string; Duration: number }[];
+                Duration: number;
+                username: string;
+              }, index) => (
                 <tr key={index} className="hover:bg-primary-800">
                   <td>{index + 1}</td>
+                  <td>{student.Joins[0].ActualName}</td>
                   {openEditName === Number(index + 1) ? (
                     <td className="text-start pl-10 py-2 max-w-52">
                       <input
                         className="block"
-                        onChange={(e) => setJoinName(e.target.value)}
-                        defaultValue={student.Joins[0].ActualName}
+                        onChange={(e) => setUsername(e.target.value)}
+                        defaultValue={student.username}
                       />
                     </td>
                   ) : (
                     <td className="text-start pl-10 py-2 max-w-52">
-                      {student.Joins[0].ActualName}
+                      {student.username}
                     </td>
                   )}
                   <td>
-                    {String(student.Joins[0].ActualName).substring(0, 10)}
-                  </td>
-                  <td>
                     <p
-                      className={`p-1 m-auto w-10 rounded ${
-                        student.Duration < 30
-                          ? "bg-red-500"
-                          : student.Duration < 90
+                      className={`p-1 m-auto w-10 rounded ${student.Duration < 30
+                        ? "bg-red-500"
+                        : student.Duration < 90
                           ? "bg-blue-500"
                           : "bg-green-500"
-                      }`}
+                        }`}
                     >
                       {student.Duration}
                     </p>
                   </td>
                   <td>{String(student.Joins[0].JoinTime).split(" ")[0]}</td>
                   <td>{student.Joins.length}</td>
-                  
+
                   <td
                     className="cursor-pointer"
                     onClick={() => handleStudentClick(student)}
@@ -431,7 +409,7 @@ const AttendanceClient = ({ courses }: any) => {
                     <td
                       onClick={() => {
                         setOpenEditName(0);
-                        handleEditName(student.Joins[0].ActualName, joinName);
+                        handleEditUsername(student.username, username);
                       }}
                       className="hover:bg-red-400 cursor-pointer"
                     >
@@ -444,6 +422,7 @@ const AttendanceClient = ({ courses }: any) => {
           </table>
         </>
       )}
+
 
       {selectedStudent && (
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">

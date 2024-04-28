@@ -73,10 +73,10 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
                       <Link
                         key={classItem.id}
                         href={`/courses/${params.id}/class/${classItem.id}`}
-                        className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-500 ${
+                        className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:text-white hover:bg-blue-500 ${
                           pathname ===
                           `/courses/${params.id}/class/${classItem.id}` &&
-                          "bg-sky-500"
+                          "bg-sky-500 text-white"
                         }`}
                       >
                         <MdOndemandVideo />
@@ -93,10 +93,10 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
           <Link
             key={classItem.id}
             href={`/courses/${params.id}/class/${classItem.id}`}
-            className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:bg-blue-500 ${
+            className={`px-6 py-2 flex items-center gap-2 cursor-pointer text-white rounded-md hover:bg-blue-500 ${
               pathname ===
               `/courses/${params.id}/class/${classItem.id}` &&
-              "bg-sky-500"
+              "bg-sky-500 text-white"
             }`}
           >
             <MdOndemandVideo />
@@ -108,7 +108,7 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
         currentUser?.role === "INSTRUCTOR" && (
           <Link
             href={`/courses/${params.id}/class/new`}
-            className={`px-6 py-2 mb-16 flex items-center gap-2 cursor-pointer rounded-xl bg-gray-800 hover:bg-sky-500`}
+            className={`px-6 py-2 mb-16 flex items-center gap-2 cursor-pointer rounded-xl text-white bg-blue-500`}
           >
             <MdAddToQueue />
             Add Class
