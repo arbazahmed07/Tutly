@@ -176,15 +176,15 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                     </button>
                   </div>
                     {show && (
-                      <div ref = {addDoubtRef} className="fixed z-10 inset-0 overflow-y-auto bg-secondary-900 bg-opacity-70 flex items-center justify-center">
+                      <div ref = {addDoubtRef} className="fixed z-50 inset-0 overflow-y-auto bg-secondary-900 bg-opacity-70 flex items-center justify-center">
                         <div className="relative rounded-lg w-full bg-secondary-50 max-w-xl">
                           <div className="p-5" onKeyDown={handleEscKeyDown}>
                             <h3 className="text-lg font-bold  text-secondary-700">Enter your doubt here</h3>
                             <form  className="mt-2" onSubmit={ handleSubmit} onKeyDown={handleEscKeyDown}>
 
                               <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e)=>handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block p-2.5 w-full rounded-lg outline-none bg-white border-2 text-secondary-950 "></textarea>
-                              <button type="button" onClick={()=>setShow(false)} className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-md mt-3  mr-4">Cancel</button>
-                              <button type="submit" className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-md mt-3">Submit</button>
+                              <button type="button" onClick={()=>setShow(false)} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md mt-3  mr-4">Cancel</button>
+                              <button type="submit" className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md mt-3">Submit</button>
                             </form>
                           </div>
                         </div>

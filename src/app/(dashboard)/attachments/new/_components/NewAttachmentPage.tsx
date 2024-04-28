@@ -161,7 +161,7 @@ const NewAttachmentPage = () => {
                                                             <SelectValue placeholder="Select a type"  />
                                                         </SelectTrigger>
                                                     </FormControl>
-                                                    <SelectContent className=' bg-secondary-700 '>
+                                                    <SelectContent className=' bg-secondary-700 text-white'>
                                                         <SelectItem className=' hover:bg-secondary-800' defaultChecked value="ASSIGNMENT">Assignment</SelectItem>
                                                         <SelectItem className=' hover:bg-secondary-800' value="ZOOM">Zoom</SelectItem>
                                                         <SelectItem className=' hover:bg-secondary-800' value="GITHUB">Github</SelectItem>
@@ -223,7 +223,7 @@ const NewAttachmentPage = () => {
                                                             <SelectValue placeholder="Select a class" />
                                                         </SelectTrigger>
                                                     </FormControl>
-                                                    <SelectContent className=' bg-secondary-700 ' >
+                                                    <SelectContent className=' bg-secondary-700 text-white' >
                                                         {classes.map((c:any) => (
                                                             <SelectItem
                                                                 key={c.id}
@@ -261,7 +261,7 @@ const NewAttachmentPage = () => {
                                     )}
                                 />
                             </div>
-                        <div className=' flex items-center gap-x-3'>
+                        <div className=' flex items-center gap-x-3 text-white'>
                             <Link href={'/'}>
                                 <Button className='bg-red-700' variant={"destructive"} style={{ backgroundColor: '#b91c1c' }} >
                                     Cancel

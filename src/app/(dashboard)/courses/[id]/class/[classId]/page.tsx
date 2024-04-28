@@ -91,7 +91,7 @@ return (
                     <div className=" w-full flex flex-row-reverse items-center">
                         <div hidden={currentUser?.role === "STUDENT" || currentUser?.role === "MENTOR" || !details} className="text-xl my-2">
                             <Link  href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`} >
-                                <Button className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-600"
+                                <Button className="flex justify-between items-center bg-secondary-700 text-white hover:bg-secondary-600"
                                 variant={"secondary"} >
                                 Add an assignment&nbsp;
                                 <FaPlus />
