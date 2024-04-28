@@ -45,19 +45,19 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
                     })}
                 </div>
                 <div className="space-x-4 text-sm font-medium m-auto sm:m-0">
-                    <button className={`focus:outline-none ${unreviewed === 'all' && "border-b-2"} transition-all duration-300`} onClick={() => setUnreviewed('all')}>
+                    <button className={`focus:outline-none ${unreviewed === 'all' && "border-b-2"} transition-all ease-out   duration-300`} onClick={() => setUnreviewed('all')}>
                         <input type="radio" checked={unreviewed === 'all'} value={unreviewed === 'all' ? 'all' : ''} name='status' id="all" className="hidden" />
                         <label htmlFor="all">All</label>
                     </button>
-                    <button className={`focus:outline-none ${unreviewed === 'reviewed' && "border-b-2 transition-all duration-300"}`} onClick={() => setUnreviewed('reviewed')}>
+                    <button className={`focus:outline-none ${unreviewed === 'reviewed' && "border-b-2"}  transition-all ease-out   duration-300`} onClick={() => setUnreviewed('reviewed')}>
                         <input type="radio" checked={unreviewed === 'reviewed'} value={unreviewed === 'reviewed' ? 'reviewed' : ''} name='status' id="reviewed" className="hidden" />
                         <label htmlFor="reviewed">Reviewed</label>
                     </button>
-                    <button className={`focus:outline-none ${unreviewed === 'unreviewed' && "border-b-2 transition-all duration-300"}`} onClick={() => setUnreviewed('unreviewed')}>
+                    <button className={`focus:outline-none ${unreviewed === 'unreviewed' && "border-b-2 "} transition-all ease-out   duration-300`} onClick={() => setUnreviewed('unreviewed')}>
                         <input type="radio" checked={unreviewed === 'unreviewed'} value={unreviewed === 'unreviewed' ? 'unreviewed' : ''} name='status' id="unreviewed" className="hidden" />
                         <label htmlFor="unreviewed">UnReviewed</label>
                     </button>
-                    <button className={`focus:outline-none ${unreviewed === 'not-submitted' && "border-b-2 transition-all duration-300"}`} onClick={() => setUnreviewed('not-submitted')}>
+                    <button className={`focus:outline-none ${unreviewed === 'not-submitted' && "border-b-2"} transition-all ease-out   duration-300`} onClick={() => setUnreviewed('not-submitted')}>
                         <input type="radio" checked={unreviewed === 'not-submitted'} value={unreviewed === 'not-submitted' ? 'not-submitted' : ''} name='status' id="not-submitted" className="hidden" />
                         <label htmlFor="not-submitted">Not Submitted</label>
                     </button>
