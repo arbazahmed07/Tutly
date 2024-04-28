@@ -60,7 +60,7 @@ export default function AssignmentBoard({ reviewed, courses, assignments, userId
                     <div className="text-sm">
                       <h2 className="flex-1 font-medium m-2">{assignment.title}</h2>
                     </div>
-                    <div className="flex gap-3 md:gap-6 items-center text-sm font-medium text-white flex-wrap">
+                    <div className="flex gap-3 md:gap-6 items-center text-xs font-medium text-white flex-wrap">
                       {
                         assignment.submissions.length > 0 &&
                           <div className="flex gap-2">
@@ -69,21 +69,21 @@ export default function AssignmentBoard({ reviewed, courses, assignments, userId
                                 if (eachSubmission.points.length !== 0 && !reviewed ) {
                                   return (
                                     <div className="flex gap-6 items-center" key={index}>
-                                        <div className="rounded-full p-2 px-3 bg-yellow-600 hover:bg-yellow-500">Under review</div>
+                                        <div className="rounded-full p-2.5 bg-yellow-600 hover:bg-yellow-500">Under review</div>
                                     </div>
                                   )
                                 } else if(eachSubmission.points.length !== 0 && reviewed) {
                                   let total=0
                                   return (
                                     <div className="flex gap-6 items-center" key={index}>
-                                      <div className="rounded-full p-2 px-3 bg-green-600 flex items-center">
+                                      <div className="rounded-full p-2.5 bg-green-600 flex items-center">
                                         {eachSubmission.points.forEach((point:any)=>{
                                           total += point.score;
                                         })}
                                         <h1>
                                           Score : {total}
                                         </h1>
-                                        <MdOutlineSportsScore className="inline h-5 w-5"/>
+                                        <MdOutlineSportsScore className="inline sm:h-5 sm:w-5"/>
                                       </div>
                                     </div>
                                   )
@@ -93,7 +93,7 @@ export default function AssignmentBoard({ reviewed, courses, assignments, userId
                           </div>
                       }
                       <button
-                      title="btn"
+                      title="Details"
                         onClick={() => {
                           if (userId) {
                             router.push(`/assignments/${assignment.id}?userId=${userId}`);
@@ -102,7 +102,7 @@ export default function AssignmentBoard({ reviewed, courses, assignments, userId
                           }
                         }
                         }
-                        className="p-2 px-4 bg-blue-500 rounded"
+                        className="p-2.5 bg-blue-500 rounded"
                       >
                         View Details
                       </button>
