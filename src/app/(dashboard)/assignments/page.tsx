@@ -15,7 +15,7 @@ export default async function Assignments() {
       {
         !assignments ? <div className="text-center">No Attachments found!</div> :
           <Suspense fallback={<Loader />}>
-            <AssignmentBoard courses={courses} assignments={assignments} />
+            <AssignmentBoard reviewed={true} courses={courses} assignments={assignments} />
           </Suspense>
       }
     </div>

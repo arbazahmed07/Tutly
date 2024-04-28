@@ -19,18 +19,6 @@ import { getInstructorLeaderboardData } from '@/actions/getLeaderboard';
         courses===null||courses.length===0 ? <div className="text-center">No courses created yet!</div> :
           <Suspense fallback={<Loader />}>
             <MentorAssignmentBoard courses={courses} points = {points} students={students} role={currentUser.role} />
-            <div className=' grid grid-cols-2 gap-2'>
-              <div>
-                <pre>
-                  {/* {JSON.stringify(courses, null, 2)} */}
-                </pre>
-              </div>
-              <div>
-                <pre>
-                  {JSON.stringify(points, null, 2)}
-                </pre>
-              </div>
-            </div>
           </Suspense>
       }
     </div>
