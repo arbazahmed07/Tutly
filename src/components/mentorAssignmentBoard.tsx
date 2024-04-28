@@ -33,7 +33,8 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
       <div className="flex justify-between gap-3 flex-wrap items-center">
         <div className="flex gap-3 flex-wrap items-center">
           {courses?.map((course: any) => (
-            <button
+            <button 
+              hidden={course.isPublished === false}
               onClick={() => setCurrentCourse(course.id)}
               className={`rounded p-2 ${
                 currentCourse === course.id && "border rounded"
