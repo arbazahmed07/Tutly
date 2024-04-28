@@ -1,5 +1,5 @@
 import { getCreatedCourses } from "@/actions/courses";
-import AttendanceClient from "./filters";
+import AttendanceClient from "@/components/Attendancefilters";
 
 async function Filters() {
   const courses = await getCreatedCourses();
