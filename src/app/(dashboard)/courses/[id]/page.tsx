@@ -35,7 +35,7 @@ const page = async ({ params }: { params: { id: string } }) => {
             classItem.attachments.map((attachment) => (
               <div
                 key={attachment?.id}
-                className="text-zinc-600 rounded-lg p-4 bg-slate-300"
+                className="text-zinc-600 rounded-lg p-4 bg-slate-200"
                 style={{
                   boxShadow:
                     "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",

@@ -62,24 +62,24 @@ function AddCourse() {
           </div>
           {openPopup && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30 backdrop-filter backdrop-blur-sm">
-              <div className="relative min-w-[300px] sm:min-w-[400px] max-w-[80%] bg-zinc-400 p-4 rounded-lg">
+              <div className="relative min-w-[300px] sm:min-w-[400px] max-w-[80%] bg-zinc-400 text-black p-4 rounded-lg">
                 <div
                   onClick={() => setOpenPopup(!openPopup)}
-                  className="absolute top-2 right-2 cursor-pointer text-white"
+                  className="absolute top-2 right-2 cursor-pointer"
                 >
                   <RxCross2 className="h-7 w-7"/>
                 </div>
                 <div className="mb-4">
-                  <h1 className="text-lg font-semibold text-center my-4 text-white">ADD NEW COURSE</h1>
+                  <h1 className="text-lg font-semibold text-center my-4">ADD NEW COURSE</h1>
                   <input
                     onChange={(e) => setCourseTitle(e.target.value)}
                     type="text"
-                    className="rounded p-2 outline-none block m-auto w-full mb-4 text-white"
+                    className="rounded p-2 outline-none block m-auto w-full mb-4"
                     placeholder="Title"
                   />
                 </div>
-                <label className="text-white" htmlFor="publish">Publish:</label>
-                <div className="space-x-5 flex items-center text-white">
+                <label className="" htmlFor="publish">Publish:</label>
+                <div className="space-x-5 flex items-center">
                   <div className="flex justify-start items-center">
                     <input
                       type="radio"
@@ -109,7 +109,7 @@ function AddCourse() {
                 <input
                   onChange={(e) => setImg(e.target.value)}
                   type="text" 
-                  className="rounded p-2 my-3 outline-none block m-auto w-full text-white"
+                  className="rounded p-2 my-3 outline-none block m-auto w-full"
                   placeholder="Paste image link here"
                 />
                 <button

@@ -94,7 +94,7 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
                       }`
                     )
                   }
-                  className="bg-primary-700 p-2 text-sm font-medium rounded-lg cursor-pointer"
+                  className="bg-blue-600 text-white p-2 text-sm font-medium rounded-lg cursor-pointer"
                 >
                   Assignments
                 </div>
