@@ -46,6 +46,7 @@ export default function Leaderboard({ submissions, courses }: any) {
       <div className="flex gap-3 mt-4">
         {courses?.map((course: any) => (
           <button
+            hidden={course.isPublished === false}
             onClick={() => setCurrentCourse(course.id)}
             className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "border rounded"}`}
             key={course.id}
