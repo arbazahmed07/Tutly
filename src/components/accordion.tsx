@@ -228,39 +228,13 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                     <div className="flex space-x-2 items-center">
                       <div className='flex justify-start items-center space-x-2' >
                           <p className="text-sm text-gray-800 hidden md:flex justify-start items-center font-bold">{qa.response.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
-                          <div className="p-2 font-bold  flex items-center justify-start rounded text-sm"
+                          <div className="p-2 font-bold  flex items-center justify-end rounded text-sm"
                           >
                             {openAccordion === index ? <IoIosArrowUp onClick={() => toggleAccordion(index)} className=' cursor-pointer'  /> : <IoIosArrowDown onClick={() => toggleAccordion(index)} className=' cursor-pointer' />}
                           </div>
-                          <div className="flex md:hidden items-center border-2 border-secondary-300 bg-white rounded-lg">
-                            <input
-                              type="text"
-                              placeholder="Enter your reply"
-                              value={reply}
-                              onKeyDown={
-                                (e) => {
-                                  if (e.key === 'Enter') {
-                                    handleReplyEnterBtn(qa.id);
-                                  }
-                                  if (e.key === 'Escape') {
-                                    setReplyId('');
-                                  }
-                                }
-                              }
-                              onChange={(e) => setReply(e.target.value)}
-                              className="w-full sm:w-auto px-3 py-2 bg-white text-zinc-500  border-r-2 outline-none sm:mb-0 rounded-l-lg"
-                            />
-                            <button
-                              title="btn"
-                              className="p-3 text-zinc-500"
-                              onClick={() => handleReply(qa.id)}
-                            >
-                              <BsFillSendArrowUpFill />
-                            </button>
-                          </div>
                         {
                         replyId === qa.id ? (
-                          <div className="hidden md:flex items-center">
+                          <div className="flex items-center">
                             <div className="flex items-center border-2 border-secondary-300 bg-white rounded-lg">
                             <input
                               type="text"
@@ -280,7 +254,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                               className="w-full sm:w-auto px-3 py-2 bg-white text-zinc-500  border-r-2 outline-none sm:mb-0 rounded-l-lg"
                             />
                             <button
-                              title="btn"
+                              title="Send"
                               className="p-3 text-zinc-500"
                               onClick={() => handleReply(qa.id)}
                             >
@@ -288,7 +262,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                             </button>
                           </div>
                             <button
-                              title="btn"
+                              title="Close"
                               className="p-2"
                               onClick={() => setReplyId('')}
                             >
@@ -298,7 +272,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                           </div>
                         ) : (
                           <button
-                            title="btn"
+                            title="Reply"
                             className="p-1"
                             onClick={() => setReplyId(qa.id)}
                           >
@@ -329,7 +303,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                       </div>
                     )
                 }
-                  <div className="">    
+                  <div className="bg-slate-400 text-white">    
                    <h1 className="mx-4 rounded-md py-1 text-sm font-medium text-justify">
                     {qa.description}
                     </h1>

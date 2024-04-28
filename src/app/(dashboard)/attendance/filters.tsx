@@ -188,11 +188,11 @@ const AttendanceClient = ({ courses }: any) => {
     }
   }
   return (
-    <div className="p-4 text-center ">
+    <div className="p-2 md:p-4 text-center ">
       <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
       <h1 className="text-center text-lg">Monitor your mentees attendance</h1>
-      <div className="flex justify-between items-end w-[80%] m-auto mt-8">
-        <div className="flex gap-2 items-center">
+      <div className="flex justify-between items-end m-auto mt-8">
+        <div className="flex gap-2 items-center flex-wrap">
           <div className="relative">
             {!currentCourse ? (
               <h1
