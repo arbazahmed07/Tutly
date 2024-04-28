@@ -47,11 +47,6 @@ export default function HomeLayout({
         icon: <MdOutlineLeaderboard />,
         path: access == 1 ? "/mentor/leaderboard" : "/instructor/leaderboard",
       },
-      // {
-      //   name: "Doubts",
-      //   icon: <TbMessageQuestion />,
-      //   path: "/mentor/doubts",
-      // },
       {
         name: "Community",
         icon: < HiOutlineUserGroup />,
@@ -60,7 +55,7 @@ export default function HomeLayout({
       {
         name: "Attendance",
         icon: < BsPersonRaisedHand />,
-        path: "/attendance",
+        path: access == 1 ? "/mentor/attendance" : "/instructor/attendance",
       },
     ];
   } else {

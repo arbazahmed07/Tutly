@@ -40,36 +40,45 @@ const AttendanceClient = ({ courses }: any) => {
   const onSelectFile = (file: Blob) => {
     setSelectedFile(file);
     try {
-      const reader = new FileReader();
+        const reader = new FileReader();
 
-      reader.onload = (e) => {
-        const result = (e.target as FileReader).result;
-        const workbook = XLSX.read(result, {
-          type: "binary",
-          cellDates: true,
-        });
-        const worksheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[worksheetName];
-        const data = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-        data.forEach((row: any) => {
-          _.forIn(row, (value: any, key: any) => {
-            if (value instanceof Date) {
-              row[key] = value.toISOString().split("T")[0];
-            }
-          });
-        });
+        reader.onload = (e) => {
+            const result = (e.target as FileReader).result;
+            const workbook = XLSX.read(result, {
+                type: "binary",
+                cellDates: true,
+            });
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
 
-        setFileData(data);
-      };
-      reader.onerror = () => {
-        throw new Error("Error in reading file");
-      };
+            const data = XLSX.utils.sheet_to_json(worksheet, {
+                defval: "",
+                range: { s: { c: 0, r: 3 }, e: { c: 6, r: 10000 } },
+            });
 
-      reader.readAsBinaryString(file);
+            const modifiedData = data.map((row: any) => ({
+                Name: row["Name (Original Name)"],
+                JoinTime: row["Join Time"],
+                LeaveTime: row["Leave Time"],
+                Duration: row["Duration (Minutes)"],
+                UserEmail: row["User Email"],
+                RecordingDisclaimerResponse: row["Recording Disclaimer Response"],
+                InWaitingRoom: row["In Waiting Room"],
+            }));
+
+            console.log(modifiedData);
+
+            setFileData(modifiedData);
+        };
+        reader.onerror = () => {
+            throw new Error("Error in reading file");
+        };
+
+        reader.readAsBinaryString(file);
     } catch (e: any) {
-      toast.error(e.message);
+        toast.error(e.message);
     }
-  };
+};
 
   const aggregatedStudents = fileData.reduce((acc: any, student: any) => {
     const firstTenCharsName = String(student.Name).substring(0, 10);
