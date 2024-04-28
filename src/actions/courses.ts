@@ -238,9 +238,6 @@ export const getMentorCourses = async () => {
           classes: true,
         },
       },
-      enrolledUsers:{
-        
-      }
     },
   });
   return courses;
