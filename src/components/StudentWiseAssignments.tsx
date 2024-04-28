@@ -83,7 +83,7 @@ return (
                 <div className="text-sm">
                     <h2 className="flex-1 font-medium m-2">{assignment.title}</h2>
                 </div>
-                <div className="flex gap-3 md:gap-6 items-center text-xs font-medium text-white flex-wrap">
+                <div className="flex gap-3 md:gap-6 items-center text-sm font-medium text-white flex-wrap">
                     {
                     assignment.submissions.length === 0 ?
                         <div className="flex gap-6 itens-center">
@@ -96,7 +96,7 @@ return (
                             if (eachSubmission.points.length === 0) {
                                 return (
                                 <div className="flex gap-6 items-center" key={index}>
-                                    <div className="rounded-full p-2.5 bg-yellow-600 hover:bg-yellow-500">Under review</div>
+                                    <div className="rounded-full p-3 bg-yellow-600 hover:bg-yellow-500">Under review</div>
                                 </div>
                                 )
                             } else {
