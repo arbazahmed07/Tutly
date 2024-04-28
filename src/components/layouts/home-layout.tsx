@@ -1,7 +1,6 @@
 "use client";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/sidebar";
-
 import { RxDashboard } from "react-icons/rx";
 import { MdAirplay, MdOutlineAssignment } from "react-icons/md";
 import { MdOutlineLeaderboard } from "react-icons/md";
@@ -19,7 +18,8 @@ export default function HomeLayout({
   children: React.ReactNode;
   currentUser: any;
 }) {
-  const [menu, setMenu] = useState<boolean>(true);
+  const isMobile = window.innerWidth <= 640;
+  const [menu, setMenu] = useState<boolean>(!isMobile);
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
   const access = currentUser?.role === "MENTOR" ? 1 : currentUser?.role === "INSTRUCTOR" && 2;

@@ -60,21 +60,19 @@ return (
                     <div>
                         <div className=" flex justify-between items-center w-full mb-2">
                             <div className="flex justify-start items-center space-x-5">
-                                <p className="text-2xl font-semibold text-primary-100">{details?.title}</p>
+                                <p className="text-xl font-semibold text-primary-100">{details?.title}</p>
                                 {
                                     currentUser?.role ==='INSTRUCTOR' && details && 
-                                    <div>
+                                    <div className="flex gap-3 items-center">
                                         <Link href={`/courses/${params.id}/class/${params.classId}/edit`} >
-                                            <button >
-                                                <RiEdit2Fill className=" w-5 h-5" />
-                                            </button>
+                                            <RiEdit2Fill className=" w-5 h-5" />
                                         </Link>
-                                    <DeleteClass classId={params.classId} courseId={params.id} />
+                                        <DeleteClass classId={params.classId} courseId={params.id} />
                                     </div>
                                 }
                             </div>
                             {
-                                details && <p className="text-lg text-neutral-300">{String(details?.createdAt.toDateString())}</p>
+                                details && <p className="text-sm font-medium">{String(details?.createdAt.toDateString())}</p>
                             }
                         </div>
                         <div className="flex-1  text-secondary-100">

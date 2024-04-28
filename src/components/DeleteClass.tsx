@@ -26,8 +26,9 @@ const DeleteClass = ({ classId, courseId }: { classId: string; courseId: string 
         }
     }
     
-    return <button onClick={handleDeleteClass}> 
-        <MdDelete className=" w-5 h-5" />
+    return 
+    <button title="Delete" onClick={handleDeleteClass}> 
+        <MdDelete className=" w-5 h-5 text-red-500" />
     </button>
 }
 
