@@ -74,8 +74,8 @@ const Profile = ({ currentUser } :any) => {
       toast.error("An error occurred while sending password reset link");
     }
   }
-  return (
-    <div className="flex justify-center items-center text-white">
+  return (  
+    <div className="flex justify-center mt-10 text-sm font-semibold dark:text-white text-black">
       <div className="p-5 m-auto rounded-lg">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-2 w-[300px]">

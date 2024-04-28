@@ -8,7 +8,7 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
     const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
     const [isMounted, setIsMounted] = useState(false);
     const router = useRouter();
-    const [unreviewed, setUnreviewed] = useState<string>('unreviewed');
+    const [unreviewed, setUnreviewed] = useState<string>('all');
 
     useEffect(() => {
         setIsMounted(true);
@@ -22,8 +22,9 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
         <div className="flex flex-col gap-4">
             <div className="relative">
                 <button
+                    title="Go back"
                     onClick={() => router.back()}
-                    className="absolute -top-10 -left-10  p-2"
+                    className="absolute bottom-5 -left-15 p-2"
                 >
                     <IoMdArrowRoundBack className=" w-8 h-8" />
                 </button>
@@ -43,22 +44,22 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
                         );
                     })}
                 </div>
-                <div>
-                    <button>
-                        <input type="radio" checked={unreviewed === 'reviewed'} value={unreviewed === 'reviewed' ? 'reviewed' : ''} name='status' id="reviewed" onChange={() => setUnreviewed('reviewed')} className="m-2" />
+                <div className="space-x-4 text-sm font-medium m-auto sm:m-0">
+                    <button className={`focus:outline-none ${unreviewed === 'all'&&"border-b-2"}`} onClick={() => setUnreviewed('all')}>
+                        <input type="radio" checked={unreviewed === 'all'} value={unreviewed === 'all' ? 'all' : ''} name='status' id="all" className="hidden" />
+                        <label htmlFor="all">All</label>
+                    </button>
+                    <button className={`focus:outline-none ${unreviewed === 'reviewed'&&"border-b-2"}`} onClick={() => setUnreviewed('reviewed')}>
+                        <input type="radio" checked={unreviewed === 'reviewed'} value={unreviewed === 'reviewed' ? 'reviewed' : ''} name='status' id="reviewed" className="hidden" />
                         <label htmlFor="reviewed">Reviewed</label>
                     </button>
-                    <button>
-                        <input type="radio" checked={unreviewed === 'unreviewed'} value={unreviewed === 'unreviewed' ? 'unreviewed' : ''} name='status' id="unreviewed" onChange={() => setUnreviewed('unreviewed')} className="m-2" />
+                    <button className={`focus:outline-none ${unreviewed === 'unreviewed'&&"border-b-2"}`} onClick={() => setUnreviewed('unreviewed')}>
+                        <input type="radio" checked={unreviewed === 'unreviewed'} value={unreviewed === 'unreviewed' ? 'unreviewed' : ''} name='status' id="unreviewed" className="hidden" />
                         <label htmlFor="unreviewed">UnReviewed</label>
                     </button>
-                    <button>
-                        <input type="radio" checked={unreviewed === 'not-submitted'} value={unreviewed === 'not-submitted' ? 'not-submitted' : ''} name='status' id="not-submitted" onChange={() => setUnreviewed('not-submitted')} className="m-2" />
+                    <button className={`focus:outline-none ${unreviewed === 'not-submitted'&&"border-b-2"}`} onClick={() => setUnreviewed('not-submitted')}>
+                        <input type="radio" checked={unreviewed === 'not-submitted'} value={unreviewed === 'not-submitted' ? 'not-submitted' : ''} name='status' id="not-submitted" className="hidden" />
                         <label htmlFor="not-submitted">Not Submitted</label>
-                    </button>
-                    <button>
-                        <input type="radio" checked={unreviewed === 'all'} value={unreviewed === 'all' ? 'all' : ''} name='status' id="all" onChange={() => setUnreviewed('all')} className="m-2" />
-                        <label htmlFor="all">All</label>
                     </button>
                 </div>
             </div>

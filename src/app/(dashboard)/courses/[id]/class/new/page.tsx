@@ -118,7 +118,7 @@ const NewClass = () => {
         )}
         <Button
           disabled={!videoLink || !classTitle || !videoType || textValue === 'Creating Class'}
-          className="flex justify-between items-center bg-secondary-700 z-0 hover:bg-secondary-800"
+          className="flex justify-between items-center bg-secondary-700 text-white z-0 hover:bg-secondary-800"
           onClick={handleCreateClass}
         >
           {textValue}
