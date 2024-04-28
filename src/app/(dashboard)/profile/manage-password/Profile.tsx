@@ -75,16 +75,16 @@ const Profile = ({ currentUser } :any) => {
     }
   }
   return (
-    <div className="flex justify-center items-center h-[85vh]">
-      <div className="p-5 m-auto bg-slate-300 text-secondary-800 rounded-lg">
+    <div className="flex justify-center items-center text-white">
+      <div className="p-5 m-auto rounded-lg">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-2 md:w-[25vw]">
+          <div className="flex flex-col gap-2 w-[300px]">
             <div>
               <label className="w-full block mb-1">Email</label>
               <input
                 type="email"
                 placeholder="Email"
-                className="border border-gray-300 outline-none px-3 py-2 rounded-md bg-slate-400/40 w-full"
+                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
                 value={email}
                 disabled
               />
@@ -95,7 +95,7 @@ const Profile = ({ currentUser } :any) => {
                 <input
                   type="password"
                   placeholder="Old Password"
-                  className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full"
+                  className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
                   {...register("oldPassword")}
                 />
               </div>
@@ -105,7 +105,7 @@ const Profile = ({ currentUser } :any) => {
               <input
                 type="password"
                 placeholder="New Password"
-                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full"
+                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
                 {...register("newPassword", { required: true, minLength: 8 })}
               />
             </div>
@@ -117,7 +117,7 @@ const Profile = ({ currentUser } :any) => {
               <input
                 type="password"
                 placeholder="Confirm Password"
-                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full"
+                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
 
                 {...register("confirmPassword", { required: true, minLength: 8 })}
               />
@@ -127,7 +127,7 @@ const Profile = ({ currentUser } :any) => {
 
             <button
               type="submit"
-              className="bg-gray-950 hover:bg-gray-800 text-white text-sm font-semibold p-3 rounded-md mt-4"
+              className="bg-blue-600 text-white text-sm font-semibold p-3 rounded-md mt-4"
             >
               Update
             </button>
