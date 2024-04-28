@@ -9,7 +9,6 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [unreviewed, setUnreviewed] = useState<string>('unreviewed');
 
 
   useEffect(() => {
@@ -55,20 +54,7 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
           />
           <FaSearch className="h-5 w-5 m-2"/>
         </div>
-        <div>
-          <button>
-            <input type="radio" checked={unreviewed === 'reviewed'} value={unreviewed === 'reviewed' ? 'reviewed' : ''} name='status' id="reviewed" onChange={() => setUnreviewed('reviewed')} className="m-2" />
-            <label htmlFor="reviewed">Reviewed</label>
-          </button>
-          <button>
-            <input type="radio" checked={unreviewed === 'unreviewed'} value={unreviewed === 'unreviewed' ? 'unreviewed' : ''} name='status' id="unreviewed" onChange={() => setUnreviewed('unreviewed')} className="m-2" />
-            <label htmlFor="unreviewed">UnReviewed</label>
-          </button>
-          <button>
-            <input type="radio" checked={unreviewed === 'not-submitted'} value={unreviewed === 'not-submitted' ? 'not-submitted' : ''} name='status' id="not-submitted" onChange={() => setUnreviewed('not-submitted')} className="m-2" />
-            <label htmlFor="not-submitted">Not Submitted</label>
-          </button>
-        </div>
+
       </div>
       {
       filteredStudents.length > 0 ? (
@@ -102,20 +88,9 @@ function MentorAssignmentBoard({ courses, points, students, role }: any) {
                     router.push(
                       `${
                         role === "INSTRUCTOR" ?
-                        (
-                          (unreviewed === 'not-submitted') ?
-                            `/instructor/assignments/${student.id}/not-submitted`
+                            `/instructor/assignments/${student.id}`
                           :
-                            `/instructor/assignments/${student.id}/${unreviewed}`
-                          
-                        )
-                        :
-                        (
-                          (unreviewed === 'not-submitted') ?
-                            `/mentor/assignments/${student.id}/not-submitted`
-                          :
-                            `/mentor/assignments/${student.id}/${unreviewed}`
-                        )
+                            `/mentor/assignments/${student.id}`                        
                       }`
                     )
                   }
