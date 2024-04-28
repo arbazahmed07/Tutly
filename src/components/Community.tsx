@@ -16,7 +16,8 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
       <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg">Community Forum</h1>
       <div className="flex gap-3">
         {allDoubts?.map((course: any) => (
-          <button 
+          <button
+          hidden={course.isPublished === false}
           onClick={() => setCurrentCourse(course.id)}
           className={`rounded p-2 w-20 sm:w-auto ${
               currentCourse === course?.id && "border rounded"
