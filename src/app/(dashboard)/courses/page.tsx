@@ -11,7 +11,7 @@ export default async function Courses() {
   const currentUser = await getCurrentUser();
   return (
     <div className="w-full">
-      <div className="flex justify-center">
+      <div className="flex max-sm:justify-center">
         {courses?.length === 0 || (courses && courses[0].isPublished === false) ? (
           <div className="text-center text-2xl font-bold">
             <div hidden={currentUser?.role === 'INSTRUCTOR'}>
