@@ -108,8 +108,8 @@ model AssignedMentors {
   mentorId String
   mentor   User   @relation(fields: [mentorId], references: [id])
 
-  enrolledUserId String
-  enrolledUser   EnrolledUsers @relation(fields: [enrolledUserId], references: [id])
+  enrolledUsername String
+  enrolledUser   EnrolledUsers @relation(fields: [enrolledUsername], references: [id])
 
   startDate DateTime  @default(now())
   endDate   DateTime?
@@ -117,7 +117,7 @@ model AssignedMentors {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([mentorId, enrolledUserId])
+  @@unique([mentorId, enrolledUsername])
 }
 
 model Class {
