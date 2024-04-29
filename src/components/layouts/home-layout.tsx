@@ -18,7 +18,8 @@ export default function HomeLayout({
   children: React.ReactNode;
   currentUser: any;
 }) {
-  const [menu, setMenu] = useState<boolean>(true);
+  const isMobile = window.innerWidth <= 640;
+  const [menu, setMenu] = useState<boolean>(!isMobile);
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
   const access = currentUser?.role === "MENTOR" ? 1 : currentUser?.role === "INSTRUCTOR" && 2;
