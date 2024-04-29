@@ -90,7 +90,7 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
       },
     },
   });
-  return { courses, coursesWithAssignments };
+  return { courses, coursesWithAssignments } as any;
 };
 
 export const getAllMentorAssignments = async () => {
