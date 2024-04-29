@@ -79,8 +79,8 @@ export const createSubmission = async (
 
   const enrolledUser = await db.enrolledUsers.findUnique({
     where:{
-      userId_courseId:{
-        userId:user.id,
+      username_courseId:{
+        username:user.username,
         courseId:assignmentDetails.class.courseId
       }
     }

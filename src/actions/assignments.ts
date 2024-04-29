@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import { getEnrolledCoursesById, getMentorCourses } from "./courses";
+import { getEnrolledCoursesById } from "./courses";
 
 const currentUser = await getCurrentUser();
 export const getAllAssignedAssignments = async () => {
+
   if (!currentUser) {
     return null;
   }
@@ -12,7 +13,7 @@ export const getAllAssignedAssignments = async () => {
     where: {
       enrolledUsers: {
         some: {
-          userId: currentUser.id,
+          username: currentUser.username,
         },
       },
     },
@@ -29,7 +30,7 @@ export const getAllAssignedAssignments = async () => {
               submissions: {
                 where: {
                   enrolledUser: {
-                    userId: currentUser.id,
+                    username: currentUser.username,
                   },
                 },
                 include: {
@@ -55,7 +56,9 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
     where: {
       enrolledUsers: {
         some: {
-          userId: id,
+          user: {
+            id: id,
+          },
         },
       },
     },
@@ -72,7 +75,9 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
               submissions: {
                 where: {
                   enrolledUser: {
-                    userId: id,
+                    user:{
+                      id: id
+                    }
                   },
                 },
                 include: {
@@ -217,7 +222,9 @@ export const getAssignmentDetailsByUserId = async (
       submissions: {
         where: {
           enrolledUser: {
-            userId: userId,
+            user:{
+              id: userId
+            },
           },
         },
         include: {

@@ -128,7 +128,7 @@ export default {
           } else {
             await prisma.user.create({
               data: {
-                username: user.email?.split("@")[0].toUpperCase(),
+                username: user.email?.split("@")[0].toUpperCase() as string,
                 email: user.email?.toLowerCase(),
                 name: user.name,
                 image: user.image,

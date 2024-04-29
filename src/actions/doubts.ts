@@ -29,7 +29,7 @@ export const getEnrolledCoursesDoubts = async () => {
     where: {
       enrolledUsers:{
         some:{
-          userId:currentUser.id
+          username:currentUser.username
         }
       }
     },
