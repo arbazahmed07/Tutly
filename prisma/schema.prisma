@@ -70,21 +70,22 @@ model Course {
   classes       Class[]
   attachments   Attachment[]
   doubts        Doubt[]
+  AssignedMentors AssignedMentors[]
 
   startDate DateTime  @default(now())
   endDate   DateTime?
 
   isPublished Boolean @default(false)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 }
 
 model EnrolledUsers {
   id String @id @default(uuid())
 
   username String
-  user   User   @relation(fields: [username], references: [username])
+  user     User   @relation(fields: [username], references: [username])
 
   assignedMentors AssignedMentors[]
 
@@ -108,8 +109,11 @@ model AssignedMentors {
   mentorId String
   mentor   User   @relation(fields: [mentorId], references: [id])
 
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id])
+
   enrolledUsername String
-  enrolledUser   EnrolledUsers @relation(fields: [enrolledUsername], references: [id])
+  enrolledUser     EnrolledUsers @relation(fields: [enrolledUsername, courseId], references: [username, courseId])
 
   startDate DateTime  @default(now())
   endDate   DateTime?
@@ -238,7 +242,7 @@ model submission {
   attachmentId String
   assignment   Attachment @relation(fields: [attachmentId], references: [id])
 
-  data        Json?
+  data Json?
 
   points Point[]
 
