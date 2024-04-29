@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function AssignmentPage({
 
@@ -20,6 +21,8 @@ export default function AssignmentPage({
     styling: 0,
     other: 0,
   });
+
+  const router = useRouter();
 
   const handleEdit = (index: number) => {
     setEditingIndex(index);
@@ -40,6 +43,8 @@ export default function AssignmentPage({
       styling: sValue ? sValue.score : 0,
       other: oValue ? oValue.score : 0,
     });
+
+    router.refresh()
   };
 
   const handleSave = async (index: number) => {
@@ -66,6 +71,7 @@ export default function AssignmentPage({
   }finally{
     toast.success("Scores saved successfully")
     setEditingIndex(-1);
+    router.refresh();
   }
   };
 

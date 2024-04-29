@@ -4,7 +4,7 @@ import {  useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
-function MentorAssignmentBoard({ courses, points, students, role }: any) {
+function MentorAssignmentBoard({ courses, students, role }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
