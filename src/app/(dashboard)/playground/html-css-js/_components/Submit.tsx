@@ -40,7 +40,7 @@ const Submit = ({
 
       const submission = await axios.post(`/api/assignment/submit`, {
         assignmentDetails,
-        newFiles,
+        files:newFiles,
       });
       toast.dismiss();
       toast.success('Assignment submitted successfully');
