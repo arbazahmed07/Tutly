@@ -58,7 +58,7 @@ export const getEnrolledCourses = async () => {
     where: {
       enrolledUsers: {
         some: {
-          userId: currentUser.id,
+          username: currentUser.username,
         },
       },
     },
@@ -100,7 +100,9 @@ export const getEnrolledCoursesById = async (id: string) => {
     where: {
       enrolledUsers: {
         some: {
-          userId: id,
+          user:{
+            id:id
+          },
         },
       },
     },
@@ -183,7 +185,7 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
       image ,
       enrolledUsers:{
         create:{
-          userId:currentUser.id
+          username:currentUser.username
         }
       }
     },

@@ -22,7 +22,7 @@ enum Role {
 model User {
   id       String  @id @default(uuid())
   name     String?
-  username String? @unique
+  username String  @unique
   email    String? @unique
   image    String?
   password String?
@@ -83,8 +83,8 @@ model Course {
 model EnrolledUsers {
   id String @id @default(uuid())
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  username String
+  user   User   @relation(fields: [username], references: [username])
 
   assignedMentors AssignedMentors[]
 
@@ -99,7 +99,7 @@ model EnrolledUsers {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, courseId])
+  @@unique([username, courseId])
 }
 
 model AssignedMentors {
