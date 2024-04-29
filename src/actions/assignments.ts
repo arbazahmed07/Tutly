@@ -2,8 +2,8 @@ import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 import { getEnrolledCoursesById, getMentorCourses } from "./courses";
 
+const currentUser = await getCurrentUser();
 export const getAllAssignedAssignments = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) {
     return null;
   }
@@ -46,6 +46,9 @@ export const getAllAssignedAssignments = async () => {
 };
 
 export const getAllAssignedAssignmentsByUserId = async (id: string) => {
+  if (!currentUser) {
+    return null;
+  }
   const courses = await getEnrolledCoursesById(id);
 
   const coursesWithAssignments = await db.course.findMany({
@@ -86,7 +89,6 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
 };
 
 export const getAllMentorAssignments = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) {
     return null;
   }
@@ -163,7 +165,6 @@ export const getAllMentorAssignments = async () => {
 };
 
 export const getAllCreatedAssignments = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) {
     return null;
   }
@@ -200,6 +201,9 @@ export const getAssignmentDetailsByUserId = async (
   id: string,
   userId: string
 ) => {
+  if (!currentUser) {
+    return null;
+  }
   const assignment = await db.attachment.findUnique({
     where: {
       id,
@@ -231,7 +235,6 @@ export const getAssignmentDetailsByUserId = async (
 };
 
 export const getAllAssignmentsByCourseId = async (id: string) => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) {
     return null;
   }

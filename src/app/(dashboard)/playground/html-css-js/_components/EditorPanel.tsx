@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from 'react';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { editorOptions } from './config';
