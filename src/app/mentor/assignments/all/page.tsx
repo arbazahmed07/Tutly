@@ -10,13 +10,15 @@ export default async function mentorAssignments({ params }: {
 }) {
   const courses = await getMentorCourses()
   const {coursesWithAssignments,submissions} = await getAllMentorAssignments();
+
   // return (
-  // <pre>
-  // {JSON.stringify(coursesWithAssignments, null, 2)}
-  // </pre>
-  //)
-  return (
-    <div className="md:mx-6 px-2 md:px-8 py-2 flex flex-col gap-4">
+  //   <pre>
+  //     {JSON.stringify(coursesWithAssignments, null, 2)}
+  //   </pre>
+  // )
+
+    return (
+      <div className="md:mx-6 px-2 md:px-8 py-2 flex flex-col gap-4">
       <h1 className="text-center text-3xl font-semibold py-2">ASSIGNMENTS</h1>
       {!coursesWithAssignments ? <div className="text-center">No Attachments found!</div> : <AssignmentBoard courses={courses} assignments={coursesWithAssignments}/>}
     </div>

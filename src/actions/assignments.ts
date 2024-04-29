@@ -159,7 +159,7 @@ export const getAllMentorAssignments = async () => {
     },
   });
 
-  return {coursesWithAssignments,submissions};
+  return {coursesWithAssignments,submissions} as any
 };
 
 export const getAllCreatedAssignments = async () => {
