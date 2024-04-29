@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-
+const currentUser = await getCurrentUser();
 export const getAllCourses = async () => {
+  if (!currentUser) return null;
   try {
     const courses = await db.course.findMany({
       where: {},
@@ -20,10 +21,7 @@ export const getAllCourses = async () => {
 };
 
 export const getCourseClasses = async (id: string) => {
-
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-  
   const classes = await db.class.findMany({
     where: {
       courseId: id,
@@ -39,6 +37,7 @@ export const getCourseClasses = async (id: string) => {
 };
 
 export const foldersByCourseId = async (id: string) => {
+  if (!currentUser) return null;
   const folders = await db.folder.findMany({
     where: {
       Class:{
@@ -52,7 +51,6 @@ export const foldersByCourseId = async (id: string) => {
 }
 
 export const getEnrolledCourses = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
   const courses = await db.course.findMany({
     where: {
@@ -76,7 +74,6 @@ export const getEnrolledCourses = async () => {
 };
 
 export const getCreatedCourses = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
   const courses = await db.course.findMany({
     where: {
@@ -96,6 +93,7 @@ export const getCreatedCourses = async () => {
 };
 
 export const getEnrolledCoursesById = async (id: string) => {
+  if (!currentUser) return null;
   const courses = await db.course.findMany({
     where: {
       enrolledUsers: {
@@ -120,7 +118,6 @@ export const getEnrolledCoursesById = async (id: string) => {
 };
 
 export const getMentorStudents = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
   const students = await db.user.findMany({
@@ -145,7 +142,7 @@ export const getMentorStudents = async () => {
 };
 
 export const getEnrolledStudents = async () => {
-  const currentUser = await getCurrentUser();
+
   if (!currentUser) return null;
 
   const students = await db.user.findMany({
@@ -168,7 +165,7 @@ export const getEnrolledStudents = async () => {
 };
 
 export const createCourse = async ({ title,isPublished,image }: { title: string;isPublished:boolean,image:string }) => {
-  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
   if(currentUser?.role !== "INSTRUCTOR") return null;
   
 
@@ -195,7 +192,7 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
 
 
 export const updateCourse = async ({ id, title, isPublished,image }: { id: string; title: string; isPublished:boolean,image:string }) => {
-  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
   if(currentUser?.role !== "INSTRUCTOR") return null;
 
   if(!title.trim() || title==="" )
@@ -217,9 +214,7 @@ export const updateCourse = async ({ id, title, isPublished,image }: { id: strin
 }
 
 export const getMentorCourses = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-
   const courses = await db.course.findMany({
     where: {
       enrolledUsers: {
@@ -246,6 +241,7 @@ export const getMentorCourses = async () => {
 };
 
 export const getClassDetails = async (id: string) => {
+  if (!currentUser) return null;
   const classDetails = await db.class.findUnique({
     where: {
       id: id,
@@ -260,6 +256,7 @@ export const getClassDetails = async (id: string) => {
 };
 
 export const getCourseByCourseId = async (id: string) => {
+  if (!currentUser) return null;
   const course = await db.course.findUnique({
     where: {
       id: id,

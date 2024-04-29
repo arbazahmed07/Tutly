@@ -1,9 +1,8 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 import { getMentorCourses } from "./courses";
-
+const currentUser = await getCurrentUser();
 export const getUserDoubtsByCourseId = async (courseId: string) => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
   const doubts = await db.doubt.findMany({
     where: {
@@ -24,7 +23,6 @@ export const getUserDoubtsByCourseId = async (courseId: string) => {
 
 //get all doubts based on enrolled courses for user
 export const getEnrolledCoursesDoubts = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
   
   const courses = await db.course.findMany({
@@ -53,7 +51,6 @@ export const getEnrolledCoursesDoubts = async () => {
 
 //get all doubts based on created courses for user (instructor)
 export const getCreatedCoursesDoubts = async () => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
   const courses = await db.course.findMany({
     where:{
@@ -77,6 +74,7 @@ export const getCreatedCoursesDoubts = async () => {
 
 //get all doubts for mentor
 export const getAllDoubtsForMentor = async () => {
+  if (!currentUser) return null;
   const mentorCourses = await getMentorCourses();
   if (!mentorCourses) return null;
   const courses = await db.course.findMany({
@@ -106,8 +104,7 @@ export const createDoubt = async (
   title?: string,
   description?: string
 ) => {
-  
-  const currentUser = await getCurrentUser();
+
   if (!currentUser) return null;
   const doubt = await db.doubt.create({
     data: {
@@ -131,7 +128,6 @@ export const createDoubt = async (
 
 //for user/mentor/instructor to create response for user doubts , even user can create response for his own doubts(like commenting)
 export const createResponse = async (doubtId: string, description: string) => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
   const response = await db.response.create({
@@ -149,7 +145,6 @@ export const createResponse = async (doubtId: string, description: string) => {
 
 //for user to delete his own doubts
 export const deleteDoubt = async (doubtId: string) => {
-  const currentUser = await getCurrentUser();
   if (!currentUser) return null;
   const doubt = await db.doubt.delete({
     where: {
@@ -171,6 +166,7 @@ export const deleteDoubt = async (doubtId: string) => {
 
 //for mentor/instructor to delete any doubts
 export const deleteAnyDoubt = async (doubtId: string) => {
+  if (!currentUser) return null;
   const doubt = await db.doubt.delete({
     where: {
       id: doubtId,
@@ -190,7 +186,7 @@ export const deleteAnyDoubt = async (doubtId: string) => {
 
 //for user to delete his own response
 export const deleteResponse = async (responseId: string) => {
-
+  if (!currentUser) return null;
   const response = await db.response.delete({
     where: {
       id: responseId,
