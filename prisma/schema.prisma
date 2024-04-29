@@ -43,7 +43,7 @@ model User {
   profile         Profile?
   doubt           Doubt[]
   response        Response[]
-  assignedMentors AssignedMentors[]
+  assignedMentees AssignedMentors[]
   Attendence      Attendance[]
 }
 
