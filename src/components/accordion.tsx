@@ -10,6 +10,7 @@ import { MdDelete } from "react-icons/md";
 import { BsFillSendArrowUpFill } from "react-icons/bs";
 import { ImReply } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
+import { PiCrown } from "react-icons/pi";
 import { PiCrownSimpleFill } from "react-icons/pi";
 
 
