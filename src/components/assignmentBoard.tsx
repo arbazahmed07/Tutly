@@ -99,7 +99,7 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
                                                 <div className="rounded-full p-2.5 bg-secondary-600">Not submitted</div>
                                             </div>
                                         ) : (
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 flex-wrap">
                                                 {assignment.submissions.map((eachSubmission: any, index: number) => {
                                                     if (eachSubmission.points.length === 0) {
                                                         return (

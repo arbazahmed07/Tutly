@@ -152,8 +152,8 @@ model Folder {
 model Attendance {
   id String @id @default(uuid())
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [username])
+  username String @unique
+  user   User   @relation(fields: [username], references: [username])
 
   classId String
   class   Class  @relation(fields: [classId], references: [id])
