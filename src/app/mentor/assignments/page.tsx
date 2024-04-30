@@ -14,7 +14,7 @@ export default async function mentorAssignments() {
         courses && courses.length > 0 ? (
           <MentorAssignmentBoard students={students} courses={courses}/>
         ) : (
-          <div className="text-center m-3">No courses found!</div>
+          <div className="text-center text-xl m-4">No courses found!</div>
         )
       }
       </div>
