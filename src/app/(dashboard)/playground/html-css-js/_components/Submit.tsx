@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import usePlaygroundContext from "@/hooks/usePlaygroundContext";
+import Confetti from 'react-confetti'
 
 const Submit = ({
   user,
@@ -15,7 +16,7 @@ const Submit = ({
   assignmentDetails: any,
   isLoading?: boolean
 }) => {
-
+  const [confetti,setConfetti]=useState(false)
   const [isSubmitting, setSubmitting] = useState(false);
   const { files } = usePlaygroundContext();
 
@@ -43,6 +44,8 @@ const Submit = ({
         files:newFiles,
       });
       toast.dismiss();
+      setConfetti(true)
+      setTimeout(() => setConfetti(false),10000)
       toast.success('Assignment submitted successfully');
     } catch (e) {
       toast.dismiss();
@@ -53,9 +56,16 @@ const Submit = ({
   }
 
   return (
-    <Button disabled={isLoading || isSubmitting} className="w-full" variant="outline" onClick={handleSubmit} >
-      Submit
-    </Button>
+    <div>
+      <Button disabled={isLoading || isSubmitting} className="w-full" variant="outline" onClick={handleSubmit} >
+        Submit
+      </Button>
+        <div>
+          {confetti && (<Confetti width={window.innerWidth || 1000} height={window.innerHeight || 600} numberOfPieces={1000}
+            colors={['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']}/>
+          )}
+        </div>
+    </div>
   );
 };
 
