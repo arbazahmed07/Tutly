@@ -224,6 +224,7 @@ model Attachment {
   attachmentType attachmentType
   link           String?
   submissions    submission[]
+  maxSubmissions  Int?           @default(1)
   classId        String?
   class          Class?         @relation(fields: [classId], references: [id])
   courseId       String?
