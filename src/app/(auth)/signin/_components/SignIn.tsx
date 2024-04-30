@@ -46,7 +46,7 @@ const SignIn = () => {
           <input
             type="text"
             placeholder="Username"
-            className="border bg-gray-500 text-zinc-500 border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg w-full"
+            className="border bg-gray-500 border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg w-full"
             {...register("username", { required: true })}
           />
         </div>
@@ -55,7 +55,7 @@ const SignIn = () => {
           <input
             type={showPassword}
             placeholder="Password"
-            className="border bg-gray-500 text-zinc-500 border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg w-full"
+            className="border bg-gray-500 border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg w-full"
             {...register("password", { required: true, minLength: 8 })}
           />
           {showPassword === 'password' ? 
