@@ -22,7 +22,7 @@ export const createSubmission = async (
   });
   const submissionId = uuidv4();
   const pr = await octokit.createPullRequest({
-    owner: "WebWizards-Git",
+    owner: "GoodKodersUnV",
     repo: "LMS-DATA",
     title: `${assignmentDetails.title} submission by ${user.username}`,
     body: `
