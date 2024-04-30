@@ -3,6 +3,7 @@ import { getAllAssignedAssignments } from "@/actions/assignments";
 import AssignmentBoard from "@/components/assignmentBoard";
 import Loader from "@/components/Loader";
 import { Suspense } from "react";
+import Image from "next/image";
 
 export default async function Assignments() {
   const assignments = await getAllAssignedAssignments();
@@ -13,7 +14,18 @@ export default async function Assignments() {
       <h1 className="text-center text-xl font-bold py-2">ASSIGNMENTS</h1>
 
       {
-        !assignments ? <div className="text-center">No Attachments found!</div> :
+        !courses||courses.length===0 ? 
+        <div className="p-4 font-semibold text-center mt-20">
+            <Image
+              src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
+              height={400}
+              className="m-auto "
+              width={400}
+              alt=""
+            />
+            <h1>No Assignments available</h1>
+          </div>
+         :
           <Suspense fallback={<Loader />}>
             <AssignmentBoard reviewed={true} courses={courses} assignments={assignments} />
           </Suspense>
