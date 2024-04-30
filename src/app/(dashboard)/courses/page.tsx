@@ -11,10 +11,10 @@ export default async function Courses() {
   const currentUser = await getCurrentUser();
   return (
     <div className="w-full">
-      <div className="flex max-sm:justify-center">
-        {courses?.length === 0  ? (
-          <div className="text-center text-2xl font-bold m-auto mt-14">
-            <div hidden={currentUser?.role === 'INSTRUCTOR'}>
+      <div className="flex items-center sm:justify-center">
+        {courses?.length === 0 && currentUser?.role !== 'INSTRUCTOR' ? (
+          <div className="text-center text-2xl font-bold">
+            <div >
               <div className="mt-3 flex items-center justify-center space-y-3">
                 No Courses enrolled &nbsp; <BsDropbox className="w-7 h-7" />
               </div>
@@ -26,7 +26,6 @@ export default async function Courses() {
                 />
               </div>
             </div>
-            {currentUser?.role === "INSTRUCTOR" && <AddCourse />}
           </div>
         ) : (
           <div className="flex flex-wrap">

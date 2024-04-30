@@ -10,6 +10,10 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const filteredStudents = students.filter((student: any) =>
+    student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
+    (student.name.toLowerCase().includes(searchQuery.toLowerCase())||student.username.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -19,10 +23,6 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
     return null;
   }
 
-  const filteredStudents = students.filter((student: any) =>
-    student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
-    (student.name.toLowerCase().includes(searchQuery.toLowerCase())||student.username.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
 
 
   return (
