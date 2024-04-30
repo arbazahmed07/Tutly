@@ -35,7 +35,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
         ))}
       </div>
       <div className="flex flex-col gap-2 mb-6 min-h-screen">
-        {filteredallDoubts?.length === 0 && (
+        {filteredallDoubts && (
             <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0]?.doubts} />   
         )}
       </div>

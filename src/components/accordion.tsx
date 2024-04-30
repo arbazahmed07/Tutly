@@ -346,7 +346,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                     <p className="text-sm font-medium">{r.description}</p>
                                 </div>
                             </div>
-                            <div hidden={ r.user.role==='INSTRUCTOR' } >
+                            <div hidden={ r.user.role==='INSTRUCTOR' && currentUser.role !== 'INSTRUCTOR' } >
                                 {
                                   (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR' )  && 
                                   <button onClick={() => handleDeleteReply(r.id)  }>

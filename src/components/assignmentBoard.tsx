@@ -48,17 +48,6 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
     
     return (
         <div className="flex flex-col gap-4">
-            {/* back button */}
-            
-            {/* <div className="relative">
-                <button
-                    title="Go back"
-                    onClick={() => router.back()}
-                    className="absolute bottom-5 -left-15 p-2"
-                >
-                    <IoMdArrowRoundBack className=" w-8 h-8" />
-                </button>
-            </div> */}
             <div className="flex flex-wrap justify-between items-center gap-3">
                 <div>
                     {courses?.map((course: any) => (
@@ -148,11 +137,6 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
                     ))
                 );
             })}
-            <pre>
-                <code>
-                    {JSON.stringify(assignments, null, 2)}
-                </code>
-            </pre>
         </div>
     );
 }
