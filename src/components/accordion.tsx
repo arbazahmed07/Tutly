@@ -176,7 +176,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
         <div className="bg-gradient-to-l w-full md:min-w-[800px]"> 
                 <div className="flex flex-col items-center text-sm font-medium">
                   <div className=' w-full flex flex-row-reverse'>
-                    <button onClick={()=> {handleShow() ;setOpenAccordion(-1);   }} className="py-3 px-4 rounded-md mt-3 bg-blue-600 hover:bg-blue-700 text-white">
+                    <button onClick={()=> {handleShow() ;setOpenAccordion(-1);}} className="py-3 px-4 rounded-md mt-3 bg-blue-600 hover:bg-blue-700 text-white">
                       {
                         currentUser.role === 'STUDENT' ? "Ask a Doubt" : "Raise a Query"
                       }
