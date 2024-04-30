@@ -9,15 +9,21 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
   );
 
   
+  if(!currentUser) return <div className="text-center">Sign in to view doubts!</div>  
+  if(filteredallDoubts?.length === 0) return <div className="flex flex-col gap-4 w-full">
+      <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg text-white">Community Forum</h1>
+      <p className=' text-2xl mt-5 flex justify-center items-center'>
+        No course is enrolled yet!
+      </p>
+    </div>
   
-
   return (
     <div className="flex flex-col gap-4 w-full">
       <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg text-white">Community Forum</h1>
       <div className="flex gap-3">
         {allDoubts?.map((course: any) => (
+          course.isPublished === true &&
           <button
-          hidden={course.isPublished === false} 
           onClick={() => setCurrentCourse(course.id)}
           className={`rounded p-2 w-20 sm:w-auto ${
               currentCourse === course?.id && "border rounded"
@@ -29,12 +35,8 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
         ))}
       </div>
       <div className="flex flex-col gap-2 mb-6 min-h-screen">
-        {filteredallDoubts?.length === 0 ? (
-          <div className="p-4 border rounded text-center">
-            No doubts are rised in this course
-          </div>
-        ) : (
-            <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0].doubts} />   
+        {filteredallDoubts?.length === 0 && (
+            <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0]?.doubts} />   
         )}
       </div>
     </div>

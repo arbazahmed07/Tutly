@@ -18,21 +18,22 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
         return null;
     }
 
+
     const filteredAssignments = assignments.filter((assignment: any) => {
         switch (filterOption) {
             case 'all':
                 return true;
             case 'reviewed':
                 return assignment.classes.some((cls: any) =>
-                    cls.attachments.some((attachment: any) =>
+                    cls.attachments.every((attachment: any) =>
                         attachment.submissions.every((submission: any) => submission.points.length > 0)
                     )
                 );
             case 'unreviewed':
                 return assignment.classes.some((cls: any) =>
                     cls.attachments.some((attachment: any) =>
-                        attachment.submissions.some((submission: any) => submission.points.length === 0) &&
-                        attachment.submissions.length > 0
+                        attachment.submissions.some ( (submission: any) => submission.points.length === 0 )&&
+                        attachment.submissions.length > 0 
                     )
                 );
             case 'not-submitted':
@@ -44,6 +45,7 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
         }
     });
 
+    
     return (
         <div className="flex flex-col gap-4">
             <div className="relative">
@@ -144,6 +146,11 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
                     ))
                 );
             })}
+            <pre>
+                <code>
+                    {JSON.stringify(assignments, null, 2)}
+                </code>
+            </pre>
         </div>
     );
 }

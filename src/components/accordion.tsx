@@ -47,7 +47,10 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
       } else {
         toast.success("Doubt added successfully");
         setDoubt("");
-        setDbts([...doubts, res.data]);
+        if(!doubt)
+          setDbts([res.data]);
+        else
+          setDbts([...doubts, res.data]);
       }
     };
   
@@ -64,9 +67,13 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
         toast.success("Reply added successfully");
         setReply("");
         setReplyId("");
+        if(!doubts)
+          setDbts([res.data]);
+        else
         setDbts(
-          doubts.map((d: any) =>
-            d.id === id ? { ...d, response: [...d.response, res.data] } : d
+          doubts?.map((d: any) =>
+            (d) &&
+            d?.id === id ? { ...d, response: [...d.response, res.data] } : d
           )
         );
       }
@@ -191,8 +198,11 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                       </div>
                     )}
                 </div>
+                
+                {
+                  doubts?.length !== 0 && 
             <div id="accordion-color" data-accordion="collapse" className="mt-10 cursor-pointer" >
-            {QA.map((qa : any, index : number) => ( 
+            {QA?.map((qa : any, index : number) => ( 
                 <div key={index} className={`relative cursor-pointer mb-1 ${openAccordion === index ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white" :"bg-slate-200 text-zinc-500 shadow-3xl"}`}>
                 <div className={`flex items-center justify-between w-full p-3 flex-wrap font-medium gap-3 rounded-t-lg`} >
                     <div className='flex justify-start items-center space-x-5 ml-2 relative'> 
@@ -214,26 +224,26 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                         }
                         <div className=" flex flex-col justify-start">
                             <div className="flex justify-start items-center space-x-2">
-                                <p className="text-xs font-semibold text-secondary-900 ">{qa.user?.name} </p>
-                                <p className='text-xs font-medium'>{formatDateTime(qa.createdAt)}</p>
+                                <p className="text-xs font-semibold text-secondary-900 ">{qa?.user?.name} </p>
+                                <p className='text-xs font-medium'>{formatDateTime(qa?.createdAt)}</p>
                             </div>                
                             <div className='flex justify-start'>
                                 <p className='text-xs font-medium mt-2'>{qa.user?.username}</p>
                             </div>                
                         </div>
                         <div>
-                          <p className="text-sm text-gray-800 flex md:hidden ml-5 justify-end items-center font-bold">{qa.response.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
+                          <p className="text-sm text-gray-800 flex md:hidden ml-5 justify-end items-center font-bold">{qa?.response?.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
                         </div>
                     </div>
                     <div className="flex space-x-2 items-center">
                       <div className='flex justify-start items-center space-x-2' >
-                          <p className="text-sm text-gray-800 hidden md:flex justify-start items-center font-bold">{qa.response.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
+                          <p className="text-sm text-gray-800 hidden md:flex justify-start items-center font-bold">{qa?.response?.length} &nbsp; <PiUserListFill className=' w-5 h-5' /></p>
                           <div className="p-2 font-bold  flex items-center justify-end rounded text-sm"
                           >
                             {openAccordion === index ? <IoIosArrowUp onClick={() => toggleAccordion(index)} className=' cursor-pointer'  /> : <IoIosArrowDown onClick={() => toggleAccordion(index)} className=' cursor-pointer' />}
                           </div>
                         {
-                        replyId === qa.id ? (
+                        replyId === qa?.id ? (
                           <div className="flex items-center">
                             <div className="flex items-center border-2 border-secondary-300 bg-white rounded-lg">
                             <input
@@ -304,7 +314,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                     )
                 }
                   <div className="bg-slate-400 text-white">    
-                   <h1 className="mx-4 rounded-md py-1 text-sm font-medium text-justify">
+                  <h1 className="mx-4 rounded-md py-1 text-sm font-medium text-justify">
                     {qa.description}
                     </h1>
                   </div>
@@ -351,6 +361,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                 </div>
             ))}
             </div>
+          }
         </div>
     );
 }
