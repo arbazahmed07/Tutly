@@ -102,7 +102,7 @@ const AttendanceClient = ({ courses }: any) => {
           },
         ],
         Duration: parseInt(student.Duration),
-        username: student.username
+        username: student.username,
       };
     } else {
       acc[username].Joins.push({
@@ -117,7 +117,7 @@ const AttendanceClient = ({ courses }: any) => {
   }, {});
 
   const sortedAggregatedStudents = Object.values(aggregatedStudents).sort(
-    (a: any, b: any ) => {
+    (a: any, b: any) => {
       const usernameA = String(a.username).toUpperCase();
       const usernameB = String(b.username).toUpperCase();
       if (usernameA < usernameB) {
@@ -175,6 +175,18 @@ const AttendanceClient = ({ courses }: any) => {
       student.username = student.username.replace(from, to);
     });
   };
+
+  // upload attendance to db
+  const handleUpload=async()=>{
+    try {
+      const res = await axios.post("/api/attendance", {
+        classId: currentClass?.id,
+        data: presentStudents
+      })
+      toast.success("Attendance uploaded successfully")
+    } catch(e) {
+      toast.error("something went wrong!")}
+  }
   return (
     <div className="p-4 text-center ">
       <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
@@ -270,6 +282,7 @@ const AttendanceClient = ({ courses }: any) => {
                 : files && files.length > 0 && onSelectFile(files[0]);
             }}
           />
+          <div onClick={handleUpload} className="bg-primary-600 rounded p-1">upload</div>
         </div>
       </div>
 
@@ -285,6 +298,8 @@ const AttendanceClient = ({ courses }: any) => {
                 <th>Duration</th>
                 <th>Date</th>
                 <th>Times Joined</th>
+                <th>view</th>
+                <th>status</th>
               </tr>
             </thead>
             <tbody>
@@ -292,7 +307,6 @@ const AttendanceClient = ({ courses }: any) => {
                 <tr
                   key={index}
                   className="hover:bg-primary-800 cursor-pointer"
-                  onClick={() => handleStudentClick(student)}
                 >
                   <td>{index + 1}</td>
                   <td className="py-2 pl-10 text-start">
@@ -301,18 +315,31 @@ const AttendanceClient = ({ courses }: any) => {
                   <td>{student.username}</td>
                   <td>
                     <p
-                      className={`p-1 m-auto w-10 rounded ${student.Duration < 30
-                        ? "bg-red-500"
-                        : student.Duration < 90
+                      className={`p-1 m-auto w-10 rounded ${
+                        student.Duration < 30
+                          ? "bg-red-500"
+                          : student.Duration < 90
                           ? "bg-blue-500"
                           : "bg-green-500"
-                        }`}
+                      }`}
                     >
                       {student.Duration}
                     </p>
                   </td>
                   <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
                   <td>{student.Joins.length}</td>
+                  <td
+                        className="cursor-pointer"
+                        onClick={() => handleStudentClick(student)}
+                      >
+                        view
+                      </td>
+                      <td>
+                        <select>
+                          <option value="absent">A</option>
+                          <option value="present">P</option>
+                        </select>
+                      </td>
                 </tr>
               ))}
               {users.map((student: any, index: number) => {
@@ -328,6 +355,19 @@ const AttendanceClient = ({ courses }: any) => {
                       <td>-</td>
                       <td>-</td>
                       <td>-</td>
+                      <td>-</td>
+                      <td
+                        className="cursor-pointer"
+                        onClick={() => handleStudentClick(student)}
+                      >
+                        view
+                      </td>
+                      <td>
+                        <select>
+                          <option value="absent">A</option>
+                          <option value="present">P</option>
+                        </select>
+                      </td>
                     </tr>
                   );
               })}
@@ -351,78 +391,87 @@ const AttendanceClient = ({ courses }: any) => {
               </tr>
             </thead>
             <tbody>
-              {absentStudents.map((student: {
-                Name: string;
-                Joins: { ActualName: string; JoinTime: string; Duration: number }[];
-                Duration: number;
-                username: string;
-              }, index) => (
-                <tr key={index} className="hover:bg-primary-800">
-                  <td>{index + 1}</td>
-                  <td>{student.Joins[0].ActualName}</td>
-                  {openEditName === Number(index + 1) ? (
-                    <td className="text-start pl-10 py-2 max-w-52">
-                      <input
-                        className="block"
-                        onChange={(e) => setUsername(e.target.value)}
-                        defaultValue={student.username}
-                      />
-                    </td>
-                  ) : (
-                    <td className="text-start pl-10 py-2 max-w-52">
-                      {student.username}
-                    </td>
-                  )}
-                  <td>
-                    <p
-                      className={`p-1 m-auto w-10 rounded ${student.Duration < 30
-                        ? "bg-red-500"
-                        : student.Duration < 90
-                          ? "bg-blue-500"
-                          : "bg-green-500"
+              {absentStudents.map(
+                (
+                  student: {
+                    Name: string;
+                    Joins: {
+                      ActualName: string;
+                      JoinTime: string;
+                      Duration: number;
+                    }[];
+                    Duration: number;
+                    username: string;
+                  },
+                  index
+                ) => (
+                  <tr key={index} className="hover:bg-primary-800">
+                    <td>{index + 1}</td>
+                    <td>{student.Joins[0].ActualName}</td>
+                    {openEditName === Number(index + 1) ? (
+                      <td className="text-start pl-10 py-2 max-w-52">
+                        <input
+                          className="block"
+                          onChange={(e) => setUsername(e.target.value)}
+                          defaultValue={student.username}
+                        />
+                      </td>
+                    ) : (
+                      <td className="text-start pl-10 py-2 max-w-52">
+                        {student.username}
+                      </td>
+                    )}
+                    <td>
+                      <p
+                        className={`p-1 m-auto w-10 rounded ${
+                          student.Duration < 30
+                            ? "bg-red-500"
+                            : student.Duration < 90
+                            ? "bg-blue-500"
+                            : "bg-green-500"
                         }`}
-                    >
-                      {student.Duration}
-                    </p>
-                  </td>
-                  <td>{String(student.Joins[0].JoinTime).split(" ")[0]}</td>
-                  <td>{student.Joins.length}</td>
+                      >
+                        {student.Duration}
+                      </p>
+                    </td>
+                    <td>{String(student.Joins[0].JoinTime).split(" ")[0]}</td>
+                    <td>{student.Joins.length}</td>
 
-                  <td
-                    className="cursor-pointer"
-                    onClick={() => handleStudentClick(student)}
-                  >
-                    view
-                  </td>
-                  {openEditName !== index + 1 ? (
                     <td
-                      className="hover:bg-red-400 cursor-pointer"
-                      onClick={
-                        openEditName === 0
-                          ? () => setOpenEditName(index + 1)
-                          : () => setOpenEditName(0)
-                      }
+                      className="cursor-pointer"
+                      onClick={() => handleStudentClick(student)}
                     >
-                      edit
+                      view
                     </td>
-                  ) : (
-                    <td
-                      onClick={() => {
-                        setOpenEditName(0);
-                        handleEditUsername(student.username, username);
-                      }}
-                      className="hover:bg-red-400 cursor-pointer"
-                    >
-                      save
-                    </td>
-                  )}
-                </tr>
-              ))}
+                    {openEditName !== index + 1 ? (
+                      <td
+                        className="hover:bg-red-400 cursor-pointer"
+                        onClick={
+                          openEditName === 0
+                            ? () => setOpenEditName(index + 1)
+                            : () => setOpenEditName(0)
+                        }
+                      >
+                        edit
+                      </td>
+                    ) : (
+                      <td
+                        onClick={() => {
+                          setOpenEditName(0);
+                          handleEditUsername(student.username, username);
+                        }}
+                        className="hover:bg-red-400 cursor-pointer"
+                      >
+                        save
+                      </td>
+                    )}
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         </>
       )}
-
 
       {selectedStudent && (
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
