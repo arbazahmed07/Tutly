@@ -12,7 +12,7 @@ export default async function Courses() {
   return (
     <div className="w-full">
       <div className="flex max-sm:justify-center">
-        {courses?.length === 0 || (courses && courses[0].isPublished === false) ? (
+        {courses?.length === 0  ? (
           <div className="text-center text-2xl font-bold">
             <div hidden={currentUser?.role === 'INSTRUCTOR'}>
               <div className="mt-3 flex items-center justify-center space-y-3">
@@ -30,7 +30,8 @@ export default async function Courses() {
           </div>
         ) : (
           <div className="flex flex-wrap">
-            {courses?.map(async (course) => {
+            {courses?.map( (course) => {
+
               return <CourseCard currentUser={currentUser} key={course.id} course={course} />;
             })}
             {currentUser?.role === "INSTRUCTOR" && <AddCourse />}
