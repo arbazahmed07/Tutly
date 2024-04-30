@@ -44,7 +44,7 @@ const Submit = ({
       });
       toast.dismiss();
       setConfetti(true)
-      setTimeout(() => setConfetti(false),10000)
+      setTimeout(() => setConfetti(false),5000)
       toast.success('Assignment submitted successfully');
     } catch (e) {
       toast.dismiss();
@@ -60,7 +60,8 @@ const Submit = ({
         Submit
       </Button>
         <div>
-          {confetti && (<Confetti width={window.innerWidth || 1000} height={window.innerHeight || 600} numberOfPieces={1000}
+          {confetti && (<Confetti width={1600} height={window.innerHeight || 1000} numberOfPieces={400}
+            friction={0.99}
             colors={['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']}/>
           )}
         </div>
