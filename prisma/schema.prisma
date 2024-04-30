@@ -161,7 +161,7 @@ model Attendance {
   attendedDuration Int?
   attended         Boolean @default(false)
 
-  data Json?
+  data Json[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
