@@ -31,7 +31,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
       <div className="flex flex-col gap-2 mb-6 min-h-screen">
         {filteredallDoubts?.length === 0 ? (
           <div className="p-4 border rounded text-center">
-            No doubts are rised in this course
+            No doubts are rised in your courses
           </div>
         ) : (
             <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0].doubts} />   
