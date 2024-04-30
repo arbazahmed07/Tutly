@@ -13,7 +13,7 @@ export default async function Courses() {
     <div className="w-full">
       <div className="flex max-sm:justify-center">
         {courses?.length === 0  ? (
-          <div className="text-center text-2xl font-bold">
+          <div className="text-center text-2xl font-bold m-auto mt-14">
             <div hidden={currentUser?.role === 'INSTRUCTOR'}>
               <div className="mt-3 flex items-center justify-center space-y-3">
                 No Courses enrolled &nbsp; <BsDropbox className="w-7 h-7" />

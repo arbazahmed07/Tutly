@@ -46,7 +46,9 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="relative">
+            {/* back button */}
+            
+            {/* <div className="relative">
                 <button
                     title="Go back"
                     onClick={() => router.back()}
@@ -54,7 +56,7 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
                 >
                     <IoMdArrowRoundBack className=" w-8 h-8" />
                 </button>
-            </div>
+            </div> */}
             <div className="flex flex-wrap justify-between items-center gap-3">
                 <div>
                     {courses?.map((course: any) => (
