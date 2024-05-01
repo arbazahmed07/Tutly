@@ -18,6 +18,20 @@ export const createSubmission = async (
   if (!user) {
     return { message: "unauthorized" };
   }
+
+  const submissions = await db.submission.findMany({
+    where: {
+      attachmentId: assignmentDetails.id,
+      enrolledUser:{
+        username:user.username
+      },
+    },
+  });
+
+  if (submissions.length >= assignmentDetails.maxSubmissions ) {
+    return { message: "Maximum submission limit reached" };
+  }
+
   const octokit = new MyOctokit({
     auth: process.env.GITHUB_PAT,
   });
@@ -58,7 +72,7 @@ export const createSubmission = async (
       "assignment-submission",
       assignmentDetails.class.course.title,
       assignmentDetails.title,
-      `mentor-${mentorDetails.assignedMentors[0].mentor.username}`,
+      `mentor-${mentorDetails.mentor.username}`,
     ],
     changes: [
       {
@@ -81,9 +95,10 @@ export const createSubmission = async (
 
   const enrolledUser = await db.enrolledUsers.findUnique({
     where:{
-      username_courseId:{
+      username_courseId_mentorUsername:{
         username:user.username,
-        courseId:assignmentDetails.class.courseId
+        courseId:assignmentDetails.class.courseId,
+        mentorUsername:mentorDetails.mentor.username
       }
     }
   });

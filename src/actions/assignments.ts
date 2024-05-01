@@ -99,11 +99,7 @@ export const getAllMentorAssignments = async () => {
     where: {
       enrolledUsers: {
         some: {
-          assignedMentors: {
-            some: {
-              mentorId: currentUser.id,
-            },
-          },
+          mentorUsername: currentUser.username,
         },
       },
     },
@@ -120,11 +116,7 @@ export const getAllMentorAssignments = async () => {
               submissions: {
                 where: {
                   enrolledUser: {
-                    assignedMentors: {
-                      some: {
-                        mentorId: currentUser.id,
-                      },
-                    },
+                    mentorUsername: currentUser.username,
                   },
                 },
                 select: {
@@ -146,11 +138,7 @@ export const getAllMentorAssignments = async () => {
   const submissions = await db.submission.findMany({
     where: {
       enrolledUser: {
-        assignedMentors: {
-          some: {
-            mentorId: currentUser.id,
-          },
-        },
+        mentorUsername: currentUser.username,
       },
     },
     select: {
