@@ -2,6 +2,7 @@
 import  { useState } from 'react'
 import Accordion from "./accordion";
 
+
 export default function CommunityForum({ allDoubts, currentUser }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(allDoubts[0]?.id);
   const filteredallDoubts = allDoubts.filter(
@@ -19,7 +20,12 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
   
   return (
     <div className="flex flex-col gap-4 w-full">
-      <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-blue-500 to-red-400 rounded-lg text-white">Community Forum</h1>
+      <div className="w-full overflow-hidden">
+        <div className="flex animate-marquee">  
+          <p className="text-sm font-medium dark:text-white">This community forum fosters an environment where anyone can contribute insights and solutions to each other's inquiries. </p>
+        </div>
+      </div>
+      <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg text-white">Community Forum</h1>
       <div className="flex gap-3">
         {allDoubts?.map((course: any) => (
           course.isPublished === true &&

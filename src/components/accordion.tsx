@@ -167,7 +167,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
         <div className="bg-gradient-to-l w-full md:min-w-[800px]"> 
                 <div className="flex flex-col items-center text-sm font-medium">
                   <div className=' w-full flex flex-row-reverse'>
-                    <button onClick={()=> {handleShow() ;setOpenAccordion(-1);}} className="py-3 px-4 rounded-md bg-blue-600 hover:bg-blue-700 text-white">
+                    <button onClick={()=> {handleShow() ;setOpenAccordion(-1);}} className="py-3 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white">
                       {
                         currentUser.role === 'STUDENT' ? "Ask a Doubt" : "Raise a Query"
                       }
@@ -194,7 +194,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                   doubts?.length !== 0 && 
             <div id="accordion-color" data-accordion="collapse" className="mt-5 cursor-pointer" >
             {QA?.map((qa : any, index : number) => ( 
-                <div key={index} className={`relative cursor-pointer mb-1 ${openAccordion === index ? "bg-red-300 text-white" :"bg-slate-200 text-zinc-500 shadow-3xl"} p-2`}>
+                <div key={index} className={`relative cursor-pointer mb-1 rounded-t-md ${openAccordion === index ? "bg-blue-500 text-white" :"bg-white text-zinc-500 shadow-3xl"} p-2 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]`}>
                 <div className={`flex items-center justify-between w-full p-3 flex-wrap font-medium gap-3 rounded-t-lg`} >
                     <div className='flex justify-start items-center space-x-5 ml-2 relative'> 
                         {qa.user.role === 'STUDENT' &&
@@ -231,54 +231,54 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                           <div className='flex justify-start items-center space-x-2' >
                           {
                             popover && replyId === qa?.id ? (   
-                              <div className="flex items-center absolute right-0 top-16 z-50">
-                                <div className="bg-white border border-gray-300 rounded-lg shadow-lg p-4">
-                                  <textarea
-
-                                    placeholder="Enter your reply"
-                                    value={reply}
-                                    onKeyDown={(e) => {
-                                      if (e.key === 'Enter') {
-                                        handleReplyEnterBtn(qa.id);
-                                      }
-                                      if (e.key === 'Escape') {
-                                        setReplyId('');
-                                      }
-                                    }}
-                                    onChange={(e) => setReply(e.target.value)}
-                                    className="w-full px-3 py-2 bg-gray-100 text-gray-800 border rounded-lg outline-none mb-2"
-                                    ></textarea>  
-                                  <div className="flex justify-end">
-                                    <button
-                                      title="Send"
-                                      className="px-4 py-2 bg-blue-500 text-white rounded-lg mr-2"
-                                      onClick={() => handleReply(qa.id)}
-                                    >
-                                      Send
-                                    </button>
-                                    <button
-                                      title="Close"
-                                      className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg"
-                                      onClick={() => setReplyId('')}
-                                    >
-                                      Close
-                                    </button>
-                                  </div>
+                                <div className="flex items-center absolute right-0 top-16 z-50">
+                                    <div className="bg-white border rounded-lg shadow-xl p-4">
+                                        <textarea
+                                            placeholder="Enter your reply"
+                                            value={reply}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    handleReplyEnterBtn(qa.id);
+                                                }
+                                                if (e.key === 'Escape') {
+                                                    setReplyId('');
+                                                }
+                                            }}
+                                            onChange={(e) => setReply(e.target.value)}
+                                            className="w-full px-3 py-2 bg-gray-100 text-gray-800 border rounded-lg outline-none mb-2"
+                                        ></textarea>  
+                                        <div className="flex justify-end">
+                                            <button
+                                                title="Send"
+                                                className="px-4 py-2 bg-blue-500 text-white rounded-lg mr-2 hover:bg-blue-600"
+                                                onClick={() => handleReply(qa.id)}
+                                            >
+                                                Send
+                                            </button>
+                                            <button
+                                                title="Close"
+                                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                                                onClick={() => setReplyId('')}
+                                            >
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                              </div>
                             ) :
-                              <button
+                            <button
                                 title="Reply"
                                 className="p-1"
                                 onClick={() => {
-                                  togglePopover();
-                                  setReplyId(qa.id);
+                                    togglePopover();
+                                    setReplyId(qa.id);
                                 }}
-                              >
+                            >
                                 <ImReply className="cursor-pointer" />
-                              </button>
-                            }
-                          </div>
+                            </button>
+                        }
+
+                        </div>
                         </div>
                         <div hidden ={currentUser.role !== 'INSTRUCTOR' && qa.user.role === 'INSTRUCTOR'}>
                               <button
@@ -309,10 +309,11 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                   </div>
                   {/* Replies */}
                   {openAccordion === index && qa.response.length > 0 && (
-                    <div className="top-full left-0 z-50 w-full bg-white p-3 mt-3 rounded-lg">
+                    <div className="top-full left-0 z-50 w-full bg-white p-3 mt-2 rounded-lg text-black">
                     {qa.response.map((r : any, responseIndex : number) => (
-                        <div key={responseIndex} className="flex items-center justify-between space-x-2 mt-3 p-4 border-2 rounded-lg hover:bg-zinc-200 ">
-                            <div className='flex items-center space-x-5'>                                
+                        <div key={responseIndex} className="mt-3 p-4 border-2 rounded-lg hover:bg-zinc-200 ">
+                          <div className="flex justify-between items-center">
+                          <div className='flex  space-x-5'>                                
                                 {r.user?.role === 'STUDENT' &&
                                     <Image src={r.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
                                 }
@@ -328,22 +329,28 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                         <Image src={r.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
                                     </div>
                                 }
-                                <div className='flex flex-col text-black'>
-                                    <div className='flex justify-start items-center space-x-2'>
-                                        <p className="text-xs  font-medium  text-secondary-700">{r.user?.name}</p>
-                                        <p className='text-xs font-medium'>{formatDateTime(r.createdAt)}</p>
-                                    </div>
-                                    <p className="text-lg font-medium">{r.description}</p>
-                                </div>
+                              <div className="flex justify-start space-x-4">
+                                  <div className="flex flex-col justify-start">
+                                    <p className="text-xs font-semibold">{qa?.user?.name} </p>
+                                    <p className='text-xs font-medium'>{qa.user?.username}</p>
+                                  </div>
+                                  <div>
+                                    <p className='text-xs font-medium'>{formatDateTime(qa?.createdAt)}</p>
+                                  </div>                            
+                              </div>
                             </div>
-                            <div hidden={ r.user.role==='INSTRUCTOR' && currentUser.role !== 'INSTRUCTOR' } >
-                                {
-                                  (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR' )  && 
-                                  <button onClick={() => handleDeleteReply(r.id)  }>
-                                      <MdDelete className='cursor-pointer w-5 h-5 text-red-700 hover:text-red-600'  />
-                                  </button>
-                                }
-                            </div>
+                              <div hidden={ r.user.role==='INSTRUCTOR' && currentUser.role !== 'INSTRUCTOR' } >
+                                  {
+                                    (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR' )  && 
+                                    <button onClick={() => handleDeleteReply(r.id)  }>
+                                        <MdDelete className='cursor-pointer w-5 h-5 text-red-700 hover:text-red-600'  />
+                                    </button>
+                                  }
+                              </div>
+                          </div>
+                          <div className="text-lg font-medium mt-2 -mb-2">
+                              {r.description}
+                          </div>
                         </div>
                     ))}
                     </div>
