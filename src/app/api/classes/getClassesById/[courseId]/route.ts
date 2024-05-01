@@ -10,6 +10,7 @@ export async function GET(request: NextRequest, { params }: { params: {courseId:
                 id: c.id,
                 title: c.title,
                 folderTitle: c.Folder?.title,
+                createdAt : c.createdAt,
             };
         }
         );

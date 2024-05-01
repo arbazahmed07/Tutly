@@ -10,15 +10,23 @@ const classSchema = z.object({
   videoLink: z.string().trim().min(1),
   videoType: z.enum(["DRIVE", "YOUTUBE", "ZOOM"]),
   courseId: z.string().trim().min(1),
+  createdAt : z.string().optional(),
   folderId: z.string().optional(),
   folderName: z.string().optional(),
 });
 
 export const createClass = async (data: any) => {
-  const { classTitle, videoLink, videoType, courseId, folderId, folderName } =
-    classSchema.parse(data);
-
+  console.log(data.createdAt, "data");
+  console.log(typeof data.createdAt);
+  
+  const { classTitle, videoLink, videoType, courseId, folderId, folderName,createdAt } =
+  classSchema.parse(data);
+  // console.log(JSON.stringify(data,null,2));
+  console.log(createdAt,"createdAt");
+  
+  
   let myClass;
+  
 
   try {
     // If folderId is provided, connect to the existing folder
@@ -26,6 +34,7 @@ export const createClass = async (data: any) => {
       myClass = await db.class.create({
         data: {
           title: classTitle,
+          createdAt: new Date(createdAt ?? ""),
           video: {
             create: {
               videoLink: videoLink,
@@ -50,6 +59,7 @@ export const createClass = async (data: any) => {
       myClass = await db.class.create({
         data: {
           title: classTitle,
+          createdAt : new Date(createdAt ?? ""),
           video: {
             create: {
               videoLink: videoLink,
@@ -73,6 +83,7 @@ export const createClass = async (data: any) => {
       myClass = await db.class.create({
         data: {
           title: classTitle,
+          createdAt : new Date(createdAt ?? ""),
           video: {
             create: {
               videoLink: videoLink,
@@ -101,7 +112,7 @@ export const updateClass = async (data: any) => {
     throw new Error("You are not authorized to update this class.");
   }
 
-  const { classTitle,videoLink, videoType,folderId,folderName } = classSchema.parse(data);
+  const { classTitle,videoLink, videoType,folderId,folderName,createdAt } = classSchema.parse(data);
 
   let newFolderId = undefined;
 
@@ -112,6 +123,7 @@ export const updateClass = async (data: any) => {
       },
       data: {
         title: folderName,
+        createdAt : new Date(createdAt ?? ""),
       },
     });
     newFolderId = folderId;
@@ -119,6 +131,7 @@ export const updateClass = async (data: any) => {
     const res = await db.folder.create({
       data: {
         title: folderName,
+        createdAt : new Date(createdAt ?? ""),
       },
     });
     newFolderId = res.id;
@@ -126,7 +139,6 @@ export const updateClass = async (data: any) => {
     newFolderId = folderId;
   }
 
-    console.log("newFolderId",newFolderId);
 
   try {
     const myClass = await db.class.update({
@@ -135,6 +147,7 @@ export const updateClass = async (data: any) => {
       },
       data: {
         title: classTitle,
+        createdAt : new Date(createdAt ?? ""),
         video: {
           update: {
             videoLink: videoLink,
