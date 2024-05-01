@@ -92,23 +92,6 @@ const EditClass = () => {
     
     return (
         <div className="mt-8">
-                    <pre>
-            <div>
-                {createdAt}
-            </div>
-            <div>
-                {videoLink}
-            </div>
-            <div>
-                {videoType}
-            </div>
-            <div>
-                {classTitle}
-            </div>
-            <div>
-                {folderName}
-            </div>
-        </pre>
             {
                 showForm ?
                     <div className="flex flex-col items-center">
