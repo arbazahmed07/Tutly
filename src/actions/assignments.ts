@@ -258,7 +258,9 @@ export const getAllAssignmentsByCourseId = async (id: string) => {
               class: true,
               submissions: {
                 where: {
-                  enrolledUserId: currentUser.id,
+                  enrolledUser:{
+                    username: currentUser.username
+                  }
                 },
               },
             },
