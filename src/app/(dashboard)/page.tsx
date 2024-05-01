@@ -135,7 +135,6 @@ export default async function Home() {
             </h1>
           </div>
         </div>
-        <pre>{JSON.stringify(mleaderboard,null,2)}</pre>
       </div>
     );
   } else if (currentUser?.role === "INSTRUCTOR") {

@@ -1,6 +1,6 @@
 import { getMentorCourses, getMentorStudents } from "@/actions/courses";
 import MentorAssignmentBoard from "@/components/mentorAssignmentBoard";
-
+import Image from "next/image";
 export default async function mentorAssignments() {
   const students = await getMentorStudents();
   const courses = await getMentorCourses();
@@ -14,7 +14,18 @@ export default async function mentorAssignments() {
         courses && courses.length > 0 ? (
           <MentorAssignmentBoard students={students} courses={courses}/>
         ) : (
-          <div className="text-center text-xl m-4">No courses found!</div>
+          <div>
+            <p className=' text-xl font-semibold mt-5 flex justify-center items-center'>
+              No course is enrolled yet!
+            </p>
+            <Image
+                src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
+                height={400}
+                className="m-auto "
+                width={400}
+                alt=""
+              />
+          </div>
         )
       }
       </div>

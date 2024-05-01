@@ -1,7 +1,5 @@
 import { createCourse, getEnrolledCourses } from "@/actions/courses";
 import CourseCard from "@/components/courseCard";
-import img from "/public/assets/notEnrolled.png";
-import { BsDropbox } from "react-icons/bs";
 import Image from "next/image";
 import getCurrentUser from "@/actions/getCurrentUser";
 import AddCourse from "@/components/addCourse";
@@ -11,23 +9,23 @@ export default async function Courses() {
   const currentUser = await getCurrentUser();
   return (
     <div className="w-full">
-      <div className="flex max-sm:justify-center">
+      <div className="flex justify-center">
         {courses?.length === 0  ? (
-          <div className="text-center text-2xl font-bold mt-14">
             <div hidden={currentUser?.role === 'INSTRUCTOR'}>
-              <div className="mt-3 flex items-center justify-center space-y-3">
-                No Courses enrolled &nbsp; <BsDropbox className="w-7 h-7" />
-              </div>
-              <div className="text-center w-full m-auto flex flex-1 mt-10">
-                <Image
-                  src={img}
-                  alt="unenrolled.png"
-                  className="block m-auto w-[50%] h-[50%]"
-                />
-              </div>
-            </div>
-            {currentUser?.role === "INSTRUCTOR" && <AddCourse />}
-          </div> 
+                <div>
+                  <p className=' text-xl font-semibold mt-5 flex justify-center items-center'>
+                    No course is enrolled yet!
+                  </p>
+                  <Image
+                      src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
+                      height={400}
+                      className="m-auto "
+                      width={400}
+                      alt=""
+                    />
+                </div>
+              {currentUser?.role === "INSTRUCTOR" && <AddCourse />}
+            </div> 
         ) : (
           <div className="flex flex-wrap">
             {courses?.map( (course) => {
