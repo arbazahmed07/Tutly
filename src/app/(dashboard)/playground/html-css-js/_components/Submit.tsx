@@ -35,7 +35,7 @@ const Submit = ({
       const newFiles: { [key: string]: string } = {};
 
       files.forEach((file, index) => {
-        const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.assignedMentors.mentor.username}/assignments/${user.username}/${assignmentDetails.title}/${file.filePath}`;
+        const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.assignedMentors[0].mentor.username}/assignments/${user.username}/${assignmentDetails.title}/${file.filePath}`;
         filePaths.push(filePath);
         newFiles[filePath] = file.code;
       });

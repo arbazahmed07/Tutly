@@ -45,7 +45,9 @@ export const createSubmission = async (
       - Due Date: ${assignmentDetails.dueDate}
       - Submission Date: ${new Date().toISOString()}
       - Submission Files:
-        ${files.map((file: any) => `- ${file.filePath}`).join("\n")}
+        ${Object.keys(files).map((file) => {
+          return `- ${file}`;
+        })}
       `,
     head: `${user.username?.trim()}-submissionId-${submissionId}`,
     base: `main`,
@@ -56,7 +58,7 @@ export const createSubmission = async (
       "assignment-submission",
       assignmentDetails.class.course.title,
       assignmentDetails.title,
-      `mentor-${mentorDetails.assignedMentors.mentor.username}`,
+      `mentor-${mentorDetails.assignedMentors[0].mentor.username}`,
     ],
     changes: [
       {
