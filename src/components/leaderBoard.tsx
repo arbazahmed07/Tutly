@@ -61,15 +61,17 @@ export default function Leaderboard({ submissions, courses }: any) {
       </div>
       <div className="flex flex-col">
         {leaderboardData.length === 0 ? (
-          <div className="p-4 mt-6 font-semibold text-center">
+          <div>
+            <p className=' text-xl font-semibold mt-5 flex justify-center items-center'>
+              No course is enrolled yet!
+            </p>
             <Image
-              src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
-              height={300}
-              className="m-auto "
-              width={300}
-              alt=""
-            />
-            <h1>No submissions available for this course</h1>
+                src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
+                height={400}
+                className="m-auto "
+                width={400}
+                alt=""
+              />
           </div>
         ) : (
           leaderboardData.map((data: any, index: number) => (

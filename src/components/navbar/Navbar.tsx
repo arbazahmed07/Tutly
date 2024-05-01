@@ -66,10 +66,9 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
           <div className="rounded-full cursor-pointer dark:hover:bg-secondary-800 hover:bg-neutral-300 p-2">
               <div onClick={() => setPopover((prev)=>!prev)}>
                 <IoMdNotificationsOutline className="text-xl"/>
-                <div className="absolute top-2 right-24 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                {/* <div className="absolute top-2 right-24 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                   0
-                  {/* we can change the value afterwards */}
-                </div>
+                </div> */}
               </div>
               {popover && (
                 <div className="flex flex-col justify-between absolute right-0 text-zinc-700 w-64 mr-5 h-60 mt-5 text-center bg-white rounded-lg shadow-lg p-2">
