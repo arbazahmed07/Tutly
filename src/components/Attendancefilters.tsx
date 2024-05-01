@@ -282,7 +282,7 @@ const AttendanceClient = ({ courses }: any) => {
                 : files && files.length > 0 && onSelectFile(files[0]);
             }}
           />
-          <div onClick={handleUpload} className="bg-primary-600 rounded p-1">upload</div>
+          {/* <div onClick={handleUpload} className="bg-primary-600 rounded p-1">upload</div> */}
         </div>
       </div>
 
@@ -508,6 +508,7 @@ const AttendanceClient = ({ courses }: any) => {
           </div>
         </div>
       )}
+      <div className="text-center text-xl font-bold mt-20">Under Progress...</div>
     </div>
   );
 };
