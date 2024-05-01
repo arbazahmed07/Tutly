@@ -94,7 +94,7 @@ const EditAttachmentPage = ({attachment }:any) => {
             link: values.link,
             attachmentType: values.attachmentType,
             details: values.details,
-            dueDate: values?.dueDate!="" ? new Date(values.dueDate).toISOString() : undefined,
+            dueDate: values?.dueDate!="" ? new Date(values.dueDate as string).toISOString() : undefined,
             maxSubmissions: values?.maxSubmissions,
             courseId : courseId as string
         })
