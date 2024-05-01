@@ -12,7 +12,7 @@ const CommunityPage = async () => {
   if(!allDoubts) return <div className="text-center">No doubts found!</div>
 
   return (
-    <main className="flex flex-col m-2 md:m-10 md:mx-20 mt-2 items-center justify-center">
+    <main className="flex flex-col m-2 mx-5 items-center justify-center">
       <CommunityForum allDoubts={allDoubts}  currentUser={currentuser}  />
     </main>
   );

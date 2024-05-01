@@ -19,7 +19,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
   
   return (
     <div className="flex flex-col gap-4 w-full">
-      <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg text-white">Community Forum</h1>
+      <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-blue-500 to-red-400 rounded-lg text-white">Community Forum</h1>
       <div className="flex gap-3">
         {allDoubts?.map((course: any) => (
           course.isPublished === true &&
@@ -34,7 +34,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
           </button>
         ))}
       </div>
-      <div className="flex flex-col gap-2 mb-6 min-h-screen">
+      <div className="flex flex-col gap-2 min-h-screen">
         {filteredallDoubts && (
             <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0]?.doubts} />   
         )}
