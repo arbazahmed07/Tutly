@@ -46,7 +46,7 @@ const formSchema = z.object({
     }),
     details: z.string().optional(),
     dueDate: z.string().optional(),
-    maxSubmissions :  z.string().transform((v) => Number(v)||0),
+    maxSubmissions :  z.string().transform((v) => Number(v)||0)
 })
 
 const NewAttachmentPage = () => {
@@ -92,7 +92,7 @@ const NewAttachmentPage = () => {
             link: values.link,
             attachmentType: values.attachmentType,
             details: values.details,
-            dueDate: values?.dueDate!="" ? new Date(values.dueDate).toISOString() : undefined,
+            dueDate: values?.dueDate!="" ? new Date(values.dueDate as string).toISOString() : undefined,
             maxSubmissions: values?.maxSubmissions
         })
 
@@ -266,7 +266,7 @@ const NewAttachmentPage = () => {
                                     Cancel
                                 </Button>
                             </Link>
-                            <Button type='submit' disabled={!form.formState.isValid || isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
+                            <Button type='submit' disabled={!isValid || isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
                                 Continue
                             </Button>
                         </div>
