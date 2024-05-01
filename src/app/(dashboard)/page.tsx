@@ -99,7 +99,8 @@ export default async function Home() {
     const mstudents = await getMentorStudents();
     const mcourses = await getMentorCourses();
     const mleaderboard = await getMentorLeaderboardData();
-    return (
+
+      return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
           <h1 className="text-secondary-50 font-bold text-2xl">
@@ -134,6 +135,7 @@ export default async function Home() {
             </h1>
           </div>
         </div>
+        <pre>{JSON.stringify(mleaderboard,null,2)}</pre>
       </div>
     );
   } else if (currentUser?.role === "INSTRUCTOR") {
