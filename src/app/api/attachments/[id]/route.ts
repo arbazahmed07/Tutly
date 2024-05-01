@@ -1,5 +1,6 @@
 import { getAssignmentDetailsByUserId } from "@/actions/assignments";
 import getCurrentUser from "@/actions/getCurrentUser";
+import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -15,7 +16,39 @@ export async function GET(
       params.id,
       currentUser.id
     );
-    return NextResponse.json({ assignment, currentUser });
+
+    if (!assignment) {
+      return NextResponse.json({ error: "Assignment not found" }, { status: 400 });
+    }
+
+    if(!assignment.class?.courseId){
+      return NextResponse.json({ error: "Course not found" }, { status: 400 });
+    }
+
+    const mentorDetails = await db.enrolledUsers.findUnique({
+      where: {
+        username_courseId:{
+          username: currentUser.username,
+          courseId: assignment.class.courseId
+        }
+      },
+      select:{
+        assignedMentors:{
+          select:{
+            mentor:{
+              select:{
+                name:true,
+                email:true,
+                username:true
+              }
+            }
+          }
+        
+        }
+      }
+    });
+
+    return NextResponse.json({ assignment, currentUser,mentorDetails });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });
   }

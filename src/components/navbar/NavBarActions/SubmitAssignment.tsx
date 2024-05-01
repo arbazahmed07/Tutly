@@ -14,6 +14,7 @@ const SubmitAssignment = ({
 }) => {
 
   const [assignmentDetails, setAssignmentDetails] = useState<any>(null);
+  const [mentorDetails, setMentorDetails] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const SubmitAssignment = ({
       async function fetchData() {
         const { data } = await axios.get(`/api/attachments/${assignmentId}`);
         setAssignmentDetails(data.assignment);
+        setMentorDetails(data.mentorDetails);
         return data;
       }
       const data: any = await fetchData();
@@ -36,7 +38,7 @@ const SubmitAssignment = ({
 
   return (
     (
-      assignmentDetails && <Submit user={currentUser} assignmentDetails={assignmentDetails} isLoading={isLoading}/>
+      assignmentDetails && <Submit user={currentUser} mentorDetails={mentorDetails} assignmentDetails={assignmentDetails} isLoading={isLoading}/>
     )
   )
 }
