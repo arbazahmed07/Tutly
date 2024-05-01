@@ -47,7 +47,11 @@ const formSchema = z.object({
     courseId : z.string().optional(),
     details: z.string().optional(),
     dueDate: z.string().optional(),
+<<<<<<< HEAD
     maxSubmissions :  z.string().transform((v) => Number(v)||0).optional()
+=======
+    maxSubmissions :  z.string().transform((v) => Number(v)||0)
+>>>>>>> afb70b63daa6dc6be006f8117bde2e2321004f9e
 })
 
 const NewAttachmentPage = () => {
@@ -94,9 +98,14 @@ const NewAttachmentPage = () => {
             link: values.link,
             attachmentType: values.attachmentType,
             details: values.details,
+<<<<<<< HEAD
             dueDate: values?.dueDate!="" ? new Date(values.dueDate).toISOString() : undefined,
             maxSubmissions: values?.maxSubmissions,
             courseId: courseId as string
+=======
+            dueDate: values?.dueDate!="" ? new Date(values.dueDate as string).toISOString() : undefined,
+            maxSubmissions: values?.maxSubmissions
+>>>>>>> afb70b63daa6dc6be006f8117bde2e2321004f9e
         })
 
         if (response.status !== 200) {
@@ -267,7 +276,11 @@ const NewAttachmentPage = () => {
                                     Cancel
                                 </Button>
                             </Link>
+<<<<<<< HEAD
                             <Button type='submit' disabled={ isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
+=======
+                            <Button type='submit' disabled={!isValid || isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
+>>>>>>> afb70b63daa6dc6be006f8117bde2e2321004f9e
                                 Continue
                             </Button>
                         </div>
