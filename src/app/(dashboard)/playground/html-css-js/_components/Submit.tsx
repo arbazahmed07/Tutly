@@ -9,10 +9,12 @@ import Confetti from 'react-confetti'
 const Submit = ({
   user,
   assignmentDetails,
+  mentorDetails,
   isLoading,
 }: {
   user: any,
   assignmentDetails: any,
+  mentorDetails: any,
   isLoading?: boolean
 }) => {
   const [confetti,setConfetti]=useState(false)
@@ -33,7 +35,7 @@ const Submit = ({
       const newFiles: { [key: string]: string } = {};
 
       files.forEach((file, index) => {
-        const filePath = `assignments/${user.username}/${assignmentDetails.title}/${file.filePath}`;
+        const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.assignedMentors.mentor.username}/assignments/${user.username}/${assignmentDetails.title}/${file.filePath}`;
         filePaths.push(filePath);
         newFiles[filePath] = file.code;
       });
@@ -41,6 +43,7 @@ const Submit = ({
       const submission = await axios.post(`/api/assignment/submit`, {
         assignmentDetails,
         files:newFiles,
+        mentorDetails,
       });
       toast.dismiss();
       setConfetti(true)

@@ -231,7 +231,6 @@ export const getAssignmentDetailsByUserId = async (
           points: true,
         },
       },
-      
     },
   });
   return assignment;
