@@ -101,9 +101,12 @@ export default function AssignmentPage({
         <span className="block mt-5">
               Details : 👇
         </span>
-        <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className=" p-2 bg-emerald-700 hover:bg-emerald-800 rounded-xl">
+        {
+          currentUser?.role === "INSTRUCTOR" &&   
+          <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className=" p-2 bg-emerald-700 hover:bg-emerald-800 rounded-xl">
             edit
-        </button>
+          </button>
+        }
       </div>
       <div className="my-5">
         {assignment?.details || "No details given to show"}

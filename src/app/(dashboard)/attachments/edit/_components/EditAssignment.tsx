@@ -49,11 +49,11 @@ const formSchema = z.object({
     courseId: z.string().optional(),
     details: z.string().optional(),
     dueDate: z.string().optional(),
-    maxSubmissions :  z.string().transform((v) => Number(v)||0).optional() || 1
+    maxSubmissions :  z.number().transform((v) => Number(v)||1).optional() 
 })
 
 const EditAttachmentPage = ({attachment }:any) => {
-    const { id,title, link, attachmentType,  classId, courseId, details, dueDate, maxSubmissions } = attachment;
+    const { title, link, attachmentType,  classId, courseId, details, dueDate, maxSubmissions } = attachment;
 
     const [classes, setClasses] = useState([])
     const [loading, setLoading] = useState(true)
@@ -84,7 +84,7 @@ const EditAttachmentPage = ({attachment }:any) => {
         }
     })
 
-    const { isSubmitting, isValid } = form.formState
+    const { isSubmitting } = form.formState
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
 
@@ -289,14 +289,14 @@ const EditAttachmentPage = ({attachment }:any) => {
                                     Cancel
                                 </Button>
                             </Link>
-                            <Button type='submit ' className=' bg-secondary-500 hover:bg-secondary-600' disabled={!isValid || isSubmitting}  >
+                            <Button type='submit' className=' bg-secondary-500 hover:bg-secondary-600' disabled={isSubmitting}  >
                                 Continue
                             </Button>
                         </div>
                     </form>
                 </Form>
             </div>
-            <Button onClick={deleteAssignment} className='bg-red-700' variant={"destructive"}   >
+            <Button onClick={deleteAssignment} className='bg-red-700 hover:bg-red-800' variant={"destructive"}   >
                 <MdDelete className=' w-5 h-5' />
             </Button>
         </div>

@@ -14,13 +14,21 @@ const attachmentSchema = z.object({
   courseId: z.string().optional(),
   details: z.string().optional(),
   dueDate: z.string().optional(),
-  maxSubmissions: z.number().optional()
+  maxSubmissions: z.number().int().positive().optional(),
 });
 
 export const createAttachment = async (data : z.infer<typeof attachmentSchema>) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to upload an attachment");
+  }
+
+  if( data.maxSubmissions &&  data.maxSubmissions<=0){
+    throw new Error("Max Submissions must be greater than 0");
+  }
+
+  if(currentUser.role !=='INSTRUCTOR'){
+    throw new Error("You must be an instructor to upload an attachment");
   }
 
   const attachment = await db.attachment.create({
@@ -44,13 +52,16 @@ export const getAttachmentByID = async (id: string) => {
   if (!currentUser) {
     throw new Error("You must be logged in to view an attachment");
   }
+  if(currentUser.role !=='INSTRUCTOR'){
+    throw new Error("You must be an instructor to create an attachment");
+  }
   
   const attachment = await db.attachment.findUnique({
     where: {
       id,
     },
   });
-
+  
   return attachment;
 }
 
@@ -58,6 +69,9 @@ export const deleteAttachment = async (id: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to delete an attachment");
+  }
+  if(currentUser.role !=='INSTRUCTOR'){
+    throw new Error("You must be an instructor to delete an attachment");
   }
 
   const attachment = await db.attachment.delete({

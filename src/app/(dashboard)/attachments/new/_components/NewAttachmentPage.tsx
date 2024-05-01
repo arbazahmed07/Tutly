@@ -47,7 +47,7 @@ const formSchema = z.object({
     courseId : z.string().optional(),
     details: z.string().optional(),
     dueDate: z.string().optional(),
-    maxSubmissions :  z.string().transform((v) => Number(v)||0)
+    maxSubmissions :  z.string().transform((v) => Number(v)||0).optional()
 })
 
 const NewAttachmentPage = () => {
@@ -84,7 +84,7 @@ const NewAttachmentPage = () => {
         }
     })
 
-    const { isSubmitting, isValid } = form.formState
+    const { isSubmitting } = form.formState
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
 
@@ -128,7 +128,7 @@ const NewAttachmentPage = () => {
                                             <FormControl>
                                                 <Input className='text-sm' disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.title?.message}</FormMessage>
+                                            <FormMessage className='text-red-700 font-bold'>{form.formState.errors.title?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -158,7 +158,7 @@ const NewAttachmentPage = () => {
                                                         <SelectItem className=' hover:bg-secondary-800' value="OTHERS">Other</SelectItem>
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage />
+                                                <FormMessage className='text-red-700 font-bold' />
                                             </FormItem>
                                         );
                                     }}
@@ -174,7 +174,6 @@ const NewAttachmentPage = () => {
                                             <FormControl>
                                                 <Input type='number' className='text-sm' disabled={isSubmitting} placeholder='eg., max Submissions...' {...field} />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.maxSubmissions?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -226,7 +225,7 @@ const NewAttachmentPage = () => {
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage />
+                                                <FormMessage className=' text-red-700 font-bold' />
                                             </FormItem>
                                         );
                                     }}
@@ -243,7 +242,7 @@ const NewAttachmentPage = () => {
                                             <FormControl>
                                                 <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.link?.message}</FormMessage>
+                                            <FormMessage className=' text-red-700'>{form.formState.errors.link?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -258,7 +257,6 @@ const NewAttachmentPage = () => {
                                             <FormControl>
                                                 <Textarea className='text-sm' disabled={isSubmitting} placeholder='Write some details here...' {...field} />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.details?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -269,7 +267,7 @@ const NewAttachmentPage = () => {
                                     Cancel
                                 </Button>
                             </Link>
-                            <Button type='submit' disabled={!form.formState.isValid || isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
+                            <Button type='submit' disabled={ isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
                                 Continue
                             </Button>
                         </div>
