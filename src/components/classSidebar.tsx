@@ -38,9 +38,9 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
   return (
     <div className="relative z-10">
       <div
-        className={`${
+        className={` min-w-[170px] ${
           !open && "hidden"
-        } max-sm:absolute sticky sm:top-10 flex flex-col w-44 px-2 bg-background items-center py-3 gap-2 h-dvh shadow-xl`}
+        } max-sm:absolute sticky sm:top-10 flex flex-col px-2 items-start bg-background py-3 gap-2 h-dvh shadow-xl`}
       >
         <div className=" flex items-center justify-center">
           <Link href={`/courses/${params.id}`} className="cursor-pointer">
