@@ -3,7 +3,7 @@
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, {  useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import {
@@ -30,7 +30,7 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { FaFilePen } from "react-icons/fa6";
-import {  useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 
 const formSchema = z.object({
@@ -44,10 +44,10 @@ const formSchema = z.object({
     class: z.string().min(1, {
         message: 'class is required'
     }),
-    courseId : z.string().optional(),
+    courseId: z.string().optional(),
     details: z.string().optional(),
     dueDate: z.string().optional(),
-    maxSubmissions :  z.string().transform((v) => Number(v)||0).optional()
+    maxSubmissions: z.string().transform((v) => Number(v) || 0).optional()
 })
 
 const NewAttachmentPage = () => {
@@ -61,10 +61,10 @@ const NewAttachmentPage = () => {
         const fetchData = async () => {
             const response = await axios.get(`/api/classes/getClassesById/${courseId}`)
             setClasses(response.data)
-            setLoading(false)   
+            setLoading(false)
         }
         fetchData()
-        
+
     }, [courseId])
 
 
@@ -77,7 +77,7 @@ const NewAttachmentPage = () => {
             link: '',
             attachmentType: '',
             class: '',
-            courseId:  '',
+            courseId: '',
             details: '',
             dueDate: '',
             maxSubmissions: 1
@@ -88,13 +88,15 @@ const NewAttachmentPage = () => {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
 
+        const dueDate = values?.dueDate !== "" && values.dueDate ? new Date(values.dueDate) : undefined;
+
         const response = await axios.post('/api/attachments/create', {
             title: values.title,
             classId: values.class,
             link: values.link,
             attachmentType: values.attachmentType,
             details: values.details,
-            dueDate: values?.dueDate!="" ? new Date(values.dueDate).toISOString() : undefined,
+            dueDate: dueDate?.toISOString(),
             maxSubmissions: values?.maxSubmissions,
             courseId: courseId as string
         })
@@ -148,7 +150,7 @@ const NewAttachmentPage = () => {
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger>
-                                                            <SelectValue placeholder="Select a type"  />
+                                                            <SelectValue placeholder="Select a type" />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className=' bg-secondary-700 text-white'>
@@ -213,7 +215,7 @@ const NewAttachmentPage = () => {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className=' bg-secondary-700 text-white' >
-                                                        {classes.map((c:any) => (
+                                                        {classes.map((c: any) => (
                                                             <SelectItem
                                                                 key={c.id}
                                                                 value={c.id}
@@ -232,42 +234,42 @@ const NewAttachmentPage = () => {
                                 />
                             </div>
                         </div>
-                            <div className='mt-5'>
-                                <FormField
-                                    name='link'
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <FormItem className=' '>
-                                            <FormLabel>Link</FormLabel>
-                                            <FormControl>
-                                                <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
-                                            </FormControl>
-                                            <FormMessage className=' text-red-700'>{form.formState.errors.link?.message}</FormMessage>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                            <div className=' col-span-5' >
-                                <FormField
-                                    name='details'
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <FormItem className=' '>
-                                            <FormLabel>Details</FormLabel>
-                                            <FormControl>
-                                                <Textarea className='text-sm' disabled={isSubmitting} placeholder='Write some details here...' {...field} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+                        <div className='mt-5'>
+                            <FormField
+                                name='link'
+                                control={form.control}
+                                render={({ field }) => (
+                                    <FormItem className=' '>
+                                        <FormLabel>Link</FormLabel>
+                                        <FormControl>
+                                            <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
+                                        </FormControl>
+                                        <FormMessage className=' text-red-700'>{form.formState.errors.link?.message}</FormMessage>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className=' col-span-5' >
+                            <FormField
+                                name='details'
+                                control={form.control}
+                                render={({ field }) => (
+                                    <FormItem className=' '>
+                                        <FormLabel>Details</FormLabel>
+                                        <FormControl>
+                                            <Textarea className='text-sm' disabled={isSubmitting} placeholder='Write some details here...' {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                         <div className=' flex items-center gap-x-3 text-white'>
                             <Link href={'/'}>
                                 <Button className='bg-red-700' variant={"destructive"} style={{ backgroundColor: '#b91c1c' }} >
                                     Cancel
                                 </Button>
                             </Link>
-                            <Button type='submit' disabled={ isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
+                            <Button type='submit' disabled={isSubmitting} style={{ border: '2px solid #6b7280', backgroundColor: '#6b7280' }} >
                                 Continue
                             </Button>
                         </div>

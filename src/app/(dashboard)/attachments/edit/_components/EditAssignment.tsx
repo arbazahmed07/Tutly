@@ -88,13 +88,14 @@ const EditAttachmentPage = ({attachment }:any) => {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
 
+        const dueDate = values?.dueDate !== undefined ? new Date(values.dueDate).toISOString() : undefined;
         const response = await axios.put(`/api/attachments/edit/${attachment.id}`, {
             title: values.title,
             classId: values.class,
             link: values.link,
             attachmentType: values.attachmentType,
             details: values.details,
-            dueDate: values?.dueDate!="" ? new Date(values.dueDate as string).toISOString() : undefined,
+            dueDate: dueDate,
             maxSubmissions: values?.maxSubmissions,
             courseId : courseId as string
         })
