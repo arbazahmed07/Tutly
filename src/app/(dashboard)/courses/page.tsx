@@ -9,9 +9,9 @@ export default async function Courses() {
   const currentUser = await getCurrentUser();
   return (
     <div className="w-full">
-      <div className="flex justify-center">
+      <div className="flex w-full">
         {courses?.length === 0  ? (
-            <div hidden={currentUser?.role === 'INSTRUCTOR'}>
+            <div>
                 <div>
                   <p className=' text-xl font-semibold mt-5 flex justify-center items-center'>
                     No course is enrolled yet!
@@ -19,7 +19,7 @@ export default async function Courses() {
                   <Image
                       src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
                       height={400}
-                      className="m-auto "
+                      className={`${currentUser?.role === "INSTRUCTOR"&&"hidden"} m-auto`}
                       width={400}
                       alt=""
                     />
