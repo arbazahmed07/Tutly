@@ -29,7 +29,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
     <div className="flex flex-col gap-4 w-full">
       <div className="w-full overflow-hidden">
         <div className="flex animate-marquee">  
-          <p className="text-sm font-medium dark:text-white">This community forum fosters an environment where anyone can contribute insights and solutions to each other's inquiries. </p>
+          <p className="text-sm font-medium dark:text-white">This community forum fosters an environment where anyone can contribute insights and solutions to each other&apos;s inquiries. </p>
         </div>
       </div>
       <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg text-white">Community Forum</h1>
