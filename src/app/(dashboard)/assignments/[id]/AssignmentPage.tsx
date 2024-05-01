@@ -102,12 +102,15 @@ export default function AssignmentPage({
         <span className="block mt-5">
               Details : 👇
         </span>
+        <div className= "flex justify-center items-center gap-4">
+        <h1 className="border rounded-md p-1 text-sm">Max responses : {assignment?.maxSubmissions}</h1>
         {
           currentUser?.role === "INSTRUCTOR" &&   
           <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className=" p-2 bg-emerald-700 hover:bg-emerald-800 rounded-xl">
             edit
           </button>
         }
+        </div>
       </div>
       <div className="my-5">
         {assignment?.details || "No details given to show"}
