@@ -231,6 +231,7 @@ export const getAssignmentDetailsByUserId = async (
           points: true,
         },
       },
+      
     },
   });
   return assignment;
@@ -258,7 +259,9 @@ export const getAllAssignmentsByCourseId = async (id: string) => {
               class: true,
               submissions: {
                 where: {
-                  enrolledUserId: currentUser.id,
+                  enrolledUser:{
+                    username: currentUser.username
+                  }
                 },
               },
             },
