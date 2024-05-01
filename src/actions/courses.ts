@@ -133,11 +133,7 @@ export const getMentorStudents = async () => {
     where: {
       enrolledUsers: {
         some: {
-          assignedMentors: {
-            some: {
-              mentorId: currentUser.id,
-            },
-          },
+          mentorUsername: currentUser.username,
         },
       },
     },
@@ -191,7 +187,7 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
       image ,
       enrolledUsers:{
         create:{
-          username:currentUser.username
+          username:currentUser.username,
         }
       }
     },
@@ -230,11 +226,7 @@ export const getMentorCourses = async () => {
     where: {
       enrolledUsers: {
         some: {
-          assignedMentors: {
-            some: {
-              mentorId: currentUser.id,
-            },
-          },
+          mentorUsername: currentUser.username,
         },
       },
     },
