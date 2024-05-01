@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React,{ useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { FaPlus } from 'react-icons/fa';
 import axios from 'axios';
@@ -14,7 +14,8 @@ const NewClass = () => {
   const [folderName, setFolderName] = useState('');
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState('');
-
+  const [createdAt, setCreatedAt] = useState('');
+  
   const router = useRouter();
   const params = useParams();
 
@@ -38,17 +39,19 @@ const NewClass = () => {
     }
 
     setTextValue('Creating Class');
-
     try {
       const res = await axios.post('/api/classes/create', {
         classTitle,
         videoLink,
         videoType,
+        createdAt,
         folderId: selectedFolder != "new" ? selectedFolder : undefined,
         courseId: params.id,
         folderName: selectedFolder=="new" ? folderName.trim() : undefined,
       });
 
+      console.log(res.data);
+      
       if (res.data.error) {
         toast.error('Failed to add new class');
       } else {
@@ -94,6 +97,14 @@ const NewClass = () => {
           onChange={(e) => setClassTitle(e.target.value)}
           className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
         />
+        <input
+        type="date"
+        placeholder="Enter class date"
+        value={createdAt}
+        onChange={(e) => setCreatedAt(e.target.value)}
+        className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
+      />
+
         <select
           value={selectedFolder}
           onChange={(e) => setSelectedFolder(e.target.value)}

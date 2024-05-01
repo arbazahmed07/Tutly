@@ -37,14 +37,14 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  account         Account[]
-  course          Course[]
-  enrolledUsers   EnrolledUsers[]
-  profile         Profile?
-  doubt           Doubt[]
-  response        Response[]
-  assignedMentees AssignedMentors[]
-  Attendence      Attendance[]
+  account       Account[]
+  course        Course[]
+  profile       Profile?
+  doubt         Doubt[]
+  response      Response[]
+  Attendence    Attendance[]
+  enrolledUsers EnrolledUsers[] @relation(name: "user")
+  assignedMentees EnrolledUsers[] @relation(name: "mentor")
 }
 
 model Profile {
@@ -70,24 +70,24 @@ model Course {
   classes       Class[]
   attachments   Attachment[]
   doubts        Doubt[]
-  AssignedMentors AssignedMentors[]
 
   startDate DateTime  @default(now())
   endDate   DateTime?
 
   isPublished Boolean @default(false)
 
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model EnrolledUsers {
   id String @id @default(uuid())
 
   username String
-  user     User   @relation(fields: [username], references: [username])
+  user     User   @relation(name: "user", fields: [username], references: [username])
 
-  assignedMentors AssignedMentors[]
+  mentorUsername String?
+  mentor         User?   @relation(name: "mentor", fields: [mentorUsername], references: [username])
 
   startDate DateTime  @default(now())
   endDate   DateTime?
@@ -99,29 +99,7 @@ model EnrolledUsers {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@unique([username, courseId])
-}
-
-model AssignedMentors {
-  id String @id @default(uuid())
-
-  mentorId String
-  mentor   User   @relation(fields: [mentorId], references: [id])
-
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id])
-
-  enrolledUsername String
-  enrolledUser     EnrolledUsers @relation(fields: [enrolledUsername, courseId], references: [username, courseId])
-
-  startDate DateTime  @default(now())
-  endDate   DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([mentorId, enrolledUsername])
+  @@unique([username, courseId,mentorUsername])
 }
 
 model Class {
@@ -153,7 +131,7 @@ model Attendance {
   id String @id @default(uuid())
 
   username String @unique
-  user   User   @relation(fields: [username], references: [username])
+  user     User   @relation(fields: [username], references: [username])
 
   classId String
   class   Class  @relation(fields: [classId], references: [id])
@@ -224,7 +202,7 @@ model Attachment {
   attachmentType attachmentType
   link           String?
   submissions    submission[]
-  maxSubmissions  Int?           @default(1)
+  maxSubmissions Int?           @default(1)
   classId        String?
   class          Class?         @relation(fields: [classId], references: [id])
   courseId       String?
