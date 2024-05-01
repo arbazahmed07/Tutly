@@ -97,9 +97,14 @@ export default function AssignmentPage({
           </div>
         )}
       </div>
-      <span className="block mt-5">
-            Details : 👇
-      </span>
+      <div className=" flex justify-between items-center w-full" >
+        <span className="block mt-5">
+              Details : 👇
+        </span>
+        <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className=" p-2 bg-emerald-700 hover:bg-emerald-800 rounded-xl">
+            edit
+        </button>
+      </div>
       <div className="my-5">
         {assignment?.details || "No details given to show"}
       </div>
