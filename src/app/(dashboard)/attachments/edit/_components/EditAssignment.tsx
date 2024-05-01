@@ -3,8 +3,11 @@
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useEffect, useState } from 'react'
+import React, {  useEffect, useState } from 'react'
 import axios from 'axios'
+import { FaRegEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+
 
 import {
     Form,
@@ -29,8 +32,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-import { FaFilePen } from "react-icons/fa6";
-import { useRouter, useSearchParams } from 'next/navigation'
+import {  useRouter } from 'next/navigation'
 
 
 const formSchema = z.object({
@@ -47,24 +49,22 @@ const formSchema = z.object({
     courseId: z.string().optional(),
     details: z.string().optional(),
     dueDate: z.string().optional(),
-    maxSubmissions: z.string().transform((v) => Number(v) || 0).optional()
+    maxSubmissions :  z.number().transform((v) => Number(v)||1).optional() 
 })
 
-const NewAttachmentPage = () => {
+const EditAttachmentPage = ({attachment }:any) => {
+    const { title, link, attachmentType,  classId, courseId, details, dueDate, maxSubmissions } = attachment;
 
-    const searchParams = useSearchParams()
-    const courseId = searchParams.get('courseId')
-    const classId = searchParams.get('classId')
     const [classes, setClasses] = useState([])
     const [loading, setLoading] = useState(true)
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get(`/api/classes/getClassesById/${courseId}`)
             setClasses(response.data)
-            setLoading(false)
+            setLoading(false)   
         }
         fetchData()
-
+        
     }, [courseId])
 
 
@@ -73,14 +73,14 @@ const NewAttachmentPage = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: '',
-            link: '',
-            attachmentType: '',
-            class: '',
-            courseId: '',
-            details: '',
-            dueDate: '',
-            maxSubmissions: 1
+            title: title || '',
+            link: link || '',
+            attachmentType: attachmentType || '',
+            class: classId || '',
+            courseId: courseId || '',
+            details:  details || '',
+            dueDate:    dueDate || '',
+            maxSubmissions:  maxSubmissions || 1
         }
     })
 
@@ -88,17 +88,16 @@ const NewAttachmentPage = () => {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
 
-        const dueDate = values?.dueDate !== "" && values.dueDate ? new Date(values.dueDate) : undefined;
-
-        const response = await axios.post('/api/attachments/create', {
+        const dueDate = values?.dueDate !== undefined ? new Date(values.dueDate).toISOString() : undefined;
+        const response = await axios.put(`/api/attachments/edit/${attachment.id}`, {
             title: values.title,
             classId: values.class,
             link: values.link,
             attachmentType: values.attachmentType,
             details: values.details,
-            dueDate: dueDate?.toISOString(),
+            dueDate: dueDate,
             maxSubmissions: values?.maxSubmissions,
-            courseId: courseId as string
+            courseId : courseId as string
         })
 
         if (response.status !== 200) {
@@ -106,14 +105,34 @@ const NewAttachmentPage = () => {
             return
         }
         toast.success('attachment created')
-        router.push(`/courses/${courseId}/class/${classId}`)
+        router.push(`/assignments/${attachment.id}`)
+    }
+
+    const deleteAssignment = async () => {
+        try
+        {
+            const response = await axios.delete(`/api/attachments/delete/${attachment.id}`)
+            if (response.status !== 200) {
+                toast.error('An error occurred')
+                return
+            }
+            toast.success('attachment deleted')
+            router.push(`/courses/${courseId}/class/${classId}`)
+        }
+        catch (e:any)
+        {
+            toast.error('An error occurred')
+            console.log(e);
+            router.push(`/courses/${courseId}/class/${classId}`)
+            return
+        }
     }
 
 
     return (
         <div className='h-full w-full  md:flex md:justify-start p-4 md:p-10'>
             <div>
-                <h1 className=' flex items-center md:text-xl'>Create a new attachment!&nbsp;<FaFilePen className='w-5 h-5 ml-4' /></h1>
+                <h1 className=' flex items-center md:text-xl'>Edit attachment!<FaRegEdit className='w-5 h-5 ml-4' /></h1>
                 <Form {...form}>
                     <form action=""
                         onSubmit={form.handleSubmit(onSubmit)}
@@ -130,7 +149,7 @@ const NewAttachmentPage = () => {
                                             <FormControl>
                                                 <Input className='text-sm' disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
                                             </FormControl>
-                                            <FormMessage className='text-red-700 font-bold'>{form.formState.errors.title?.message}</FormMessage>
+                                            <FormMessage>{form.formState.errors.title?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -150,7 +169,7 @@ const NewAttachmentPage = () => {
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger>
-                                                            <SelectValue placeholder="Select a type" />
+                                                            <SelectValue placeholder="Select a type"  />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className=' bg-secondary-700 text-white'>
@@ -160,7 +179,7 @@ const NewAttachmentPage = () => {
                                                         <SelectItem className=' hover:bg-secondary-800' value="OTHERS">Other</SelectItem>
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage className='text-red-700 font-bold' />
+                                                <FormMessage />
                                             </FormItem>
                                         );
                                     }}
@@ -176,6 +195,7 @@ const NewAttachmentPage = () => {
                                             <FormControl>
                                                 <Input type='number' className='text-sm' disabled={isSubmitting} placeholder='eg., max Submissions...' {...field} />
                                             </FormControl>
+                                            <FormMessage>{form.formState.errors.maxSubmissions?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -215,7 +235,7 @@ const NewAttachmentPage = () => {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className=' bg-secondary-700 text-white' >
-                                                        {classes.map((c: any) => (
+                                                        {classes.map((c:any) => (
                                                             <SelectItem
                                                                 key={c.id}
                                                                 value={c.id}
@@ -227,57 +247,61 @@ const NewAttachmentPage = () => {
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage className=' text-red-700 font-bold' />
+                                                <FormMessage />
                                             </FormItem>
                                         );
                                     }}
                                 />
                             </div>
                         </div>
-                        <div className='mt-5'>
-                            <FormField
-                                name='link'
-                                control={form.control}
-                                render={({ field }) => (
-                                    <FormItem className=' '>
-                                        <FormLabel>Link</FormLabel>
-                                        <FormControl>
-                                            <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
-                                        </FormControl>
-                                        <FormMessage className=' text-red-700'>{form.formState.errors.link?.message}</FormMessage>
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        <div className=' col-span-5' >
-                            <FormField
-                                name='details'
-                                control={form.control}
-                                render={({ field }) => (
-                                    <FormItem className=' '>
-                                        <FormLabel>Details</FormLabel>
-                                        <FormControl>
-                                            <Textarea className='text-sm' disabled={isSubmitting} placeholder='Write some details here...' {...field} />
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                            <div className='mt-5'>
+                                <FormField
+                                    name='link'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className=' '>
+                                            <FormLabel>Link</FormLabel>
+                                            <FormControl>
+                                                <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
+                                            </FormControl>
+                                            <FormMessage>{form.formState.errors.link?.message}</FormMessage>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <div className=' col-span-5' >
+                                <FormField
+                                    name='details'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className=' '>
+                                            <FormLabel>Details</FormLabel>
+                                            <FormControl>
+                                                <Textarea className='text-sm' disabled={isSubmitting} placeholder='Write some details here...' {...field} />
+                                            </FormControl>
+                                            <FormMessage>{form.formState.errors.details?.message}</FormMessage>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         <div className=' flex items-center gap-x-3 text-white'>
                             <Link href={'/'}>
-                                <Button className='bg-red-700' variant={"destructive"} style={{ backgroundColor: '#b91c1c' }} >
+                                <Button className='bg-red-700' variant={"destructive"}   >
                                     Cancel
                                 </Button>
                             </Link>
-                            <Button type='submit' disabled={isSubmitting} style={{ border: '2px solid #6b7280', backgroundColor: '#6b7280' }} >
+                            <Button type='submit' className=' bg-secondary-500 hover:bg-secondary-600' disabled={isSubmitting}  >
                                 Continue
                             </Button>
                         </div>
                     </form>
                 </Form>
             </div>
+            <Button onClick={deleteAssignment} className='bg-red-700 hover:bg-red-800' variant={"destructive"}   >
+                <MdDelete className=' w-5 h-5' />
+            </Button>
         </div>
     )
 }
 
-export default NewAttachmentPage; 
+export default EditAttachmentPage; 

@@ -18,7 +18,8 @@ const nextConfig = {
       "acourseoflove.org",
       "img.freepik.com",
       "www.google.com",
-      "images.unsplash.com"
+      "images.unsplash.com",
+      "images.pexels.com",
     ]
   },
 };
