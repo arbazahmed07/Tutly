@@ -63,7 +63,6 @@ const page = async ({ params }: { params: { id: string } }) => {
                 <p className="mb-2 text-sm font-semibold mt-2">
                   {truncateText(attachment?.details ? attachment?.details.slice(0, 200) + '...' : null  || "No Description")}
                 </p>
-                {/* <p className="text-secondary-200 mb-2">Class Name: {classItem?.class?.title || 'null'}</p> */}6
                 {attachment?.link && (
                   <div className=" flex items-center text-sm justify-start space-x-2 hover:opacity-90">
                     <a
