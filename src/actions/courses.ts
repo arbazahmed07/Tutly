@@ -72,7 +72,13 @@ export const getEnrolledCourses = async () => {
       },
     },
   });
-  return courses;
+
+  const publishedCourses = courses.filter((course) => course.isPublished);
+  const instructorCourses = courses.filter((course) => course.createdById === currentUser.id);
+
+  if(currentUser.role === "INSTRUCTOR")
+    return instructorCourses;
+  return publishedCourses;
 };
 
 export const getCreatedCourses = async () => {
