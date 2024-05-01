@@ -45,7 +45,6 @@ const page = async ({ params }: { params: { id: string } }) => {
                     {attachment?.title}
                   </Link>
                   <p className="flex gap-2 items-center text-sm font-medium">
-                    {/* <span className="font-semibold">Due Date:</span>{" "} */}
                     {attachment?.dueDate
                       &&new Date(attachment?.dueDate).toLocaleDateString()
                     }

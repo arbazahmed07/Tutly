@@ -9,6 +9,7 @@ export async function POST(
   const {
     assignmentDetails,
     files,
+    mentorDetails
   } = await request.json();
 
   try {
@@ -16,7 +17,7 @@ export async function POST(
     if (!currentUser) {
       return NextResponse.json({ error: "User not found" }, { status: 400 });
     }
-    const response :any = await createSubmission(assignmentDetails, files);
+    const response :any = await createSubmission(assignmentDetails, files, mentorDetails);
     if(!response){
       return NextResponse.json({ error: "Error submitting assignment" }, { status: 400 });
     }

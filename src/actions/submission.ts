@@ -11,7 +11,8 @@ const MyOctokit = Octokit.plugin(createPullRequest);
 
 export const createSubmission = async (
   assignmentDetails: any,
-  files: any
+  files: any,
+  mentorDetails: any
 ) => {
   const user = await getCurrentUser();
   if (!user) {
@@ -44,9 +45,9 @@ export const createSubmission = async (
       - Due Date: ${assignmentDetails.dueDate}
       - Submission Date: ${new Date().toISOString()}
       - Submission Files:
-        - index.html
-        - index.css
-        - index.js
+        ${Object.keys(files).map((file) => {
+          return `- ${file}`;
+        })}
       `,
     head: `${user.username?.trim()}-submissionId-${submissionId}`,
     base: `main`,
@@ -57,14 +58,15 @@ export const createSubmission = async (
       "assignment-submission",
       assignmentDetails.class.course.title,
       assignmentDetails.title,
+      `mentor-${mentorDetails.assignedMentors[0].mentor.username}`,
     ],
     changes: [
       {
         files,
         commit: `submitted assignment ${assignmentDetails.id} by ${user.username}`,
         author: {
-          name: user.name as string,
-          email: "udaysagar.mail@gmail.com",
+          name: "goodkodersUnV",
+          email: "goodkodersUnV@gmail.com",
           date: new Date().toISOString(),
         },
       },
