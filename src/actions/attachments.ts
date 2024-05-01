@@ -13,6 +13,7 @@ const attachmentSchema = z.object({
   }),
   details: z.string().optional(),
   dueDate: z.string().optional(),
+  maxSubmissions: z.number().optional()
 });
 
 export const createAttachment = async (data : z.infer<typeof attachmentSchema>) => {
@@ -29,6 +30,7 @@ export const createAttachment = async (data : z.infer<typeof attachmentSchema>) 
       attachmentType: data.attachmentType ,
       details: data.details,
       dueDate: data.dueDate,
+      maxSubmissions:data.maxSubmissions
     },
   });
 

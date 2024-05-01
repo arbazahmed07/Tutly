@@ -3,7 +3,7 @@
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {  useEffect, useState } from 'react'
 import axios from 'axios'
 
 import {
@@ -18,14 +18,11 @@ import {
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
 
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
 import { Button } from '@/components/ui/button'
@@ -33,24 +30,23 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { FaFilePen } from "react-icons/fa6";
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {  useRouter, useSearchParams } from 'next/navigation'
 
 
 const formSchema = z.object({
     title: z.string().min(1, {
         message: 'Title is required'
     }),
-    videoLink: z.string().min(1, {
-        message: 'Link is required'
-    }),
-    videoType: z.string().min(1, {
+    link: z.string().optional(),
+    attachmentType: z.string().min(1, {
         message: 'Type is required'
     }),
     class: z.string().min(1, {
         message: 'class is required'
     }),
-    details: z.string(),
-    dueDate: z.string()
+    details: z.string().optional(),
+    dueDate: z.string().optional(),
+    maxSubmissions :  z.string().transform((v) => Number(v)||0)
 })
 
 const NewAttachmentPage = () => {
@@ -58,7 +54,6 @@ const NewAttachmentPage = () => {
     const searchParams = useSearchParams()
     const courseId = searchParams.get('courseId')
     const classId = searchParams.get('classId')
-    const pathname = usePathname()
     const [classes, setClasses] = useState([])
     const [loading, setLoading] = useState(true)
     useEffect(() => {
@@ -71,28 +66,19 @@ const NewAttachmentPage = () => {
         
     }, [courseId])
 
-    // const createQueryString = useCallback(
-    //     (name: string, value: string) => {
-    //         const params = new URLSearchParams(searchParams.toString())
-    //         params.set(name, value)
-
-    //         return params.toString()
-    //     },
-    //     [searchParams]
-    // )
 
     const router = useRouter()
-
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: '',
-            videoLink: '',
-            videoType: '',
+            link: '',
+            attachmentType: '',
             class: '',
             details: '',
-            dueDate: ''
+            dueDate: '',
+            maxSubmissions: 1
         }
     })
 
@@ -103,10 +89,11 @@ const NewAttachmentPage = () => {
         const response = await axios.post('/api/attachments/create', {
             title: values.title,
             classId: values.class,
-            link: values.videoLink,
-            attachmentType: values.videoType,
+            link: values.link,
+            attachmentType: values.attachmentType,
             details: values.details,
-            dueDate: values?.dueDate!="" ? new Date(values.dueDate).toISOString() : undefined
+            dueDate: values?.dueDate!="" ? new Date(values.dueDate as string).toISOString() : undefined,
+            maxSubmissions: values?.maxSubmissions
         })
 
         if (response.status !== 200) {
@@ -146,7 +133,7 @@ const NewAttachmentPage = () => {
                             <div className='mt-5 '>
                                 <FormField
                                     control={form.control}
-                                    name="videoType"
+                                    name="attachmentType"
                                     render={({ field }) => {
                                         return (
                                             <FormItem >
@@ -176,15 +163,15 @@ const NewAttachmentPage = () => {
                             </div>
                             <div className='mt-5'>
                                 <FormField
-                                    name='videoLink'
+                                    name='maxSubmissions'
                                     control={form.control}
                                     render={({ field }) => (
-                                        <FormItem className=' '>
-                                            <FormLabel>Link</FormLabel>
+                                        <FormItem className='  '>
+                                            <FormLabel>Max Submissions</FormLabel>
                                             <FormControl>
-                                                <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
+                                                <Input type='number' className='text-sm' disabled={isSubmitting} placeholder='eg., max Submissions...' {...field} />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.videoLink?.message}</FormMessage>
+                                            <FormMessage>{form.formState.errors.maxSubmissions?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -228,9 +215,6 @@ const NewAttachmentPage = () => {
                                                             <SelectItem
                                                                 key={c.id}
                                                                 value={c.id}
-                                                                // onClick={() => {
-                                                                //     router.push(pathname + '?' + createQueryString('classId', c.id))
-                                                                // }}
                                                                 className=' hover:bg-secondary-800'
                                                                 defaultChecked={c.id === classId as string}
                                                             >
@@ -246,6 +230,21 @@ const NewAttachmentPage = () => {
                                 />
                             </div>
                         </div>
+                            <div className='mt-5'>
+                                <FormField
+                                    name='link'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className=' '>
+                                            <FormLabel>Link</FormLabel>
+                                            <FormControl>
+                                                <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
+                                            </FormControl>
+                                            <FormMessage>{form.formState.errors.link?.message}</FormMessage>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                             <div className=' col-span-5' >
                                 <FormField
                                     name='details'
