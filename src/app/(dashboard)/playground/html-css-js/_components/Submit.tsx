@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import usePlaygroundContext from "@/hooks/usePlaygroundContext";
 import Confetti from 'react-confetti'
+import { useRouter } from "next/navigation";
 
 const Submit = ({
   user,
@@ -20,6 +21,8 @@ const Submit = ({
   const [confetti,setConfetti]=useState(false)
   const [isSubmitting, setSubmitting] = useState(false);
   const { files } = usePlaygroundContext();
+
+  const router = useRouter();
 
   const handleSubmit = async () => {
     if (!user || !user.username || !user.email || !assignmentDetails || !assignmentDetails.title) {
@@ -52,6 +55,7 @@ const Submit = ({
       setConfetti(true)
       setTimeout(() => setConfetti(false),5000)
       toast.success('Assignment submitted successfully');
+      router.back();
     } catch (e) {
       toast.dismiss();
       toast.error('Error submitting assignment');
