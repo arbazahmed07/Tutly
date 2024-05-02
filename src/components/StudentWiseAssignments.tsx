@@ -70,7 +70,26 @@ export default function StudentWiseAssignments({ courses, assignments, userId }:
                 assignments.map((couse: any) => {
                     if (couse.id !== currentCourse) return null;
                     return couse.classes.map((cls: any) => {
-                        return cls.attachments.map((assignment: any) => {
+                        return cls.attachments
+                        .filter((x: any) => {
+                            if (unreviewed == "all") {
+                              return true;
+                            } else if (unreviewed == "not-submitted") {
+                              return x.submissions.length === 0;
+                            } else if (unreviewed == "unreviewed") {
+                              return (
+                                x.submissions.length > 0 &&
+                                x.submissions.some((x: any) => x.points.length === 0)
+                              );
+                            } else if (unreviewed == "reviewed") {
+                              return (
+                                x.submissions.length > 0 &&
+                                x.submissions.some((x: any) => x.points.length > 0)
+                              );
+                            }
+                            return true;
+                          })
+                        .map((assignment: any) => {
                             return (
                                 <div key={assignment.id} className="border rounded-lg p-1 md:p-3">
                                     <div className="flex items-center p-2 md:p-0 md:px-4 justify-around md:justify-between flex-wrap">
