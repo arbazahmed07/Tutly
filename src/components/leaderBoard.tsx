@@ -74,12 +74,13 @@ export default function Leaderboard({ submissions, courses }: any) {
               />
           </div>
         ) : (
-          leaderboardData.map((data: any, index: number) => (
+          leaderboardData.map((data: any, index: number) => {
+            if(data.totalPoints === 0) return null
+            return (
             <div
               className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:text-white hover:from-blue-600 hover:to-sky-500`}
               key={index}
-            >
-              {data.totalPoints !== 0 && (
+            > 
                 <div className="flex justify-between items-center">
                   <div className="flex gap-3 md:gap-10 items-center">
                     <h1>{index + 1}</h1>
@@ -101,9 +102,8 @@ export default function Leaderboard({ submissions, courses }: any) {
                     </h1>
                   </div>
                 </div>
-              )}
             </div>
-          ))
+          )})
         )}
       </div>
     </div>
