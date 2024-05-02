@@ -20,6 +20,7 @@ const Submit = ({
 }) => {
   const [confetti,setConfetti]=useState(false)
   const [isSubmitting, setSubmitting] = useState(false);
+  const [status , setStatus] = useState('Submit');
   const { files } = usePlaygroundContext();
 
   const router = useRouter();
@@ -55,6 +56,7 @@ const Submit = ({
       setConfetti(true)
       setTimeout(() => setConfetti(false),5000)
       toast.success('Assignment submitted successfully');
+      setStatus('Submitted');
       router.back();
     } catch (e) {
       toast.dismiss();
@@ -66,8 +68,8 @@ const Submit = ({
   // return <pre className="text-red-900">{JSON.stringify(assignmentDetails, null, 2)}</pre>
   return (
     <div>
-      <Button disabled={isLoading || isSubmitting} className="w-full" variant="outline" onClick={handleSubmit} >
-        Submit
+      <Button disabled={isLoading || isSubmitting || status === 'Submitted'} className="w-full" variant="outline" onClick={handleSubmit} >
+        {status}
       </Button>
         <div>
           {confetti && (<Confetti width={1600} height={window.innerHeight || 1000} numberOfPieces={400}
