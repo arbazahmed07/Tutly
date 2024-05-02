@@ -26,8 +26,12 @@ const Submit = ({
       toast.error('Error submitting assignment');
       return;
     }
-
+    
     try {
+      if(assignmentDetails.maxSubmissions<=assignmentDetails.submissions.length) {
+        toast.error("Assignment has reached maximum number of submissions");
+        return;
+      }
       setSubmitting(true);
       toast.loading('Submitting assignment');
 
@@ -39,7 +43,6 @@ const Submit = ({
         filePaths.push(filePath);
         newFiles[filePath] = file.code;
       });
-
       const submission = await axios.post(`/api/assignment/submit`, {
         assignmentDetails,
         files:newFiles,
@@ -56,7 +59,7 @@ const Submit = ({
       setSubmitting(false);
     }
   }
-
+  // return <pre className="text-red-900">{JSON.stringify(assignmentDetails, null, 2)}</pre>
   return (
     <div>
       <Button disabled={isLoading || isSubmitting} className="w-full" variant="outline" onClick={handleSubmit} >
