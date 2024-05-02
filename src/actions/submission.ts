@@ -59,8 +59,9 @@ export const createSubmission = async (
       - Due Date: ${assignmentDetails.dueDate}
       - Submission Date: ${new Date().toISOString()}
       - Submission Files:
+      //make it in new line for each file
         ${Object.keys(files).map((file) => {
-          return `- ${file}`;
+          return `- ${file} \n`;
         })}
       `,
     head: `${user.username?.trim()}-submissionId-${submissionId}`,
