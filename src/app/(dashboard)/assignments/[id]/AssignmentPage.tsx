@@ -86,31 +86,31 @@ export default function AssignmentPage({
         <p className="rounded p-1 px-2 bg-secondary-500 text-white">
           # {assignment?.class?.course?.title}
         </p>
-        {assignment?.dueDate != null && (
-          <div
-            className={`p-1 px-2 rounded text-white ${
-              new Date(assignment?.dueDate) > new Date()
-                ? "bg-primary-600"
-                : "bg-secondary-500"
-            }`}
-          >
-            Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
-          </div>
-        )}
+        <div className= "flex justify-center items-center gap-4">
+          {assignment?.dueDate != null && (
+              <div
+                className={`p-1 px-2 rounded text-white ${
+                  new Date(assignment?.dueDate) > new Date()
+                    ? "bg-primary-600"
+                    : "bg-secondary-500"
+                }`}
+              >
+                Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
+              </div>
+            )}
+          <h1 className="border rounded-md py-1 px-4 text-sm">Max responses : {assignment?.maxSubmissions}</h1>
+          {
+            currentUser?.role === "INSTRUCTOR" &&   
+            <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className="py-1 px-4 bg-emerald-700 hover:bg-emerald-800 rounded-md">
+              Edit  
+            </button>
+          }
+        </div>
       </div>
       <div className=" flex justify-between items-center w-full" >
         <span className="block mt-5">
               Details : 👇
         </span>
-        <div className= "flex justify-center items-center gap-4">
-        <h1 className="border rounded-md p-1 text-sm">Max responses : {assignment?.maxSubmissions}</h1>
-        {
-          currentUser?.role === "INSTRUCTOR" &&   
-          <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className=" p-2 bg-emerald-700 hover:bg-emerald-800 rounded-xl">
-            edit
-          </button>
-        }
-        </div>
       </div>
       <div className="my-5">
         {assignment?.details || "No details given to show"}
