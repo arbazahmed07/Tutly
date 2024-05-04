@@ -40,9 +40,8 @@ const Submit = ({
     }
 
     try {
-      if (
-        assignmentDetails.maxSubmissions <= assignmentDetails.submissions.length
-      ) {
+      const maxSubmissions = assignmentDetails.maxSubmissions;
+      if(maxSubmissions<=assignmentDetails.submissions.length) {
         toast.error("Assignment has reached maximum number of submissions");
         return;
       }
@@ -53,9 +52,15 @@ const Submit = ({
       const newFiles: { [key: string]: string } = {};
 
       files.forEach((file, index) => {
-        const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.mentor.username}/assignments/${user.username}/${assignmentDetails.title}/${file.filePath}`;
-        filePaths.push(filePath);
-        newFiles[filePath] = file.code;
+        if(maxSubmissions > 1){
+          const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.mentor.username}/assignments/${user.username}/${assignmentDetails.title}.${assignmentDetails.submissions.length + 1}/${file.filePath}`;
+          filePaths.push(filePath);
+          newFiles[filePath] = file.code;
+        } else {
+          const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.mentor.username}/assignments/${user.username}/${assignmentDetails.title}/${file.filePath}`;
+          filePaths.push(filePath);
+          newFiles[filePath] = file.code;
+        }
       });
       const submission = await axios.post(`/api/assignment/submit`, {
         assignmentDetails,

@@ -60,7 +60,7 @@ export const createSubmission = async (
       - Submission Date: ${new Date().toISOString()}
       - Submission Files:
         ${Object.keys(files).map((file) => {
-          return `- ${file}`;
+          return `\n - ${file}`;
         })}
       `,
     head: `${user.username?.trim()}-submissionId-${submissionId}`,
