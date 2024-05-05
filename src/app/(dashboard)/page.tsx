@@ -22,8 +22,8 @@ export default async function Home() {
   if (currentUser?.role === "STUDENT") {
     // student
     const data = await getDashboardData();
-    const total =await getLeaderboardDataForStudent();
-    // let total = 0;
+    // const total =await getLeaderboardDataForStudent();
+    let total = 0;
     // if (leaderboard) {
     //   for (const score of leaderboard) {
     //     total += score?.totalPoints || 0;
@@ -59,7 +59,7 @@ export default async function Home() {
               className="m-auto"
             />
             <p className="text-primary-600 font-bold pt-2">
-              {total}
+            {total===0?"NA":total}
             </p>
             <h1 className="p-1 text-sm font-bold">
               Your current Score in the Leaderboard.
