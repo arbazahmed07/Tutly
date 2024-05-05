@@ -67,6 +67,18 @@ export default async function getLeaderboardData() {
     return null;
   }
 }
+export const getLeaderboardDataForStudent = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  const leaderboardData = await getLeaderboardData();
+  if (!leaderboardData) return null;
+
+  const totalPoints = leaderboardData.sortedSubmissions
+    .filter((submission :any) => submission?.enrolledUser?.user?.id === currentUser?.id)
+    .reduce((total:any, submission:any) => total + submission.totalPoints, 0);
+  return totalPoints;
+}
 
 export const getInstructorLeaderboardData=async() => {
   try {

@@ -1,5 +1,6 @@
 import {
   getDashboardData,
+  getLeaderboardDataForStudent,
   getMentorLeaderboardData,
   getMentorLeaderboardDataForDashboard,
 } from "@/actions/getLeaderboard";
@@ -21,15 +22,14 @@ export default async function Home() {
   if (currentUser?.role === "STUDENT") {
     // student
     const data = await getDashboardData();
-    const leaderboard =await getLeaderboardData();
-    let total = 0;
-    const currentUsern = await getCurrentUser();
-    const currentUserAssignments = leaderboard.sortedSubmissions.filter((submission: any) => submission?.enrolledUser?.user?.id === currentUsern?.id);
-    if (currentUserAssignments) {
-      for (const score of currentUserAssignments ) {
-        total += score?.totalPoints || 0;
-      }
-    }
+    const total =await getLeaderboardDataForStudent();
+    // let total = 0;
+    // if (leaderboard) {
+    //   for (const score of leaderboard) {
+    //     total += score?.totalPoints || 0;
+    //   }
+    // }
+    // return <pre>{JSON.stringify(total,null,2)}</pre>
     if (!data) return;
     const {
       position,
