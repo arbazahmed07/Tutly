@@ -110,10 +110,22 @@ export const getAllAssignmentsForMentor = async () => {
           attachments: {
             where: {
               attachmentType: "ASSIGNMENT",
+              submissions: {
+                some: {
+                  enrolledUser: {
+                    mentorUsername: currentUser.username,
+                  }
+                }
+              }
             },
             include: {
               class: true,
               submissions: {
+                where:{
+                  enrolledUser:{
+                    mentorUsername: currentUser.username
+                  }
+                },
                 include: {
                   points: true,
                 }
@@ -308,6 +320,8 @@ export const getAssignmentDetailsByUserId = async (
 export const getAllAssignmentDetailsBy = async (
   id: string,
 ) => {
+  const currentUser = await getCurrentUser();
+  if(!currentUser) return null;
   const assignment = await db.attachment.findUnique({
     where: {
       id,
@@ -319,13 +333,11 @@ export const getAllAssignmentDetailsBy = async (
         },
       },
       submissions: {
-        // where: {
-        //   enrolledUser: {
-        //     user:{
-        //       id: userId
-        //     },
-        //   },
-        // },
+        where: {
+          enrolledUser: {
+            mentorUsername:currentUser.username
+          },
+        },
         include: {
           enrolledUser: {
             include: {

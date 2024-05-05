@@ -1,6 +1,7 @@
 import {
   getDashboardData,
   getMentorLeaderboardData,
+  getMentorLeaderboardDataForDashboard,
 } from "@/actions/getLeaderboard";
 import Image from "next/image";
 import { MdOutlineNoteAlt } from "react-icons/md";
@@ -98,8 +99,9 @@ export default async function Home() {
     // mentor
     const mstudents = await getMentorStudents();
     const mcourses = await getMentorCourses();
-    const mleaderboard = await getMentorLeaderboardData();
-
+    const mleaderboard = await getMentorLeaderboardDataForDashboard();
+    // return <pre>{JSON.stringify(mleaderboard, null, 2)}</pre>
+    
       return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
@@ -128,7 +130,7 @@ export default async function Home() {
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
             <SiTicktick className="m-auto h-20 w-20 text-blue-400 my-2" />
             <p className="text-primary-600 font-bold pt-2">
-              {mleaderboard?.sortedSubmissions?.length}
+              {mleaderboard}
             </p>
             <h1 className="p-1 text-sm font-bold">
               No of assignments evaluated
