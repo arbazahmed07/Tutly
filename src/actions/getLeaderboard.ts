@@ -203,6 +203,33 @@ export const getMentorLeaderboardData=async() => {
     return null;
   }
 }
+export const getMentorLeaderboardDataForDashboard=async() => {
+  try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return null;
+    }
+
+    const createdCourses = await getMentorCourses();
+    if (!createdCourses) return null;
+    const submissions = await db.submission.findMany({
+      where: {
+        enrolledUser:{
+          mentorUsername:currentUser.username
+        }
+      },
+      include:{
+        points:true
+      }
+    });
+    const filteredSubmissions = submissions.filter((submission:any)=>submission.points.length>0)
+    return filteredSubmissions.length;
+  } catch (error: any) {
+    return null;
+  }
+}
+
+
 
 export const getDashboardData = async () => {
   const leaderboardData = await getLeaderboardData();
