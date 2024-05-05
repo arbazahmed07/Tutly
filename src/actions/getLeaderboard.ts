@@ -69,14 +69,15 @@ export default async function getLeaderboardData() {
 }
 export const getLeaderboardDataForStudent = async () => {
   const currentUser = await getCurrentUser();
-  if(!currentUser) return null;
+  if (!currentUser) return null;
+
   const leaderboardData = await getLeaderboardData();
-  const currentUserAssignments = leaderboardData.sortedSubmissions.filter((submission: any) => submission?.enrolledUser?.user?.id === currentUser?.id);
-  let total=0;
-  for(let i=0;i<currentUserAssignments.length;i++){
-    total+=currentUserAssignments[i].totalPoints
-  }
-  return total;
+  if (!leaderboardData) return null;
+
+  const totalPoints = leaderboardData.sortedSubmissions
+    .filter((submission :any) => submission?.enrolledUser?.user?.id === currentUser?.id)
+    .reduce((total:any, submission:any) => total + submission.totalPoints, 0);
+  return totalPoints;
 }
 
 export const getInstructorLeaderboardData=async() => {
