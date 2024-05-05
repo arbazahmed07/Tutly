@@ -35,6 +35,7 @@ const Submit = ({
       !assignmentDetails ||
       !assignmentDetails.title
     ) {
+      console.log(user, user.username, user.email, assignmentDetails, assignmentDetails.title);
       toast.error("Error submitting assignment");
       return;
     }
@@ -81,7 +82,7 @@ const Submit = ({
       setOpenPopup(false);
     }
   };
-
+  // return <pre>{JSON.stringify(user, null, 2)}</pre>  
   return (
     <div>
       <div>

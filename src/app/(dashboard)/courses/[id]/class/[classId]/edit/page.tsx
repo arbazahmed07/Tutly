@@ -45,7 +45,6 @@ const EditClass = () => {
             setSelectedFolder(res.data?.Folder.id);
             setCreatedAt(res.data?.createdAt?.toString());
             setShowForm(true);
-            
         } catch (error: any) {
             console.log(error);
         }

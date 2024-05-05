@@ -36,15 +36,39 @@ export async function GET(
       select: {
         mentor: {
           select: {
-            name: true,
-            email: true,
             username: true,
           },
         },
       },
     });
 
-    return NextResponse.json({ assignment, currentUser, mentorDetails });
+    return NextResponse.json({
+      assignment: {
+        id: assignment.id,
+        title: assignment.title,
+        link: assignment.link,
+        class: {
+          id: assignment.class.id,
+          title: assignment.class.title,
+          courseId: assignment.class.courseId,
+          course: {
+            id: assignment.class.course?.id,
+            title: assignment.class.course?.title,
+          },
+        },
+        submissions: assignment.submissions.map((submission) => {
+          return {
+            id: submission.id,
+          };
+        }),
+      },
+      currentUser: {
+        username: currentUser.username,
+        name: currentUser.name,
+        email: currentUser.email,
+      },
+      mentorDetails,
+    });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });
   }
