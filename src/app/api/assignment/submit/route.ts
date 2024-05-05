@@ -17,6 +17,9 @@ export async function POST(
     if (!currentUser) {
       return NextResponse.json({ error: "User not found" }, { status: 400 });
     }
+    if(currentUser.role !== "STUDENT") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const response :any = await createSubmission(assignmentDetails, files, mentorDetails);
     if(!response){
       return NextResponse.json({ error: "Error submitting assignment" }, { status: 400 });

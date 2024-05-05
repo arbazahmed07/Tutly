@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { hash, compare } from "bcryptjs";
 import { db } from "@/lib/db";
 import * as z from "zod";
+import getCurrentUser from "@/actions/getCurrentUser";
 
 const userSchema = z
   .object({
@@ -22,11 +23,12 @@ const userSchema = z
   });
 
 export async function POST(req: Request) {
+  const currentUser = await getCurrentUser();
+  if(!currentUser) return NextResponse.json("Unauthorized", { status: 401 });
   try {
     const body = await req.json();
     const { newPassword, confirmPassword, oldPassword, email } =
       userSchema.parse(body);
-
     if (newPassword !== confirmPassword) {
       return NextResponse.json(
         { message: "Passwords don't match" },
