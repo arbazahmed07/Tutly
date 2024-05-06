@@ -101,9 +101,8 @@ export default function AssignmentPage({
                 Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
               </div>
             )}
-          <h1 className="border rounded-md py-1 px-4 text-sm">Max responses : {assignment?.maxSubmissions}</h1>
           {
-            currentUser?.role === "INSTRUCTOR" &&   
+            currentUser?.role === "INSTRUCTOR" &&
             <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className="py-1 px-4 bg-emerald-700 hover:bg-emerald-800 rounded-md">
               Edit  
             </button>

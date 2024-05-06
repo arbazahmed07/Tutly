@@ -1,6 +1,10 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import { getCreatedCourses, getEnrolledCourses, getMentorCourses } from "./courses";
+import {
+  getCreatedCourses,
+  getEnrolledCourses,
+  getMentorCourses,
+} from "./courses";
 
 export default async function getLeaderboardData() {
   try {
@@ -8,14 +12,20 @@ export default async function getLeaderboardData() {
     if (!currentUser) {
       return null;
     }
+    const mentor = await db.enrolledUsers.findMany({
+      where: {
+        username: currentUser.username,
+      },
+      select: {
+        mentorUsername: true,
+      },
+    });
     const enrolledCourses = await getEnrolledCourses();
     if (!enrolledCourses) return null;
     const submissions = await db.submission.findMany({
       where: {
         enrolledUser: {
-          courseId: {
-            in: enrolledCourses.map((course) => course.id),
-          },
+          mentorUsername: mentor[0].mentorUsername,
         },
       },
       select: {
@@ -35,6 +45,7 @@ export default async function getLeaderboardData() {
             },
           },
         },
+        submissionDate: true,
         enrolledUser: {
           select: {
             user: {
@@ -50,17 +61,43 @@ export default async function getLeaderboardData() {
       },
     });
 
-    const totalPoints = submissions.reduce((acc: any, curr: any) => {
-      const totalPoints = curr.points.reduce(
-        (acc: any, curr: any) => acc + curr.score,
-        0
-      );
-      return [...acc, { ...curr, totalPoints }];
-    }, []);
+    const submissionsUptoLastSunday = submissions.filter(submission => {
+      // Convert submissionDate to a Date object
+      const submissionDate = new Date(submission.submissionDate);
+  
+      // Get the current date
+      const currentDate = new Date();
+  
+      // Get the day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+      const currentDayOfWeek = currentDate.getDay();
+  
+      // Calculate the difference in days to go back to last Sunday
+      const daysToLastSunday = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
+      const lastSunday = new Date(currentDate);
+      lastSunday.setDate(currentDate.getDate() - daysToLastSunday);
+  
+      // Set the time to 12 PM (12:00:00)
+      lastSunday.setHours(12, 0, 0, 0);
+  
+      // Check if the submissionDate is before the last Sunday of the current date at 12 PM
+      return submissionDate < lastSunday;
+  });
+  
+  
+    const totalPoints = submissionsUptoLastSunday.reduce(
+      (acc: any, curr: any) => {
+        const totalPoints = curr.points.reduce(
+          (acc: any, curr: any) => acc + curr.score,
+          0
+        );
+        return [...acc, { ...curr, totalPoints }];
+      },
+      []
+    );
 
     const sortedSubmissions = totalPoints.sort(
       (a: any, b: any) => b.totalPoints - a.totalPoints
-    ) ;
+    );
 
     return { sortedSubmissions, currentUser, enrolledCourses } as any;
   } catch (error: any) {
@@ -75,12 +112,15 @@ export const getLeaderboardDataForStudent = async () => {
   if (!leaderboardData) return null;
 
   const totalPoints = leaderboardData.sortedSubmissions
-    .filter((submission :any) => submission?.enrolledUser?.user?.id === currentUser?.id)
-    .reduce((total:any, submission:any) => total + submission.totalPoints, 0);
+    .filter(
+      (submission: any) =>
+        submission?.enrolledUser?.user?.id === currentUser?.id
+    )
+    .reduce((total: any, submission: any) => total + submission.totalPoints, 0);
   return totalPoints;
-}
+};
 
-export const getInstructorLeaderboardData=async() => {
+export const getInstructorLeaderboardData = async () => {
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
@@ -91,11 +131,11 @@ export const getInstructorLeaderboardData=async() => {
     if (!createdCourses) return null;
     const submissions = await db.submission.findMany({
       where: {
-        enrolledUser:{
-          course:{
-            createdById:currentUser.id
-          }
-        }
+        enrolledUser: {
+          course: {
+            createdById: currentUser.id,
+          },
+        },
       },
       select: {
         points: true,
@@ -139,15 +179,15 @@ export const getInstructorLeaderboardData=async() => {
 
     const sortedSubmissions = totalPoints.sort(
       (a: any, b: any) => b.totalPoints - a.totalPoints
-    ) ;
+    );
 
     return { sortedSubmissions, currentUser, createdCourses } as any;
   } catch (error: any) {
     return null;
   }
-}
+};
 
-export const getMentorLeaderboardData=async() => {
+export const getMentorLeaderboardData = async () => {
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
@@ -158,13 +198,9 @@ export const getMentorLeaderboardData=async() => {
     if (!createdCourses) return null;
     const submissions = await db.submission.findMany({
       where: {
-        enrolledUser:{
-          course:{
-            id:{
-              in:createdCourses.map(course=>course.id)
-            }
-          }
-        }
+        enrolledUser: {
+          mentorUsername: currentUser.username,
+        },
       },
       select: {
         points: true,
@@ -208,14 +244,14 @@ export const getMentorLeaderboardData=async() => {
 
     const sortedSubmissions = totalPoints.sort(
       (a: any, b: any) => b.totalPoints - a.totalPoints
-    ) ;
+    );
 
     return { sortedSubmissions, currentUser, createdCourses } as any;
   } catch (error: any) {
     return null;
   }
-}
-export const getMentorLeaderboardDataForDashboard=async() => {
+};
+export const getMentorLeaderboardDataForDashboard = async () => {
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
@@ -226,22 +262,22 @@ export const getMentorLeaderboardDataForDashboard=async() => {
     if (!createdCourses) return null;
     const submissions = await db.submission.findMany({
       where: {
-        enrolledUser:{
-          mentorUsername:currentUser.username
-        }
+        enrolledUser: {
+          mentorUsername: currentUser.username,
+        },
       },
-      include:{
-        points:true
-      }
+      include: {
+        points: true,
+      },
     });
-    const filteredSubmissions = submissions.filter((submission:any)=>submission.points.length>0)
+    const filteredSubmissions = submissions.filter(
+      (submission: any) => submission.points.length > 0
+    );
     return filteredSubmissions.length;
   } catch (error: any) {
     return null;
   }
-}
-
-
+};
 
 export const getDashboardData = async () => {
   const leaderboardData = await getLeaderboardData();
@@ -260,10 +296,10 @@ export const getDashboardData = async () => {
   const assignmentsSubmitted = sortedSubmissions.filter(
     (x: any) => x.enrolledUser.user.id === currentUser.id
   ).length;
-  // const assignmentsPending = 
+  // const assignmentsPending =
 
   return {
-    position:position+1,
+    position: position + 1,
     points,
     assignmentsSubmitted,
     // assignmentsPending,
