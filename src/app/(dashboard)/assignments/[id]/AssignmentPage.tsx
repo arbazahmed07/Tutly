@@ -607,7 +607,6 @@ export default function AssignmentPage({
         )
         }
       </div>
-      <pre>{JSON.stringify(assignments,null,2)}</pre>
     </div>
   );
 }
