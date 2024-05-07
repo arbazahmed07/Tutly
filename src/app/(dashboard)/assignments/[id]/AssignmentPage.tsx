@@ -18,18 +18,6 @@ export default function AssignmentPage({
   assignment: any;
   assignments: any;
 }) {
-
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-  };
-
-  const filteredSubmissions = assignments?.submissions.filter((submission: any) =>
-    submission.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())
-);
-
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedScores, setEditedScores] = useState({
     responsiveness: 0,
@@ -96,6 +84,7 @@ export default function AssignmentPage({
       <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 text-white rounded text-sm md:text-lg font-medium">
         Assignment Submission : {assignment?.title}
       </h1>
+
       <div className="flex items-center justify-between my-4 text-xs md:text-sm font-medium">
         <p className="rounded p-1 px-2 bg-secondary-500 text-white">
           # {assignment?.class?.course?.title}
@@ -182,15 +171,6 @@ export default function AssignmentPage({
                 Submissions : 👇
               </span>
             </h1>
-            <div className="my-4">
-            <input
-              type="text"
-              placeholder="Search by username"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              className="p-2 border border-gray-300 rounded-md w-full"
-            />
-            </div>
             <div className="overflow-x-auto">
               <table className="text-center w-full">
                 <thead className="bg-secondary-300 text-secondary-700">
@@ -250,7 +230,7 @@ export default function AssignmentPage({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredSubmissions?.map((submission: any, index: any) => {
+                  {assignment?.submissions.map((submission: any, index: any) => {
                     const rValue = submission.points.find(
                       (point: any) => point.category === "RESPOSIVENESS"
                     );
@@ -381,25 +361,13 @@ export default function AssignmentPage({
               </table>
             </div>
           </>
-        ) : 
-          pathname===`/assignments/${params.id}` && (currentUser?.role==="MENTOR" || currentUser.role==="INSTRUCTOR") ?(
+        ) : pathname===`/assignments/${params.id}` && (currentUser?.role==="MENTOR" || currentUser.role==="INSTRUCTOR") ?(
           <>
-            <div className="my-4 flex justify-between">
-              <h1>
-                <span className="block mt-5 dark:text-white">
-                  Submissions : 👇
-                </span>
-              </h1>
-              <div className="dark:text-white">
-              <input
-                    type="text"
-                    placeholder="Search by username"
-                    value={searchQuery}
-                    onChange={handleSearchInputChange}
-                    className="p-2 border border-gray-300 rounded-md w-full"
-                  />
-              </div>
-            </div>
+            <h1>
+              <span className="block mt-5 dark:text-white">
+                Submissions : 👇
+              </span>
+            </h1>
             <div className="overflow-x-auto">
               <table className="text-center w-full">
                 <thead className="bg-secondary-300 text-secondary-700">
@@ -460,7 +428,7 @@ export default function AssignmentPage({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredSubmissions?.map((submission: any, index: any) => {
+                  {assignments?.submissions.map((submission: any, index: any) => {
                     const rValue = submission.points.find(
                       (point: any) => point.category === "RESPOSIVENESS"
                     );
