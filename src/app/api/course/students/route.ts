@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 
     try {
         const currentUser = await getCurrentUser();
-        if(!currentUser || currentUser.role !== "STUDENT") {
+        if(!currentUser || currentUser.role === "STUDENT") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
         }
         const users = await getAllEnrolledUsers(courseId);
