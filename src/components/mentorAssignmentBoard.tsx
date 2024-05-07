@@ -63,8 +63,9 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
             student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
           ).map((student: any, index: number) => (
           <div
+            hidden = {student.role==='INSTRUCTOR' || student.role==='MENTOR'}
             key={index}
-            className={`${index < filteredStudents.length - 1 && "border-b pb-3"} ${student.role==='INSTRUCTOR' || student.role==='MENTOR'&&"hidden"}`}
+            className={`${index < filteredStudents.length - 1 && "border-b pb-3"}`}
           >
             <div className="p-1 flex justify-between items-center">
               <div className="flex gap-2 md:gap-5 items-center">

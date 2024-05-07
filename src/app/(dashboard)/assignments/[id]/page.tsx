@@ -1,4 +1,4 @@
-import { getAllAssignmentDetailsBy, getAllAssignmentDetailsByIdForInstructor, getAssignmentDetailsByUserId } from "@/actions/assignments";
+import { getAllAssignmentDetailsBy, getAssignmentDetailsByUserId } from "@/actions/assignments";
 import getCurrentUser from "@/actions/getCurrentUser";
 import AssignmentPage from "./AssignmentPage";
 
@@ -15,10 +15,8 @@ export default async function SubmmitAssignment({
   }
   const userId = (searchParams?.userId as string) || currentUser.id;
   const assignment = await getAssignmentDetailsByUserId(params.id, userId);
-  let assignments;
-  if(currentUser.role === "MENTOR") assignments = await getAllAssignmentDetailsBy(params.id);
-  else assignments = await getAllAssignmentDetailsByIdForInstructor(params.id);
-  // return <pre>{JSON.stringify(assignments, null, 2)}</pre>
+  const assignments = await getAllAssignmentDetailsBy(params.id);
+
   return(
     <AssignmentPage assignment={assignment} currentUser={currentUser} params={params} assignments={assignments}/>
   );

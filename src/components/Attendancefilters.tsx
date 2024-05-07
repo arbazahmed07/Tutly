@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FiUpload } from "react-icons/fi";
 import * as XLSX from "xlsx";
 import _ from "lodash";
 import toast from "react-hot-toast";
@@ -26,7 +25,6 @@ const AttendanceClient = ({ courses }: any) => {
   const [openClasses, setOpenClasses] = useState<boolean>(false);
   const [users, setUsers] = useState<any>([]);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
-  let indexing = 0;
 
   useEffect(() => {
     if (!currentCourse) {
@@ -173,26 +171,22 @@ const AttendanceClient = ({ courses }: any) => {
   const [username, setUsername] = useState<string>("");
   const [openEditName, setOpenEditName] = useState<number>(0);
   const handleEditUsername = (from: any, to: any) => {
-    if (from !== to) {
-      fileData.map((student: any) => {
-        student.username = student.username.replace(from, to);
-      });
-    }
+    fileData.map((student: any) => {
+      student.username = student.username.replace(from, to);
+    });
   };
 
   // upload attendance to db
-  const handleUpload = async () => {
+  const handleUpload=async()=>{
     try {
-      toast.loading("Uploading...");
       const res = await axios.post("/api/attendance", {
         classId: currentClass?.id,
-        data: presentStudents,
-      });
-      toast.success("Attendance uploaded successfully");
-    } catch (e) {
-      toast.error("something went wrong!");
-    }
-  };
+        data: presentStudents
+      })
+      toast.success("Attendance uploaded successfully")
+    } catch(e) {
+      toast.error("something went wrong!")}
+  }
   return (
     <div className="p-4 text-center ">
       <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
@@ -276,28 +270,26 @@ const AttendanceClient = ({ courses }: any) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-4">
-          <div>
-            <input
-              type="file"
-              className="bg-primary-600 rounded cursor-pointer w-60 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out"
-              accept=".csv, .xlsx"
-              onChange={(e) => {
-                const files = e.target.files;
-                !currentClass
-                  ? toast.error("select class")
-                  : files && files.length > 0 && onSelectFile(files[0]);
-              }}
-            />
-          </div>
-          {fileData && selectedFile && <div onClick={handleUpload} className="bg-primary-600 h-7 px-2 rounded cursor-pointer hover:bg-primary-700 font-semibold flex items-center gap-1">upload <FiUpload/></div>}
+        <div>
+          <input
+            type="file"
+            className="bg-primary-600 rounded cursor-pointer w-60 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out"
+            accept=".csv, .xlsx"
+            onChange={(e) => {
+              const files = e.target.files;
+              !currentClass
+                ? toast.error("select class")
+                : files && files.length > 0 && onSelectFile(files[0]);
+            }}
+          />
+          {/* <div onClick={handleUpload} className="bg-primary-600 rounded p-1">upload</div> */}
         </div>
       </div>
 
       {/* Present Students Table */}
       {fileData && selectedFile && (
         <>
-          <table className="w-[95%] m-auto mt-10">
+          <table className="w-[80%] m-auto mt-10">
             <thead>
               <tr className="border-b">
                 <th>index</th>
@@ -312,7 +304,10 @@ const AttendanceClient = ({ courses }: any) => {
             </thead>
             <tbody>
               {presentStudents.map((student: any, index) => (
-                <tr key={index} className="hover:bg-primary-800">
+                <tr
+                  key={index}
+                  className="hover:bg-primary-800 cursor-pointer"
+                >
                   <td>{index + 1}</td>
                   <td className="py-2 pl-10 text-start">
                     {student.ActualName}
@@ -334,31 +329,30 @@ const AttendanceClient = ({ courses }: any) => {
                   <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
                   <td>{student.Joins.length}</td>
                   <td
-                    className="cursor-pointer"
-                    onClick={() => handleStudentClick(student)}
-                  >
-                    view
-                  </td>
-                  <td>
-                    <select>
-                      <option value="absent">A</option>
-                      <option value="present">P</option>
-                    </select>
-                  </td>
+                        className="cursor-pointer"
+                        onClick={() => handleStudentClick(student)}
+                      >
+                        view
+                      </td>
+                      <td>
+                        <select>
+                          <option value="absent">A</option>
+                          <option value="present">P</option>
+                        </select>
+                      </td>
                 </tr>
               ))}
-              {/* absent students */}
               {users.map((student: any, index: number) => {
                 const userInPresentStudents = presentStudents.find(
                   (x) => x.username === student.username
                 );
-                if (!userInPresentStudents) {
-                  indexing += 1;
+                if (!userInPresentStudents)
                   return (
                     <tr key={index} className="hover:bg-primary-800">
-                      <td>{presentStudents.length + indexing}</td>
+                      <td>{index + 1}</td>
                       <td className="py-2 text-start pl-10">{student.name}</td>
                       <td>{student.username}</td>
+                      <td>-</td>
                       <td>-</td>
                       <td>-</td>
                       <td>-</td>
@@ -376,13 +370,12 @@ const AttendanceClient = ({ courses }: any) => {
                       </td>
                     </tr>
                   );
-                }
               })}
             </tbody>
           </table>
 
-          {/* Other Students Table */}
-          <table className="w-[95%] m-auto mt-10">
+          {/* Absent Students Table */}
+          <table className="w-[80%] m-auto mt-10">
             <thead>
               <tr className="border-b">
                 <th>index</th>
@@ -414,13 +407,11 @@ const AttendanceClient = ({ courses }: any) => {
                 ) => (
                   <tr key={index} className="hover:bg-primary-800">
                     <td>{index + 1}</td>
-                    <td className="text-start pl-10 max-w-[400px] overflow-x-auto">
-                      {student.Joins[0].ActualName}
-                    </td>
+                    <td>{student.Joins[0].ActualName}</td>
                     {openEditName === Number(index + 1) ? (
-                      <td className="text-start pl-10 py-2 max-w-32">
+                      <td className="text-start pl-10 py-2 max-w-52">
                         <input
-                          className="m-auto max-w-40"
+                          className="block"
                           onChange={(e) => setUsername(e.target.value)}
                           defaultValue={student.username}
                         />
@@ -517,6 +508,7 @@ const AttendanceClient = ({ courses }: any) => {
           </div>
         </div>
       )}
+      <div className="text-center text-xl font-bold mt-20">Under Progress...</div>
     </div>
   );
 };
