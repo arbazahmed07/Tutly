@@ -62,24 +62,13 @@ export default async function getLeaderboardData() {
     });
 
     const submissionsUptoLastSunday = submissions.filter(submission => {
-      // Convert submissionDate to a Date object
       const submissionDate = new Date(submission.submissionDate);
-  
-      // Get the current date
       const currentDate = new Date();
-  
-      // Get the day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
       const currentDayOfWeek = currentDate.getDay();
-  
-      // Calculate the difference in days to go back to last Sunday
       const daysToLastSunday = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
       const lastSunday = new Date(currentDate);
       lastSunday.setDate(currentDate.getDate() - daysToLastSunday);
-  
-      // Set the time to 12 PM (12:00:00)
       lastSunday.setHours(12, 0, 0, 0);
-  
-      // Check if the submissionDate is before the last Sunday of the current date at 12 PM
       return submissionDate < lastSunday;
   });
   
