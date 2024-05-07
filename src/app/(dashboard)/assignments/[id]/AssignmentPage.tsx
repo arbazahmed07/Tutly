@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { divide } from "lodash";
 import Image from "next/image";
 
@@ -26,6 +26,8 @@ export default function AssignmentPage({
   });
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams?.get("userId");
 
   const handleEdit = (index: number) => {
     setEditingIndex(index);
@@ -101,12 +103,6 @@ export default function AssignmentPage({
                 Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
               </div>
             )}
-          {
-            currentUser?.role === "INSTRUCTOR" &&
-            <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className="py-1 px-4 bg-emerald-700 hover:bg-emerald-800 rounded-md">
-              Edit  
-            </button>
-          }
         </div>
       </div>
       <div className=" flex justify-between items-center w-full">
@@ -118,7 +114,7 @@ export default function AssignmentPage({
           {currentUser?.role === "INSTRUCTOR" && (
             <button
               onClick={() => router.push(`/attachments/edit/${assignment.id}`)}
-              className=" p-2 bg-emerald-700 hover:bg-emerald-800 rounded-xl"
+              className=" px-2 py-1 bg-emerald-700 hover:bg-emerald-800 rounded-xl"
             >
               edit
             </button>
@@ -163,8 +159,7 @@ export default function AssignmentPage({
             </Link>
           )}
         </div>
-        {
-        (pathname===`/assignments/${params.id}`) && assignment.submissions.length > 0 ? (
+        { userId ? (
           <>
             <h1>
               <span className="block mt-5 dark:text-white">
@@ -219,7 +214,7 @@ export default function AssignmentPage({
                     >
                       Total
                     </th>
-                    {currentUser.role !== "STUDENT" && (
+                    {currentUser.role === "MENTOR" && (
                       <th
                         scope="col"
                         className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
@@ -333,7 +328,7 @@ export default function AssignmentPage({
                             ? totalScore
                             : "NA"}
                         </td>
-                        {currentUser.role !== "STUDENT" && (
+                        {currentUser.role === "MENTOR" && (
                           <td className="px-6 py-4 whitespace-nowrap">
                             {editingIndex === index ? (
                               <button
@@ -361,7 +356,7 @@ export default function AssignmentPage({
               </table>
             </div>
           </>
-        ) : pathname===`/assignments/${params.id}` && (currentUser?.role==="MENTOR" || currentUser.role==="INSTRUCTOR") ?(
+        ) : (currentUser?.role==="MENTOR" || currentUser.role==="INSTRUCTOR") ?(
           <>
             <h1>
               <span className="block mt-5 dark:text-white">
@@ -417,7 +412,7 @@ export default function AssignmentPage({
                     >
                       Total
                     </th>
-                    {currentUser.role !== "STUDENT" && (
+                    {currentUser.role === "MENTOR" && (
                       <th
                         scope="col"
                         className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
@@ -532,7 +527,7 @@ export default function AssignmentPage({
                             ? totalScore
                             : "NA"}
                         </td>
-                        {currentUser.role !== "STUDENT" && (
+                        {currentUser.role === "MENTOR" && (
                           <td className="px-6 py-4 whitespace-nowrap">
                             {editingIndex === index ? (
                               <button

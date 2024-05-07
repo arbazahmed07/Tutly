@@ -1,14 +1,13 @@
 import Image from "next/image";
 import React from "react";
-import { Link } from "lucide-react";
-import { getMentorCourses } from "@/actions/courses";
-import { getAllAssignmentsForMentor } from "@/actions/assignments";
+import { getAllAssignmentsForInstructor } from "@/actions/assignments";
 import SingleAssignmentBoard from "../../../../components/assignmentBoard";
 
 async function GetByAssignment() {
   // const courses = await getMentorCourses();
   const { courses, coursesWithAssignments } =
-    await getAllAssignmentsForMentor();
+    await getAllAssignmentsForInstructor();
+  // return <pre>{JSON.stringify(courses)}</pre>
   return (
     <div className="md:mx-14 md:px-8 py-2 flex flex-col gap-4">
       <div>
