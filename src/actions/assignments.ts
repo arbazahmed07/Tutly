@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import { getCreatedCourses, getEnrolledCoursesById, getMentorCourses } from "./courses";
+import { getEnrolledCoursesById, getMentorCourses } from "./courses";
 
 export const getAllAssignedAssignments = async () => {
   const currentUser = await getCurrentUser();
@@ -138,37 +138,6 @@ export const getAllAssignmentsForMentor = async () => {
   });
   return { courses, coursesWithAssignments } as any;
 };
-
-export const getAllAssignmentsForInstructor = async () => {
-  const courses = await getCreatedCourses();
-  const currentUser = await getCurrentUser();
-  if(!currentUser) return null;
-
-  const coursesWithAssignments = await db.course.findMany({
-    select: {
-      id: true,
-      classes: {
-        select: {
-          attachments: {
-            where: {
-              attachmentType: "ASSIGNMENT",
-            },
-            include: {
-              class: true,
-              submissions: {
-                include: {
-                  points: true,
-                }
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-  return { courses, coursesWithAssignments } as any;
-};
-
 export const getAllAssignedAssignmentsForMentor = async (id: string) => {
   const courses = await getEnrolledCoursesById(id);
   const currentUser = await getCurrentUser();
@@ -369,37 +338,6 @@ export const getAllAssignmentDetailsBy = async (
             mentorUsername:currentUser.username
           },
         },
-        include: {
-          enrolledUser: {
-            include: {
-              submission: true,
-            },
-          },
-          points: true,
-        },
-      },
-    },
-  });
-  return assignment;
-};
-
-export const getAllAssignmentDetailsByIdForInstructor = async (
-  id: string,
-) => {
-  const currentUser = await getCurrentUser();
-  if(!currentUser) return null;
-  const assignment = await db.attachment.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      class: {
-        include: {
-          course: true,
-        },
-      },
-      submissions: {
-        
         include: {
           enrolledUser: {
             include: {
