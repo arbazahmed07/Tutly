@@ -27,11 +27,11 @@ export default function Sidebar({items,menu,setMenu}:Props) {
                 items.map((item)=>{
                     return (
                       <div key={item.path}>
-                            <div onClick={()=>Mobile(item.path)} key={item.path} className={`${pathname!=='/' ? pathname.startsWith(item.path):pathname===item.path ?"bg-blue-600 text-white":"hover:bg-blue-500 hover:text-white"} m-auto rounded md:hidden px-4 py-3 my-2 flex items-center gap-4 cursor-pointer`}>
+                            <div onClick={()=>Mobile(item.path)} key={item.path} className={`${pathname!=='/' ? pathname.startsWith(item.path):pathname===item.path||(pathname.includes("/assignments")&&item.name=="Assignments") ?"bg-blue-600 text-white":"hover:bg-blue-500 hover:text-white"} m-auto rounded md:hidden px-4 py-3 my-2 flex items-center gap-4 cursor-pointer`}>
                                 <div className={`text-2xl px-2`}>{item.icon}</div>
                                 <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
                             </div>
-                            <div onClick={()=>Desktop(item.path)} key={item.path} className={`${pathname===item.path?"bg-blue-600 text-white":"hover:bg-blue-500 hover:text-white"} m-auto rounded hidden md:flex px-3 py-3 my-2 items-center gap-4 cursor-pointer`}>
+                            <div onClick={()=>Desktop(item.path)} key={item.path} className={`${pathname===item.path||(pathname.includes("/assignments")&&item.name=="Assignments")?"bg-blue-600 text-white":"hover:bg-blue-500 hover:text-white"} m-auto rounded hidden md:flex px-3 py-3 my-2 items-center gap-4 cursor-pointer`}>
                                 <div className={`text-2xl px-2`}>{item.icon}</div>
                                 <h1 className={`${!menu&&"hidden"}`}>{item.name}</h1>
                             </div>

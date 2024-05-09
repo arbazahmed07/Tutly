@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import { getEnrolledCoursesById, getMentorCourses } from "./courses";
+import { getCreatedCourses, getEnrolledCoursesById, getMentorCourses } from "./courses";
+import { orderBy } from "lodash";
 
 export const getAllAssignedAssignments = async () => {
   const currentUser = await getCurrentUser();
@@ -71,9 +72,9 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
               submissions: {
                 where: {
                   enrolledUser: {
-                    user:{
-                      id: id
-                    }
+                    user: {
+                      id: id,
+                    },
                   },
                 },
                 include: {
@@ -93,7 +94,7 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
 export const getAllAssignmentsForMentor = async () => {
   const courses = await getMentorCourses();
   const currentUser = await getCurrentUser();
-  if(!currentUser) return null;
+  if (!currentUser) return null;
 
   const coursesWithAssignments = await db.course.findMany({
     where: {
@@ -114,21 +115,53 @@ export const getAllAssignmentsForMentor = async () => {
                 some: {
                   enrolledUser: {
                     mentorUsername: currentUser.username,
-                  }
-                }
-              }
+                  },
+                },
+              },
             },
             include: {
               class: true,
               submissions: {
-                where:{
-                  enrolledUser:{
-                    mentorUsername: currentUser.username
-                  }
+                where: {
+                  enrolledUser: {
+                    mentorUsername: currentUser.username,
+                  },
                 },
                 include: {
                   points: true,
-                }
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return { courses, coursesWithAssignments } as any;
+};
+export const getAllAssignmentsForInstructor = async () => {
+  const courses = await getCreatedCourses();
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  const coursesWithAssignments = await db.course.findMany({
+    where: {
+      createdById: currentUser.id,
+    },
+    select: {
+      id: true,
+      classes: {
+        select: {
+          attachments: {
+            where: {
+              attachmentType: "ASSIGNMENT",
+            },
+            include: {
+              class: true,
+              submissions: {
+                include: {
+                  points: true,
+                },
               },
             },
           },
@@ -141,7 +174,7 @@ export const getAllAssignmentsForMentor = async () => {
 export const getAllAssignedAssignmentsForMentor = async (id: string) => {
   const courses = await getEnrolledCoursesById(id);
   const currentUser = await getCurrentUser();
-  if(!currentUser) return null;
+  if (!currentUser) return null;
 
   const coursesWithAssignments = await db.course.findMany({
     where: {
@@ -164,9 +197,9 @@ export const getAllAssignedAssignmentsForMentor = async (id: string) => {
               submissions: {
                 where: {
                   enrolledUser: {
-                    user:{
-                      id: id
-                    }
+                    user: {
+                      id: id,
+                    },
                   },
                 },
                 include: {
@@ -244,7 +277,7 @@ export const getAllMentorAssignments = async () => {
     },
   });
 
-  return {coursesWithAssignments,submissions} as any
+  return { coursesWithAssignments, submissions } as any;
 };
 
 export const getAllCreatedAssignments = async () => {
@@ -298,8 +331,8 @@ export const getAssignmentDetailsByUserId = async (
       submissions: {
         where: {
           enrolledUser: {
-            user:{
-              id: userId
+            user: {
+              id: userId,
             },
           },
         },
@@ -317,11 +350,9 @@ export const getAssignmentDetailsByUserId = async (
   return assignment;
 };
 
-export const getAllAssignmentDetailsBy = async (
-  id: string,
-) => {
+export const getAllAssignmentDetailsBy = async (id: string) => {
   const currentUser = await getCurrentUser();
-  if(!currentUser) return null;
+  if (!currentUser) return null;
   const assignment = await db.attachment.findUnique({
     where: {
       id,
@@ -335,7 +366,7 @@ export const getAllAssignmentDetailsBy = async (
       submissions: {
         where: {
           enrolledUser: {
-            mentorUsername:currentUser.username
+            mentorUsername: currentUser.username,
           },
         },
         include: {
@@ -349,8 +380,61 @@ export const getAllAssignmentDetailsBy = async (
       },
     },
   });
-  return assignment;
+  const sortedAssignments = assignment?.submissions.sort((a, b) => {
+    if( b.enrolledUser.username > a.enrolledUser.username ) {
+      return -1
+    } else if( b.enrolledUser.username < a.enrolledUser.username ) {
+      return 1
+    } else {
+      return 0
+    }
+  })
+  return sortedAssignments;
 };
+
+export const getAllAssignmentDetailsForInstructor = async (id: string) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+  
+  const assignment = await db.attachment.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      class: {
+        include: {
+          course: {
+            where: {
+              createdById: currentUser.id
+            }
+          },
+        },
+      },
+      submissions: {
+        include: {
+          enrolledUser: {
+            include: {
+              submission: true,
+            },
+          },
+          points: true,
+        },
+      },
+    },
+  });
+  
+  const sortedAssignments = assignment?.submissions.sort((a, b) => {
+    if( b.enrolledUser.username > a.enrolledUser.username ) {
+      return -1
+    } else if( b.enrolledUser.username < a.enrolledUser.username ) {
+      return 1
+    } else {
+      return 0
+    }
+  })
+  return sortedAssignments;
+};
+
 
 export const getAllAssignmentsByCourseId = async (id: string) => {
   const currentUser = await getCurrentUser();
@@ -374,9 +458,9 @@ export const getAllAssignmentsByCourseId = async (id: string) => {
               class: true,
               submissions: {
                 where: {
-                  enrolledUser:{
-                    username: currentUser.username
-                  }
+                  enrolledUser: {
+                    username: currentUser.username,
+                  },
                 },
               },
             },
