@@ -168,8 +168,7 @@ export default function AssignmentPage({
             </Link>
           )}
         </div>
-        {userId &&
-        assignment.submissions.length > 0 ? (
+        {(userId && assignment.submissions.length > 0)||(currentUser?.role === "STUDENT") ? (
           <>
             <h1>
               <span className="block mt-5 dark:text-white">
