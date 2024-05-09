@@ -2,6 +2,7 @@ import { getCreatedCourses, getEnrolledStudents } from '@/actions/courses'
 import getCurrentUser from '@/actions/getCurrentUser';
 import Loader from '@/components/Loader';
 import MentorAssignmentBoard from '@/components/mentorAssignmentBoard';
+import Link from 'next/link';
 import React, { Suspense } from 'react'
 
 async function instructorAssignments() {
@@ -16,6 +17,7 @@ async function instructorAssignments() {
       {
         courses===null||courses.length===0 ? <div className="text-center">No courses created yet!</div> :
           <Suspense fallback={<Loader />}>
+            <div className='flex justify-end'><Link href={"/instructor/assignments/getByAssignment"} className='text-gray-500 font-bold italic cursor-pointer'>Get by assignment?</Link></div>
             <MentorAssignmentBoard courses={courses} students={students} role={currentUser.role} />
           </Suspense>
       }
