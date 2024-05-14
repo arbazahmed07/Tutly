@@ -1,7 +1,8 @@
 import { db } from "@/lib/db"
+import getCurrentUser from "./getCurrentUser";
 
 export const getAllEnrolledUsers = async(courseId:string) => {
-    const x = await db.user.findMany({
+    const enrolledUsers = await db.user.findMany({
         where:{
             enrolledUsers:{
                 some:{
@@ -17,5 +18,36 @@ export const getAllEnrolledUsers = async(courseId:string) => {
             email:true,
         }
     });
-    return x;
+    return enrolledUsers;
+}
+
+export const getAllUsers = async( courseId : string ) => {
+
+    const currentUser = await getCurrentUser();
+    if (!currentUser) return null;
+
+    
+    const globalUsers = await db.user.findMany({
+        select:{
+            id:true,
+            image:true,
+            username:true,
+            name:true,
+            email:true,
+            enrolledUsers:{
+                where : {
+                    courseId:courseId
+                },
+                select: {
+                    course: {
+                        select: {
+                            id:true,
+                            title:true,
+                        }
+                    }
+                }
+            },
+        },
+    });
+    return globalUsers;
 }

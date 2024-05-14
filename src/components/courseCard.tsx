@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
+import { FaUsersGear } from "react-icons/fa6";
 
 
 export default function CourseCard({ course,currentUser }: any) {
@@ -95,9 +96,15 @@ export default function CourseCard({ course,currentUser }: any) {
                 <div onClick={() => router.push(`/courses/${course.id}`) } className=" cursor-pointer" > 
                     <h1 className="text-sm">{course?.title}</h1>
                 </div>
-                <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
-                    <MdOutlineEdit className=" w-5 h-5 cursor-pointer"  />
-                </button>
+                <div>
+                  <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
+                      <MdOutlineEdit className=" w-5 h-5 cursor-pointer"  />
+                  </button>
+                  <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
+                      <MdOutlineEdit className=" w-5 h-5 cursor-pointer"  />
+                  </button>
+
+                </div>
             </div>
                 {
                 openPopup

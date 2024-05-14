@@ -15,8 +15,7 @@ export const updatePoints = async (
     },
     update: {
       score,
-      category,
-    },
+    },    
     create: {
       score,
       category,

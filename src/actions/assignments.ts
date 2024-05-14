@@ -380,6 +380,7 @@ export const getAllAssignmentDetailsBy = async (id: string) => {
       },
     },
   });
+  
   const sortedAssignments = assignment?.submissions.sort((a, b) => {
     if( b.enrolledUser.username > a.enrolledUser.username ) {
       return -1

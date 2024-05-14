@@ -265,3 +265,46 @@ export const getCourseByCourseId = async (id: string) => {
   });
   return course;
 }
+
+
+export const enrollStudentToCourse = async (courseId: string, username: string) => {
+  try {
+    const user = await db.user.findUnique({
+      where: { username },
+    });
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const course = await db.course.findUnique({
+      where: { id: courseId },
+    });
+
+    if (!course) {
+      throw new Error('Course not found');
+    }
+
+    const existingEnrollment = await db.enrolledUsers.findFirst({
+      where: {
+        courseId,
+        username,
+      },
+    });
+
+    if (existingEnrollment) {
+      throw new Error('User is already enrolled in the course');
+    }
+
+    const newEnrollment = await db.enrolledUsers.create({
+      data: {
+        courseId,
+        username,
+      },
+    });
+
+    return newEnrollment;
+  } catch (error : any) {
+    throw new Error(`Failed to enroll student: ${error.message}`);
+  }
+};
