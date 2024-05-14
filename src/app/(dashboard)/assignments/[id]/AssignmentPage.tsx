@@ -20,15 +20,20 @@ export default function AssignmentPage({
 }) {
 
   const [searchQuery, setSearchQuery] = useState("");
-
+  let filteredSubmissions;
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
   };
 
-  const filteredSubmissions = assignments?.submissions.filter((submission: any) =>
-    submission.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())
-);
+  filteredSubmissions = assignments?.submissions.filter((submission: any) =>
+    submission.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()));
+
+const sortSubmissions = () => {
+  filteredSubmissions = [...assignments?.submissions].sort((a, b) =>
+    a.enrolledUser.username.localeCompare(b.enrolledUser.username)
+  );
+};
 
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedScores, setEditedScores] = useState({
@@ -411,7 +416,7 @@ export default function AssignmentPage({
                     >
                       sl.no
                     </th>
-                    <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">username</th>
+                    <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider" onClick={()=>sortSubmissions()}>username</th>
                     <th
                       scope="col"
                       className={`${
@@ -601,7 +606,7 @@ export default function AssignmentPage({
               className="m-auto"
               width={300}
               alt=""
-            />
+            /> 
             <h1 className="text-white">No submissions yet!</h1>
           </div>
         )

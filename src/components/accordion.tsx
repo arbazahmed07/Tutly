@@ -7,7 +7,7 @@ import { FaCrown } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { ImReply } from "react-icons/im";
 import { PiCrownSimpleFill } from "react-icons/pi";
-import { FaEye } from "react-icons/fa";
+import { LuReply } from "react-icons/lu";
 
 
 export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
@@ -224,8 +224,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                         </div>
                     </div>
                     <div className="flex gap-2 justify-end items-center flex-wrap">
-                          <div onClick={() => toggleAccordion(index)}><FaEye className="h-5 w-5 mr-2"/></div>
-                          <div className="text-sm justify-start items-center font-bold">{qa?.response?.length} Responses</div>
+                          <div onClick={() => toggleAccordion(index)}><LuReply className="h-5 w-5 mr-2"/></div>
                       {/* your reply for that answer */}
                           <div className="flex space-x-2 items-center">
                           <div className='flex justify-start items-center space-x-2' >
