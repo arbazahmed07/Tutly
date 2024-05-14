@@ -2,13 +2,33 @@
 
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { useState } from "react";
+
 
 const Profile = ({ currentUser } :any) => {
-  const router = useRouter()
   const email = currentUser?.email;
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  const togglePasswordVisibility = (type: string) => {
+    switch (type) {
+      case "old":
+        setShowOldPassword(!showOldPassword);
+        break;
+      case "new":
+        setShowNewPassword(!showNewPassword);
+        break;
+      case "confirm":
+        setShowConfirmPassword(!showConfirmPassword);
+        break;
+      default:
+        break;
+    }
+  };
 
   const onSubmit = async (data :any) => {
 
@@ -74,6 +94,8 @@ const Profile = ({ currentUser } :any) => {
       toast.error("An error occurred while sending password reset link");
     }
   }
+
+  
   return (  
     <div className="flex justify-center mt-10 text-sm font-semibold dark:text-white text-black">
       <div className="p-5 m-auto rounded-lg">
@@ -90,37 +112,60 @@ const Profile = ({ currentUser } :any) => {
               />
             </div>
             {currentUser?.password && (
-              <div>
+              <div  >
                 <label className="w-full block mb-1">Old Password <a onClick={handleForgotPassword} className="text-xs text-blue-500 hover:cursor-pointer hover:text-red-700">forgot?</a> </label>
-                <input
-                  type="password"
-                  placeholder="Old Password"
-                  className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
-                  {...register("oldPassword")}
-                />
+                <div className=" relative">
+                  <input
+                    type={showOldPassword ? "text" : "password"}
+                    placeholder="Old Password"
+                    className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
+                    {...register("oldPassword")}
+                    />
+                    <span
+                      className="absolute top-2 right-2 cursor-pointer"
+                      onClick={() => togglePasswordVisibility("old")}
+                    >
+                      {showOldPassword ? <FaRegEyeSlash className=" w-5 h-5" /> : <FaRegEye className=" w-5 h-5" />}
+                    </span>
+                </div>
               </div>
             )}
-            <div>
+            <div >
               <label className="w-full block mb-1">New Password</label>
-              <input
-                type="password"
-                placeholder="New Password"
-                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
-                {...register("newPassword", { required: true, minLength: 8 })}
-              />
+              <div className="relative">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    placeholder="New Password"
+                    className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
+                    {...register("newPassword", { required: true, minLength: 8 })}
+                    />
+                    <span
+                      className="absolute top-2 right-2 cursor-pointer"
+                      onClick={() => togglePasswordVisibility("new")}
+                    >
+                      {showNewPassword ? <FaRegEyeSlash className=" w-5 h-5" /> : <FaRegEye className=" w-5 h-5" />}
+                    </span>
+                </div>
             </div>
             {errors.newPassword?.type == "required" && <span className="text-red-500">Password is required</span>}
             {errors.newPassword?.type == "minLength" && <span className="text-red-500">Password must have more than 8 characters</span>}
-            <div>
-
+            <div >
               <label className="w-full block mb-1">Confirm Password</label>
-              <input
-                type="password"
-                placeholder="Confirm Password"
-                className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
-
-                {...register("confirmPassword", { required: true, minLength: 8 })}
-              />
+              <div className=" relative" >
+                <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    className="border border-gray-300 outline-none px-3 py-2 rounded-md w-full bg-background"
+                    
+                    {...register("confirmPassword", { required: true, minLength: 8 })}
+                    />
+                    <span
+                      className="absolute top-2 right-2 cursor-pointer"
+                      onClick={() => togglePasswordVisibility("confirm")}
+                    >
+                      {showConfirmPassword ? <FaRegEyeSlash className=" w-5 h-5" /> : <FaRegEye className=" w-5 h-5" />}
+                    </span>
+              </div>
             </div>
             {errors.confirmPassword?.type == "required" && <span className="text-red-500">Confirm Password is required</span>}
 

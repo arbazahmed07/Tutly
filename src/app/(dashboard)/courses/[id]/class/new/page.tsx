@@ -38,6 +38,10 @@ const NewClass = () => {
       return toast.error('Please fill all fields');
     }
 
+    if (/\s/.test(classTitle)) {
+      return toast.error('Class title cannot contain spaces');
+    }
+
     setTextValue('Creating Class');
     try {
       const res = await axios.post('/api/classes/create', {

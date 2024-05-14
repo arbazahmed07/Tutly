@@ -5,6 +5,7 @@ import { FaPlus } from 'react-icons/fa';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
+import Loader from '@/components/Loader';
 
 const EditClass = () => {
     const [videoLink, setVideoLink] = useState('');
@@ -16,6 +17,7 @@ const EditClass = () => {
     const [selectedFolder, setSelectedFolder] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [createdAt, setCreatedAt] = useState('');
+    const [loading,setLoading] = useState(true);
 
     const router = useRouter();
     const params = useParams();
@@ -32,6 +34,7 @@ const EditClass = () => {
         };
 
         fetchFolders();
+        handleGetDetails();
     }, [params.classId]);
 
     const handleGetDetails = async () => {
@@ -44,6 +47,8 @@ const EditClass = () => {
             setFolderName(res.data?.Folder?.title);
             setSelectedFolder(res.data?.Folder.id);
             setCreatedAt(res.data?.createdAt?.toString());
+            
+            setLoading(false);
             setShowForm(true);
         } catch (error: any) {
             console.log(error);
@@ -56,7 +61,7 @@ const EditClass = () => {
         }
 
         setTextValue('Modifying Class...');
-
+        setLoading(true);
         try {
             const res = await axios.put('/api/classes/editClass', {
                 classId: params.classId,
@@ -96,6 +101,7 @@ const EditClass = () => {
                     <div className="flex flex-col items-center">
                         <select
                             value={videoType}
+                            disabled = {loading}
                             onChange={(e) => setVideoType(e.target.value)}
                             className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
                         >
@@ -106,6 +112,7 @@ const EditClass = () => {
                         </select>
                         <input
                             type="text"
+                            disabled = {loading}
                             placeholder="Enter video link"
                             value={videoLink}
                             onChange={(e) => setVideoLink(e.target.value)}
@@ -113,13 +120,15 @@ const EditClass = () => {
                         />
                         <input
                             type="text"
+                            disabled 
                             placeholder="Enter class title"
                             value={classTitle}
                             onChange={(e) => setClassTitle(e.target.value)}
-                            className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
+                            className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4 select-none"
                         />
                         <input
                         type="date"
+                        disabled = {loading}
                         placeholder="Enter class date"
                         value={createdAt}
                         onChange={(e) => setCreatedAt(e.target.value)}
@@ -128,6 +137,7 @@ const EditClass = () => {
 
                         <select
                             value={selectedFolder}
+                            disabled = {loading}
                             onChange={(e) => setSelectedFolder(e.target.value)}
                             className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
                         >
@@ -142,6 +152,7 @@ const EditClass = () => {
                         {(selectedFolder === 'new') && (
                             <input
                                 type="text"
+                                disabled = {loading}
                                 placeholder="Enter new folder name"
                                 value={folderName}
                                 onChange={(e) => setFolderName(e.target.value)}
@@ -149,7 +160,7 @@ const EditClass = () => {
                             />
                         )}
                         <Button
-                            disabled={!videoLink || !classTitle || !videoType || textValue === 'Creating Class'}
+                            disabled={!videoLink || !classTitle || !videoType || textValue === 'Creating Class' }
                             className="flex justify-between items-center bg-secondary-700 hover:bg-secondary-800 text-white"
                             onClick={handleEditClass}
                         >
@@ -165,14 +176,7 @@ const EditClass = () => {
                         </Button>
                     </div>
                     : (
-                        <div className="flex flex-col items-center">
-                            <Button
-                                className="flex justify-between items-center bg-secondary-700 text-white hover:bg-secondary-800"
-                                onClick={() => { setShowForm(true), handleGetDetails() }}
-                            >
-                                Modify Class
-                            </Button>
-                        </div>
+                        <Loader />
                     )
             }
         </div>
