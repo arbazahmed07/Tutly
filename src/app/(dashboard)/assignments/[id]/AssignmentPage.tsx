@@ -3,9 +3,10 @@ import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { divide } from "lodash";
 import Image from "next/image";
+import { FaSearch } from "react-icons/fa";
 
 export default function AssignmentPage({
   params,
@@ -18,6 +19,7 @@ export default function AssignmentPage({
   assignment: any;
   assignments: any;
 }) {
+<<<<<<< HEAD
 
   const [searchQuery, setSearchQuery] = useState("");
   let filteredSubmissions;
@@ -35,12 +37,15 @@ const sortSubmissions = () => {
   );
 };
 
+=======
+>>>>>>> 609085dabc08ba57994429135949bc8d497ba433
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedScores, setEditedScores] = useState({
     responsiveness: 0,
     styling: 0,
     other: 0,
   });
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const router = useRouter();
 
@@ -94,36 +99,39 @@ const sortSubmissions = () => {
       router.refresh();
     }
   };
-  const pathname=usePathname()
+
+  const searchParams = useSearchParams();
+  
+  const userId = searchParams?.get("userId");
+  let filteredAssignments;
+  if(!userId){
+    filteredAssignments = assignments?.filter((x: any) =>
+      (x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())||x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  }
   // return <pre>{JSON.stringify(assignments, null, 2)}</pre>
   return (
     <div className="mx-2 md:mx-10 my-2 relative">
       <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 text-white rounded text-sm md:text-lg font-medium">
         Assignment Submission : {assignment?.title}
       </h1>
+
       <div className="flex items-center justify-between my-4 text-xs md:text-sm font-medium">
         <p className="rounded p-1 px-2 bg-secondary-500 text-white">
           # {assignment?.class?.course?.title}
         </p>
-        <div className= "flex justify-center items-center gap-4">
+        <div className="flex justify-center items-center gap-4">
           {assignment?.dueDate != null && (
-              <div
-                className={`p-1 px-2 rounded text-white ${
-                  new Date(assignment?.dueDate) > new Date()
-                    ? "bg-primary-600"
-                    : "bg-secondary-500"
-                }`}
-              >
-                Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
-              </div>
-            )}
-          <h1 className="border rounded-md py-1 px-4 text-sm">Max responses : {assignment?.maxSubmissions}</h1>
-          {
-            currentUser?.role === "INSTRUCTOR" &&   
-            <button onClick={()=>router.push(`/attachments/edit/${assignment.id}`)} className="py-1 px-4 bg-emerald-700 hover:bg-emerald-800 rounded-md">
-              Edit  
-            </button>
-          }
+            <div
+              className={`p-1 px-2 rounded text-white ${
+                new Date(assignment?.dueDate) > new Date()
+                  ? "bg-primary-600"
+                  : "bg-secondary-500"
+              }`}
+            >
+              Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
+            </div>
+          )}
         </div>
       </div>
       <div className=" flex justify-between items-center w-full">
@@ -135,7 +143,7 @@ const sortSubmissions = () => {
           {currentUser?.role === "INSTRUCTOR" && (
             <button
               onClick={() => router.push(`/attachments/edit/${assignment.id}`)}
-              className=" p-2 bg-emerald-700 hover:bg-emerald-800 rounded-xl"
+              className=" p-1 px-3 bg-emerald-700 hover:bg-emerald-800 rounded-md"
             >
               edit
             </button>
@@ -180,23 +188,13 @@ const sortSubmissions = () => {
             </Link>
           )}
         </div>
-        {
-        (pathname===`/assignments/${params.id}`) && assignment.submissions.length > 0 ? (
+        {(userId && assignment.submissions.length > 0)||(currentUser?.role === "STUDENT") ? (
           <>
             <h1>
               <span className="block mt-5 dark:text-white">
                 Submissions : 👇
               </span>
             </h1>
-            <div className="my-4">
-            <input
-              type="text"
-              placeholder="Search by username"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              className="p-2 border border-gray-300 rounded-md w-full"
-            />
-            </div>
             <div className="overflow-x-auto">
               <table className="text-center w-full">
                 <thead className="bg-secondary-300 text-secondary-700">
@@ -256,154 +254,154 @@ const sortSubmissions = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredSubmissions?.map((submission: any, index: any) => {
-                    const rValue = submission.points.find(
-                      (point: any) => point.category === "RESPOSIVENESS"
-                    );
-                    const sValue = submission.points.find(
-                      (point: any) => point.category === "STYLING"
-                    );
-                    const oValue = submission.points.find(
-                      (point: any) => point.category === "OTHER"
-                    );
+                  {assignment?.submissions.map(
+                    (submission: any, index: any) => {
+                      const rValue = submission.points.find(
+                        (point: any) => point.category === "RESPOSIVENESS"
+                      );
+                      const sValue = submission.points.find(
+                        (point: any) => point.category === "STYLING"
+                      );
+                      const oValue = submission.points.find(
+                        (point: any) => point.category === "OTHER"
+                      );
 
-                    const totalScore = [rValue, sValue, oValue].reduce(
-                      (acc, currentValue) => {
-                        return acc + (currentValue ? currentValue.score : 0);
-                      },
-                      0
-                    );
+                      const totalScore = [rValue, sValue, oValue].reduce(
+                        (acc, currentValue) => {
+                          return acc + (currentValue ? currentValue.score : 0);
+                        },
+                        0
+                      );
 
-                    return (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {index + 1}
-                        </td>
-                        <td
-                          className={`${
-                            currentUser?.role === "STUDENT" && "hidden"
-                          } px-6 py-4 whitespace-nowrap`}
-                        >
-                          <a
-                            target="_blank"
-                            href={submission.submissionLink}
-                            className="text-blue-400 font-semibold break-words"
+                      return (
+                        <tr key={index}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {index + 1}
+                          </td>
+                          <td
+                            className={`${
+                              currentUser?.role === "STUDENT" && "hidden"
+                            } px-6 py-4 whitespace-nowrap`}
                           >
-                            LINK
-                          </a>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {submission.submissionDate
-                            .toISOString()
-                            .split("T")[0] || "NA"}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {editingIndex === index ? (
-                            <input
-                              title="null"
-                              type="number"
-                              value={editedScores.responsiveness}
-                              onChange={(e) => {
-                                const newScore = parseInt(e.target.value);
-                                setEditedScores((prevScores) => ({
-                                  ...prevScores,
-                                  responsiveness: newScore,
-                                }));
-                              }}
-                              className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                            />
-                          ) : (
-                            rValue?.score || "NA"
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {editingIndex === index ? (
-                            <input
-                              title="null"
-                              type="number"
-                              value={editedScores.styling}
-                              onChange={(e) => {
-                                const newScore = parseInt(e.target.value);
-                                setEditedScores((prevScores) => ({
-                                  ...prevScores,
-                                  styling: newScore,
-                                }));
-                              }}
-                              className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                            />
-                          ) : (
-                            sValue?.score || "NA"
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {editingIndex === index ? (
-                            <input
-                              title="null"
-                              type="number"
-                              value={editedScores.other}
-                              onChange={(e) => {
-                                const newScore = parseInt(e.target.value);
-                                setEditedScores((prevScores) => ({
-                                  ...prevScores,
-                                  other: newScore,
-                                }));
-                              }}
-                              className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                            />
-                          ) : (
-                            oValue?.score || "NA"
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {rValue?.score || sValue?.score || oValue?.score
-                            ? totalScore
-                            : "NA"}
-                        </td>
-                        {currentUser.role !== "STUDENT" && (
+                            <a
+                              target="_blank"
+                              href={submission.submissionLink}
+                              className="text-blue-400 font-semibold break-words"
+                            >
+                              LINK
+                            </a>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {submission.submissionDate
+                              .toISOString()
+                              .split("T")[0] || "NA"}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {editingIndex === index ? (
-                              <button
-                                onClick={() => handleSave(index)}
-                                className="text-blue-600 font-semibold"
-                              >
-                                Save
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => {
-                                  handleEdit(index);
+                              <input
+                                title="null"
+                                type="number"
+                                value={editedScores.responsiveness}
+                                onChange={(e) => {
+                                  const newScore = parseInt(e.target.value);
+                                  setEditedScores((prevScores) => ({
+                                    ...prevScores,
+                                    responsiveness: newScore,
+                                  }));
                                 }}
-                                className="text-blue-600 font-semibold"
-                              >
-                                Edit
-                              </button>
+                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                              />
+                            ) : (
+                              rValue?.score || "NA"
                             )}
                           </td>
-                        )}
-                      </tr>
-                    );
-                  })}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {editingIndex === index ? (
+                              <input
+                                title="null"
+                                type="number"
+                                value={editedScores.styling}
+                                onChange={(e) => {
+                                  const newScore = parseInt(e.target.value);
+                                  setEditedScores((prevScores) => ({
+                                    ...prevScores,
+                                    styling: newScore,
+                                  }));
+                                }}
+                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                              />
+                            ) : (
+                              sValue?.score || "NA"
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {editingIndex === index ? (
+                              <input
+                                title="null"
+                                type="number"
+                                value={editedScores.other}
+                                onChange={(e) => {
+                                  const newScore = parseInt(e.target.value);
+                                  setEditedScores((prevScores) => ({
+                                    ...prevScores,
+                                    other: newScore,
+                                  }));
+                                }}
+                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                              />
+                            ) : (
+                              oValue?.score || "NA"
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {rValue?.score || sValue?.score || oValue?.score
+                              ? totalScore
+                              : "NA"}
+                          </td>
+                          {currentUser.role !== "STUDENT" && (
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {editingIndex === index ? (
+                                <button
+                                  onClick={() => handleSave(index)}
+                                  className="text-blue-600 font-semibold"
+                                >
+                                  Save
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    handleEdit(index);
+                                  }}
+                                  className="text-blue-600 font-semibold"
+                                >
+                                  Edit
+                                </button>
+                              )}
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    }
+                  )}
                 </tbody>
               </table>
             </div>
           </>
-        ) : 
-          pathname===`/assignments/${params.id}` && (currentUser?.role==="MENTOR" || currentUser.role==="INSTRUCTOR") ?(
+        ) : (!userId) &&
+          (currentUser?.role === "MENTOR" ||
+            currentUser.role === "INSTRUCTOR") ? (
           <>
-            <div className="my-4 flex justify-between">
-              <h1>
-                <span className="block mt-5 dark:text-white">
-                  Submissions : 👇
-                </span>
-              </h1>
-              <div className="dark:text-white">
-              <input
-                    type="text"
-                    placeholder="Search by username"
-                    value={searchQuery}
-                    onChange={handleSearchInputChange}
-                    className="p-2 border border-gray-300 rounded-md w-full"
-                  />
+            <div className="flex justify-between">
+              <div className="block mt-5 dark:text-white">Submissions : 👇</div>
+              <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
+                <input
+                  title="input"
+                  className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
+                  placeholder="search username"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <FaSearch className="h-5 w-5 m-2" />
               </div>
             </div>
             <div className="overflow-x-auto">
@@ -416,7 +414,13 @@ const sortSubmissions = () => {
                     >
                       sl.no
                     </th>
+<<<<<<< HEAD
                     <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider" onClick={()=>sortSubmissions()}>username</th>
+=======
+                    <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
+                      username
+                    </th>
+>>>>>>> 609085dabc08ba57994429135949bc8d497ba433
                     <th
                       scope="col"
                       className={`${
@@ -466,134 +470,137 @@ const sortSubmissions = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredSubmissions?.map((submission: any, index: any) => {
-                    const rValue = submission.points.find(
-                      (point: any) => point.category === "RESPOSIVENESS"
-                    );
-                    const sValue = submission.points.find(
-                      (point: any) => point.category === "STYLING"
-                    );
-                    const oValue = submission.points.find(
-                      (point: any) => point.category === "OTHER"
-                    );
+                  {filteredAssignments
+                  ?.map(
+                    (submission: any, index: any) => {
+                      const rValue = submission.points.find(
+                        (point: any) => point.category === "RESPOSIVENESS"
+                      );
+                      const sValue = submission.points.find(
+                        (point: any) => point.category === "STYLING"
+                      );
+                      const oValue = submission.points.find(
+                        (point: any) => point.category === "OTHER"
+                      );
 
-                    const totalScore = [rValue, sValue, oValue].reduce(
-                      (acc, currentValue) => {
-                        return acc + (currentValue ? currentValue.score : 0);
-                      },
-                      0
-                    );
+                      const totalScore = [rValue, sValue, oValue].reduce(
+                        (acc, currentValue) => {
+                          return acc + (currentValue ? currentValue.score : 0);
+                        },
+                        0
+                      );
 
-                    return (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {index + 1}
-                        </td>
-                        <td>{submission.enrolledUser.username}</td>
-                        <td
-                          className={`${
-                            currentUser?.role === "STUDENT" && "hidden"
-                          } px-6 py-4 whitespace-nowrap`}
-                        >
-                          <a
-                            target="_blank"
-                            href={submission.submissionLink}
-                            className="text-blue-400 font-semibold break-words"
+                      return (
+                        <tr key={index}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {index + 1}
+                          </td>
+                          <td>{submission.enrolledUser.username}</td>
+                          <td
+                            className={`${
+                              currentUser?.role === "STUDENT" && "hidden"
+                            } px-6 py-4 whitespace-nowrap`}
                           >
-                            LINK
-                          </a>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {submission.submissionDate
-                            .toISOString()
-                            .split("T")[0] || "NA"}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {editingIndex === index ? (
-                            <input
-                              title="null"
-                              type="number"
-                              value={editedScores.responsiveness}
-                              onChange={(e) => {
-                                const newScore = parseInt(e.target.value);
-                                setEditedScores((prevScores) => ({
-                                  ...prevScores,
-                                  responsiveness: newScore,
-                                }));
-                              }}
-                              className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                            />
-                          ) : (
-                            rValue?.score || "NA"
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {editingIndex === index ? (
-                            <input
-                              title="null"
-                              type="number"
-                              value={editedScores.styling}
-                              onChange={(e) => {
-                                const newScore = parseInt(e.target.value);
-                                setEditedScores((prevScores) => ({
-                                  ...prevScores,
-                                  styling: newScore,
-                                }));
-                              }}
-                              className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                            />
-                          ) : (
-                            sValue?.score || "NA"
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {editingIndex === index ? (
-                            <input
-                              title="null"
-                              type="number"
-                              value={editedScores.other}
-                              onChange={(e) => {
-                                const newScore = parseInt(e.target.value);
-                                setEditedScores((prevScores) => ({
-                                  ...prevScores,
-                                  other: newScore,
-                                }));
-                              }}
-                              className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                            />
-                          ) : (
-                            oValue?.score || "NA"
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {rValue?.score || sValue?.score || oValue?.score
-                            ? totalScore
-                            : "NA"}
-                        </td>
-                        {currentUser.role !== "STUDENT" && (
+                            <a
+                              target="_blank"
+                              href={submission.submissionLink}
+                              className="text-blue-400 font-semibold break-words"
+                            >
+                              LINK
+                            </a>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {submission.submissionDate
+                              .toISOString()
+                              .split("T")[0] || "NA"}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {editingIndex === index ? (
-                              <button
-                                onClick={() => handleSave(index)}
-                                className="text-blue-600 font-semibold"
-                              >
-                                Save
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => {
-                                  handleEdit(index);
+                              <input
+                                title="null"
+                                type="number"
+                                value={editedScores.responsiveness}
+                                onChange={(e) => {
+                                  const newScore = parseInt(e.target.value);
+                                  setEditedScores((prevScores) => ({
+                                    ...prevScores,
+                                    responsiveness: newScore,
+                                  }));
                                 }}
-                                className="text-blue-600 font-semibold"
-                              >
-                                Edit
-                              </button>
+                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                              />
+                            ) : (
+                              rValue?.score || "NA"
                             )}
                           </td>
-                        )}
-                      </tr>
-                    );
-                  })}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {editingIndex === index ? (
+                              <input
+                                title="null"
+                                type="number"
+                                value={editedScores.styling}
+                                onChange={(e) => {
+                                  const newScore = parseInt(e.target.value);
+                                  setEditedScores((prevScores) => ({
+                                    ...prevScores,
+                                    styling: newScore,
+                                  }));
+                                }}
+                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                              />
+                            ) : (
+                              sValue?.score || "NA"
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {editingIndex === index ? (
+                              <input
+                                title="null"
+                                type="number"
+                                value={editedScores.other}
+                                onChange={(e) => {
+                                  const newScore = parseInt(e.target.value);
+                                  setEditedScores((prevScores) => ({
+                                    ...prevScores,
+                                    other: newScore,
+                                  }));
+                                }}
+                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                              />
+                            ) : (
+                              oValue?.score || "NA"
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {rValue?.score || sValue?.score || oValue?.score
+                              ? totalScore
+                              : "NA"}
+                          </td>
+                          {currentUser.role !== "STUDENT" && (
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {editingIndex === index ? (
+                                <button
+                                  onClick={() => handleSave(index)}
+                                  className="text-blue-600 font-semibold"
+                                >
+                                  Save
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    handleEdit(index);
+                                  }}
+                                  className="text-blue-600 font-semibold"
+                                >
+                                  Edit
+                                </button>
+                              )}
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    }
+                  )}
                 </tbody>
               </table>
             </div>
@@ -609,10 +616,8 @@ const sortSubmissions = () => {
             /> 
             <h1 className="text-white">No submissions yet!</h1>
           </div>
-        )
-        }
+        )}
       </div>
-      <pre>{JSON.stringify(assignments,null,2)}</pre>
     </div>
   );
 }

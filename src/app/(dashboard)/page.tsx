@@ -46,7 +46,7 @@ export default async function Home() {
             Welcome back {currentUser?.name} 👏
           </h1>
           <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report for {}
+            Here is your report
           </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
@@ -112,7 +112,7 @@ export default async function Home() {
             Welcome back {currentUser?.name} 👏
           </h1>
           <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report for {}
+            Here is your report
           </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
@@ -168,7 +168,7 @@ export default async function Home() {
             Welcome back {currentUser?.name} 👏
           </h1>
           <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report for {}
+            Here is your report
           </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
