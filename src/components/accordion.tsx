@@ -194,7 +194,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                   doubts?.length !== 0 && 
             <div id="accordion-color" data-accordion="collapse" className="mt-5 cursor-pointer" >
             {QA?.map((qa : any, index : number) => ( 
-                <div key={index} className={`relative cursor-pointer mb-1 rounded-t-md ${openAccordion === index ? "bg-blue-500 text-white" :"bg-white text-zinc-500 shadow-3xl"} p-2 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]`}>
+                <div key={index} className={`relative cursor-pointer rounded-t-md ${openAccordion === index ? "shadow-xl" :" shadow-3xl"} bg-white text-zinc-500 p-2 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]`}>
                 <div className={`flex items-center justify-between w-full p-3 flex-wrap font-medium gap-3 rounded-t-lg`} >
                     <div className='flex justify-start items-center space-x-5 ml-2 relative'> 
                         {qa.user.role === 'STUDENT' &&
@@ -251,7 +251,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                   {
                       openAccordion === index &&  qa.response.length === 0 && (
                         <div className='absolute top-full left-0 z-40  w-full bg-white shadow-lg p-3'>
-                          <div className="flex justify-center items-center  space-x-2 mt-3 bg-secondary-200 p-2 rounded-lg hover:bg-secondary-300">
+                          <div className="flex justify-center items-center  space-x-2 bg-secondary-200 p-2 rounded-lg hover:bg-secondary-300">
                             <div className='flex items-center space-x-2'>
                               <p className="text-medium text-gray-800 flex justify-start items-center font-bold">No responses</p>
                             </div>
@@ -261,17 +261,17 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                   }
                   <div className="flex justify-between mx-4 items-center"> 
                     <div>   
-                      <h1 className="rounded-md text-lg font-medium text-justify">
+                      <h1 className="rounded-md text-sm font-bold text-justify">
                       {qa.description}
                       </h1>
-                    </div>
-                    <div onClick={() => toggleAccordion(index)}><p className="text-sm font-medium border-2 border-blue-500 py-1.5 px-3.5 rounded-lg">{openAccordion===-1?"Show":"Hide"} replies</p></div>
+                    </div> 
+                    <div onClick={() => toggleAccordion(index)} className="text-sm font-medium border-2 border-blue-500 py-1.5 px-3 rounded-lg"><span className="rounded-full p-1">{qa.response.length} </span>| {openAccordion===-1?"Show":"Hide"} replies</div>
                   </div>
                   {/* Replies */}
-                  <div className="flex space-x-2 items-center mt-3">
+                  <div className="flex px-3 mt-2 items-center">
                           {
                             popover && replyId === qa?.id && (   
-                                    <div className="bg-white border rounded-lg shadow-xl p-2 w-full">
+                                    <div className="bg-white border-2 rounded-lg p-3 w-full">
                                         <textarea
                                             placeholder="Enter your reply"
                                             value={reply}
@@ -284,23 +284,22 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                                 }
                                             }}
                                             onChange={(e) => setReply(e.target.value)}
-                                            className="w-full p-2 bg-gray-100 text-gray-800 border rounded-lg outline-none"
+                                            className="w-full p-2 bg-white text-gray-800 border-2 rounded-lg outline-none text-sm"
                                         ></textarea>  
-                                        <div className="flex justify-end text-sm font-medium">
-                                            <button
-                                                title="Send"
-                                                className="flex items-center gap-2 px-4 py-2 hover:bg-blue-600 bg-blue-500 text-white rounded-lg mr-2"
-                                                onClick={() => handleReply(qa.id)}
-                                            >
-                                                <RxCross2/>
-                                                Reply
-                                            </button>
+                                        <div className="flex justify-end text-sm font-medium mt-3">
                                             <button
                                                 title="Close"
-                                                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                                                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mr-2"
                                                 onClick={() => setReplyId('')}
                                             >
-                                                <RxCross2/> Cancel
+                                                  ✖ <p className="ml-1.5">Cancel</p>
+                                            </button>
+                                            <button
+                                                title="Send"
+                                                className="flex items-center gap-2 px-4 py-2 hover:bg-blue-600 bg-blue-500 text-white rounded-lg"
+                                                onClick={() => handleReply(qa.id)}
+                                            >
+                                                ✔ <p className="ml-1.5">Reply</p>
                                             </button>
                                         </div>
                                     </div>
@@ -308,13 +307,12 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                           }
                     </div>
                   {openAccordion === index && qa.response.length > 0 && (
-                    <div className="top-full left-0 z-50 w-full bg-white p-3 mt-2 rounded-lg text-black">
-                      
-
+                    <div className="top-full left-0 z-50 w-full bg-white p-3 rounded-lg text-black">
+                      <p className="font-semibold text-sm mb-2">Replies :</p>
                     {qa.response.map((r : any, responseIndex : number) => (
-                        <div key={responseIndex} className="mt-3 p-4 border-2 rounded-lg hover:bg-zinc-200 ">
+                        <div key={responseIndex} className="p-4 border-2 rounded-lg hover:bg-zinc-200 mb-2">
                           <div className="flex justify-between items-center">
-                          <div className='flex  space-x-5'>                                
+                          <div className='flex space-x-5'>                                
                                 {r.user?.role === 'STUDENT' &&
                                     <Image src={r.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
                                 }
@@ -332,12 +330,12 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                 }
                               <div className="flex flex-col justify-start gap-1">
                                   <div>
-                                    <p className='text-xs font-medium'>Replied on {formatDateTime(qa?.createdAt)}</p>
+                                    <p className='text-xs font-medium'>Replied on {formatDateTime(r?.createdAt)}</p>
                                   </div> 
                                   <div className="flex flex-row justify-start gap-1.5">
                         
-                                    <p className="text-xs font-semibold">byㅤ{qa?.user?.name} </p>
-                                    <p className='text-xs font-medium'> [ {qa.user?.username} ]</p>
+                                    <p className="text-xs font-semibold">byㅤ{r?.user?.name} </p>
+                                    <p className='text-xs font-medium'> [ {r.user?.username} ]</p>
                                   </div>                           
                               </div>
                             </div>
@@ -350,7 +348,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                   }
                               </div>
                           </div>
-                          <div className="text-lg font-medium mt-2 -mb-2">
+                          <div className="text-sm font-bold mt-2 -mb-2">
                               {r.description}
                           </div>
                         </div>
