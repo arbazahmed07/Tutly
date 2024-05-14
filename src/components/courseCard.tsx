@@ -50,11 +50,15 @@ export default function CourseCard({ course,currentUser }: any) {
             router.refresh()
         }
     }
-
+    const expired = () => {
+      const endDate = new Date(course.endDate);
+      const currentDate = new Date();
+      return currentDate > endDate;
+    };
 
     return (    
         <div  key={course.id} className="rounded-lg border m-auto mt-3 w-[280px] md:mx-2" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
-            <div className="h-[150px]  relative text-secondary-700 bg-white rounded-t-lg cursor-pointer" onClick={() => router.push(`/courses/${course.id}`) }>
+            <div className="h-[150px]  relative text-secondary-700 bg-white rounded-t-lg cursor-pointer" onClick={expired() ? () => router.push(`/courses`):() => router.push(`/courses/${course.id}`)}>
                 <div className="h-full w-full relative">
                     {course && course.image && (
                         <Image 
@@ -92,9 +96,15 @@ export default function CourseCard({ course,currentUser }: any) {
                 </div>
             </div>
             <div className="h-[50px] border-t flex justify-between px-2 items-center">
+              {
+                expired()?
+                <div className=" cursor-pointer" > 
+                  <h1 className="text-sm">{course?.title} [ Course Expired ]</h1>
+                </div>:
                 <div onClick={() => router.push(`/courses/${course.id}`) } className=" cursor-pointer" > 
                     <h1 className="text-sm">{course?.title}</h1>
                 </div>
+              }
                 <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
                     <MdOutlineEdit className=" w-5 h-5 cursor-pointer"  />
                 </button>
