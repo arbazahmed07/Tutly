@@ -10,6 +10,10 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const filteredStudents = students.filter((student: any) =>
+    student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
+    (student.name.toLowerCase().includes(searchQuery.toLowerCase())||student.username.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -19,10 +23,6 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
     return null;
   }
 
-  const filteredStudents = students.filter((student: any) =>
-    student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
-    (student.name.toLowerCase().includes(searchQuery.toLowerCase())||student.username.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
 
 
   return (
@@ -103,7 +103,18 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
           </div>
         ))
       ) : (
-        <div className="text-sm font-medium">No students found</div>
+        <div>
+            <p className=' text-xl font-semibold mt-5 flex justify-center items-center'>
+              No course is enrolled yet!
+            </p>
+            <Image
+                src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
+                height={400}
+                className="m-auto "
+                width={400}
+                alt=""
+              />
+          </div>
       )}
     </div>
   );

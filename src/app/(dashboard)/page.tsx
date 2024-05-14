@@ -1,11 +1,14 @@
 import {
   getDashboardData,
+  getLeaderboardDataForStudent,
   getMentorLeaderboardData,
+  getMentorLeaderboardDataForDashboard,
 } from "@/actions/getLeaderboard";
 import Image from "next/image";
 import { MdOutlineNoteAlt } from "react-icons/md";
 import { PiStudentBold } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
+import getLeaderboardData from "@/actions/getLeaderboard";
 import { SiTicktick } from "react-icons/si";
 import {
   getMentorStudents,
@@ -19,6 +22,14 @@ export default async function Home() {
   if (currentUser?.role === "STUDENT") {
     // student
     const data = await getDashboardData();
+    // const total =await getLeaderboardDataForStudent();
+    let total = 0;
+    // if (leaderboard) {
+    //   for (const score of leaderboard) {
+    //     total += score?.totalPoints || 0;
+    //   }
+    // }
+    // return <pre>{JSON.stringify(total,null,2)}</pre>
     if (!data) return;
     const {
       position,
@@ -27,6 +38,7 @@ export default async function Home() {
       assignmentsPending,
       currentUser,
     } = data;
+    // return <pre>{JSON.stringify(data,null,2)}</pre>
     return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
@@ -34,7 +46,7 @@ export default async function Home() {
             Welcome back {currentUser?.name} 👏
           </h1>
           <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report for {}
+            Here is your report
           </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
@@ -47,7 +59,7 @@ export default async function Home() {
               className="m-auto"
             />
             <p className="text-primary-600 font-bold pt-2">
-              {points ? points : 0}
+            {total===0?"NA":total}
             </p>
             <h1 className="p-1 text-sm font-bold">
               Your current Score in the Leaderboard.
@@ -62,7 +74,7 @@ export default async function Home() {
               className="m-auto"
             />
             <p className="text-primary-600 font-bold pt-2">
-              {position ? position : "NA"}
+              {total===0?"NA":position ? position : "NA"}
             </p>
             <h1 className="p-1 text-sm font-bold">
               Your current rank in the Leaderboard.
@@ -90,15 +102,17 @@ export default async function Home() {
     // mentor
     const mstudents = await getMentorStudents();
     const mcourses = await getMentorCourses();
-    const mleaderboard = await getMentorLeaderboardData();
-    return (
+    const mleaderboard = await getMentorLeaderboardDataForDashboard();
+    // return <pre>{JSON.stringify(mleaderboard, null, 2)}</pre>
+    
+      return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
           <h1 className="text-secondary-50 font-bold text-2xl">
             Welcome back {currentUser?.name} 👏
           </h1>
           <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report for {}
+            Here is your report
           </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
@@ -119,7 +133,7 @@ export default async function Home() {
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
             <SiTicktick className="m-auto h-20 w-20 text-blue-400 my-2" />
             <p className="text-primary-600 font-bold pt-2">
-              {mleaderboard?.sortedSubmissions?.length}
+              {mleaderboard}
             </p>
             <h1 className="p-1 text-sm font-bold">
               No of assignments evaluated
@@ -154,7 +168,7 @@ export default async function Home() {
             Welcome back {currentUser?.name} 👏
           </h1>
           <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report for {}
+            Here is your report
           </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">

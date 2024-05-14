@@ -62,7 +62,7 @@ function AddCourse() {
           </div>
           {openPopup && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30 backdrop-filter backdrop-blur-sm">
-              <div className="relative min-w-[300px] sm:min-w-[400px] max-w-[80%] bg-zinc-400 text-black p-4 rounded-lg">
+              <div className="relative min-w-[300px] sm:min-w-[400px] max-w-[80%] bg-zinc-400  p-4 rounded-lg">
                 <div
                   onClick={() => setOpenPopup(!openPopup)}
                   className="absolute top-2 right-2 cursor-pointer"
@@ -115,7 +115,7 @@ function AddCourse() {
                 <button
                   disabled={text === "Creating..."}
                   onClick={() => {handleSubmit(); setText("Creating...")}}
-                  className="rounded-md flex justify-center items-center disabled:bg-secondary-800 disabled:cursor-not-allowed bg-primary-500 hover:bg-primary-600 p-2  my-3 w-full"
+                  className="rounded-md font-semibold flex justify-center items-center disabled:bg-secondary-800 disabled:cursor-not-allowed bg-primary-500 hover:bg-primary-600 p-2  my-3 w-full"
                 >
                   {text}
                   &nbsp;

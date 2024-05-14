@@ -72,7 +72,13 @@ export const getEnrolledCourses = async () => {
       },
     },
   });
-  return courses;
+
+  const publishedCourses = courses.filter((course) => course.isPublished);
+  const instructorCourses = courses.filter((course) => course.createdById === currentUser.id);
+
+  if(currentUser.role === "INSTRUCTOR")
+    return instructorCourses;
+  return publishedCourses;
 };
 
 export const getCreatedCourses = async () => {
@@ -127,11 +133,7 @@ export const getMentorStudents = async () => {
     where: {
       enrolledUsers: {
         some: {
-          assignedMentors: {
-            some: {
-              mentorId: currentUser.id,
-            },
-          },
+          mentorUsername: currentUser.username,
         },
       },
     },
@@ -185,7 +187,7 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
       image ,
       enrolledUsers:{
         create:{
-          username:currentUser.username
+          username:currentUser.username,
         }
       }
     },
@@ -224,11 +226,7 @@ export const getMentorCourses = async () => {
     where: {
       enrolledUsers: {
         some: {
-          assignedMentors: {
-            some: {
-              mentorId: currentUser.id,
-            },
-          },
+          mentorUsername: currentUser.username,
         },
       },
     },

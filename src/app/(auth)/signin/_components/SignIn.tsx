@@ -46,7 +46,7 @@ const SignIn = () => {
           <input
             type="text"
             placeholder="Username"
-            className="border bg-white text-zinc-500 border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg w-full"
+            className="border bg-gray-500 border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg w-full"
             {...register("username", { required: true })}
           />
         </div>
@@ -55,17 +55,17 @@ const SignIn = () => {
           <input
             type={showPassword}
             placeholder="Password"
-            className="border bg-white text-zinc-500 border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg w-full"
+            className="border bg-gray-500 border-secondary-300 text-sm font-medium p-2.5 outline-none rounded-lg w-full"
             {...register("password", { required: true, minLength: 8 })}
           />
           {showPassword === 'password' ? 
             <FaRegEyeSlash 
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 text-zinc-700 w-5 h-5 cursor-pointer"
+              className="absolute top-1/2 right-4 transform -translate-y-1/2 text-zinc-700 w-5 h-5 dark:text-white cursor-pointer"
               onClick={() => setShowPassword('text')}
             />
             :
             <FaRegEye 
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 text-zinc-700 w-5 h-5 cursor-pointer"
+              className="absolute top-1/2 right-4 transform -translate-y-1/2 text-zinc-700 w-5 h-5 dark:text-white cursor-pointer"
               onClick={() => setShowPassword('password')}
             />
           }

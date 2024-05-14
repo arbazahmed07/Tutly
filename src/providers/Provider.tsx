@@ -5,7 +5,7 @@ import PlayGroundProvider from "./PlayGroundProvider";
 
 export default function Provider({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system">
+    <ThemeProvider attribute="class" defaultTheme="dark">
         <PlayGroundProvider>
           <Toaster />
           {children}

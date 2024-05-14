@@ -7,7 +7,7 @@ function CrispChatIntegration() {
         script.type = 'text/javascript';
         script.innerHTML = `
         window.$crisp=[];
-        window.CRISP_WEBSITE_ID="0f6c8db7-1314-4057-b152-28ff30d1d935";
+        window.CRISP_WEBSITE_ID="b1db5fec-2104-4c63-a771-59dcdcd17215";
         (function(){
             var d=document;
             var s=d.createElement("script");

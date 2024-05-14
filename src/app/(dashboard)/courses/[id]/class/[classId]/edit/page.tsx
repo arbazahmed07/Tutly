@@ -15,6 +15,7 @@ const EditClass = () => {
     const [folders, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState('');
     const [showForm, setShowForm] = useState(false);
+    const [createdAt, setCreatedAt] = useState('');
 
     const router = useRouter();
     const params = useParams();
@@ -42,8 +43,8 @@ const EditClass = () => {
             setClassTitle(res.data?.title);
             setFolderName(res.data?.Folder?.title);
             setSelectedFolder(res.data?.Folder.id);
+            setCreatedAt(res.data?.createdAt?.toString());
             setShowForm(true);
-
         } catch (error: any) {
             console.log(error);
         }
@@ -63,6 +64,7 @@ const EditClass = () => {
                 classTitle,
                 videoLink,
                 videoType,
+                createdAt : new Date(createdAt || ""),
                 folderId: selectedFolder != "new" ? selectedFolder : undefined,
                 folderName: selectedFolder == "new" ? folderName.trim() : undefined,
             });
@@ -75,6 +77,7 @@ const EditClass = () => {
                 setVideoLink('');
                 setClassTitle('');
                 setSelectedFolder('');
+                setCreatedAt('');
                 router.push(`/courses/${params.id}/class/${res.data.id}`);
             }
         } catch (error) {
@@ -85,9 +88,9 @@ const EditClass = () => {
         }
     };
 
+    
     return (
         <div className="mt-8">
-
             {
                 showForm ?
                     <div className="flex flex-col items-center">
@@ -115,6 +118,14 @@ const EditClass = () => {
                             onChange={(e) => setClassTitle(e.target.value)}
                             className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
                         />
+                        <input
+                        type="date"
+                        placeholder="Enter class date"
+                        value={createdAt}
+                        onChange={(e) => setCreatedAt(e.target.value)}
+                        className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
+                        />
+
                         <select
                             value={selectedFolder}
                             onChange={(e) => setSelectedFolder(e.target.value)}

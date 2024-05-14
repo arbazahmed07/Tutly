@@ -10,6 +10,7 @@ import { RxCross2 } from "react-icons/rx";
 
 
 export default function CourseCard({ course,currentUser }: any) {
+
     const router = useRouter();
     const [openPopup, setOpenPopup] = useState<boolean>(false);
     const [courseTitle, setCourseTitle] = useState<string>(course.title);
@@ -50,9 +51,9 @@ export default function CourseCard({ course,currentUser }: any) {
         }
     }
 
-    
+
     return (    
-        <div hidden={!course.isPublished && currentUser?.role !== 'INSTRUCTOR' } key={course.id} className="rounded-lg border m-auto mt-3 w-[280px] md:mx-2" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
+        <div  key={course.id} className="rounded-lg border m-auto mt-3 w-[280px] md:mx-2" style={{boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"}}>
             <div className="h-[150px]  relative text-secondary-700 bg-white rounded-t-lg cursor-pointer" onClick={() => router.push(`/courses/${course.id}`) }>
                 <div className="h-full w-full relative">
                     {course && course.image && (
@@ -160,12 +161,10 @@ export default function CourseCard({ course,currentUser }: any) {
                             className="rounded-md flex justify-center items-center disabled:bg-secondary-800 disabled:cursor-not-allowed bg-primary-500 hover:bg-primary-600 p-2 my-3 w-full text-white"
                           >
                             {text}
-
                           </button>
                         </div>
                       </div>
-                       
             )}  
-        </div>
+        </div>  
     )
 }

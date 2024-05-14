@@ -11,18 +11,33 @@ const MyOctokit = Octokit.plugin(createPullRequest);
 
 export const createSubmission = async (
   assignmentDetails: any,
-  files: any
+  files: any,
+  mentorDetails: any
 ) => {
   const user = await getCurrentUser();
   if (!user) {
     return { message: "unauthorized" };
   }
+
+  const submissions = await db.submission.findMany({
+    where: {
+      attachmentId: assignmentDetails.id,
+      enrolledUser:{
+        username:user.username
+      },
+    },
+  });
+
+  if (submissions.length >= assignmentDetails.maxSubmissions ) {
+    return { message: "Maximum submission limit reached" };
+  }
+
   const octokit = new MyOctokit({
     auth: process.env.GITHUB_PAT,
   });
   const submissionId = uuidv4();
   const pr = await octokit.createPullRequest({
-    owner: "WebWizards-Git",
+    owner: "GoodKodersUnV",
     repo: "LMS-DATA",
     title: `${assignmentDetails.title} submission by ${user.username}`,
     body: `
@@ -44,9 +59,9 @@ export const createSubmission = async (
       - Due Date: ${assignmentDetails.dueDate}
       - Submission Date: ${new Date().toISOString()}
       - Submission Files:
-        - index.html
-        - index.css
-        - index.js
+        ${Object.keys(files).map((file) => {
+          return `\n - ${file}`;
+        })}
       `,
     head: `${user.username?.trim()}-submissionId-${submissionId}`,
     base: `main`,
@@ -57,14 +72,15 @@ export const createSubmission = async (
       "assignment-submission",
       assignmentDetails.class.course.title,
       assignmentDetails.title,
+      `mentor-${mentorDetails.mentor.username}`,
     ],
     changes: [
       {
         files,
         commit: `submitted assignment ${assignmentDetails.id} by ${user.username}`,
         author: {
-          name: user.name as string,
-          email: "udaysagar.mail@gmail.com",
+          name: "goodkodersUnV",
+          email: "goodkodersUnV@gmail.com",
           date: new Date().toISOString(),
         },
       },
@@ -79,9 +95,10 @@ export const createSubmission = async (
 
   const enrolledUser = await db.enrolledUsers.findUnique({
     where:{
-      username_courseId:{
+      username_courseId_mentorUsername:{
         username:user.username,
-        courseId:assignmentDetails.class.courseId
+        courseId:assignmentDetails.class.courseId,
+        mentorUsername:mentorDetails.mentor.username
       }
     }
   });

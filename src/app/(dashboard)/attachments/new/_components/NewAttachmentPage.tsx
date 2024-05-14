@@ -3,7 +3,7 @@
 import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import {
@@ -18,14 +18,11 @@ import {
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
 
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
 import { Button } from '@/components/ui/button'
@@ -33,24 +30,24 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { FaFilePen } from "react-icons/fa6";
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 
 const formSchema = z.object({
     title: z.string().min(1, {
         message: 'Title is required'
     }),
-    videoLink: z.string().min(1, {
-        message: 'Link is required'
-    }),
-    videoType: z.string().min(1, {
+    link: z.string().optional(),
+    attachmentType: z.string().min(1, {
         message: 'Type is required'
     }),
     class: z.string().min(1, {
         message: 'class is required'
     }),
-    details: z.string(),
-    dueDate: z.string()
+    courseId: z.string().optional(),
+    details: z.string().optional(),
+    dueDate: z.string().optional(),
+    maxSubmissions: z.string().transform((v) => Number(v) || 0).optional()
 })
 
 const NewAttachmentPage = () => {
@@ -58,55 +55,50 @@ const NewAttachmentPage = () => {
     const searchParams = useSearchParams()
     const courseId = searchParams.get('courseId')
     const classId = searchParams.get('classId')
-    const pathname = usePathname()
     const [classes, setClasses] = useState([])
     const [loading, setLoading] = useState(true)
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get(`/api/classes/getClassesById/${courseId}`)
             setClasses(response.data)
-            setLoading(false)   
+            setLoading(false)
         }
         fetchData()
-        
+
     }, [courseId])
 
-    // const createQueryString = useCallback(
-    //     (name: string, value: string) => {
-    //         const params = new URLSearchParams(searchParams.toString())
-    //         params.set(name, value)
-
-    //         return params.toString()
-    //     },
-    //     [searchParams]
-    // )
 
     const router = useRouter()
-
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: '',
-            videoLink: '',
-            videoType: '',
+            link: '',
+            attachmentType: '',
             class: '',
+            courseId: '',
             details: '',
-            dueDate: ''
+            dueDate: '',
+            maxSubmissions: 1
         }
     })
 
-    const { isSubmitting, isValid } = form.formState
+    const { isSubmitting } = form.formState
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+
+        const dueDate = values?.dueDate !== "" && values.dueDate ? new Date(values.dueDate) : undefined;
 
         const response = await axios.post('/api/attachments/create', {
             title: values.title,
             classId: values.class,
-            link: values.videoLink,
-            attachmentType: values.videoType,
+            link: values.link,
+            attachmentType: values.attachmentType,
             details: values.details,
-            dueDate: values?.dueDate!="" ? new Date(values.dueDate).toISOString() : undefined
+            dueDate: dueDate?.toISOString(),
+            maxSubmissions: values?.maxSubmissions,
+            courseId: courseId as string
         })
 
         if (response.status !== 200) {
@@ -138,7 +130,7 @@ const NewAttachmentPage = () => {
                                             <FormControl>
                                                 <Input className='text-sm' disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.title?.message}</FormMessage>
+                                            <FormMessage className='text-red-700 font-bold'>{form.formState.errors.title?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -146,7 +138,7 @@ const NewAttachmentPage = () => {
                             <div className='mt-5 '>
                                 <FormField
                                     control={form.control}
-                                    name="videoType"
+                                    name="attachmentType"
                                     render={({ field }) => {
                                         return (
                                             <FormItem >
@@ -158,7 +150,7 @@ const NewAttachmentPage = () => {
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger>
-                                                            <SelectValue placeholder="Select a type"  />
+                                                            <SelectValue placeholder="Select a type" />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className=' bg-secondary-700 text-white'>
@@ -168,7 +160,7 @@ const NewAttachmentPage = () => {
                                                         <SelectItem className=' hover:bg-secondary-800' value="OTHERS">Other</SelectItem>
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage />
+                                                <FormMessage className='text-red-700 font-bold' />
                                             </FormItem>
                                         );
                                     }}
@@ -176,15 +168,14 @@ const NewAttachmentPage = () => {
                             </div>
                             <div className='mt-5'>
                                 <FormField
-                                    name='videoLink'
+                                    name='maxSubmissions'
                                     control={form.control}
                                     render={({ field }) => (
-                                        <FormItem className=' '>
-                                            <FormLabel>Link</FormLabel>
+                                        <FormItem className='  '>
+                                            <FormLabel>Max Submissions</FormLabel>
                                             <FormControl>
-                                                <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
+                                                <Input type='number' className='text-sm' disabled={isSubmitting} placeholder='eg., max Submissions...' {...field} />
                                             </FormControl>
-                                            <FormMessage>{form.formState.errors.videoLink?.message}</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -224,13 +215,10 @@ const NewAttachmentPage = () => {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className=' bg-secondary-700 text-white' >
-                                                        {classes.map((c:any) => (
+                                                        {classes.map((c: any) => (
                                                             <SelectItem
                                                                 key={c.id}
                                                                 value={c.id}
-                                                                // onClick={() => {
-                                                                //     router.push(pathname + '?' + createQueryString('classId', c.id))
-                                                                // }}
                                                                 className=' hover:bg-secondary-800'
                                                                 defaultChecked={c.id === classId as string}
                                                             >
@@ -239,35 +227,49 @@ const NewAttachmentPage = () => {
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage />
+                                                <FormMessage className=' text-red-700 font-bold' />
                                             </FormItem>
                                         );
                                     }}
                                 />
                             </div>
                         </div>
-                            <div className=' col-span-5' >
-                                <FormField
-                                    name='details'
-                                    control={form.control}
-                                    render={({ field }) => (
-                                        <FormItem className=' '>
-                                            <FormLabel>Details</FormLabel>
-                                            <FormControl>
-                                                <Textarea className='text-sm' disabled={isSubmitting} placeholder='Write some details here...' {...field} />
-                                            </FormControl>
-                                            <FormMessage>{form.formState.errors.details?.message}</FormMessage>
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+                        <div className='mt-5'>
+                            <FormField
+                                name='link'
+                                control={form.control}
+                                render={({ field }) => (
+                                    <FormItem className=' '>
+                                        <FormLabel>Link</FormLabel>
+                                        <FormControl>
+                                            <Input className='text-sm' disabled={isSubmitting} placeholder='Paste Link here...' {...field} />
+                                        </FormControl>
+                                        <FormMessage className=' text-red-700'>{form.formState.errors.link?.message}</FormMessage>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className=' col-span-5' >
+                            <FormField
+                                name='details'
+                                control={form.control}
+                                render={({ field }) => (
+                                    <FormItem className=' '>
+                                        <FormLabel>Details</FormLabel>
+                                        <FormControl>
+                                            <Textarea className='text-sm' disabled={isSubmitting} placeholder='Write some details here...' {...field} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                         <div className=' flex items-center gap-x-3 text-white'>
                             <Link href={'/'}>
                                 <Button className='bg-red-700' variant={"destructive"} style={{ backgroundColor: '#b91c1c' }} >
                                     Cancel
                                 </Button>
                             </Link>
-                            <Button type='submit' disabled={!isValid || isSubmitting} style={{ border: '2px solid #6b7280' , backgroundColor: '#6b7280' }} >
+                            <Button type='submit' disabled={isSubmitting} style={{ border: '2px solid #6b7280', backgroundColor: '#6b7280' }} >
                                 Continue
                             </Button>
                         </div>
