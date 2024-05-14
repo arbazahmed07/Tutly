@@ -150,7 +150,7 @@ export default function AssignmentPage({
             currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR"
           }
         >
-          {assignment.maxSubmissions <= assignment.submissions.length ? (
+          {assignment?.maxSubmissions <= assignment.submissions.length ? (
             <div className="text-white font-semibold text-center my-5">
               No more responses are accepted!
             </div>

@@ -124,7 +124,7 @@ const EditClass = () => {
                             placeholder="Enter class title"
                             value={classTitle}
                             onChange={(e) => setClassTitle(e.target.value)}
-                            className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4 select-none"
+                            className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4 select-none cursor-not-allowed"
                         />
                         <input
                         type="date"
