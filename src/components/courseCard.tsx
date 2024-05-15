@@ -106,21 +106,21 @@ export default function CourseCard({ course,currentUser }: any) {
                 <div onClick={() => router.push(`/courses/${course.id}`) } className=" cursor-pointer" > 
                     <h1 className="text-sm">{course?.title}</h1>
                 </div>
-
+              }
                 {
-                  currentUser.role === 'INSTRUCTOR' && 
-                <div className=" flex items-center justify-between gap-3">
-                  <Suspense fallback={<Loader />}>
-                    <button onClick={()=>router.push(`/courses/${course.id}/allUsers`)}>
-                        <FaUsersGear className=" w-5 h-5 cursor-pointer  hover:opacity-100 opacity-90"  />
-                    </button>
-                  </Suspense>
-                  <Suspense fallback={<Loader />}>
-                    <button onClick={()=>setOpenPopup(true)}>
-                        <MdOutlineEdit className=" w-5 h-5 cursor-pointer  hover:opacity-100 opacity-90"  />
-                    </button>
-                  </Suspense>
-                </div>
+                    currentUser.role === 'INSTRUCTOR' && 
+                  <div className=" flex items-center justify-between gap-3">
+                    <Suspense fallback={<Loader />}>
+                      <button onClick={()=>router.push(`/courses/${course.id}/allUsers`)}>
+                          <FaUsersGear className=" w-5 h-5 cursor-pointer  hover:opacity-100 opacity-90"  />
+                      </button>
+                    </Suspense>
+                    <Suspense fallback={<Loader />}>
+                      <button onClick={()=>setOpenPopup(true)}>
+                          <MdOutlineEdit className=" w-5 h-5 cursor-pointer  hover:opacity-100 opacity-90"  />
+                      </button>
+                    </Suspense>
+                  </div>
                 }
 
             </div>
@@ -130,7 +130,7 @@ export default function CourseCard({ course,currentUser }: any) {
                         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30 backdrop-filter backdrop-blur-sm">
                         <div className="relative min-w-[300px] sm:min-w-[400px] dark:text-white max-w-[80%] bg-zinc-400 text-black p-4 rounded-lg">
                           <div
-                            onClick={() => setOpenPopup(!openPopup)}
+                            onClick={() => setOpenPopup(!openPopup) }
                             className="absolute top-2 right-2 cursor-pointer"
                           >
                             <RxCross2 className="h-7 w-7"/>
