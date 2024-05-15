@@ -3,8 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { divide } from "lodash";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { FaSearch } from "react-icons/fa";
 
@@ -19,26 +18,6 @@ export default function AssignmentPage({
   assignment: any;
   assignments: any;
 }) {
-<<<<<<< HEAD
-
-  const [searchQuery, setSearchQuery] = useState("");
-  let filteredSubmissions;
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-  };
-
-  filteredSubmissions = assignments?.submissions.filter((submission: any) =>
-    submission.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()));
-
-const sortSubmissions = () => {
-  filteredSubmissions = [...assignments?.submissions].sort((a, b) =>
-    a.enrolledUser.username.localeCompare(b.enrolledUser.username)
-  );
-};
-
-=======
->>>>>>> 609085dabc08ba57994429135949bc8d497ba433
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedScores, setEditedScores] = useState({
     responsiveness: 0,
@@ -414,13 +393,9 @@ const sortSubmissions = () => {
                     >
                       sl.no
                     </th>
-<<<<<<< HEAD
-                    <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider" onClick={()=>sortSubmissions()}>username</th>
-=======
                     <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                       username
                     </th>
->>>>>>> 609085dabc08ba57994429135949bc8d497ba433
                     <th
                       scope="col"
                       className={`${
