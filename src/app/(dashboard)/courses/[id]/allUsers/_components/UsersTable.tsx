@@ -7,7 +7,7 @@ import { FaCheck, FaUserPlus } from 'react-icons/fa';
 import { RiGlobalLine } from "react-icons/ri";
 import { TbUserOff } from "react-icons/tb";
 import { TbUserSearch } from "react-icons/tb";
-import { PiEmptyLight } from "react-icons/pi";
+import { MdOutlineBlock } from "react-icons/md";
 
 
 const UserTable = ({ users, params }: { users: Array<any>, params: any }) => {
@@ -100,7 +100,7 @@ return (
                 <tr className='  '>
                     <td colSpan={6} className="text-center text-xl py-4  ">
                         <div className=' flex items-center justify-center px-16 '>
-                            No users found <PiEmptyLight className='w-8 h-8' /> 
+                            No users found <MdOutlineBlock className='w-8 h-8' /> 
                         </div>
                     </td>
                 </tr>
