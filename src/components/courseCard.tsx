@@ -4,10 +4,11 @@ import { useRouter } from "next/navigation";
 import { IoMdBookmarks, IoMdCloseCircle } from "react-icons/io";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import { FaUsersGear } from "react-icons/fa6";
+import Loader from "./Loader";
 
 
 export default function CourseCard({ course,currentUser }: any) {
@@ -96,15 +97,21 @@ export default function CourseCard({ course,currentUser }: any) {
                 <div onClick={() => router.push(`/courses/${course.id}`) } className=" cursor-pointer" > 
                     <h1 className="text-sm">{course?.title}</h1>
                 </div>
-                <div>
-                  <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
-                      <MdOutlineEdit className=" w-5 h-5 cursor-pointer"  />
-                  </button>
-                  <button hidden ={ currentUser.role !== 'INSTRUCTOR' } onClick={()=>setOpenPopup(true)}>
-                      <MdOutlineEdit className=" w-5 h-5 cursor-pointer"  />
-                  </button>
-
+                {
+                  currentUser.role === 'INSTRUCTOR' && 
+                <div className=" flex items-center justify-between gap-3">
+                  <Suspense fallback={<Loader />}>
+                    <button onClick={()=>router.push(`/courses/${course.id}/allUsers`)}>
+                        <FaUsersGear className=" w-5 h-5 cursor-pointer  hover:opacity-100 opacity-90"  />
+                    </button>
+                  </Suspense>
+                  <Suspense fallback={<Loader />}>
+                    <button onClick={()=>setOpenPopup(true)}>
+                        <MdOutlineEdit className=" w-5 h-5 cursor-pointer  hover:opacity-100 opacity-90"  />
+                    </button>
+                  </Suspense>
                 </div>
+                }
             </div>
                 {
                 openPopup
