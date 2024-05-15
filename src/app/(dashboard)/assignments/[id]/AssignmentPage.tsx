@@ -109,7 +109,7 @@ const sortSubmissions = () => {
       (x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())||x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   }
-  // return <pre>{JSON.stringify(assignments, null, 2)}</pre>
+
   return (
     <div className="mx-2 md:mx-10 my-2 relative">
       <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 text-white rounded text-sm md:text-lg font-medium">
@@ -170,7 +170,7 @@ const sortSubmissions = () => {
             currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR"
           }
         >
-          {assignment.maxSubmissions <= assignment.submissions.length ? (
+          {assignment?.maxSubmissions <= assignment.submissions.length ? (
             <div className="text-white font-semibold text-center my-5">
               No more responses are accepted!
             </div>
@@ -223,19 +223,19 @@ const sortSubmissions = () => {
                       scope="col"
                       className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
                     >
-                      Responsiveness
+                      Responsiveness (/10)
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
                     >
-                      Styling
+                      Styling (/10)
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
                     >
-                      Others
+                      Others (/10)
                     </th>
                     <th
                       scope="col"
@@ -439,19 +439,19 @@ const sortSubmissions = () => {
                       scope="col"
                       className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
                     >
-                      Responsiveness
+                      Responsiveness (/10)
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
                     >
-                      Styling
+                      Styling (/10)
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
                     >
-                      Others
+                      Others (/10)
                     </th>
                     <th
                       scope="col"
@@ -522,11 +522,15 @@ const sortSubmissions = () => {
                                 value={editedScores.responsiveness}
                                 onChange={(e) => {
                                   const newScore = parseInt(e.target.value);
-                                  setEditedScores((prevScores) => ({
-                                    ...prevScores,
-                                    responsiveness: newScore,
-                                  }));
+                                  if (!isNaN(newScore) && newScore >= 0 && newScore <= 10) {
+                                    setEditedScores((prevScores) => ({
+                                      ...prevScores,
+                                      responsiveness: newScore,
+                                    }));
+                                  }
                                 }}
+                                min ={0}
+                                max={10}
                                 className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                               />
                             ) : (
@@ -541,11 +545,15 @@ const sortSubmissions = () => {
                                 value={editedScores.styling}
                                 onChange={(e) => {
                                   const newScore = parseInt(e.target.value);
-                                  setEditedScores((prevScores) => ({
-                                    ...prevScores,
-                                    styling: newScore,
-                                  }));
+                                  if (!isNaN(newScore) && newScore >= 0 && newScore <= 10) {
+                                    setEditedScores((prevScores) => ({
+                                      ...prevScores,
+                                      styling: newScore,
+                                    }));
+                                  }
                                 }}
+                                min ={0}
+                                max={10}
                                 className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                               />
                             ) : (
@@ -560,11 +568,15 @@ const sortSubmissions = () => {
                                 value={editedScores.other}
                                 onChange={(e) => {
                                   const newScore = parseInt(e.target.value);
-                                  setEditedScores((prevScores) => ({
-                                    ...prevScores,
-                                    other: newScore,
-                                  }));
+                                  if (!isNaN(newScore) && newScore >= 0 && newScore <= 10) {
+                                    setEditedScores((prevScores) => ({
+                                      ...prevScores,
+                                      other: newScore,
+                                    }));
+                                  }
                                 }}
+                                min ={0}
+                                max={10}
                                 className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                               />
                             ) : (

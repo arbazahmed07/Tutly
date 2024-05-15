@@ -13,6 +13,7 @@ import {
     FormMessage,
     FormField,
     FormItem,
+    FormDescription,
 } from '@/components/ui/form'
 
 import {
@@ -36,6 +37,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 const formSchema = z.object({
     title: z.string().min(1, {
         message: 'Title is required'
+    }).refine((value) => !/\s/.test(value), {
+        message: 'Title cannot contain spaces'
     }),
     link: z.string().optional(),
     attachmentType: z.string().min(1, {
@@ -57,6 +60,7 @@ const NewAttachmentPage = () => {
     const classId = searchParams.get('classId')
     const [classes, setClasses] = useState([])
     const [loading, setLoading] = useState(true)
+    
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get(`/api/classes/getClassesById/${courseId}`)
@@ -80,15 +84,20 @@ const NewAttachmentPage = () => {
             courseId: '',
             details: '',
             dueDate: '',
-            maxSubmissions: 1
+            maxSubmissions: 0
         }
     })
 
     const { isSubmitting } = form.formState
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
 
-        const dueDate = values?.dueDate !== "" && values.dueDate ? new Date(values.dueDate) : undefined;
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        const dueDate = values?.dueDate !== "" && values?.dueDate ? new Date(values?.dueDate) : undefined;
+
+        values.title = values.title.trim()
+        // if (/\s/.test(values.title)) {
+        //     return toast.error( values.title + ' cannot contain spaces ( use underscore )')
+        // }
 
         const response = await axios.post('/api/attachments/create', {
             title: values.title,
@@ -128,8 +137,9 @@ const NewAttachmentPage = () => {
                                         <FormItem className='  '>
                                             <FormLabel>Title</FormLabel>
                                             <FormControl>
-                                                <Input className='text-sm' disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
-                                            </FormControl>
+                                                <Input  className='text-sm' disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
+                                            </FormControl>                         
+                                            <FormDescription className='text-sm opacity-90 hover:opacity-100 select-none'>No spaces are allowed (use underscores) </FormDescription>
                                             <FormMessage className='text-red-700 font-bold'>{form.formState.errors.title?.message}</FormMessage>
                                         </FormItem>
                                     )}
@@ -176,6 +186,7 @@ const NewAttachmentPage = () => {
                                             <FormControl>
                                                 <Input type='number' className='text-sm' disabled={isSubmitting} placeholder='eg., max Submissions...' {...field} />
                                             </FormControl>
+                                            <FormMessage>{form.formState.errors.maxSubmissions?.message }</FormMessage>
                                         </FormItem>
                                     )}
                                 />
@@ -264,11 +275,9 @@ const NewAttachmentPage = () => {
                             />
                         </div>
                         <div className=' flex items-center gap-x-3 text-white'>
-                            <Link href={'/'}>
-                                <Button className='bg-red-700' variant={"destructive"} style={{ backgroundColor: '#b91c1c' }} >
-                                    Cancel
-                                </Button>
-                            </Link>
+                            <Button className='bg-red-700' onClick={()=>{router.push(`/courses/${courseId}/class/${classId}`)}} variant={"destructive"}  >
+                                Cancel
+                            </Button>
                             <Button type='submit' disabled={isSubmitting} style={{ border: '2px solid #6b7280', backgroundColor: '#6b7280' }} >
                                 Continue
                             </Button>

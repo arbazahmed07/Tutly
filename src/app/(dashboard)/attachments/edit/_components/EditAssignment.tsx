@@ -49,7 +49,7 @@ const formSchema = z.object({
     courseId: z.string().optional(),
     details: z.string().optional(),
     dueDate: z.string().optional(),
-    maxSubmissions :  z.number().transform((v) => Number(v)||1).optional() 
+    maxSubmissions :  z.number().transform((v) => Number(v)||0).optional() 
 })
 
 const EditAttachmentPage = ({attachment }:any) => {
@@ -85,9 +85,10 @@ const EditAttachmentPage = ({attachment }:any) => {
     })
 
     const { isSubmitting } = form.formState
+    const [cancelClicked, setCancelClicked] = useState(false)
+    const [deleteClicked, setDeleteClicked] = useState(false)
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-
         const dueDate = values?.dueDate !== undefined ? new Date(values.dueDate).toISOString() : undefined;
         const response = await axios.put(`/api/attachments/edit/${attachment.id}`, {
             title: values.title,
@@ -108,9 +109,11 @@ const EditAttachmentPage = ({attachment }:any) => {
         router.push(`/assignments/${attachment.id}`)
     }
 
+
     const deleteAssignment = async () => {
         try
         {
+            setDeleteClicked(true)
             const response = await axios.delete(`/api/attachments/delete/${attachment.id}`)
             if (response.status !== 200) {
                 toast.error('An error occurred')
@@ -121,8 +124,8 @@ const EditAttachmentPage = ({attachment }:any) => {
         }
         catch (e:any)
         {
+            setDeleteClicked(false)
             toast.error('An error occurred')
-            console.log(e);
             router.push(`/courses/${courseId}/class/${classId}`)
             return
         }
@@ -147,7 +150,7 @@ const EditAttachmentPage = ({attachment }:any) => {
                                         <FormItem className='  '>
                                             <FormLabel>Title</FormLabel>
                                             <FormControl>
-                                                <Input className='text-sm' disabled={isSubmitting} placeholder='eg., React Forms' {...field} />
+                                                <Input  className='text-sm' disabled placeholder='eg., React Forms' {...field} />
                                             </FormControl>
                                             <FormMessage>{form.formState.errors.title?.message}</FormMessage>
                                         </FormItem>
@@ -285,11 +288,9 @@ const EditAttachmentPage = ({attachment }:any) => {
                                 />
                             </div>
                         <div className=' flex items-center gap-x-3 text-white'>
-                            <Link href={'/'}>
-                                <Button className='bg-red-700' variant={"destructive"}   >
-                                    Cancel
-                                </Button>
-                            </Link>
+                            <Button disabled={cancelClicked} onClick={()=>{router.push(`/assignments/${attachment.id}`) ; setCancelClicked(true) } } className={ `${!cancelClicked ?  'bg-red-700' : '  bg-gray-600 cursor-not-allowed' }` }  >
+                                Cancel
+                            </Button>
                             <Button type='submit' className=' bg-secondary-500 hover:bg-secondary-600' disabled={isSubmitting}  >
                                 Continue
                             </Button>
@@ -297,7 +298,7 @@ const EditAttachmentPage = ({attachment }:any) => {
                     </form>
                 </Form>
             </div>
-            <Button onClick={deleteAssignment} className='bg-red-700 hover:bg-red-800' variant={"destructive"}   >
+            <Button onClick={deleteAssignment} className={`${!deleteClicked ? 'bg-red-700 hover:bg-red-800' : 'bg-gray-600 cursor-not-allowed'}`}   >
                 <MdDelete className=' w-5 h-5' />
             </Button>
         </div>

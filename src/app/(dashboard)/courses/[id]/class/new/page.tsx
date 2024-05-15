@@ -5,6 +5,7 @@ import { FaPlus } from 'react-icons/fa';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
+import Loader from '@/components/Loader';
 
 const NewClass = () => {
   const [videoLink, setVideoLink] = useState('');
@@ -15,6 +16,7 @@ const NewClass = () => {
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState('');
   const [createdAt, setCreatedAt] = useState('');
+  const [loading, setLoading] = useState(false);
   
   const router = useRouter();
   const params = useParams();
@@ -38,6 +40,10 @@ const NewClass = () => {
       return toast.error('Please fill all fields');
     }
 
+    if (/\s/.test(classTitle)) {
+      return toast.error('Class title cannot contain spaces ( use underscore )');
+    }
+
     setTextValue('Creating Class');
     try {
       const res = await axios.post('/api/classes/create', {
@@ -59,6 +65,7 @@ const NewClass = () => {
         setVideoLink('');
         setClassTitle('');
         setSelectedFolder('');
+        setFolderName('');
         router.push(`/courses/${params.id}/class/${res.data.id}`);
       }
     } catch (error) {
@@ -69,6 +76,9 @@ const NewClass = () => {
       router.refresh();
     }
   };
+
+
+  if(loading) return <Loader />;
 
   return (
     <div className="m-5 md:mt-20">
@@ -95,8 +105,16 @@ const NewClass = () => {
           placeholder="Enter class title"
           value={classTitle}
           onChange={(e) => setClassTitle(e.target.value)}
-          className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded mb-4"
+          className="w-full sm:w-96 px-4 py-2 border border-secondary-300 rounded "
         />
+        {
+          (classTitle=='' || /\s/.test(classTitle)) ?
+          <p className='mb-4 mt-1 text-sm ' >
+            *Class name should not contain spaces. Use underscore instead.
+          </p>
+          :
+          <div className=' mb-4'></div>
+        }
         <input
         type="date"
         placeholder="Enter class date"
