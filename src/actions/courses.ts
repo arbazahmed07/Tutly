@@ -390,3 +390,36 @@ export const updateRole = async (username: string,role :string) => {
     throw new Error(`Failed to update user role: ${error.message}`);
   }
 }
+
+export const updateMentor = async (courseId:string, username: string,mentorUsername :string) => {
+  try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role !== 'INSTRUCTOR') {
+      throw new Error('Unauthorized to update mentor');
+    }
+    const enrolledUser = await db.enrolledUsers.findFirst ({
+      where: {
+          courseId,
+          username,        
+      },
+    });
+
+    if (!enrolledUser) {
+      throw new Error('User is not enrolled in the course');
+    }
+    
+    const updatedUser = await db.enrolledUsers.update({
+      where: {
+        id: enrolledUser.id,
+      },
+      data: {
+        mentorUsername,
+      },
+    });
+
+    return updatedUser;
+    
+  } catch (error : any) {
+    throw new Error(`Failed to update mentor: ${error.message}`);
+  }
+}

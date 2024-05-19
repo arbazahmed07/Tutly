@@ -45,7 +45,8 @@ export const getAllUsers = async( courseId : string ) => {
                             id:true,
                             title:true,
                         }
-                    }
+                    },
+                    mentorUsername:true,
                 }
             },
         },
