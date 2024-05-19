@@ -34,6 +34,7 @@ export const getAllUsers = async( courseId : string ) => {
             username:true,
             name:true,
             email:true,
+            role:true,
             enrolledUsers:{
                 where : {
                     courseId:courseId
@@ -51,3 +52,4 @@ export const getAllUsers = async( courseId : string ) => {
     });
     return globalUsers;
 }
+
