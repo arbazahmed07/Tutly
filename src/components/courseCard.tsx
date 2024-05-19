@@ -101,7 +101,7 @@ export default function CourseCard({ course, currentUser }: any) {
           currentUser.role === 'INSTRUCTOR' &&
           <div className=" flex items-center justify-between gap-3">
             <Suspense fallback={<Loader />}>
-              <button onClick={() => router.push(`/courses/${course.id}/allUsers`)}>
+              <button onClick={() => router.push(`/instructor/course/${course.id}/manage`)}>
                 <FaUsersGear className=" w-5 h-5 cursor-pointer  hover:opacity-100 opacity-90" />
               </button>
             </Suspense>

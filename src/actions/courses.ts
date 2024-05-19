@@ -269,12 +269,17 @@ export const getCourseByCourseId = async (id: string) => {
 
 export const enrollStudentToCourse = async (courseId: string, username: string) => {
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role !== 'INSTRUCTOR') {
+      throw new Error('Unauthorized to enroll student to course');
+    }
+    
     const user = await db.user.findUnique({
       where: { username },
     });
     
-    if (!user) {
-      throw new Error('User not found');
+    if (!user ) {
+      throw new Error ('User not found')
     }
 
     const course = await db.course.findUnique({
@@ -312,12 +317,17 @@ export const enrollStudentToCourse = async (courseId: string, username: string) 
 
 export const unenrollStudentFromCourse = async (courseId: string, username: string) => {
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role !== 'INSTRUCTOR') {
+      throw new Error('Unauthorized to unenroll student from course');
+    }
+    
     const user = await db.user.findUnique({
       where: { username },
     });
 
-    if (!user) {
-      throw new Error('User not found');
+    if (!user ) {
+      throw new Error('User not found')
     }
 
     const course = await db.course.findUnique({
@@ -348,5 +358,35 @@ export const unenrollStudentFromCourse = async (courseId: string, username: stri
     return existingEnrollment;
   } catch (error : any) {
     throw new Error(`Failed to unenroll student: ${error.message}`);
+  }
+}
+
+export const updateRole = async (username: string,role :string) => {
+  try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role !== 'INSTRUCTOR') {
+      throw new Error('Unauthorized to update user role');
+    }
+    
+    const user = await db.user.findUnique({
+      where: { username },
+    });
+
+    if (!user ) {
+      throw new Error('User not found')
+    }
+
+    const updatedUser = await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        role: role  as  'STUDENT' | 'MENTOR',
+      },
+    });
+
+    return updatedUser;
+  } catch (error : any) {
+    throw new Error(`Failed to update user role: ${error.message}`);
   }
 }

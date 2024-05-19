@@ -3,12 +3,14 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { FaCheck, FaUserPlus } from 'react-icons/fa';
+import { FaSort,  FaSortAlphaDown,  FaSortAlphaDownAlt, FaSortAlphaUpAlt, FaUserPlus } from 'react-icons/fa';
 import { RiGlobalLine } from "react-icons/ri";
 import { TbUserOff } from "react-icons/tb";
 import { TbUserSearch } from "react-icons/tb";
 import { MdOutlineBlock } from "react-icons/md";
 import { FaUserXmark } from "react-icons/fa6";
+import { TiArrowSortedDown } from "react-icons/ti";
+import { TiArrowSortedUp } from "react-icons/ti";
 
 const UserTable = ({ users, params }: { users: Array<any>, params: any }) => {
 
@@ -16,6 +18,9 @@ const [loading, setLoading] = useState(false);
 const router = useRouter()
 const [showAllUsers, setShowAllUsers] = useState(true);
 const [searchBar,  setSearchBar] = useState('');
+const roles = ['STUDENT', 'MENTOR'];
+const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+const [sortColumn, setSortColumn] = useState<string>(''); 
 
 const filteredUsers = users.filter(user =>
     user.username.toLowerCase().includes(searchBar.trim().toLowerCase())
@@ -34,7 +39,7 @@ const handleEnroll =  async (username: string) => {
         });
         console.log(res.data);
         toast.dismiss();
-        toast.success('User enrolled successfully');
+        toast.success(`${username} enrolled successfully`);
         setLoading(false);
         router.refresh ()
     }catch(err :any){
@@ -54,7 +59,7 @@ const handleUnenroll = async (username: string) => {
         });
         console.log(res.data);
         toast.dismiss();
-        toast.success('User unenrolled successfully');
+        toast.success(`${username} unenrolled successfully`);
         setLoading(false);
         router.refresh ()
     }catch(err :any){
@@ -63,6 +68,45 @@ const handleUnenroll = async (username: string) => {
         toast.error(err.response.data.error);
     }
 }
+
+const handleRoleChange = async (username: string, role: string) => {
+    toast.loading('Updating user role...');
+    try{
+        setLoading(true);
+        const res = await axios.post('/api/course/updateToMentor', {
+            username,
+            role
+        });
+        console.log(res.data);
+        toast.dismiss();
+        toast.success(`User role updated to ${role}`);
+        setLoading(false);
+        router.refresh ()
+    }catch(err :any){
+        setLoading(false);
+        toast.dismiss();
+        toast.error(err.response.data.error);
+    }
+}
+
+
+const handleSort = (column: string) => {
+    if (column === sortColumn) {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+        setSortColumn(column);
+        setSortOrder('asc');
+    }
+};
+
+const sortedUsers = users.sort((a, b) => {
+    if (sortColumn === 'username') {
+        return sortOrder === 'asc' ? a.username.localeCompare(b.username) : b.username.localeCompare(a.username);
+    } else if (sortColumn === 'role') {
+        return sortOrder === 'asc' ? a.role.localeCompare(b.role) : b.role.localeCompare(a.role);
+    }
+    return 0;
+});
 
 return (
 <div className="mb-10">
@@ -107,8 +151,36 @@ return (
     <thead>
         <tr className=' bg-sky-800'>
             <th className="border border-gray-300 px-4 py-2">S.No</th>
-            <th className="border border-gray-300 px-4 py-2">Username</th>
+            <th className="border border-gray-300 px-4 py-2 " >
+                <div  className=' flex items-center justify-center'>
+
+                    Username &nbsp;
+                    {
+                        sortColumn !== 'username' &&  <FaSort className=' cursor-pointer' onClick={() => handleSort('username')}/>
+                    }
+                    {
+                        sortColumn === 'username' && sortOrder === 'desc' && <FaSortAlphaDownAlt onClick={() => handleSort('username')} className='w-4 h-4 cursor-pointer' />
+                    }
+                    {
+                        sortColumn === 'username' && sortOrder === 'asc' && <FaSortAlphaDown onClick={() => handleSort('username')} className='w-4 h-4 cursor-pointer' />
+                    }
+                </div>
+            </th>
             <th className="border border-gray-300 px-4 py-2">Name</th>
+            <th className="border border-gray-300 px-4 py-2 " >
+                <div className=' flex items-center justify-center'>
+                    Role &nbsp; 
+                    {
+                        sortColumn !== 'role' &&  <FaSort onClick={() => handleSort('role')} className=' cursor-pointer'/>
+                    }
+                    {
+                        sortColumn === 'role' && sortOrder === 'desc' && <FaSortAlphaDownAlt onClick={() => handleSort('role')} className='w-4 h-4 cursor-pointer' />
+                    }
+                    {
+                        sortColumn === 'role' && sortOrder === 'asc' && <FaSortAlphaDown  onClick={() => handleSort('role')} className='w-4 h-4 cursor-pointer' />
+                    }
+                </div>
+            </th>
             <th className="border border-gray-300 px-4 py-2">Email</th>
             <th className="border border-gray-300 px-4 py-2">Course</th>
             <th className="border border-gray-300 px-4 py-2">Action</th>
@@ -144,6 +216,26 @@ return (
             </div>
             </td>
             <td className="border border-gray-300 px-4 py-2">{user.name}</td>
+            <td className="border border-gray-300 px-4 py-2  text-center">
+                {
+                user.role !== 'INSTRUCTOR' ? 
+                    <select
+                            value={user.role}
+                            onChange={(e)=>handleRoleChange(user.username,e.target.value)}
+                        className="border border-gray-300 px-2 py-1 rounded-md focus:outline-none focus:border-blue-500"
+                    >
+                        {roles.map((role) => (
+                            <option key={role} value={role}>
+                            {role}
+                        </option>
+                        ))}
+                    </select>
+                    :
+                    <span className=' px-2.5 py-1 rounded-md disabled select-none cursor-not-allowed bg-zinc-700 text-white font-semibold '>
+                        {user.role}
+                    </span>
+                }
+            </td>
             <td className="border border-gray-300 px-4 py-2">{user.email}</td>
             <td className="border border-gray-300 px-4 py-2">
             {user.enrolledUsers.find( ({course}:{ course:any }) => course.id===params.id ) === undefined  ? 'Not Enrolled ' :
