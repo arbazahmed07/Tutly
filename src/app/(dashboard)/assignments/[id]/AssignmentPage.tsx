@@ -170,7 +170,7 @@ export default function AssignmentPage({
           }
         >
           {assignment?.maxSubmissions <= assignment.submissions.length ? (
-            <div className="text-white font-semibold text-center my-5">
+            <div className="text-white font-semibold text-lg text-center my-5">
               No more responses are accepted!
             </div>
           ) : (
@@ -222,19 +222,7 @@ export default function AssignmentPage({
                       scope="col"
                       className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
                     >
-                      Responsiveness (/10)
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      Styling (/10)
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      Others (/10)
+                      Feedback
                     </th>
                     <th
                       scope="col"
@@ -296,61 +284,14 @@ export default function AssignmentPage({
                               .split("T")[0] || "NA"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {editingIndex === index ? (
-                              <input
-                                title="null"
-                                type="number"
-                                value={editedScores.responsiveness}
-                                onChange={(e) => {
-                                  const newScore = parseInt(e.target.value);
-                                  setEditedScores((prevScores) => ({
-                                    ...prevScores,
-                                    responsiveness: newScore,
-                                  }));
-                                }}
-                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                              />
-                            ) : (
-                              rValue?.score || "NA"
-                            )}
+                            {
+                              submission.overallFeedback || "NA"
+                            }
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {editingIndex === index ? (
-                              <input
-                                title="null"
-                                type="number"
-                                value={editedScores.styling}
-                                onChange={(e) => {
-                                  const newScore = parseInt(e.target.value);
-                                  setEditedScores((prevScores) => ({
-                                    ...prevScores,
-                                    styling: newScore,
-                                  }));
-                                }}
-                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                              />
-                            ) : (
-                              sValue?.score || "NA"
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {editingIndex === index ? (
-                              <input
-                                title="null"
-                                type="number"
-                                value={editedScores.other}
-                                onChange={(e) => {
-                                  const newScore = parseInt(e.target.value);
-                                  setEditedScores((prevScores) => ({
-                                    ...prevScores,
-                                    other: newScore,
-                                  }));
-                                }}
-                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
-                              />
-                            ) : (
-                              oValue?.score || "NA"
-                            )}
+                            {
+                              totalScore || "NA"
+                            }
                           </td>
                         </tr>
                       );
