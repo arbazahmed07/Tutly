@@ -5,7 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { FaSearch } from "react-icons/fa";
+import { FaCheck, FaSearch } from "react-icons/fa";
 
 export default function AssignmentPage({
   params,
@@ -25,12 +25,36 @@ export default function AssignmentPage({
     other: 0,
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [feedback, setFeedback] = useState<string>("");
 
   const router = useRouter();
+  
+  const searchParams = useSearchParams();
+  
+  const userId = searchParams?.get("userId");
+  let filteredAssignments =[] ;
+  if(!userId){
+    filteredAssignments = assignments?.filter((x: any) =>
+      (x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())||x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  }
+  
+  const handleFeedback = async (submissionId : string) => {
+    try {
 
-  const handleEdit = (index: number) => {
+      const res = await axios.post("/api/feedback", {
+        submissionId : submissionId,
+        feedback: feedback,
+      });
+      toast.success("Feedback saved successfully");
+    } catch(e: any) {
+      toast.error("Failed to save feedback");
+    }
+  }
+  
+  const handleEdit = (index: number,submissionId : string) => {
     setEditingIndex(index);
-    const submission = assignment?.submissions[index];
+    const submission = filteredAssignments.find((x: any) => x.id === submissionId);
     const rValue =
       submission &&
       submission.points.find(
@@ -39,7 +63,7 @@ export default function AssignmentPage({
     const sValue =
       submission &&
       submission.points.find((point: any) => point.category === "STYLING");
-    const oValue =
+      const oValue =
       submission &&
       submission.points.find((point: any) => point.category === "OTHER");
     setEditedScores({
@@ -47,47 +71,43 @@ export default function AssignmentPage({
       styling: sValue ? sValue.score : 0,
       other: oValue ? oValue.score : 0,
     });
-
-    router.refresh();
+    
+    // router.refresh();
   };
+  
 
   const handleSave = async (index: number) => {
     try {
       toast.loading("Updating Scores...");
-      await axios.post("/api/points", {
-        submissionId: assignment.submissions[index].id,
-        score: editedScores.responsiveness,
-        category: "RESPOSIVENESS",
-      });
-      await axios.post("/api/points", {
-        submissionId: assignment.submissions[index].id,
-        score: editedScores.styling,
-        category: "STYLING",
-      });
-      await axios.post("/api/points", {
-        submissionId: assignment.submissions[index].id,
-        score: editedScores.other,
-        category: "OTHER",
+
+      const res = await axios.post("/api/points", {
+        submissionId : filteredAssignments[index].id,
+        marks: [
+          {
+            category: "RESPOSIVENESS",
+            score: editedScores.responsiveness,
+          },
+          {
+            category: "STYLING",
+            score: editedScores.styling,
+          },
+          {
+            category: "OTHER",
+            score: editedScores.other,
+          },
+        ],
       });
       toast.dismiss();
-    } catch {
+      toast.success("Scores saved successfully");
+      router.refresh();
+    } catch(e: any) {
+      toast.dismiss();
       toast.error("Failed to save scores");
     } finally {
-      toast.success("Scores saved successfully");
       setEditingIndex(-1);
-      router.refresh();
+      router.refresh()
     }
   };
-
-  const searchParams = useSearchParams();
-  
-  const userId = searchParams?.get("userId");
-  let filteredAssignments;
-  if(!userId){
-    filteredAssignments = assignments?.filter((x: any) =>
-      (x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())||x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-  }
 
   return (
     <div className="mx-2 md:mx-10 my-2 relative">
@@ -332,32 +352,6 @@ export default function AssignmentPage({
                               oValue?.score || "NA"
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {rValue?.score || sValue?.score || oValue?.score
-                              ? totalScore
-                              : "NA"}
-                          </td>
-                          {currentUser.role !== "STUDENT" && (
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {editingIndex === index ? (
-                                <button
-                                  onClick={() => handleSave(index)}
-                                  className="text-blue-600 font-semibold"
-                                >
-                                  Save
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    handleEdit(index);
-                                  }}
-                                  className="text-blue-600 font-semibold"
-                                >
-                                  Edit
-                                </button>
-                              )}
-                            </td>
-                          )}
                         </tr>
                       );
                     }
@@ -385,7 +379,7 @@ export default function AssignmentPage({
             </div>
             <div className="overflow-x-auto">
               <table className="text-center w-full">
-                <thead className="bg-secondary-300 text-secondary-700">
+                <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
                   <tr>
                     <th
                       scope="col"
@@ -393,7 +387,7 @@ export default function AssignmentPage({
                     >
                       sl.no
                     </th>
-                    <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
+                    <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider sticky left-0 text-secondary-700 bg-secondary-300 ">
                       username
                     </th>
                     <th
@@ -434,6 +428,12 @@ export default function AssignmentPage({
                     >
                       Total
                     </th>
+                    <th
+                    scope="col"
+                    className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+                    >
+                      Feedback
+                    </th>
                     {currentUser.role !== "STUDENT" && (
                       <th
                         scope="col"
@@ -445,9 +445,9 @@ export default function AssignmentPage({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredAssignments
-                  ?.map(
+                  {filteredAssignments?.map(
                     (submission: any, index: any) => {
+
                       const rValue = submission.points.find(
                         (point: any) => point.category === "RESPOSIVENESS"
                       );
@@ -470,7 +470,7 @@ export default function AssignmentPage({
                           <td className="px-6 py-4 whitespace-nowrap">
                             {index + 1}
                           </td>
-                          <td>{submission.enrolledUser.username}</td>
+                          <td className=" sticky left-0 bg-white divide-gray-200 ">{submission.enrolledUser.username}</td>
                           <td
                             className={`${
                               currentUser?.role === "STUDENT" && "hidden"
@@ -563,19 +563,48 @@ export default function AssignmentPage({
                               ? totalScore
                               : "NA"}
                           </td>
-                          {currentUser.role !== "STUDENT" && (
+                          <td>
+                            {
+                              editingIndex === index ? (
+                                  <textarea
+                                    title="null"
+                                    value={submission.feedback}
+                                    onChange={(e) => {
+                                      setFeedback(e.target.value);
+                                    }}
+                                    className="bg-transparent block min-w-16 text-start overflow-y-hidden border-black rounded-lg px-2 border-2 text-background m-2"
+                                    >
+                                  </textarea>
+                              ) : (
+                                submission.overallFeedback || "NA"
+                              )
+                            }
+                          </td>
+                          { currentUser.role !== "STUDENT"  && (
+                            totalScore !== 0 ? 
+                              <td className=" text-green-700 font-semibold">
+                                <div className=" flex items-center justify-center">
+                                  Evaluated &nbsp; <FaCheck  />
+                                </div>
+                              </td>
+                              :
                             <td className="px-6 py-4 whitespace-nowrap">
                               {editingIndex === index ? (
-                                <button
-                                  onClick={() => handleSave(index)}
-                                  className="text-blue-600 font-semibold"
-                                >
-                                  Save
-                                </button>
+                                <div className="  flex items-center justify-center gap-5">
+                                  <button
+                                    onClick={() => {handleSave(index) ; handleFeedback(submission.id)}}
+                                    className="text-blue-600 font-semibold hover:text-blue-700"
+                                    >
+                                    Save
+                                  </button>
+                                  <button  onClick={()=>setEditingIndex(-1)} className=" text-red-600 hover:text-red-700 font-semibold "> 
+                                    Cancel
+                                  </button>
+                                  </div>
                               ) : (
                                 <button
                                   onClick={() => {
-                                    handleEdit(index);
+                                    handleEdit(index,submission.id);
                                   }}
                                   className="text-blue-600 font-semibold"
                                 >
@@ -584,6 +613,7 @@ export default function AssignmentPage({
                               )}
                             </td>
                           )}
+                        
                         </tr>
                       );
                     }

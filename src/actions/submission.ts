@@ -36,6 +36,7 @@ export const createSubmission = async (
     auth: process.env.GITHUB_PAT,
   });
   const submissionId = uuidv4();
+
   const pr = await octokit.createPullRequest({
     owner: "GoodKodersUnV",
     repo: "LMS-DATA",
@@ -115,3 +116,33 @@ export const createSubmission = async (
 
   return submission;
 };
+
+
+export const addOverallFeedback = async (submissionId: string, feedback: string) => {
+  const user = await getCurrentUser();
+  if (!user) {
+    return { message: "unauthorized" };
+  }
+
+  const submission = await db.submission.findUnique({
+    where: {
+      id: submissionId,
+    },
+  });
+
+  if (!submission) {
+    return { message: "Submission not found" };
+  }
+
+  const updatedSubmission = await db.submission.update({
+    where: {
+      id: submissionId,
+    },
+    data: { 
+      overallFeedback: feedback,
+    },
+  });
+
+
+  return updatedSubmission;
+}

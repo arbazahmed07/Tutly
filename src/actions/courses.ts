@@ -308,3 +308,45 @@ export const enrollStudentToCourse = async (courseId: string, username: string) 
     throw new Error(`Failed to enroll student: ${error.message}`);
   }
 };
+
+
+export const unenrollStudentFromCourse = async (courseId: string, username: string) => {
+  try {
+    const user = await db.user.findUnique({
+      where: { username },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const course = await db.course.findUnique({
+      where: { id: courseId },
+    });
+
+    if (!course) {
+      throw new Error('Course not found');
+    }
+
+    const existingEnrollment = await db.enrolledUsers.findFirst({
+      where: {
+        courseId,
+        username,
+      },
+    });
+
+    if (!existingEnrollment) {
+      throw new Error('User is not enrolled in the course');
+    }
+
+    await db.enrolledUsers.delete({
+      where: {
+        id: existingEnrollment.id,
+      },
+    });
+
+    return existingEnrollment;
+  } catch (error : any) {
+    throw new Error(`Failed to unenroll student: ${error.message}`);
+  }
+}
