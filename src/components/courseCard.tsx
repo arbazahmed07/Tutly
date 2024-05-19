@@ -53,6 +53,7 @@ export default function CourseCard({ course, currentUser }: any) {
     }
   }
   const expired = () => {
+    if (!course.endDate) return false;
     const endDate = new Date(course.endDate);
     const currentDate = new Date();
     return currentDate > endDate;
@@ -62,26 +63,15 @@ export default function CourseCard({ course, currentUser }: any) {
     <div key={course.id} className="rounded-lg border m-auto mt-3 w-[280px] md:mx-2" style={{ boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px" }}>
       <div className="h-[150px]  relative text-secondary-700 bg-white rounded-t-lg cursor-pointer" onClick={expired() ? () => router.push(`/courses`) : () => router.push(`/courses/${course.id}`)}>
         <div className="h-full w-full relative">
-          {course && course.image && (
+          {course && (
             <Image
-              src={course.image}
+              src={course.image || "https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg"}
               alt="course image"
               layout="fill"
               className="rounded-t-lg"
               objectFit="cover"
             />
           )}
-          {
-            !course.image && (
-              <Image
-                src="https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg"
-                alt="Default Image"
-                layout="fill"
-                className="rounded-t-lg"
-                objectFit="cover"
-              />
-            )
-          }
           <div>
             {
               course.isPublished === false && currentUser?.role === 'INSTRUCTOR' && (
