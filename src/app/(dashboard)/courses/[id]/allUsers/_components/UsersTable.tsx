@@ -8,7 +8,7 @@ import { RiGlobalLine } from "react-icons/ri";
 import { TbUserOff } from "react-icons/tb";
 import { TbUserSearch } from "react-icons/tb";
 import { MdOutlineBlock } from "react-icons/md";
-
+import { FaUserXmark } from "react-icons/fa6";
 
 const UserTable = ({ users, params }: { users: Array<any>, params: any }) => {
 
@@ -35,6 +35,26 @@ const handleEnroll =  async (username: string) => {
         console.log(res.data);
         toast.dismiss();
         toast.success('User enrolled successfully');
+        setLoading(false);
+        router.refresh ()
+    }catch(err :any){
+        setLoading(false);
+        toast.dismiss();
+        toast.error(err.response.data.error);
+    }
+}
+
+const handleUnenroll = async (username: string) => {
+    toast.loading('Unenrolling user...');
+    try{
+        setLoading(true);
+        const res = await axios.post('/api/course/unenrollUser', {
+            courseId: params.id,
+            username
+        });
+        console.log(res.data);
+        toast.dismiss();
+        toast.success('User unenrolled successfully');
         setLoading(false);
         router.refresh ()
     }catch(err :any){
@@ -132,16 +152,15 @@ return (
                     <span key={course.id}>{index > 0 ? ', ' : ''}{course.title}</span>
                 ))}
             </td>
-            <td className="border border-gray-300 px-4 py-2">
+            <td className="border border-gray-300 px-4 py-2 flex items-center justify-center">
             {user.enrolledUsers.find(({course}: { course:any }) => course.id === params.id) === undefined ?
-                <button disabled={loading} onClick={() => handleEnroll(user.username)}
-                className="px-3 py-1.5 flex items-center justify-center bg-red-800 text-white rounded-full hover:bg-red-900 select-none focus:outline-none focus:bg-red-800">
-                Enroll &nbsp; <FaUserPlus className=' w-5 h-5' />
+                <button disabled={loading} onClick={() => handleEnroll(user.username)} className="px-3 py-1.5 flex items-center justify-center bg-emerald-700 text-white rounded-full hover:bg-emerald-800 select-none focus:outline-none focus:bg-emerald-800">
+                    Enroll &nbsp; <FaUserPlus className=' w-6 h-6' />
                 </button>
                 :
-                <div className="px-3 py-1.5 flex items-center justify-center bg-emerald-800 text-white rounded-full hover:bg-emerald-700 select-none focus:outline-none focus:bg-red-800">
-                Enrolled &nbsp; <FaCheck />
-                </div>
+                <button disabled={loading} onClick={() => handleUnenroll(user.username)}  className="px-3 py-1.5 flex items-center justify-center bg-red-800 text-white rounded-full hover:bg-red-700 select-none focus:outline-none focus:bg-red-800">
+                    Unenroll &nbsp; <FaUserXmark className=' w-6 h-6' />
+                </button>
             }
             </td>
         </tr>
