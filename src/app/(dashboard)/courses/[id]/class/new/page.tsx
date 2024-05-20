@@ -41,7 +41,7 @@ const NewClass = () => {
     }
 
     if (/\s/.test(classTitle)) {
-      return toast.error('Class title cannot contain spaces ( use underscore )');
+      return toast.error('Class title cannot contain spaces ( use hyphen \'-\' instead) ');
     }
 
     setTextValue('Creating Class');
@@ -110,7 +110,7 @@ const NewClass = () => {
         {
           (classTitle=='' || /\s/.test(classTitle)) ?
           <p className='mb-4 mt-1 text-sm ' >
-            *Class name should not contain spaces. Use underscore instead.
+            *Class name should not contain spaces. Use hyphen(-) instead.
           </p>
           :
           <div className=' mb-4'></div>

@@ -17,7 +17,6 @@ interface Props {
 
 const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
   const router = useRouter();
-  const roles = ["INSTRUCTOR", "STUDENT","MENTOR"];
   const [popover, setPopover] = useState(false);
   const pathname = usePathname();
   const Back = () => {
@@ -53,9 +52,9 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
             </Link>
           </div>
         </div>
-        <Suspense fallback={<div>Loading...</div>}>
+        {/* <Suspense fallback={<div>Loading...</div>}>
           <Actions currentUser={currentUser} />
-        </Suspense>
+        </Suspense> */}
         <div className="flex gap-3 items-center">
           <h1 className="text-sm font-medium">
             {
