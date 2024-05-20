@@ -38,7 +38,7 @@ const SubmitAssignment = ({
 
   return (
     (
-      assignmentDetails ? <Submit user={currentUser} mentorDetails={mentorDetails} assignmentDetails={assignmentDetails} isLoading={isLoading}/> : <h1 className="text-2xl font-bold">Loading...</h1>
+      assignmentId && (assignmentDetails ? <Submit user={currentUser} mentorDetails={mentorDetails} assignmentDetails={assignmentDetails} isLoading={isLoading} /> : <h1 className="text-2xl font-bold">Loading...</h1>)
     )
   )
 }
