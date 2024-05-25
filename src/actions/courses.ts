@@ -158,7 +158,8 @@ export const getEnrolledStudents = async () => {
             createdById:currentUser.id
           }
         }
-      }
+      },
+      role:"STUDENT"
     },
     include: {
       course: true,

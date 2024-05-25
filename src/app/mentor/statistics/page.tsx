@@ -2,12 +2,14 @@ import {
   getMentorPieChartData,
   getSubmissionsForMentorLineChart,
 } from "@/actions/assignments";
-import Barchart from "./charts/barchart";
-import Linechart from "./charts/linechart";
-import Piechart from "./charts/piechart";
-import Radarchart from "./charts/radarchart";
+import Barchart from "../../../components/charts/barchart";
+import Linechart from "../../../components/charts/linechart";
+import Piechart from "../../../components/charts/piechart";
+import Radarchart from "../../../components/charts/radarchart";
 import { getAttendanceForMentorBarChart } from "@/actions/attendance";
 import { getMentorStudents } from "@/actions/courses";
+import { FaSquareArrowUpRight } from "react-icons/fa6";
+import Link from "next/link";
 
 export default async function Statistics() {
   const mentorPieChart = await getMentorPieChartData();
@@ -41,12 +43,13 @@ export default async function Statistics() {
         </div>
       </div>
       <div className="flex gap-8">
-        <div className="w-3/4 rounded-xl p-4 shadow-2xl shadow-blue-500/20">
+        <div className="w-3/4 rounded-xl p-4 relative shadow-2xl shadow-blue-500/20">
           <Barchart
           classes={assignments}
           attendanceInEachClass={countForEachAssignment}
           label={"Submissions"}
           />
+          <Link href="mentor/assignments/getbyassignment" className="absolute top-2 right-2"><FaSquareArrowUpRight className="text-xl text-gray-500"/></Link>
         </div>
         <div className="w-1/4 shadow-2xl shadow-blue-500/20 rounded-xl p-8">
           <h1 className="pb-14 text-gray-500">Evaluation</h1>

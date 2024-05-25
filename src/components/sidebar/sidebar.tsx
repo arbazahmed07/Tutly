@@ -64,17 +64,6 @@ export default function Sidebar({ items, menu, setMenu }: Props) {
           </div>
         );
       })}
-      <div
-      onClick={()=>router.push('/statistics')}
-        className={`${
-          pathname === "/statistics"
-            ? "bg-blue-600 text-white"
-            : "hover:bg-blue-500 hover:text-white"
-        } m-auto rounded hidden md:flex px-3 py-3 my-2 items-center gap-4 cursor-pointer `}
-      >
-        <div className={`text-2xl px-2`}><FcStatistics/></div>
-        <h1 className={`${!menu && "hidden"}`}>Statistics</h1>
-      </div>
     </div>
   );
 }

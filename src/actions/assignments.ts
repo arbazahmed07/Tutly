@@ -482,16 +482,31 @@ export const getMentorPieChartData = async () => {
   if (!currentUser) {
     return null;
   }
-  const assignments = await db.submission.findMany({
-    where: {
-      enrolledUser: {
+  let assignments, noOfTotalMentees;
+  if (currentUser.role === "MENTOR") {
+    assignments = await db.submission.findMany({
+      where: {
+        enrolledUser: {
+          mentorUsername: currentUser.username,
+        },
+      },
+      include: {
+        points: true,
+      },
+    });
+    noOfTotalMentees = await db.enrolledUsers.count({
+      where: {
         mentorUsername: currentUser.username,
       },
-    },
-    include: {
-      points: true,
-    },
-  });
+    });
+  } else {
+    assignments = await db.submission.findMany({
+      include: {
+        points: true,
+      },
+    });
+    noOfTotalMentees = await db.enrolledUsers.count();
+  }
   let assignmentsWithPoints = 0,
     assignmentsWithoutPoints = 0;
   assignments.forEach((assignment) => {
@@ -506,11 +521,6 @@ export const getMentorPieChartData = async () => {
       attachmentType: "ASSIGNMENT",
     },
   });
-  const noOfTotalMentees = await db.enrolledUsers.count({
-    where: {
-      mentorUsername: currentUser.username,
-    },
-  });
   const notSubmitted =
     noOfTotalAssignments * noOfTotalMentees -
     assignmentsWithPoints -
@@ -523,29 +533,43 @@ export const getSubmissionsForMentorLineChart = async () => {
   if (!currentUser) {
     return null;
   }
-  const submissionCount = await db.attachment.findMany({
-    where: {
-      attachmentType: "ASSIGNMENT",
-    },
-    include: {
-      submissions: {
-        where: {
-          enrolledUser: {
-            mentorUsername: currentUser.username,
+  let submissionCount;
+  if (currentUser.role === "MENTOR") {
+    submissionCount = await db.attachment.findMany({
+      where: {
+        attachmentType: "ASSIGNMENT",
+      },
+      include: {
+        submissions: {
+          where: {
+            enrolledUser: {
+              mentorUsername: currentUser.username,
+            },
           },
         },
       },
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+  } else {
+    submissionCount = await db.attachment.findMany({
+      where: {
+        attachmentType: "ASSIGNMENT",
+      },
+      include: {
+        submissions: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+  }
   const assignments = <any>[];
   const countForEachAssignment = <any>[];
-  submissionCount.forEach((submission,index) => {
+  submissionCount.forEach((submission, index) => {
     assignments.push(submission.title);
     countForEachAssignment.push(submission.submissions.length);
   });
-  console.log(assignments)
   return { assignments, countForEachAssignment };
 };
