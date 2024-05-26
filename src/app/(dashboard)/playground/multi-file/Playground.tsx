@@ -3,6 +3,7 @@
 import {
   SandpackProvider,
   SandpackPreview,
+  SandpackFiles,
 } from "@codesandbox/sandpack-react";
 import MonacoEditor from "./MonacoEditor";
 import FileExplorer from "./FileExplorer";
@@ -38,15 +39,17 @@ const files = {
 
 const Playground = ({
   currentUser,
-  assignmentId
+  assignmentId,
+  initialFiles
 }: {
-  currentUser: any,
-  assignmentId: string
+  currentUser?: any,
+  assignmentId?: string,
+  initialFiles?: SandpackFiles
 }) => {
   return (
     <div className='h-full relative'>
       <SandpackProvider
-        files={files}
+        files={ initialFiles || files }
         template="static"
         theme="light"
       >
@@ -76,9 +79,13 @@ const Playground = ({
             </ResizablePanelGroup>
           </ResizablePanel>
         </ResizablePanelGroup>
-        <div className='absolute -top-6 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50'>
-          <SubmitAssignment currentUser={currentUser} assignmentId={assignmentId} />
-        </div>
+        {
+          assignmentId && (
+            <div className='absolute -top-6 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50'>
+              <SubmitAssignment currentUser={currentUser} assignmentId={assignmentId} />
+            </div>
+          )
+        }
       </SandpackProvider >
     </div>
   )

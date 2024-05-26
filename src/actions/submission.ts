@@ -1,6 +1,5 @@
-
 import { Octokit } from "@octokit/core";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import {
   createPullRequest,
   DELETE_FILE,
@@ -22,13 +21,13 @@ export const createSubmission = async (
   const submissions = await db.submission.findMany({
     where: {
       attachmentId: assignmentDetails.id,
-      enrolledUser:{
-        username:user.username
+      enrolledUser: {
+        username: user.username,
       },
     },
   });
 
-  if (submissions.length >= assignmentDetails.maxSubmissions ) {
+  if (submissions.length >= assignmentDetails.maxSubmissions) {
     return { message: "Maximum submission limit reached" };
   }
 
@@ -88,22 +87,22 @@ export const createSubmission = async (
     ],
   });
 
-  if(!pr){
+  if (!pr) {
     return { message: "Error submitting assignment" };
   }
 
   const prUrl = pr.data.html_url;
 
   const enrolledUser = await db.enrolledUsers.findUnique({
-    where:{
-      username_courseId_mentorUsername:{
-        username:user.username,
-        courseId:assignmentDetails.class.courseId,
-        mentorUsername:mentorDetails.mentor.username
-      }
-    }
+    where: {
+      username_courseId_mentorUsername: {
+        username: user.username,
+        courseId: assignmentDetails.class.courseId,
+        mentorUsername: mentorDetails.mentor.username,
+      },
+    },
   });
-  if(!enrolledUser) return null;
+  if (!enrolledUser) return null;
 
   const submission = await db.submission.create({
     data: {
@@ -117,8 +116,10 @@ export const createSubmission = async (
   return submission;
 };
 
-
-export const addOverallFeedback = async (submissionId: string, feedback: string) => {
+export const addOverallFeedback = async (
+  submissionId: string,
+  feedback: string
+) => {
   const user = await getCurrentUser();
   if (!user) {
     return { message: "unauthorized" };
@@ -138,11 +139,31 @@ export const addOverallFeedback = async (submissionId: string, feedback: string)
     where: {
       id: submissionId,
     },
-    data: { 
+    data: {
       overallFeedback: feedback,
     },
   });
 
-
   return updatedSubmission;
-}
+};
+
+export const getAssignmentSubmissions = async (assignmentId: string) => {
+  const user = await getCurrentUser();
+  if (!user || user.role == "STUDENT") {
+    return { message: "unauthorized" };
+  }
+
+  const submissions = await db.submission.findMany({
+    where: {
+      attachmentId: assignmentId,
+      enrolledUser:{
+        mentorUsername: user.username
+      }
+    },
+    include: {
+      enrolledUser: true,
+    },
+  });
+
+  return submissions;
+};
