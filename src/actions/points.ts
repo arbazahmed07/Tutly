@@ -22,6 +22,8 @@ export default async function addPoints({ submissionId, marks }  : { submissionI
                 }
             })
         });
+
+        await mergeAndDeleteBranch(submissionId);
         
         return allCategories;
         
@@ -29,4 +31,47 @@ export default async function addPoints({ submissionId, marks }  : { submissionI
     catch(e : any){
         throw new Error(e.message);
     }
+}
+
+const { Octokit } = require('@octokit/rest');
+
+export async function mergeAndDeleteBranch (submissionId:string){
+    const submission = await db.submission.findUnique({
+        where: {
+            id: submissionId
+        }
+    });
+
+    const octokit = new Octokit({
+        auth: process.env.GITHUB_PAT,
+      });
+
+    const owner = "GoodKodersUnV";
+    const repo = "LMS-DATA";
+    const prLink = submission?.submissionLink 
+    // https://github.com/GoodKodersUnV/LMS-DATA/pull/2225
+
+    if (!prLink) {
+        throw new Error("PR Link not found");
+    }
+
+    const response = await octokit.pulls.get({
+        owner,
+        repo,
+        pull_number: Number(prLink.split("/").pop())
+    });
+
+    const pr = response.data;
+
+    await octokit.pulls.merge({
+        owner,
+        repo,
+        pull_number: pr.number
+    });
+
+    await octokit.git.deleteRef({
+        owner,
+        repo,
+        ref: `heads/${pr.head.ref}`
+    });
 }
