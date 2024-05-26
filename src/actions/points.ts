@@ -49,7 +49,6 @@ export async function mergeAndDeleteBranch (submissionId:string){
     const owner = "GoodKodersUnV";
     const repo = "LMS-DATA";
     const prLink = submission?.submissionLink 
-    // https://github.com/GoodKodersUnV/LMS-DATA/pull/2225
 
     if (!prLink) {
         throw new Error("PR Link not found");
