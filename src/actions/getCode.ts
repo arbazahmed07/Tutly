@@ -42,7 +42,7 @@ export const getSubmission = async (prNumber: number) => {
     let files = {};
 
     for (let file of filesData) {
-      const { data:eachFileData }: { data: { content: string } = await octokit.request(
+      const response = await octokit.request(
         "GET /repos/{owner}/{repo}/contents/{path}",
         {
           owner,
@@ -52,15 +52,13 @@ export const getSubmission = async (prNumber: number) => {
         }
       );
 
-      const fileContent = Buffer.from(eachFileData.content, "base64").toString(
-        "utf-8"
-      );
+      const data: any = response.data;
 
       const relativePath = file.filename.replace(basePath, "");
 
       files = {
         ...files,
-        [relativePath]: fileContent,
+        [relativePath]: Buffer.from(data.content, "base64").toString("utf-8"),
       };
     }
 
