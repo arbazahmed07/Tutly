@@ -62,6 +62,10 @@ export async function mergeAndDeleteBranch (submissionId:string){
 
     const pr = response.data;
 
+    if (pr.merged) {
+        return;
+    }
+    
     await octokit.pulls.merge({
         owner,
         repo,
