@@ -150,7 +150,7 @@ export const addOverallFeedback = async (
 export const getAssignmentSubmissions = async (assignmentId: string) => {
   const user = await getCurrentUser();
   if (!user || user.role == "STUDENT") {
-    return { message: "unauthorized" };
+    return null;
   }
 
   const submissions = await db.submission.findMany({
@@ -162,6 +162,7 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
     },
     include: {
       enrolledUser: true,
+      points: true,
     },
   });
 

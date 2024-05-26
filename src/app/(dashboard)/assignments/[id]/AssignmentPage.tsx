@@ -28,31 +28,31 @@ export default function AssignmentPage({
   const [feedback, setFeedback] = useState<string>("");
 
   const router = useRouter();
-  
+
   const searchParams = useSearchParams();
-  
+
   const userId = searchParams?.get("userId");
-  let filteredAssignments =[] ;
-  if(!userId){
+  let filteredAssignments = [];
+  if (!userId) {
     filteredAssignments = assignments?.filter((x: any) =>
-      (x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())||x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()))
+      (x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()) || x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   }
-  
-  const handleFeedback = async (submissionId : string) => {
+
+  const handleFeedback = async (submissionId: string) => {
     try {
 
       const res = await axios.post("/api/feedback", {
-        submissionId : submissionId,
+        submissionId: submissionId,
         feedback: feedback,
       });
       toast.success("Feedback saved successfully");
-    } catch(e: any) {
+    } catch (e: any) {
       toast.error("Failed to save feedback");
     }
   }
-  
-  const handleEdit = (index: number,submissionId : string) => {
+
+  const handleEdit = (index: number, submissionId: string) => {
     setEditingIndex(index);
     const submission = filteredAssignments.find((x: any) => x.id === submissionId);
     const rValue =
@@ -63,7 +63,7 @@ export default function AssignmentPage({
     const sValue =
       submission &&
       submission.points.find((point: any) => point.category === "STYLING");
-      const oValue =
+    const oValue =
       submission &&
       submission.points.find((point: any) => point.category === "OTHER");
     setEditedScores({
@@ -71,17 +71,17 @@ export default function AssignmentPage({
       styling: sValue ? sValue.score : 0,
       other: oValue ? oValue.score : 0,
     });
-    
+
     // router.refresh();
   };
-  
+
 
   const handleSave = async (index: number) => {
     try {
       toast.loading("Updating Scores...");
 
       const res = await axios.post("/api/points", {
-        submissionId : filteredAssignments[index].id,
+        submissionId: filteredAssignments[index].id,
         marks: [
           {
             category: "RESPOSIVENESS",
@@ -100,7 +100,7 @@ export default function AssignmentPage({
       toast.dismiss();
       toast.success("Scores saved successfully");
       router.refresh();
-    } catch(e: any) {
+    } catch (e: any) {
       toast.dismiss();
       toast.error("Failed to save scores");
     } finally {
@@ -122,11 +122,10 @@ export default function AssignmentPage({
         <div className="flex justify-center items-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`p-1 px-2 rounded text-white ${
-                new Date(assignment?.dueDate) > new Date()
-                  ? "bg-primary-600"
-                  : "bg-secondary-500"
-              }`}
+              className={`p-1 px-2 rounded text-white ${new Date(assignment?.dueDate) > new Date()
+                ? "bg-primary-600"
+                : "bg-secondary-500"
+                }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -187,7 +186,7 @@ export default function AssignmentPage({
             </Link>
           )}
         </div>
-        {(userId && assignment.submissions.length > 0)||(currentUser?.role === "STUDENT") ? (
+        {(userId && assignment.submissions.length > 0) || (currentUser?.role === "STUDENT") ? (
           <>
             <h1>
               <span className="block mt-5 dark:text-white">
@@ -206,9 +205,8 @@ export default function AssignmentPage({
                     </th>
                     <th
                       scope="col"
-                      className={`${
-                        currentUser?.role === "STUDENT" && "hidden"
-                      } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
+                      className={`${currentUser?.role === "STUDENT" && "hidden"
+                        } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                     >
                       Submission Link
                     </th>
@@ -266,9 +264,8 @@ export default function AssignmentPage({
                             {index + 1}
                           </td>
                           <td
-                            className={`${
-                              currentUser?.role === "STUDENT" && "hidden"
-                            } px-6 py-4 whitespace-nowrap`}
+                            className={`${currentUser?.role === "STUDENT" && "hidden"
+                              } px-6 py-4 whitespace-nowrap`}
                           >
                             <a
                               target="_blank"
@@ -307,15 +304,20 @@ export default function AssignmentPage({
           <>
             <div className="flex justify-between">
               <div className="block mt-5 dark:text-white">Submissions : 👇</div>
-              <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
-                <input
-                  title="input"
-                  className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
-                  placeholder="search username"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <FaSearch className="h-5 w-5 m-2" />
+              <div className="flex gap-4">
+                <button onClick={() => router.push(`/assignments/${params.id}/evaluate`)} className="bg-primary-600 inline px-2 py-1 text-sm rounded font-semibold text-white">
+                  Evaluate
+                </button>
+                <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
+                  <input
+                    title="input"
+                    className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
+                    placeholder="search username"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <FaSearch className="h-5 w-5 m-2" />
+                </div>
               </div>
             </div>
             <div className="overflow-x-auto">
@@ -333,9 +335,8 @@ export default function AssignmentPage({
                     </th>
                     <th
                       scope="col"
-                      className={`${
-                        currentUser?.role === "STUDENT" && "hidden"
-                      } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
+                      className={`${currentUser?.role === "STUDENT" && "hidden"
+                        } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                     >
                       Submission Link
                     </th>
@@ -370,8 +371,8 @@ export default function AssignmentPage({
                       Total
                     </th>
                     <th
-                    scope="col"
-                    className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+                      scope="col"
+                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
                     >
                       Feedback
                     </th>
@@ -413,9 +414,8 @@ export default function AssignmentPage({
                           </td>
                           <td className=" sticky left-0 bg-white divide-gray-200 ">{submission.enrolledUser.username}</td>
                           <td
-                            className={`${
-                              currentUser?.role === "STUDENT" && "hidden"
-                            } px-6 py-4 whitespace-nowrap`}
+                            className={`${currentUser?.role === "STUDENT" && "hidden"
+                              } px-6 py-4 whitespace-nowrap`}
                           >
                             <a
                               target="_blank"
@@ -445,7 +445,7 @@ export default function AssignmentPage({
                                     }));
                                   }
                                 }}
-                                min ={0}
+                                min={0}
                                 max={10}
                                 className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                               />
@@ -468,7 +468,7 @@ export default function AssignmentPage({
                                     }));
                                   }
                                 }}
-                                min ={0}
+                                min={0}
                                 max={10}
                                 className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                               />
@@ -491,7 +491,7 @@ export default function AssignmentPage({
                                     }));
                                   }
                                 }}
-                                min ={0}
+                                min={0}
                                 max={10}
                                 className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
                               />
@@ -507,54 +507,54 @@ export default function AssignmentPage({
                           <td>
                             {
                               editingIndex === index ? (
-                                  <textarea
-                                    title="null"
-                                    value={submission.feedback}
-                                    onChange={(e) => {
-                                      setFeedback(e.target.value);
-                                    }}
-                                    className="bg-transparent block min-w-16 text-start overflow-y-hidden border-black rounded-lg px-2 border-2 text-background m-2"
-                                    >
-                                  </textarea>
+                                <textarea
+                                  title="null"
+                                  value={submission.feedback}
+                                  onChange={(e) => {
+                                    setFeedback(e.target.value);
+                                  }}
+                                  className="bg-transparent block min-w-16 text-start overflow-y-hidden border-black rounded-lg px-2 border-2 text-background m-2"
+                                >
+                                </textarea>
                               ) : (
                                 submission.overallFeedback || "NA"
                               )
                             }
                           </td>
-                          { currentUser.role !== "STUDENT"  && (
-                            totalScore !== 0 ? 
+                          {currentUser.role !== "STUDENT" && (
+                            totalScore !== 0 ?
                               <td className=" text-green-700 font-semibold">
                                 <div className=" flex items-center justify-center">
-                                  Evaluated &nbsp; <FaCheck  />
+                                  Evaluated &nbsp; <FaCheck />
                                 </div>
                               </td>
                               :
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {editingIndex === index ? (
-                                <div className="  flex items-center justify-center gap-5">
-                                  <button
-                                    onClick={() => {handleSave(index) ; handleFeedback(submission.id)}}
-                                    className="text-blue-600 font-semibold hover:text-blue-700"
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                {editingIndex === index ? (
+                                  <div className="  flex items-center justify-center gap-5">
+                                    <button
+                                      onClick={() => { handleSave(index); handleFeedback(submission.id) }}
+                                      className="text-blue-600 font-semibold hover:text-blue-700"
                                     >
-                                    Save
-                                  </button>
-                                  <button  onClick={()=>setEditingIndex(-1)} className=" text-red-600 hover:text-red-700 font-semibold "> 
-                                    Cancel
-                                  </button>
+                                      Save
+                                    </button>
+                                    <button onClick={() => setEditingIndex(-1)} className=" text-red-600 hover:text-red-700 font-semibold ">
+                                      Cancel
+                                    </button>
                                   </div>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    handleEdit(index,submission.id);
-                                  }}
-                                  className="text-blue-600 font-semibold"
-                                >
-                                  Edit
-                                </button>
-                              )}
-                            </td>
+                                ) : (
+                                  <button
+                                    onClick={() => {
+                                      handleEdit(index, submission.id);
+                                    }}
+                                    className="text-blue-600 font-semibold"
+                                  >
+                                    Edit
+                                  </button>
+                                )}
+                              </td>
                           )}
-                        
+
                         </tr>
                       );
                     }
@@ -571,7 +571,7 @@ export default function AssignmentPage({
               className="m-auto"
               width={300}
               alt=""
-            /> 
+            />
             <h1 className="text-white">No submissions yet!</h1>
           </div>
         )}

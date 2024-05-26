@@ -3,6 +3,7 @@ import { getAssignmentSubmissions } from '@/actions/submission'
 import Playground from '@/app/(dashboard)/playground/multi-file/Playground'
 import Link from 'next/link'
 import React from 'react'
+import EvaluateSubmission from './EvaluateSubmission'
 
 const page = async ({
   params,
@@ -42,7 +43,7 @@ const page = async ({
         }
       </div>
       <div className='flex-1'>
-        <PlaygroundPage prNumber={prNumber} />
+        <PlaygroundPage submissions={submissions} prNumber={prNumber} />
       </div>
     </div>
   )
@@ -50,11 +51,22 @@ const page = async ({
 
 export default page
 
-const PlaygroundPage = async ({ prNumber }: { prNumber: number }) => {
+const PlaygroundPage = async ({
+  submissions,
+  prNumber
+}: {
+  submissions: any,
+  prNumber: number
+}) => {
   if (!prNumber) return (<div>Invalid PR Number</div>)
   const data = await getSubmission(prNumber)
 
   return (
-    <Playground initialFiles={data} />
+    <div>
+      <EvaluateSubmission
+        submission={submissions.find((submission: any) => submission.submissionLink && (parseInt(submission.submissionLink.split('/').pop() || "") == prNumber))}
+      />
+      <Playground initialFiles={data} />
+    </div>
   )
 }
