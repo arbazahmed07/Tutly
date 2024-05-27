@@ -22,7 +22,41 @@ export const postAttendance = async ({classId,data}: {
     })
     return postAttendance
 }
-
+export const getAttendanceForMentorByIdBarChart = async (id:string) => {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+        throw new Error("You must be logged in to attend a class");
+    }
+    const attendance = await db.attendance.findMany({
+        where: {
+            user:{
+                enrolledUsers:{
+                    some:{
+                        mentorUsername:id
+                    }
+                }
+            },
+            attended:true
+        }
+    })
+    const getAllClasses = await db.class.findMany({
+        select:{
+            id:true,
+            createdAt:true,
+        },
+        orderBy:{
+            createdAt:"asc"
+        }
+    });
+    const classes = <any>[];
+    const attendanceInEachClass = <any>[];
+    getAllClasses.forEach((classData) => {
+        classes.push(classData.createdAt.toISOString().split("T")[0]);
+        const tem = attendance.filter((attendanceData) => attendanceData.classId === classData.id)
+        attendanceInEachClass.push(tem.length);
+    })
+    return {classes,attendanceInEachClass}
+}
 export const getAttendanceForMentorBarChart = async () => {
     const currentUser = await getCurrentUser();
     if (!currentUser) {

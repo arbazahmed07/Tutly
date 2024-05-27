@@ -1,5 +1,6 @@
 import {
   getMentorPieChartData,
+  getStudentEvaluatedAssigmentsForMentor,
   getSubmissionsForMentorLineChart,
 } from "@/actions/assignments";
 import Barchart from "../../../components/charts/barchart";
@@ -9,8 +10,10 @@ import Radarchart from "../../../components/charts/radarchart";
 import { getAttendanceForMentorBarChart } from "@/actions/attendance";
 import { getMentorStudents } from "@/actions/courses";
 import { FaSquareArrowUpRight } from "react-icons/fa6";
+import { FaFilter } from "react-icons/fa6";
 import Link from "next/link";
 import getCurrentUser from "@/actions/getCurrentUser";
+import StudentsInfoForMentor from "@/components/studentsInfoForMentor";
 
 export default async function Statistics() {
   const mentorPieChart = await getMentorPieChartData();
@@ -33,16 +36,6 @@ export default async function Statistics() {
           <Piechart mentorPieChart={mentorPieChart} />
         </div>
         <div className="w-3/4 rounded-xl shadow-xl shadow-blue-500/5 flex gap-2">
-          {/* <div className="w-1/3 flex flex-col justify-between p-14 text-gray-500">
-            <h1>Total Students [Mentees]</h1>
-            <h1 className="text-4xl font-bold text-primary-500">
-              {mstudents?.length}
-            </h1>
-            <h1>Total Sessions</h1>
-            <h1 className="text-4xl font-bold text-primary-500">
-              {classes.length}
-            </h1>
-          </div> */}
           <div className="w-1/3 flex flex-col gap-6 p-14 text-gray-500">
             <div className="p-4 rounded-xl relative border">
               <h1 className="absolute -top-3 bg-background px-1">
@@ -109,6 +102,13 @@ export default async function Statistics() {
             Assignments to be evaluated
           </h1>
         </div>
+      </div>
+      <div className="w-full rounded-xl p-4 shadow-xl shadow-blue-500/5">
+        {!mstudents || mstudents.length === 0 ? (
+          <div>No Mentees are assigned!</div>
+        ) : (
+          <StudentsInfoForMentor mstudents={mstudents} />
+        )}
       </div>
     </div>
   );

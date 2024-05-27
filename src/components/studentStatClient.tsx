@@ -1,4 +1,3 @@
-"use client";
 import { FaSquareArrowUpRight } from "react-icons/fa6";
 import Link from "next/link";
 import DoughnutChart from "@/components/charts/doughnut";
@@ -13,7 +12,7 @@ export default function StudentStatClient({
     totalPoints,
     forBarChart,
 }:any) {
-  const rank = localStorage.getItem("rank");
+  const rank = 5
   return (
     <div className="m-8 flex flex-col gap-8">
       <div className="flex gap-8">

@@ -7,10 +7,12 @@ import {
   import Piechart from "../../../components/charts/piechart";
   import Radarchart from "../../../components/charts/radarchart";
   import { getAttendanceForMentorBarChart } from "@/actions/attendance";
-  import { getEnrolledStudents, getMentorStudents } from "@/actions/courses";
+  import { getEnrolledMentees, getEnrolledStudents, getMentorStudents } from "@/actions/courses";
   import { FaSquareArrowUpRight } from "react-icons/fa6";
   import Link from "next/link";
 import { getAllEnrolledUsers } from "@/actions/users";
+import StudentsInfoForMentor from "@/components/studentsInfoForMentor";
+import MentorInfoForInstructor from "@/components/mentorInfoForInstructor";
   
   export default async function Statistics() {
     const mentorPieChart = await getMentorPieChartData();
@@ -19,6 +21,7 @@ import { getAllEnrolledUsers } from "@/actions/users";
     const { assignments, countForEachAssignment }: any =
       await getSubmissionsForMentorLineChart();
       const mstudents = await getEnrolledStudents();
+      const mmentees = await getEnrolledMentees();
       let loaderValue = !mentorPieChart?0:String(mentorPieChart![0]*100/(mentorPieChart![0]+mentorPieChart![1]));
       loaderValue+='%';
     return (
@@ -28,12 +31,24 @@ import { getAllEnrolledUsers } from "@/actions/users";
             <Piechart mentorPieChart={mentorPieChart} />
           </div>
           <div className="w-3/4 rounded-xl shadow-xl shadow-blue-500/5 flex gap-2">
-            <div className="w-1/3 flex flex-col justify-between p-14 text-gray-500">
-              <h1>Total Students</h1>
-              <h1 className="text-4xl font-bold text-primary-500">{mstudents?.length}</h1>
-              <h1>Total Sessions</h1>
-              <h1 className="text-4xl font-bold text-primary-500">{classes.length}</h1>
+          <div className="w-1/3 flex flex-col gap-6 p-14 text-gray-500">
+            <div className="p-4 rounded-xl relative border">
+              <h1 className="absolute -top-3 bg-background px-1">
+                Total Students
+              </h1>
+              <h1 className="text-4xl flex justify-between items-baseline font-bold text-primary-500">
+                {mstudents?.length}
+              </h1>
             </div>
+            <div className="p-4 rounded-xl relative border">
+              <h1 className="absolute -top-3 bg-background px-1">
+                Total Sessions
+              </h1>
+              <h1 className="text-4xl font-bold text-primary-500">
+                {classes.length}
+              </h1>
+            </div>
+          </div>
             <div className="w-2/3 p-2">
               <Barchart
                 classes={classes}
@@ -63,6 +78,13 @@ import { getAllEnrolledUsers } from "@/actions/users";
             <h1 className="p-2 text-gray-500 text-center">Assignments to be evaluated by all the mentors</h1>
           </div>
         </div>
+        <div className="w-full rounded-xl p-4 shadow-xl shadow-blue-500/5">
+        {!mstudents || mstudents.length === 0 ? (
+          <div>No Mentees are assigned!</div>
+        ) : (
+          <MentorInfoForInstructor mstudents={mmentees} />
+        )}
+      </div>
       </div>
     );
   }
