@@ -145,6 +145,26 @@ export const getMentorStudents = async () => {
 
   return students;
 };
+export const getMentorStudentsById = async (id:string) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  const students = await db.user.findMany({
+    where: {
+      enrolledUsers: {
+        some: {
+          mentorUsername: id,
+        },
+      },
+    },
+    include: {
+      course: true,
+      enrolledUsers:true
+    },
+  });
+
+  return students;
+};
 
 export const getEnrolledStudents = async () => {
   const currentUser = await getCurrentUser();
@@ -158,7 +178,24 @@ export const getEnrolledStudents = async () => {
             createdById:currentUser.id
           }
         }
-      }
+      },
+      role:"STUDENT"
+    },
+    include: {
+      course: true,
+      enrolledUsers:true
+    },
+  });
+
+  return students;
+};
+export const getEnrolledMentees = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  const students = await db.user.findMany({
+    where:{
+      role:"MENTOR"
     },
     include: {
       course: true,

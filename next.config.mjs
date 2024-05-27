@@ -20,6 +20,7 @@ const nextConfig = {
       "www.google.com",
       "images.unsplash.com",
       "images.pexels.com",
+      "plus.unsplash.com"
     ]
   },
 };

@@ -10,6 +10,7 @@ import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { BsPersonRaisedHand } from "react-icons/bs";
+import { FcStatistics } from "react-icons/fc";
 
 export default function HomeLayout({
   children,
@@ -56,6 +57,11 @@ export default function HomeLayout({
         icon: < BsPersonRaisedHand />,
         path: access == 1 ? "/mentor/attendance" : "/instructor/attendance",
       },
+      {
+        name: "Statistics",
+        icon: <FcStatistics/>,
+        path: access == 1 ? "/mentor/statistics" : "/instructor/statistics"
+      }
     ];
   } else {
     items = [
@@ -88,6 +94,11 @@ export default function HomeLayout({
         name: "Playgrounds",
         icon: <MdAirplay />,
         path: "/playground/html-css-js"
+      },
+      {
+        name: "Statistics",
+        icon: <FcStatistics/>,
+        path: "/statistics"
       }
     ]
   }

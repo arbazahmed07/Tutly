@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 export default function Leaderboard({ submissions, courses, currentUser }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
-
   useEffect(() => {
     const filteredSubmissions = submissions.filter(
       (x: any) => x?.assignment?.class?.course?.id === currentCourse
@@ -43,6 +42,9 @@ export default function Leaderboard({ submissions, courses, currentUser }: any) 
         <FaCrown className="h-20 w-20 m-auto text-yellow-400" />
         <h1 className="text-2xl font-semibold text-yellow-300">Leaderboard</h1>
       </div>
+      <div>
+        <h1 className="py-2 text-gray-500 text-sm text-center">Leaderboard is updated on the immediate sunday after the assignment is submitted!</h1>
+      </div>
       <div className="flex gap-3 mt-4">
         {courses?.map((course: any) => (
           <button
@@ -75,7 +77,10 @@ export default function Leaderboard({ submissions, courses, currentUser }: any) 
           </div>
         ) : (
           leaderboardData.map((data: any, index: number) => {
-            if(data.totalPoints === 0||(currentUser?.role==="STUDENT"&&index>10)) return null
+            if(currentUser.role==="STUDENT"&&data.username===currentUser.username) {
+              localStorage.setItem("rank", String(index + 1));
+            }
+            if(data.totalPoints === 0) return null
             return (
             <div
               className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:text-white hover:from-blue-600 hover:to-sky-500`}

@@ -1,6 +1,10 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import { getCreatedCourses, getEnrolledCoursesById, getMentorCourses } from "./courses";
+import {
+  getCreatedCourses,
+  getEnrolledCoursesById,
+  getMentorCourses,
+} from "./courses";
 import { orderBy } from "lodash";
 
 export const getAllAssignedAssignments = async () => {
@@ -380,23 +384,23 @@ export const getAllAssignmentDetailsBy = async (id: string) => {
       },
     },
   });
-  
+
   const sortedAssignments = assignment?.submissions.sort((a, b) => {
-    if( b.enrolledUser.username > a.enrolledUser.username ) {
-      return -1
-    } else if( b.enrolledUser.username < a.enrolledUser.username ) {
-      return 1
+    if (b.enrolledUser.username > a.enrolledUser.username) {
+      return -1;
+    } else if (b.enrolledUser.username < a.enrolledUser.username) {
+      return 1;
     } else {
-      return 0
+      return 0;
     }
-  })
+  });
   return sortedAssignments;
 };
 
 export const getAllAssignmentDetailsForInstructor = async (id: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-  
+
   const assignment = await db.attachment.findUnique({
     where: {
       id,
@@ -406,8 +410,8 @@ export const getAllAssignmentDetailsForInstructor = async (id: string) => {
         include: {
           course: {
             where: {
-              createdById: currentUser.id
-            }
+              createdById: currentUser.id,
+            },
           },
         },
       },
@@ -423,19 +427,18 @@ export const getAllAssignmentDetailsForInstructor = async (id: string) => {
       },
     },
   });
-  
+
   const sortedAssignments = assignment?.submissions.sort((a, b) => {
-    if( b.enrolledUser.username > a.enrolledUser.username ) {
-      return -1
-    } else if( b.enrolledUser.username < a.enrolledUser.username ) {
-      return 1
+    if (b.enrolledUser.username > a.enrolledUser.username) {
+      return -1;
+    } else if (b.enrolledUser.username < a.enrolledUser.username) {
+      return 1;
     } else {
-      return 0
+      return 0;
     }
-  })
+  });
   return sortedAssignments;
 };
-
 
 export const getAllAssignmentsByCourseId = async (id: string) => {
   const currentUser = await getCurrentUser();
@@ -472,4 +475,245 @@ export const getAllAssignmentsByCourseId = async (id: string) => {
   });
 
   return coursesWithAssignments;
+};
+
+export const getMentorPieChartData = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+  let assignments, noOfTotalMentees;
+  if (currentUser.role === "MENTOR") {
+    assignments = await db.submission.findMany({
+      where: {
+        enrolledUser: {
+          mentorUsername: currentUser.username,
+        },
+      },
+      include: {
+        points: true,
+      },
+    });
+    noOfTotalMentees = await db.enrolledUsers.count({
+      where: {
+        mentorUsername: currentUser.username,
+      },
+    });
+  } else {
+    assignments = await db.submission.findMany({
+      include: {
+        points: true,
+      },
+    });
+    noOfTotalMentees = await db.enrolledUsers.count();
+  }
+  let assignmentsWithPoints = 0,
+    assignmentsWithoutPoints = 0;
+  assignments.forEach((assignment) => {
+    if (assignment.points.length > 0) {
+      assignmentsWithPoints += 1;
+    } else {
+      assignmentsWithoutPoints += 1;
+    }
+  });
+  const noOfTotalAssignments = await db.attachment.count({
+    where: {
+      attachmentType: "ASSIGNMENT",
+    },
+  });
+  const notSubmitted =
+    noOfTotalAssignments * noOfTotalMentees -
+    assignmentsWithPoints -
+    assignmentsWithoutPoints;
+
+  return [assignmentsWithPoints, assignmentsWithoutPoints, notSubmitted];
+};
+export const getMentorPieChartById = async(id: string) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+  let assignments = await db.submission.findMany({
+    where: {
+      enrolledUser: {
+        mentorUsername: id,
+      },
+    },
+    include: {
+      points: true,
+    },
+  });
+  let noOfTotalMentees = await db.enrolledUsers.count({
+    where: {
+      mentorUsername: id,
+    },
+  });
+  let assignmentsWithPoints = 0,
+    assignmentsWithoutPoints = 0;
+  assignments.forEach((assignment) => {
+    if (assignment.points.length > 0) {
+      assignmentsWithPoints += 1;
+    } else {
+      assignmentsWithoutPoints += 1;
+    }
+  });
+  const noOfTotalAssignments = await db.attachment.count({
+    where: {
+      attachmentType: "ASSIGNMENT",
+    },
+  });
+  const notSubmitted =
+    noOfTotalAssignments * noOfTotalMentees -
+    assignmentsWithPoints -
+    assignmentsWithoutPoints;
+
+  return [assignmentsWithPoints, assignmentsWithoutPoints, notSubmitted];
+}
+export const getSubmissionsForMentorByIdLineChart = async (id:string) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+  const submissionCount = await db.attachment.findMany({
+    where: {
+      attachmentType: "ASSIGNMENT",
+    },
+    include: {
+      submissions: {
+        where: {
+          enrolledUser: {
+            mentorUsername: id,
+          },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+  const assignments = <any>[];
+  const countForEachAssignment = <any>[];
+  submissionCount.forEach((submission, index) => {
+    assignments.push(submission.title);
+    countForEachAssignment.push(submission.submissions.length);
+  });
+  return { assignments, countForEachAssignment };
+}
+export const getSubmissionsForMentorLineChart = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+  let submissionCount;
+  if (currentUser.role === "MENTOR") {
+    submissionCount = await db.attachment.findMany({
+      where: {
+        attachmentType: "ASSIGNMENT",
+      },
+      include: {
+        submissions: {
+          where: {
+            enrolledUser: {
+              mentorUsername: currentUser.username,
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+  } else {
+    submissionCount = await db.attachment.findMany({
+      where: {
+        attachmentType: "ASSIGNMENT",
+      },
+      include: {
+        submissions: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+  }
+  const assignments = <any>[];
+  const countForEachAssignment = <any>[];
+  submissionCount.forEach((submission, index) => {
+    assignments.push(submission.title);
+    countForEachAssignment.push(submission.submissions.length);
+  });
+  return { assignments, countForEachAssignment };
+};
+
+export const getStudentEvaluatedAssigments = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+  let assignments = await db.submission.findMany({
+    where: {
+      enrolledUser: {
+        username: currentUser.username,
+      }
+    },
+    include: {
+      points: true,
+    },
+  });
+  let totalPoints = 0;
+  const tem=assignments;
+  assignments = assignments.filter((assignment) => assignment.points.length > 0);
+  const underReview=tem.length-assignments.length;
+  assignments.forEach((assignment) => {
+    assignment.points.forEach((point) => {
+      totalPoints += point.score;
+    })
+  })
+  const noOfTotalAssignments = await db.attachment.count({
+    where: {
+      attachmentType: "ASSIGNMENT",
+    },
+  });
+  return {
+    evaluated: assignments.length,
+    underReview:underReview,
+    unsubmitted:noOfTotalAssignments-assignments.length-underReview,
+    totalPoints: totalPoints,
+  };
+};
+export const getStudentEvaluatedAssigmentsForMentor = async (id:any) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+  let assignments = await db.submission.findMany({
+    where: {
+      enrolledUser: {
+        username: id,
+      }
+    },
+    include: {
+      points: true,
+    },
+  });
+  let totalPoints = 0;
+  const tem=assignments;
+  assignments = assignments.filter((assignment) => assignment.points.length > 0);
+  const underReview=tem.length-assignments.length;
+  assignments.forEach((assignment) => {
+    assignment.points.forEach((point) => {
+      totalPoints += point.score;
+    })
+  })
+  const noOfTotalAssignments = await db.attachment.count({
+    where: {
+      attachmentType: "ASSIGNMENT",
+    },
+  });
+  return {
+    evaluated: assignments.length || 0,
+    underReview:underReview,
+    unsubmitted:noOfTotalAssignments-assignments.length-underReview,
+    totalPoints: totalPoints,
+  };
 };
