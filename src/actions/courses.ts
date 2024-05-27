@@ -306,12 +306,17 @@ export const getCourseByCourseId = async (id: string) => {
 
 export const enrollStudentToCourse = async (courseId: string, username: string) => {
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role !== 'INSTRUCTOR') {
+      throw new Error('Unauthorized to enroll student to course');
+    }
+    
     const user = await db.user.findUnique({
       where: { username },
     });
     
-    if (!user) {
-      throw new Error('User not found');
+    if (!user ) {
+      throw new Error ('User not found')
     }
 
     const course = await db.course.findUnique({
@@ -345,3 +350,113 @@ export const enrollStudentToCourse = async (courseId: string, username: string) 
     throw new Error(`Failed to enroll student: ${error.message}`);
   }
 };
+
+
+export const unenrollStudentFromCourse = async (courseId: string, username: string) => {
+  try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role !== 'INSTRUCTOR') {
+      throw new Error('Unauthorized to unenroll student from course');
+    }
+    
+    const user = await db.user.findUnique({
+      where: { username },
+    });
+
+    if (!user ) {
+      throw new Error('User not found')
+    }
+
+    const course = await db.course.findUnique({
+      where: { id: courseId },
+    });
+
+    if (!course) {
+      throw new Error('Course not found');
+    }
+
+    const existingEnrollment = await db.enrolledUsers.findFirst({
+      where: {
+        courseId,
+        username,
+      },
+    });
+
+    if (!existingEnrollment) {
+      throw new Error('User is not enrolled in the course');
+    }
+
+    await db.enrolledUsers.delete({
+      where: {
+        id: existingEnrollment.id,
+      },
+    });
+
+    return existingEnrollment;
+  } catch (error : any) {
+    throw new Error(`Failed to unenroll student: ${error.message}`);
+  }
+}
+
+export const updateRole = async (username: string,role :string) => {
+  try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role !== 'INSTRUCTOR') {
+      throw new Error('Unauthorized to update user role');
+    }
+    
+    const user = await db.user.findUnique({
+      where: { username },
+    });
+
+    if (!user ) {
+      throw new Error('User not found')
+    }
+
+    const updatedUser = await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        role: role  as  'STUDENT' | 'MENTOR',
+      },
+    });
+
+    return updatedUser;
+  } catch (error : any) {
+    throw new Error(`Failed to update user role: ${error.message}`);
+  }
+}
+
+export const updateMentor = async (courseId:string, username: string,mentorUsername :string) => {
+  try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role !== 'INSTRUCTOR') {
+      throw new Error('Unauthorized to update mentor');
+    }
+    const enrolledUser = await db.enrolledUsers.findFirst ({
+      where: {
+          courseId,
+          username,        
+      },
+    });
+
+    if (!enrolledUser) {
+      throw new Error('User is not enrolled in the course');
+    }
+    
+    const updatedUser = await db.enrolledUsers.update({
+      where: {
+        id: enrolledUser.id,
+      },
+      data: {
+        mentorUsername,
+      },
+    });
+
+    return updatedUser;
+    
+  } catch (error : any) {
+    throw new Error(`Failed to update mentor: ${error.message}`);
+  }
+}
