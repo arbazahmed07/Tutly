@@ -1,5 +1,5 @@
 import getCurrentUser from "@/actions/getCurrentUser";
-import { updatePoints } from "@/actions/points";
+import addPoints from "@/actions/points";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -7,12 +7,15 @@ export async function POST(request: NextRequest) {
   if(!user || user.role==="STUDENT"){
     return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
   }
-  const { submissionId, score, category } = await request.json();
+  const { submissionId, marks } = await request.json();
+
   try {
-    const points = await updatePoints(submissionId, score, category);
-    console.log(points);
+    
+    const points = await addPoints({ submissionId, marks });
+
+
     return NextResponse.json(points);
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+    return NextResponse.json({ error: e.message }, { status: 401 });
   }
 }
