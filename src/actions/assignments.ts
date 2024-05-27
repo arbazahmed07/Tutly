@@ -573,3 +573,40 @@ export const getSubmissionsForMentorLineChart = async () => {
   });
   return { assignments, countForEachAssignment };
 };
+
+export const getStudentEvaluatedAssigments = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return null;
+  }
+  let assignments = await db.submission.findMany({
+    where: {
+      enrolledUser: {
+        username: currentUser.username,
+      }
+    },
+    include: {
+      points: true,
+    },
+  });
+  let totalPoints = 0;
+  const tem=assignments;
+  assignments = assignments.filter((assignment) => assignment.points.length > 0);
+  const underReview=tem.length-assignments.length;
+  assignments.forEach((assignment) => {
+    assignment.points.forEach((point) => {
+      totalPoints += point.score;
+    })
+  })
+  const noOfTotalAssignments = await db.attachment.count({
+    where: {
+      attachmentType: "ASSIGNMENT",
+    },
+  });
+  return {
+    evaluated: assignments.length,
+    underReview:underReview,
+    unsubmitted:noOfTotalAssignments-assignments.length-underReview,
+    totalPoints: totalPoints,
+  };
+};

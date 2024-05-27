@@ -10,7 +10,7 @@ export default async function mentorLeaderboard() {
     const { sortedSubmissions, createdCourses } = data;
 
     return (
-      <Leaderboard submissions={sortedSubmissions} courses={createdCourses} />
+      <Leaderboard submissions={sortedSubmissions} courses={createdCourses} currentUser={data.currentUser}/>
     );
 
   } else {

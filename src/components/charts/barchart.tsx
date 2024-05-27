@@ -2,7 +2,7 @@
 import { useRef, useEffect } from "react";
 import { Chart } from "chart.js/auto";
 
-export default function Barchart({classes,attendanceInEachClass,label}:{classes:any,attendanceInEachClass:any,label:string}) {
+export default function Barchart({classes,attendanceInEachClass,label,bgColors,currentUser}:any) {
   const chartRef = useRef<any>(null);
 
   useEffect(() => {
@@ -20,9 +20,7 @@ export default function Barchart({classes,attendanceInEachClass,label}:{classes:
             {
               label:label,
               data:attendanceInEachClass,
-              backgroundColor: [
-                'rgb(37,99,235)'
-              ],
+              backgroundColor: bgColors,
               borderColor:'white',
               borderWidth: 0,
             }
@@ -49,7 +47,7 @@ export default function Barchart({classes,attendanceInEachClass,label}:{classes:
     }
   },[]);
 
-  return <div className=" max-h-[300px]">
+  return <div className={`h-full w-[80%]`}>
     <canvas ref={chartRef}/>
   </div>;
 }

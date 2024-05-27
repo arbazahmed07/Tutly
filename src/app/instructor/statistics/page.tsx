@@ -27,7 +27,7 @@ import { getAllEnrolledUsers } from "@/actions/users";
           <div className="w-1/4 shadow-xl shadow-blue-500/5 rounded-xl p-8">
             <Piechart mentorPieChart={mentorPieChart} />
           </div>
-          <div className="w-3/4 rounded-xl shadow-2xl shadow-blue-500/20 flex gap-2">
+          <div className="w-3/4 rounded-xl shadow-xl shadow-blue-500/5 flex gap-2">
             <div className="w-1/3 flex flex-col justify-between p-14 text-gray-500">
               <h1>Total Students</h1>
               <h1 className="text-4xl font-bold text-primary-500">{mstudents?.length}</h1>
@@ -39,20 +39,22 @@ import { getAllEnrolledUsers } from "@/actions/users";
                 classes={classes}
                 attendanceInEachClass={attendanceInEachClass}
                 label={"Attendees"}
+                bgColors={["rgb(37,99,235)"]}
               />
             </div>
           </div>
         </div>
         <div className="flex gap-8">
-          <div className="w-3/4 rounded-xl p-4 relative shadow-2xl shadow-blue-500/20">
+          <div className="w-3/4 rounded-xl p-4 relative shadow-xl max-h-[300px] shadow-blue-500/5">
             <Barchart
             classes={assignments}
             attendanceInEachClass={countForEachAssignment}
             label={"Submissions"}
+            bgColors={["rgb(37,99,235)"]}
             />
             <Link href="/instructor/assignments/getByAssignment" className="absolute top-2 right-2"><FaSquareArrowUpRight className="text-xl text-gray-500"/></Link>
           </div>
-          <div className="w-1/4 shadow-2xl shadow-blue-500/20 rounded-xl p-8">
+          <div className="w-1/4 shadow-xl shadow-blue-500/5 rounded-xl p-8">
             <h1 className="pb-14 text-gray-500">Evaluation</h1>
             <div className="px-16 font-semibold text-blue-500 text-center"><span className="text-3xl font-bold">{mentorPieChart?mentorPieChart[0]:0}</span><span>/{mentorPieChart?mentorPieChart![0]+mentorPieChart![1]:0}</span></div >
             <div className="w-[80%] rounded-full border border-gray-700 m-auto my-4">

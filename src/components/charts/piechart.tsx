@@ -18,7 +18,7 @@ export default function Piechart({mentorPieChart}:{mentorPieChart:any}) {
           labels:['Reviewed','Under review','Unsubmitted'],
           datasets:[
             {
-              label:"Info",
+              label:"Assignments",
               data:mentorPieChart,
               backgroundColor: [
                 'rgb(22,163,74)',
@@ -43,7 +43,7 @@ export default function Piechart({mentorPieChart}:{mentorPieChart:any}) {
     }
   },[]);
 
-  return <div className="w-full m-auto">
+  return <div className="w-full m-auto max-w-[300px]">
     <canvas ref={chartRef}/>
   </div>
 }

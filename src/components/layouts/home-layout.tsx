@@ -94,6 +94,11 @@ export default function HomeLayout({
         name: "Playgrounds",
         icon: <MdAirplay />,
         path: "/playground/html-css-js"
+      },
+      {
+        name: "Statistics",
+        icon: <FcStatistics/>,
+        path: "/statistics"
       }
     ]
   }
