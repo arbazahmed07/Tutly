@@ -95,11 +95,11 @@ export default function HomeLayout({
         icon: <MdAirplay />,
         path: "/playground/html-css-js"
       },
-      {
-        name: "Statistics",
-        icon: <FcStatistics/>,
-        path: "/statistics"
-      }
+      // {
+      //   name: "Statistics",
+      //   icon: <FcStatistics/>,
+      //   path: "/statistics"
+      // }
     ]
   }
   return (
