@@ -1,8 +1,6 @@
-import { getAttedanceByClassId } from "@/actions/attendance";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { BiSolidCloudUpload } from "react-icons/bi";
-import AttendanceOfClass from "./attendanceOfClass";
 
 export default function AttendanceHeader({
   pastpresentStudents,
