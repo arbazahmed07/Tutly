@@ -3,15 +3,11 @@ import {
     getSubmissionsForMentorLineChart,
   } from "@/actions/assignments";
   import Barchart from "../../../components/charts/barchart";
-  import Linechart from "../../../components/charts/linechart";
   import Piechart from "../../../components/charts/piechart";
-  import Radarchart from "../../../components/charts/radarchart";
   import { getAttendanceForMentorBarChart } from "@/actions/attendance";
   import { getEnrolledMentees, getEnrolledStudents, getMentorStudents } from "@/actions/courses";
   import { FaSquareArrowUpRight } from "react-icons/fa6";
   import Link from "next/link";
-import { getAllEnrolledUsers } from "@/actions/users";
-import StudentsInfoForMentor from "@/components/studentsInfoForMentor";
 import MentorInfoForInstructor from "@/components/mentorInfoForInstructor";
   
   export default async function Statistics() {

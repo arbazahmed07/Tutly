@@ -4,7 +4,6 @@ import * as XLSX from "xlsx";
 import _ from "lodash";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { BiSolidCloudUpload } from "react-icons/bi";
 import AttendanceHeader from "./AttendanceHeader";
 
 interface Student {
@@ -27,7 +26,6 @@ const AttendanceClient = ({ courses }: any) => {
   const [openClasses, setOpenClasses] = useState<boolean>(false);
   const [users, setUsers] = useState<any>([]);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
-  let k = 0;
 
   useEffect(() => {
     if (!currentCourse) {
@@ -198,7 +196,27 @@ const AttendanceClient = ({ courses }: any) => {
     const viewAttendance = async () => {
       if (currentClass) {
         const res = await axios.get(`/api/attendance/${currentClass.id}`);
-        setPastPresentStudents(res.data);
+        setPastPresentStudents(res.data.attendance);
+
+        const Totaldata: any = [];
+
+        res.data.attendance.forEach((student: any) => {
+          const { username, data } = student;
+          data.forEach((join: any) => {
+            Totaldata.push({
+              Name: join.ActualName,
+              username: username,
+              JoinTime: join.JoinTime,
+              LeaveTime: join.LeaveTime,
+              Duration: join.Duration,
+              UserEmail: student.UserEmail,
+              RecordingDisclaimerResponse: student.RecordingDisclaimerResponse,
+              InWaitingRoom: student.InWaitingRoom,
+            });
+          });
+        }
+        );
+        setFileData(Totaldata);
       }
     };
     viewAttendance();
@@ -223,45 +241,157 @@ const AttendanceClient = ({ courses }: any) => {
         selectedFile={selectedFile}
         handleUpload={handleUpload}
       />
-      {/* Present Students Table */}
-      {fileData && selectedFile && (
-        <>
-          <table className="w-[80%] m-auto mt-10">
-            <thead>
-              <tr className="border-b">
-                <th>index</th>
-                <th className="py-2 pl-10 text-start">Name</th>
-                <th>Username</th>
-                <th>Duration</th>
-                <th>Date</th>
-                <th>Times Joined</th>
-                <th>view</th>
-                {/* <th>status</th> */}
-              </tr>
-            </thead>
-            <tbody>
-              {presentStudents.map((student: any, index) => (
-                <tr key={index} className="hover:bg-primary-800 cursor-pointer">
-                  <td>{index + 1}</td>
-                  <td className="py-2 pl-10 text-start">
-                    {student.ActualName}
-                  </td>
+      {/* Table */}
+      {fileData && selectedFile && pastpresentStudents.length == 0 && (
+        <AttendanceTable
+          presentStudents={presentStudents}
+          users={users}
+          absentStudents={absentStudents}
+          handleStudentClick={handleStudentClick}
+          openEditName={openEditName}
+          setOpenEditName={setOpenEditName}
+          username={username}
+          setUsername={setUsername}
+          handleEditUsername={handleEditUsername}
+        />
+      )}
+
+      {
+        pastpresentStudents.length > 0 && (
+          <AttendanceTable
+            presentStudents={presentStudents}
+            users={users}
+            absentStudents={absentStudents}
+            handleStudentClick={handleStudentClick}
+            openEditName={openEditName}
+            setOpenEditName={setOpenEditName}
+            username={username}
+            setUsername={setUsername}
+            handleEditUsername={handleEditUsername}
+          />
+        )
+      }
+
+      {selectedStudent && (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white text-gray-700 p-4 rounded-md w-[60%]">
+            <h2 className="text-lg font-semibold mb-2">
+              Attendance Details for {String(selectedStudent?.Name)}
+            </h2>
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th className="border px-4 py-2">Actual Name</th>
+                  <th className="border px-4 py-2">Join Time</th>
+                  <th className="border px-4 py-2">Leave Time</th>
+                  <th className="border px-4 py-2">Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedStudent.Joins && selectedStudent.Joins.map((join: any, index: number) => (
+                  <tr key={index}>
+                    <td className="border px-4 py-2">{join.ActualName}</td>
+                    <td className="border px-4 py-2">{join.JoinTime}</td>
+                    <td className="border px-4 py-2">{join.LeaveTime}</td>
+                    <td className="border px-4 py-2">{join.Duration}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button
+              className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleClosePopup}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AttendanceClient;
+
+
+const AttendanceTable = ({
+  presentStudents,
+  users,
+  absentStudents,
+  handleStudentClick,
+  openEditName,
+  setOpenEditName,
+  username,
+  setUsername,
+  handleEditUsername,
+}: any) => {
+  let k = 0;
+
+  return (
+    <>
+      <table className="w-[80%] m-auto mt-10">
+        <thead>
+          <tr className="border-b">
+            <th>index</th>
+            <th className="py-2 pl-10 text-start">Name</th>
+            <th>Username</th>
+            <th>Duration</th>
+            <th>Date</th>
+            <th>Times Joined</th>
+            <th>view</th>
+            {/* <th>status</th> */}
+          </tr>
+        </thead>
+        <tbody>
+          {presentStudents.map((student: any, index: number) => (
+            <tr key={index} className="hover:bg-primary-800 cursor-pointer">
+              <td>{index + 1}</td>
+              <td className="py-2 pl-10 text-start">
+                {student.ActualName}
+              </td>
+              <td>{student.username}</td>
+              <td>
+                <p
+                  className={`p-1 m-auto w-10 rounded ${student.Duration < 30
+                    ? "bg-red-500"
+                    : student.Duration < 90
+                      ? "bg-blue-500"
+                      : "bg-green-500"
+                    }`}
+                >
+                  {student.Duration}
+                </p>
+              </td>
+              <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
+              <td>{student.Joins.length}</td>
+              <td
+                className="cursor-pointer"
+                onClick={() => handleStudentClick(student)}
+              >
+                view
+              </td>
+              {/* <td>
+                        <select>
+                          <option value="absent">A</option>
+                          <option value="present">P</option>
+                        </select>
+                      </td> */}
+            </tr>
+          ))}
+          {users.map((student: any, index: number) => {
+            const userInPresentStudents = presentStudents.find(
+              (x: any) => x.username === student.username
+            );
+            if (!userInPresentStudents) {
+              k += 1;
+              return (
+                <tr key={index} className="hover:bg-primary-800">
+                  <td>{k + presentStudents.length}</td>
+                  <td className="py-2 text-start pl-10">{student.name}</td>
                   <td>{student.username}</td>
-                  <td>
-                    <p
-                      className={`p-1 m-auto w-10 rounded ${
-                        student.Duration < 30
-                          ? "bg-red-500"
-                          : student.Duration < 90
-                          ? "bg-blue-500"
-                          : "bg-green-500"
-                      }`}
-                    >
-                      {student.Duration}
-                    </p>
-                  </td>
-                  <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
-                  <td>{student.Joins.length}</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
                   <td
                     className="cursor-pointer"
                     onClick={() => handleStudentClick(student)}
@@ -275,41 +405,15 @@ const AttendanceClient = ({ courses }: any) => {
                         </select>
                       </td> */}
                 </tr>
-              ))}
-              {users.map((student: any, index: number) => {
-                const userInPresentStudents = presentStudents.find(
-                  (x) => x.username === student.username
-                );
-                if (!userInPresentStudents) {
-                  k += 1;
-                  return (
-                    <tr key={index} className="hover:bg-primary-800">
-                      <td>{k + presentStudents.length}</td>
-                      <td className="py-2 text-start pl-10">{student.name}</td>
-                      <td>{student.username}</td>
-                      <td>-</td>
-                      <td>-</td>
-                      <td>-</td>
-                      <td
-                        className="cursor-pointer"
-                        onClick={() => handleStudentClick(student)}
-                      >
-                        view
-                      </td>
-                      {/* <td>
-                        <select>
-                          <option value="absent">A</option>
-                          <option value="present">P</option>
-                        </select>
-                      </td> */}
-                    </tr>
-                  );
-                }
-              })}
-            </tbody>
-          </table>
+              );
+            }
+          })}
+        </tbody>
+      </table>
 
-          {/* Absent Students Table */}
+      {/* Absent Students Table */}
+      {
+        absentStudents.length > 0 && (
           <table className="w-[80%] m-auto mt-10">
             <thead>
               <tr className="border-b">
@@ -338,7 +442,7 @@ const AttendanceClient = ({ courses }: any) => {
                     Duration: number;
                     username: string;
                   },
-                  index
+                  index: number
                 ) => (
                   <tr key={index} className="hover:bg-primary-800">
                     <td>{index + 1}</td>
@@ -360,13 +464,12 @@ const AttendanceClient = ({ courses }: any) => {
                     )}
                     <td>
                       <p
-                        className={`p-1 m-auto w-10 rounded ${
-                          student.Duration < 30
-                            ? "bg-red-500"
-                            : student.Duration < 90
+                        className={`p-1 m-auto w-10 rounded ${student.Duration < 30
+                          ? "bg-red-500"
+                          : student.Duration < 90
                             ? "bg-blue-500"
                             : "bg-green-500"
-                        }`}
+                          }`}
                       >
                         {student.Duration}
                       </p>
@@ -407,46 +510,8 @@ const AttendanceClient = ({ courses }: any) => {
               )}
             </tbody>
           </table>
-        </>
-      )}
-
-      {selectedStudent && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white text-gray-700 p-4 rounded-md w-[60%]">
-            <h2 className="text-lg font-semibold mb-2">
-              Attendance Details for {String(selectedStudent?.Name)}
-            </h2>
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="border px-4 py-2">Actual Name</th>
-                  <th className="border px-4 py-2">Join Time</th>
-                  <th className="border px-4 py-2">Leave Time</th>
-                  <th className="border px-4 py-2">Duration</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedStudent.Joins.map((join: any, index: number) => (
-                  <tr key={index}>
-                    <td className="border px-4 py-2">{join.ActualName}</td>
-                    <td className="border px-4 py-2">{join.JoinTime}</td>
-                    <td className="border px-4 py-2">{join.LeaveTime}</td>
-                    <td className="border px-4 py-2">{join.Duration}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button
-              className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={handleClosePopup}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default AttendanceClient;
+        )
+      }
+    </>
+  )
+}

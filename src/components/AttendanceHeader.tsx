@@ -1,4 +1,3 @@
-import Link from "next/link";
 import toast from "react-hot-toast";
 import { BiSolidCloudUpload } from "react-icons/bi";
 
@@ -100,7 +99,7 @@ export default function AttendanceHeader({
             </div>
           </div>
         </div>
-        {pastpresentStudents.length === 0 ? (
+        {pastpresentStudents.length === 0 && (
           <div className="flex gap-2 items-center">
             <input
               type="file"
@@ -122,10 +121,6 @@ export default function AttendanceHeader({
               </div>
             )}
           </div>
-        ) : (
-          <Link href={`/attendance/${currentClass.id}`} className="bg-primary-600 rounded px-2 py-1 hover:scale-105 hover:duration-500">
-            Get Attendance
-          </Link>
         )}
       </div>
     </>

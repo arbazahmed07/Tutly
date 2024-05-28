@@ -195,7 +195,14 @@ export const getEnrolledMentees = async () => {
 
   const students = await db.user.findMany({
     where:{
-      role:"MENTOR"
+      role:"MENTOR",
+      enrolledUsers:{
+        some:{
+          course:{
+            createdById:currentUser.id,
+          }
+        }
+      }
     },
     include: {
       course: true,
