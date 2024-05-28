@@ -130,7 +130,7 @@ model Folder {
 model Attendance {
   id String @id @default(uuid())
 
-  username String @unique
+  username String
   user     User   @relation(fields: [username], references: [username])
 
   classId String
@@ -143,6 +143,8 @@ model Attendance {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([username,classId])
 }
 
 model Doubt {
