@@ -4,6 +4,8 @@ import * as XLSX from "xlsx";
 import _ from "lodash";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { BiSolidCloudUpload } from "react-icons/bi";
+import AttendanceHeader from "./AttendanceHeader";
 
 interface Student {
   Name: string;
@@ -25,6 +27,7 @@ const AttendanceClient = ({ courses }: any) => {
   const [openClasses, setOpenClasses] = useState<boolean>(false);
   const [users, setUsers] = useState<any>([]);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  let k = 0;
 
   useEffect(() => {
     if (!currentCourse) {
@@ -177,115 +180,49 @@ const AttendanceClient = ({ courses }: any) => {
   };
 
   // upload attendance to db
-  const handleUpload=async()=>{
+  const handleUpload = async () => {
+    // toast.loading("uploading attendance...")
     try {
       const res = await axios.post("/api/attendance", {
         classId: currentClass?.id,
-        data: presentStudents
-      })
-      toast.success("Attendance uploaded successfully")
-    } catch(e) {
-      toast.error("something went wrong!")}
-  }
+        data: presentStudents,
+      });
+      toast.success("Attendance uploaded successfully");
+      toast.dismiss();
+    } catch (e) {
+      toast.error("Attendance already uploaded!");
+    }
+  };
+  const [pastpresentStudents, setPastPresentStudents] = useState([]);
+  useEffect(() => {
+    const viewAttendance = async () => {
+      if (currentClass) {
+        const res = await axios.get(`/api/attendance/${currentClass.id}`);
+        setPastPresentStudents(res.data);
+      }
+    };
+    viewAttendance();
+  }, [currentClass]);
   return (
     <div className="p-4 text-center ">
       <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
       <h1 className="text-center text-lg">Monitor your mentees attendance</h1>
-      <div className="flex justify-between w-[80%] m-auto mt-8">
-        <div className="flex gap-2 items-center">
-          <div className="relative">
-            {!currentCourse ? (
-              <h1
-                onClick={
-                  courses.length === 0
-                    ? () => toast.error("no courses exist")
-                    : () => setOpenCourses(!openCourses)
-                }
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer"
-              >
-                select course
-              </h1>
-            ) : (
-              <h1
-                onClick={() => setOpenCourses(!openCourses)}
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer"
-              >
-                {currentCourse.title}
-              </h1>
-            )}
-            <div className="flex flex-col absolute bg-primary-800 w-full">
-              {openCourses &&
-                courses.map((course: any) => {
-                  return (
-                    <h1
-                      onClick={() => {
-                        setOpenCourses(!openCourses);
-                        setCurrentCourse(course);
-                      }}
-                      className="border-b p-1 cursor-pointer hover:bg-primary-600"
-                      key={course.id}
-                    >
-                      {course.title}
-                    </h1>
-                  );
-                })}
-            </div>
-          </div>
-          <div className="relative">
-            {!currentClass ? (
-              <h1
-                onClick={
-                  !currentCourse
-                    ? () => toast.error("select course!")
-                    : () => setOpenClasses(!openClasses)
-                }
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer"
-              >
-                select class
-              </h1>
-            ) : (
-              <h1
-                onClick={() => setOpenClasses(!openClasses)}
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer"
-              >
-                {currentClass.title}
-              </h1>
-            )}
-            <div className="flex flex-col absolute bg-primary-800 w-full">
-              {openClasses &&
-                currentCourse.classes.map((x: any) => {
-                  return (
-                    <h1
-                      onClick={() => {
-                        setCurrentClass(x);
-                        setOpenClasses(!openClasses);
-                      }}
-                      className="border-b p-1 cursor-pointer hover:bg-primary-600"
-                      key={x.id}
-                    >
-                      {x.title}
-                    </h1>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-        <div>
-          <input
-            type="file"
-            className="bg-primary-600 rounded cursor-pointer w-60 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out"
-            accept=".csv, .xlsx"
-            onChange={(e) => {
-              const files = e.target.files;
-              !currentClass
-                ? toast.error("select class")
-                : files && files.length > 0 && onSelectFile(files[0]);
-            }}
-          />
-          {/* <div onClick={handleUpload} className="bg-primary-600 rounded p-1">upload</div> */}
-        </div>
-      </div>
-
+      <AttendanceHeader
+        pastpresentStudents={pastpresentStudents}
+        courses={courses}
+        currentCourse={currentCourse}
+        setCurrentCourse={setCurrentCourse}
+        currentClass={currentClass}
+        setCurrentClass={setCurrentClass}
+        openClasses={openClasses}
+        openCourses={openCourses}
+        setOpenClasses={setOpenClasses}
+        setOpenCourses={setOpenCourses}
+        onSelectFile={onSelectFile}
+        fileData={fileData}
+        selectedFile={selectedFile}
+        handleUpload={handleUpload}
+      />
       {/* Present Students Table */}
       {fileData && selectedFile && (
         <>
@@ -299,15 +236,12 @@ const AttendanceClient = ({ courses }: any) => {
                 <th>Date</th>
                 <th>Times Joined</th>
                 <th>view</th>
-                <th>status</th>
+                {/* <th>status</th> */}
               </tr>
             </thead>
             <tbody>
               {presentStudents.map((student: any, index) => (
-                <tr
-                  key={index}
-                  className="hover:bg-primary-800 cursor-pointer"
-                >
+                <tr key={index} className="hover:bg-primary-800 cursor-pointer">
                   <td>{index + 1}</td>
                   <td className="py-2 pl-10 text-start">
                     {student.ActualName}
@@ -329,30 +263,30 @@ const AttendanceClient = ({ courses }: any) => {
                   <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
                   <td>{student.Joins.length}</td>
                   <td
-                        className="cursor-pointer"
-                        onClick={() => handleStudentClick(student)}
-                      >
-                        view
-                      </td>
-                      <td>
+                    className="cursor-pointer"
+                    onClick={() => handleStudentClick(student)}
+                  >
+                    view
+                  </td>
+                  {/* <td>
                         <select>
                           <option value="absent">A</option>
                           <option value="present">P</option>
                         </select>
-                      </td>
+                      </td> */}
                 </tr>
               ))}
               {users.map((student: any, index: number) => {
                 const userInPresentStudents = presentStudents.find(
                   (x) => x.username === student.username
                 );
-                if (!userInPresentStudents)
+                if (!userInPresentStudents) {
+                  k += 1;
                   return (
                     <tr key={index} className="hover:bg-primary-800">
-                      <td>{index + 1}</td>
+                      <td>{k + presentStudents.length}</td>
                       <td className="py-2 text-start pl-10">{student.name}</td>
                       <td>{student.username}</td>
-                      <td>-</td>
                       <td>-</td>
                       <td>-</td>
                       <td>-</td>
@@ -362,14 +296,15 @@ const AttendanceClient = ({ courses }: any) => {
                       >
                         view
                       </td>
-                      <td>
+                      {/* <td>
                         <select>
                           <option value="absent">A</option>
                           <option value="present">P</option>
                         </select>
-                      </td>
+                      </td> */}
                     </tr>
                   );
+                }
               })}
             </tbody>
           </table>
@@ -407,7 +342,9 @@ const AttendanceClient = ({ courses }: any) => {
                 ) => (
                   <tr key={index} className="hover:bg-primary-800">
                     <td>{index + 1}</td>
-                    <td>{student.Joins[0].ActualName}</td>
+                    <td className="text-start ps-8">
+                      {student.Joins[0].ActualName}
+                    </td>
                     {openEditName === Number(index + 1) ? (
                       <td className="text-start pl-10 py-2 max-w-52">
                         <input
@@ -508,7 +445,6 @@ const AttendanceClient = ({ courses }: any) => {
           </div>
         </div>
       )}
-      <div className="text-center text-xl font-bold mt-20">Under Progress...</div>
     </div>
   );
 };
