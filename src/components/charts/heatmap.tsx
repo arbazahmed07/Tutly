@@ -25,7 +25,7 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data }) => {
   const generateDatesForYear = (year: number) => {
     const startOfYearDate = startOfYear(new Date(year, 0, 1));
     const endOfYearDate = endOfYear(new Date(year, 0, 1));
-    const allDays = eachDayOfInterval({ start: startOfYearDate, end: endOfYearDate }).map(
+    const allDays :any= eachDayOfInterval({ start: startOfYearDate, end: endOfYearDate }).map(
       (date) => ({
         date,
         isPresent: data.includes(format(date, "yyyy-MM-dd")),
@@ -70,8 +70,8 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data }) => {
       </div>
       <div className="flex ms-12 gap-12 mb-2">
         {
-          months.map((month) => (
-            <h1 className="text-xs text-gray-400">{month}</h1>
+          months.map((month,index) => (
+            <h1 key={index} className="text-xs text-gray-400">{month}</h1>
           ))
         }
       </div>
@@ -87,9 +87,10 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data }) => {
           }
 
           const { date, isPresent } = dateInfo;
+
           return (
             <div
-              key={date.toISOString()}
+              key={(date as Date).toISOString()}
               className={`relative w-4 h-4 flex items-center justify-center rounded cursor-pointer transition duration-300 transform hover:scale-110 ${
                 isPresent ? "bg-green-600" : "bg-gray-500"
               }`}
