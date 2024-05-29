@@ -11,6 +11,7 @@ export default function StudentStatClient({
     totalEvaluatedAssigmentsOfStudent,
     totalPoints,
     forBarChart,
+    attendanceDates
 }:any) {
   const rank = 5
   return (
@@ -50,7 +51,7 @@ export default function StudentStatClient({
         </div>
       </div>
       <div className="rounded-xl shadow-xl shadow-blue-500/5">
-        <CalendarHeatmap data={["2024-05-27"]} />
+        <CalendarHeatmap data={attendanceDates} />
       </div>
     </div>
   );
