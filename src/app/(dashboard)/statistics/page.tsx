@@ -3,10 +3,11 @@ import {
   getStudentEvaluatedAssigments,
   getSubmissionsForMentorLineChart,
 } from "@/actions/assignments";
-import { getAttendanceForMentorBarChart } from "@/actions/attendance";
+import { getAttendanceForMentorBarChart, getAttendanceOfStudent } from "@/actions/attendance";
 import { getEnrolledStudents, getMentorStudents } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
 import StudentStatClient from "@/components/studentStatClient";
+import { json } from "stream/consumers";
 
 export default async function Statistics() {
   const mentorPieChart = await getMentorPieChartData();
@@ -17,15 +18,10 @@ export default async function Statistics() {
         (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1])
       );
   loaderValue += "%";
-  const sampleData: string[] = [
-    "2024-05-01",
-    "2024-05-02",
-    "2024-05-03",
-    "2024-05-15",
-    "2024-05-16",
-    "2024-05-17",
-    // Add more dates
-  ];
+  const currentUser = await getCurrentUser();
+  if(!currentUser) return <div className="text-center text-xl font-bold">Please Login to view your Statistics</div>
+  const attendanceDates = await getAttendanceOfStudent(currentUser.username);
+  // return <pre>{JSON.stringify(attendanceDates,null,2)}</pre>
 
   return (
     <div>
@@ -33,6 +29,7 @@ export default async function Statistics() {
       totalEvaluatedAssigmentsOfStudent={evaluated} 
       totalPoints={totalPoints}
       forBarChart={[evaluated,underReview,unsubmitted]}
+      attendanceDates={attendanceDates}
       />
     </div>
   );
