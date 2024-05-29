@@ -194,8 +194,8 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                   doubts?.length !== 0 && 
             <div id="accordion-color" data-accordion="collapse" className="mt-5 cursor-pointer" >
             {QA?.map((qa : any, index : number) => ( 
-                <div key={index} className={`relative cursor-pointer rounded-t-md ${openAccordion === index ? "shadow-xl" :" shadow-3xl"} bg-white text-zinc-500 p-2 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]`}>
-                <div className={`flex items-center justify-between w-full p-3 flex-wrap font-medium gap-3 rounded-t-lg`} >
+                <div key={index} className={`relative cursor-pointer rounded-md ${openAccordion === index ? "shadow-xl" :" shadow-3xl"} bg-white text-zinc-600 p-2 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]`}>
+                <div className={`flex items-center justify-between w-full p-3 flex-wrap font-medium gap-3`} >
                     <div className='flex justify-start items-center space-x-5 ml-2 relative'> 
                         {qa.user.role === 'STUDENT' &&
                             <Image src={qa.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
@@ -223,7 +223,7 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                             </div>                            
                         </div>
                     </div>
-                    <div className="flex gap-2 justify-end items-center flex-wrap">
+                    <div className="flex gap-7 justify-end items-center flex-wrap">
                       {/* your reply for that answer */}
                         <div>
                           <button
@@ -243,30 +243,26 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                 className="p-1 mr-2"
                                 onClick={() => handleDeleteDoubt(qa.id)}
                                 >
-                                <MdDelete className='cursor-pointer  w-5 h-5 text-red-600' />
+                                <MdDelete className='cursor-pointer  w-5 h-5 text-red-500 hover:text-red-600' />
                               </button>
                       </div>
                     </div>
                 </div>
-                  {
-                      openAccordion === index &&  qa.response.length === 0 && (
-                        <div className='absolute top-full left-0 z-40  w-full bg-white shadow-lg p-3'>
-                          <div className="flex justify-center items-center  space-x-2 bg-secondary-200 p-2 rounded-lg hover:bg-secondary-300">
-                            <div className='flex items-center space-x-2'>
-                              <p className="text-medium text-gray-800 flex justify-start items-center font-bold">No responses</p>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                  }
                   <div className="flex justify-between mx-4 items-center"> 
                     <div>   
-                      <h1 className="rounded-md text-sm font-bold text-justify">
+                      <h1 className="rounded-md text-sm font-semibold text-justify">
                       {qa.description}
                       </h1>
                     </div> 
                     <div onClick={() => toggleAccordion(index)} className="text-sm font-medium border-2 border-blue-500 py-1.5 px-3 rounded-lg"><span className="rounded-full p-1">{qa.response.length} </span>| {openAccordion===-1?"Show":"Hide"} replies</div>
                   </div>
+                  {
+                      openAccordion === index &&  qa.response.length === 0 && (
+                          <div className="flex justify-center items-center  space-x-2 bg-secondary-200 p-3 m-2 rounded-lg hover:bg-secondary-300">
+                              <p className="text-medium text-gray-800 flex justify-start items-center font-bold">No responses</p>
+                          </div>
+                      )
+                  }
                   {/* Replies */}
                   <div className="flex px-3 mt-2 items-center">
                           {
@@ -307,10 +303,10 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                           }
                     </div>
                   {openAccordion === index && qa.response.length > 0 && (
-                    <div className="top-full left-0 z-50 w-full bg-white p-3 rounded-lg text-black">
+                    <div className="bg-white p-3 rounded-lg text-black">
                       <p className="font-semibold text-sm mb-2">Replies :</p>
                     {qa.response.map((r : any, responseIndex : number) => (
-                        <div key={responseIndex} className="p-4 border-2 rounded-lg hover:bg-zinc-200 mb-2">
+                        <div key={responseIndex} className="p-4 border-2 rounded-lg hover:bg-zinc-200 mb-2 text-zinc-600">
                           <div className="flex justify-between items-center">
                           <div className='flex space-x-5'>                                
                                 {r.user?.role === 'STUDENT' &&
@@ -328,27 +324,26 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
                                         <Image src={r.user?.image  || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
                                     </div>
                                 }
-                              <div className="flex flex-col justify-start gap-1">
+                              <div className=" flex flex-col justify-start gap-1">   
+                                  <div className="flex flex-row justify-start gap-3">
+                                          <p className="text-xs font-semibold">{r?.user?.name} </p>
+                                          <p className='text-xs font-medium'> [ {r?.user?.username} ]</p>
+                                  </div>
                                   <div>
-                                    <p className='text-xs font-medium'>Replied on {formatDateTime(r?.createdAt)}</p>
-                                  </div> 
-                                  <div className="flex flex-row justify-start gap-1.5">
-                        
-                                    <p className="text-xs font-semibold">byㅤ{r?.user?.name} </p>
-                                    <p className='text-xs font-medium'> [ {r.user?.username} ]</p>
-                                  </div>                           
+                                      <p className='text-xs font-medium'>Posted on {formatDateTime(r?.createdAt)}</p>
+                                  </div>                            
                               </div>
                             </div>
                               <div hidden={ r.user.role==='INSTRUCTOR' && currentUser.role !== 'INSTRUCTOR' } >
                                   {
                                     (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR' )  && 
                                     <button onClick={() => handleDeleteReply(r.id)  }>
-                                        <MdDelete className='cursor-pointer w-5 h-5 text-red-700 hover:text-red-600'  />
+                                        <MdDelete className='cursor-pointer w-5 h-5 text-red-500 hover:text-red-600'  />
                                     </button>
                                   }
                               </div>
                           </div>
-                          <div className="text-sm font-bold mt-2 -mb-2">
+                          <div className="text-sm font-semibold mt-2 -mb-2">
                               {r.description}
                           </div>
                         </div>
