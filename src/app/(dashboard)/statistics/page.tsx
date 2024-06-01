@@ -21,7 +21,6 @@ export default async function Statistics() {
   const currentUser = await getCurrentUser();
   if(!currentUser) return <div className="text-center text-xl font-bold">Please Login to view your Statistics</div>
   const attendanceDates = await getAttendanceOfStudent(currentUser.username);
-  // return <pre>{JSON.stringify(attendanceDates,null,2)}</pre>
 
   return (
     <div>
