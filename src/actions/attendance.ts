@@ -132,3 +132,19 @@ export const getAttedanceByClassId = async (id: string) => {
   });
   return attendance;
 };
+
+export const getAttendanceOfStudent = async(id:string)=>{
+  const attendance = await db.attendance.findMany({
+    where:{
+      username:id
+    },
+    select:{
+      createdAt:true
+    }
+  })
+  let attendanceDates = <any>[];
+  attendance.forEach((attendanceData)=>{
+    attendanceDates.push(attendanceData.createdAt.toISOString().split("T")[0])
+  })
+  return attendanceDates;
+}

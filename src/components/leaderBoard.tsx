@@ -2,10 +2,12 @@
 import Image from "next/image";
 import { FaCrown } from "react-icons/fa6";
 import { useState, useEffect } from "react";
+import { count } from "console";
 
 export default function Leaderboard({ submissions, courses, currentUser }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
+  let count=0;
   useEffect(() => {
     const filteredSubmissions = submissions.filter(
       (x: any) => x?.assignment?.class?.course?.id === currentCourse
@@ -70,17 +72,15 @@ export default function Leaderboard({ submissions, courses, currentUser }: any) 
             <Image
                 src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
                 height={400}
-                className="m-auto "
+                className="m-auto"
                 width={400}
                 alt=""
               />
           </div>
         ) : (
           leaderboardData.map((data: any, index: number) => {
-            if(currentUser.role==="STUDENT"&&data.username===currentUser.username) {
-              localStorage.setItem("rank", String(index + 1));
-            }
             if(data.totalPoints === 0) return null
+            count+=1;
             return (
             <div
               className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:text-white hover:from-blue-600 hover:to-sky-500`}
@@ -88,7 +88,7 @@ export default function Leaderboard({ submissions, courses, currentUser }: any) 
             > 
                 <div className="flex justify-between items-center">
                   <div className="flex gap-3 md:gap-10 items-center">
-                    <h1>{index + 1}</h1>
+                    <h1>{count}</h1>
                     <Image
                       src={data?.image || "/images/placeholder.jpg"}
                       alt={`User ${index + 1}`}
