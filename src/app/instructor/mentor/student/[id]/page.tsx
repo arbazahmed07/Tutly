@@ -2,6 +2,7 @@ import {
     getMentorPieChartData,
     getStudentEvaluatedAssigmentsForMentor,
   } from "@/actions/assignments";
+import { getAttendanceOfStudent } from "@/actions/attendance";
   import StudentStatClient from "@/components/studentStatClient";
   
   export default async function Page({params}:any) {
@@ -13,15 +14,7 @@ import {
           (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1])
         );
     loaderValue += "%";
-    const sampleData: string[] = [
-      "2024-05-01",
-      "2024-05-02",
-      "2024-05-03",
-      "2024-05-15",
-      "2024-05-16",
-      "2024-05-17",
-      // Add more dates
-    ];
+    const {classes,attendanceDates} = await getAttendanceOfStudent(params.id);
   
     return (
       <div>
@@ -30,6 +23,8 @@ import {
         totalEvaluatedAssigmentsOfStudent={evaluated}
         totalPoints={totalPoints}
         forBarChart={[evaluated,underReview,unsubmitted]}
+        classes={classes}
+        attendanceDates={attendanceDates}
         />
       </div>
     );

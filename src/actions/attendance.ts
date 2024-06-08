@@ -146,5 +146,21 @@ export const getAttendanceOfStudent = async(id:string)=>{
   attendance.forEach((attendanceData)=>{
     attendanceDates.push(attendanceData.createdAt.toISOString().split("T")[0])
   })
-  return attendanceDates;
+
+  const getAllClasses = await db.class.findMany({
+    select: {
+      id: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+  const classes = <any>[];
+  getAllClasses.forEach((classData) => {
+    if(!attendanceDates.includes(classData.createdAt.toISOString().split("T")[0])){
+      classes.push(classData.createdAt.toISOString().split("T")[0]);
+    }
+  });
+  return {classes,attendanceDates};
 }
