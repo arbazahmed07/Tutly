@@ -3,7 +3,6 @@ import { deleteClass } from "@/actions/classes";
 import getCurrentUser from "@/actions/getCurrentUser";
 
 export async function DELETE(req: NextRequest,{ params }: { params: {classId: string }}) {
-    console.log(params.classId);
     
     try {
         const currentUser = await getCurrentUser();

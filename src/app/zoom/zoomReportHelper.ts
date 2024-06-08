@@ -57,7 +57,6 @@ export const pastMeetingParticipantsReport = async()=>{
         }).catch(err=>{
             return err;
         })
-        console.log("***",result)
         if(result.data?.participants) {
             pastMeetingParticipantsResult.push(result.data.participants);
             pastMeetingParticipantsUri+=`&next_page_tokens=${result.data.next_page_tokens}`

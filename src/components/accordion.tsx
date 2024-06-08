@@ -26,12 +26,8 @@ export default function Accordion({doubts ,currentUser,currentCourseId}: any) {
     },[currentCourseId])
     
     const QA = dbts;
-    console.log(QA);
-    
-    
     
     const handleAddDoubt = async (data  : any) => {
-      console.log(data);
       
       const res = await axios.post("/api/doubts/postDoubt", {
         courseId : currentCourseId,
