@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { FaCrown } from "react-icons/fa6";
 import { useState, useEffect } from "react";
-import { count } from "console";
 
 export default function Leaderboard({ submissions, courses, currentUser }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
@@ -45,7 +44,7 @@ export default function Leaderboard({ submissions, courses, currentUser }: any) 
         <h1 className="text-2xl font-semibold text-yellow-300">Leaderboard</h1>
       </div>
       <div>
-        <h1 className="py-2 text-gray-500 text-sm text-center">Leaderboard is updated on the immediate sunday after the assignment is submitted!</h1>
+        <h1 className="py-2 text-gray-500 text-sm text-center">The leaderboard is updated on the Sunday immediately following the assignment submission.</h1>
       </div>
       <div className="flex gap-3 mt-4">
         {courses?.map((course: any) => (

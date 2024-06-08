@@ -9,30 +9,29 @@ import {
   eachDayOfInterval,
   getDay,
   isSameDay,
-  subYears,
-  addYears,
 } from "date-fns";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 
 interface CalendarHeatmapProps {
+  classes: string[];
   data: string[];
 }
 
-const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data }) => {
+const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
   const [currentYear, setCurrentYear] = useState(startOfToday().getFullYear());
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
 
   const generateDatesForYear = (year: number) => {
     const startOfYearDate = startOfYear(new Date(year, 0, 1));
     const endOfYearDate = endOfYear(new Date(year, 0, 1));
-    const allDays :any= eachDayOfInterval({ start: startOfYearDate, end: endOfYearDate }).map(
+    const allDays: any = eachDayOfInterval({ start: startOfYearDate, end: endOfYearDate }).map(
       (date) => ({
         date,
-        isPresent: data.includes(format(date, "yyyy-MM-dd")),
+        isPresent: data?.includes(format(date, "yyyy-MM-dd")),
+        isInClass: classes?.includes(format(date, "yyyy-MM-dd")),
       })
     );
 
-    // Get padding days for the first week of January
     const paddingDays = getDay(startOfYearDate);
     const paddedDays = Array.from({ length: paddingDays }, () => null).concat(allDays);
 
@@ -48,6 +47,7 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data }) => {
   const handleNextYear = () => {
     setCurrentYear(currentYear + 1);
   };
+
   const months = [
     "January",
     "February",
@@ -60,8 +60,8 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data }) => {
     "September",
     "October",
     "November",
-    "December"
-  ]
+    "December",
+  ];
 
   return (
     <div className="flex flex-col items-center">
@@ -69,11 +69,11 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data }) => {
         {currentYear}
       </div>
       <div className="flex ms-12 gap-12 mb-2">
-        {
-          months.map((month,index) => (
-            <h1 key={index} className="text-xs text-gray-400">{month}</h1>
-          ))
-        }
+        {months.map((month, index) => (
+          <h1 key={index} className="text-xs text-gray-400">
+            {month}
+          </h1>
+        ))}
       </div>
       <div className="grid grid-rows-7 grid-flow-col gap-1 relative">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
@@ -86,14 +86,19 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ data }) => {
             return <div key={index} className="w-4 h-4"></div>;
           }
 
-          const { date, isPresent } = dateInfo;
+          const { date, isPresent, isInClass } = dateInfo;
+
+          let cellColorClass = "bg-gray-500";
+          if (isPresent) {
+            cellColorClass = "bg-green-500";
+          } else if (isInClass) {
+            cellColorClass = "bg-red-500";
+          }
 
           return (
             <div
               key={(date as Date).toISOString()}
-              className={`relative w-4 h-4 flex items-center justify-center rounded cursor-pointer transition duration-300 transform hover:scale-110 ${
-                isPresent ? "bg-green-600" : "bg-gray-500"
-              }`}
+              className={`relative w-4 h-4 flex items-center justify-center rounded cursor-pointer transition duration-300 transform hover:scale-110 ${cellColorClass}`}
               onMouseEnter={() => setHoveredDate(date)}
               onMouseLeave={() => setHoveredDate(null)}
             >

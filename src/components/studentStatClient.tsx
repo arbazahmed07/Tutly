@@ -1,24 +1,19 @@
-import { FaSquareArrowUpRight } from "react-icons/fa6";
-import Link from "next/link";
 import DoughnutChart from "@/components/charts/doughnut";
 import CalendarHeatmap from "@/components/charts/heatmap";
 import { FaRankingStar } from "react-icons/fa6";
 import Barchart from "@/components/charts/barchart";
-import Linechart from "@/components/charts/linechart";
-import Piechart from "@/components/charts/piechart";
-import Radarchart from "@/components/charts/radarchart";
 export default function StudentStatClient({
     totalEvaluatedAssigmentsOfStudent,
     totalPoints,
     forBarChart,
+    classes,
     attendanceDates
 }:any) {
-  const rank = 5
   return (
     <div className="m-8 flex flex-col gap-8">
       <div className="flex gap-8">
         <div className="w-1/4 shadow-xl shadow-blue-500/5 rounded-xl px-8">
-          <DoughnutChart attendance={[200, 200]} />
+          <DoughnutChart attendance={[attendanceDates?.length, attendanceDates?.length+classes?.length]} />
           <h1 className="py-2 text-center font-bold text-xl text-gray-500">
             Attendance
           </h1>
@@ -28,7 +23,7 @@ export default function StudentStatClient({
             <div className="p-4 rounded-xl relative border">
               <h1 className="absolute -top-3 bg-background px-1"># Rank</h1>
               <div className="flex justify-between items-center">
-                <h1 className="text-4xl font-bold text-primary-500">{rank}</h1>
+                <h1 className="text-4xl font-bold text-primary-500">NA</h1>
                 <h1>
                   <FaRankingStar className="text-4xl" />
                 </h1>
@@ -51,7 +46,7 @@ export default function StudentStatClient({
         </div>
       </div>
       <div className="rounded-xl shadow-xl shadow-blue-500/5">
-        <CalendarHeatmap data={attendanceDates} />
+        <CalendarHeatmap classes={classes} data={attendanceDates} />
       </div>
     </div>
   );
