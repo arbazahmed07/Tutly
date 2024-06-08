@@ -6,7 +6,6 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  console.log(params.id, "params.id");
 
   try {
     const currentUser = await getCurrentUser();

@@ -55,8 +55,6 @@ const NewClass = () => {
         courseId: params.id,
         folderName: selectedFolder=="new" ? folderName.trim() : undefined,
       });
-
-      console.log(res.data);
       
       if (res.data.error) {
         toast.error('Failed to add new class');

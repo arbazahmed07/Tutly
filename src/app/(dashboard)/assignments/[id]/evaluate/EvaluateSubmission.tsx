@@ -18,7 +18,7 @@ const EvaluateSubmission = ({
     styling: 0,
     other: 0,
   });
-  const [feedback, setFeedback] = useState<string|null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const rValue = submission.points.find(
     (point: any) => point.category === "RESPOSIVENESS"
@@ -107,6 +107,21 @@ const EvaluateSubmission = ({
       router.refresh()
     }
   };
+
+  const handleDelete = async () => {
+    const response = confirm("Are you sure you want to delete this submission?");
+    if (!response) return;
+    try {
+      toast.loading("Deleting Submission...");
+      const res = await axios.delete(`/api/submissions/${submission.id}`);
+      toast.dismiss();
+      toast.success("Submission deleted successfully");
+      router.refresh()
+    } catch (e: any) {
+      toast.dismiss();
+      toast.error("Failed to delete submission");
+    }
+  }
 
   return (
     <div>
@@ -285,7 +300,7 @@ const EvaluateSubmission = ({
                   :
                   <td className="px-2 py-1 whitespace-nowrap">
                     {isEditing ? (
-                      <div className="  flex items-center justify-center gap-5">
+                      <div className="flex items-center justify-center gap-5">
                         <button
                           onClick={handleSave}
                           className="text-blue-600 font-semibold hover:text-blue-700"
@@ -297,12 +312,20 @@ const EvaluateSubmission = ({
                         </button>
                       </div>
                     ) : (
-                      <button
-                        onClick={handleEdit}
-                        className="text-blue-600 font-semibold"
-                      >
-                        Edit
-                      </button>
+                      <div className="flex items-center justify-center gap-5">
+                        <button
+                          onClick={handleEdit}
+                          className="text-blue-600 font-semibold"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={handleDelete}
+                          className="text-red-600 hover:text-red-700 font-semibold"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     )}
                   </td>
               }

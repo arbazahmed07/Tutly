@@ -10,10 +10,7 @@ export async function POST(request: NextRequest) {
   const { submissionId, marks } = await request.json();
 
   try {
-    
     const points = await addPoints({ submissionId, marks });
-
-
     return NextResponse.json(points);
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 401 });

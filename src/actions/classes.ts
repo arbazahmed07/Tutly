@@ -16,15 +16,8 @@ const classSchema = z.object({
 });
 
 export const createClass = async (data: any) => {
-  console.log(data.createdAt, "data");
-  console.log(typeof data.createdAt);
-  
   const { classTitle, videoLink, videoType, courseId, folderId, folderName,createdAt } =
   classSchema.parse(data);
-  // console.log(JSON.stringify(data,null,2));
-  console.log(createdAt,"createdAt");
-  
-  
   let myClass;
   
 
