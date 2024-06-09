@@ -27,7 +27,7 @@ export default function Barchart({classes,attendanceInEachClass,label,bgColors,c
           ]
         },
         options:{
-          responsive:true,
+          // responsive:true,
           scales:{
             x:{
               type:'category',
