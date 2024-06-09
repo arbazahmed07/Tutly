@@ -53,16 +53,18 @@ export default function HomeLayout({
         path: "/community",
       },
       {
-        name: "Attendance",
-        icon: < BsPersonRaisedHand />,
-        path: access == 1 ? "/mentor/attendance" : "/instructor/attendance",
-      },
-      {
         name: "Statistics",
         icon: <FcStatistics/>,
         path: access == 1 ? "/mentor/statistics" : "/instructor/statistics"
       }
     ];
+    if(access == 2){
+      items.push({
+        name: "Attendance",
+        icon: < BsPersonRaisedHand />,
+        path: "/instructor/attendance",
+      })
+    }
   } else {
     items = [
       {

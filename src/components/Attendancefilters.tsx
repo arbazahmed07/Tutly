@@ -221,9 +221,10 @@ const AttendanceClient = ({ courses }: any) => {
     };
     viewAttendance();
   }, [currentClass]);
+
   return (
     <div className="p-4 text-center ">
-      <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
+      <div><h1 className="text-4xl mt-4 w-60 mx-auto font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-orange-200 to-red-400">Attendance</h1></div>
       <h1 className="text-center text-lg">Monitor your mentees attendance</h1>
       <AttendanceHeader
         pastpresentStudents={pastpresentStudents}

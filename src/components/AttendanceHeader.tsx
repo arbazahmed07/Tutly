@@ -1,5 +1,18 @@
+"use client";
 import toast from "react-hot-toast";
 import { BiSolidCloudUpload } from "react-icons/bi";
+import { MdDeleteOutline } from "react-icons/md";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import axios from "axios";
 
 export default function AttendanceHeader({
   pastpresentStudents,
@@ -17,7 +30,16 @@ export default function AttendanceHeader({
   selectedFile,
   handleUpload,
 }: any) {
-  //   const attendance = await getAttedanceByClassId(currentClass.id);
+  const handleDelete = async (x:any) => {
+    try {
+      const res = await axios.post("/api/attendance/delete", {
+        classId: x
+      });
+      toast.success("Attendance deleted successfully");
+    } catch (e: any) {
+      toast.error("Failed to delete attendance");
+    }
+  };
   return (
     <>
       <div className="flex justify-between w-[80%] m-auto mt-8">
@@ -99,7 +121,7 @@ export default function AttendanceHeader({
             </div>
           </div>
         </div>
-        {pastpresentStudents.length === 0 && (
+        {pastpresentStudents.length === 0 ? (
           <div className="flex gap-2 items-center">
             <input
               type="file"
@@ -121,6 +143,45 @@ export default function AttendanceHeader({
               </div>
             )}
           </div>
+        ) : (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="text-red-500 font-bold p-1 px-3 rounded-lg border-2 border-red-500 flex justify-center gap-1 items-center hover:scale-105 duration-500">
+                <h1>Delete</h1>
+                <MdDeleteOutline className="text-lg" />
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="border-none rounded-2xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Clear Attendance</AlertDialogTitle>
+                <div className="flex gap-2">
+                  <h1 className="rounded-full p-0.5 px-2 text-xs text-primary-700 border border-primary-700">
+                    {currentCourse?.title}
+                  </h1>
+                  <h1 className="rounded-full p-0.5 px-2 text-xs text-primary-700 border border-primary-700">
+                    {currentClass?.title}
+                  </h1>
+                </div>
+                <p className="text-sm text-gray-500 pb-10 flex items-center gap-1">
+                  Are you sure?
+                  <br />
+                  On continuing, attendance of all the students will be cleared
+                  for this class.
+                </p>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="mr-2 bg-gray-200 hover:bg-gray-300 text-black">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={()=>handleDelete(currentClass?.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white"
+                >
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </div>
     </>
