@@ -62,15 +62,14 @@ export async function deleteSubmission(submissionId:string){
 
     const pr = response.data;
 
-    if (pr.merged) {
-        throw new Error("PR is already merged");
+    //todo: change this later
+    if (!pr.merged) {
+        await octokit.git.deleteRef({
+            owner,
+            repo,
+            ref: `heads/${pr.head.ref}`
+        });
     }
-
-    await octokit.git.deleteRef({
-        owner,
-        repo,
-        ref: `heads/${pr.head.ref}`
-    });
 
     await db.submission.delete({
         where: {
