@@ -18,7 +18,7 @@ export default function Doughnutchart({attendance}:{attendance:any}) {
           // labels:classes,
           datasets:[
             {
-            //   label:label,
+              label:"classes",
               data:attendance,
               backgroundColor: [
                 'rgb(37,99,235)',
@@ -31,7 +31,7 @@ export default function Doughnutchart({attendance}:{attendance:any}) {
           ]
         },
         options:{
-          responsive:true,
+          // responsive:true,
           // scales:{
           //   x:{
           //     type:'category',
@@ -53,6 +53,6 @@ export default function Doughnutchart({attendance}:{attendance:any}) {
 
   return <div className="relative max-h-[300px]">
     <canvas ref={chartRef}/>
-    <div className="absolute flex justify-center items-center w-full h-full top-0 font-bold text-3xl">{(attendance[0]*100/(attendance[0]+attendance[1])).toFixed(2)}</div>
+    <div className="absolute flex justify-center items-center top-[45%] left-[35%] font-bold text-3xl">{(attendance[0]*100/(attendance[0]+attendance[1])).toFixed(2)}</div>
   </div>;
 }

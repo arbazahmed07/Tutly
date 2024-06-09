@@ -139,12 +139,16 @@ export const getAttendanceOfStudent = async(id:string)=>{
       username:id
     },
     select:{
-      createdAt:true
+      class:{
+        select:{
+          createdAt:true
+        }
+      }
     }
   })
   let attendanceDates = <any>[];
   attendance.forEach((attendanceData)=>{
-    attendanceDates.push(attendanceData.createdAt.toISOString().split("T")[0])
+    attendanceDates.push(attendanceData.class.createdAt.toISOString().split("T")[0])
   })
 
   const getAllClasses = await db.class.findMany({
