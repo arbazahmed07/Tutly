@@ -20,15 +20,15 @@ export default async function Statistics() {
   loaderValue += "%";
   const currentUser = await getCurrentUser();
   if(!currentUser) return <div className="text-center text-xl font-bold">Please Login to view your Statistics</div>
-  const attendanceDates = await getAttendanceOfStudent(currentUser.username);
-  // return <pre>{JSON.stringify(attendanceDates,null,2)}</pre>
+  const {classes,attendanceDates} = await getAttendanceOfStudent(currentUser.username);
 
   return (
     <div>
-      <StudentStatClient 
-      totalEvaluatedAssigmentsOfStudent={evaluated} 
+      <StudentStatClient
+      totalEvaluatedAssigmentsOfStudent={evaluated}
       totalPoints={totalPoints}
       forBarChart={[evaluated,underReview,unsubmitted]}
+      classes={classes}
       attendanceDates={attendanceDates}
       />
     </div>
