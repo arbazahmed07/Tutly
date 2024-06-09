@@ -2,6 +2,7 @@
 import toast from "react-hot-toast";
 import { BiSolidCloudUpload } from "react-icons/bi";
 import { MdDeleteOutline } from "react-icons/md";
+import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,11 +30,12 @@ export default function AttendanceHeader({
   fileData,
   selectedFile,
   handleUpload,
+  count
 }: any) {
-  const handleDelete = async (x:any) => {
+  const handleDelete = async (x: any) => {
     try {
       const res = await axios.post("/api/attendance/delete", {
-        classId: x
+        classId: x,
       });
       toast.success("Attendance deleted successfully");
     } catch (e: any) {
@@ -42,29 +44,53 @@ export default function AttendanceHeader({
   };
   return (
     <>
-      <div className="flex justify-between w-[80%] m-auto mt-8">
+      {pastpresentStudents.length>0&&<><div className="flex justify-center gap-6 mx-32 my-2 mb-6">
+        <p className="text-sm text-primary-500 rounded-full p-0.5 px-3 border-l-2 border-r-2 border-primary-500">Present : {count[0]}</p>
+        <p className="text-sm text-primary-500 rounded-full p-0.5 px-3 border-l-2 border-r-2 border-primary-500">Absent : {count[1]}</p>
+      </div>
+      <div className="mx-32 mb-2 flex"><p className="text-xs ms-1 p-0.5 rounded text-gray-400 px-2 border border-gray-400">{"<<"}60 : {count[2]}</p></div>
+      </>}
+      <div className="flex justify-between w-[80%] m-auto">
         <div className="flex gap-2 items-center">
           <div className="relative">
             {!currentCourse ? (
-              <h1
+              <div
                 onClick={
                   courses?.length === 0
                     ? () => toast.error("no courses exist")
                     : () => setOpenCourses(!openCourses)
                 }
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer"
+                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex items-center justify-between"
               >
-                select course
-              </h1>
+                <h1>select course</h1>
+                {openCourses ? (
+                  <h1>
+                    <FaCaretUp />
+                  </h1>
+                ) : (
+                  <h1>
+                    <FaCaretDown />
+                  </h1>
+                )}
+              </div>
             ) : (
-              <h1
+              <div
                 onClick={() => setOpenCourses(!openCourses)}
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer"
+                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex gap-2 items-center justify-between"
               >
-                {currentCourse.title}
-              </h1>
+                <h1>{currentCourse.title}</h1>
+                {openCourses ? (
+                  <h1>
+                    <FaCaretUp />
+                  </h1>
+                ) : (
+                  <h1>
+                    <FaCaretDown />
+                  </h1>
+                )}
+              </div>
             )}
-            <div className="flex flex-col absolute bg-primary-800 w-full">
+            <div className="flex flex-col absolute bg-primary-800 w-full rounded max-h-[100px] overflow-y-scroll scrollbar-thin">
               {openCourses &&
                 courses?.map((course: any) => {
                   return (
@@ -73,7 +99,7 @@ export default function AttendanceHeader({
                         setOpenCourses(!openCourses);
                         setCurrentCourse(course);
                       }}
-                      className="border-b p-1 cursor-pointer hover:bg-primary-600"
+                      className="p-1 cursor-pointer hover:bg-primary-600"
                       key={course.id}
                     >
                       {course.title}
@@ -84,25 +110,43 @@ export default function AttendanceHeader({
           </div>
           <div className="relative">
             {!currentClass ? (
-              <h1
+              <div
                 onClick={
                   !currentCourse
                     ? () => toast.error("select course!")
                     : () => setOpenClasses(!openClasses)
                 }
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer"
+                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex gap-2 items-center justify-between"
               >
-                select class
-              </h1>
+                <h1>select class</h1>
+                {openClasses ? (
+                  <h1>
+                    <FaCaretUp />
+                  </h1>
+                ) : (
+                  <h1>
+                    <FaCaretDown />
+                  </h1>
+                )}
+              </div>
             ) : (
-              <h1
+              <div
                 onClick={() => setOpenClasses(!openClasses)}
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer"
+                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex gap-2 items-center justify-between"
               >
-                {currentClass.title}
-              </h1>
+                <h1>{currentClass.title}</h1>
+                {openClasses ? (
+                  <h1>
+                    <FaCaretUp />
+                  </h1>
+                ) : (
+                  <h1>
+                    <FaCaretDown />
+                  </h1>
+                )}
+              </div>
             )}
-            <div className="flex flex-col absolute bg-primary-800 w-full">
+            <div className="flex flex-col absolute bg-primary-800 w-full rounded max-h-[100px] overflow-auto scrollbar-thin">
               {openClasses &&
                 currentCourse.classes.map((x: any) => {
                   return (
@@ -111,7 +155,7 @@ export default function AttendanceHeader({
                         setCurrentClass(x);
                         setOpenClasses(!openClasses);
                       }}
-                      className="border-b p-1 cursor-pointer hover:bg-primary-600"
+                      className="p-1 cursor-pointer hover:bg-primary-600"
                       key={x.id}
                     >
                       {x.title}
@@ -165,8 +209,8 @@ export default function AttendanceHeader({
                 <p className="text-sm text-gray-500 pb-10 flex items-center gap-1">
                   Are you sure?
                   <br />
-                  On continuing, attendance of all the students will be cleared
-                  for this class.
+                  Continuing will clear the attendance of all students for this
+                  class.
                 </p>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -174,7 +218,7 @@ export default function AttendanceHeader({
                   Cancel
                 </AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={()=>handleDelete(currentClass?.id)}
+                  onClick={() => handleDelete(currentClass?.id)}
                   className="bg-red-500 hover:bg-red-600 text-white"
                 >
                   Confirm

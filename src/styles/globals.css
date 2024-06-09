@@ -9,6 +9,28 @@ body,
   height: 100%;
 }
 
+/* scroll bar */
+/* width */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Track */
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #2b00ff;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #a6ff00;
+}
+
 html.light {
   --background: #fafaff;
   --foreground: #020202;
