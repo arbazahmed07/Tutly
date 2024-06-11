@@ -186,18 +186,18 @@ const AttendanceClient = ({ courses }: any) => {
         data: presentStudents,
       });
       toast.success("Attendance uploaded successfully");
-      toast.dismiss();
     } catch (e) {
       toast.error("Attendance already uploaded!");
     }
   };
   const [pastpresentStudents, setPastPresentStudents] = useState([]);
+  const [present, setPresent] = useState(0);
   useEffect(() => {
     const viewAttendance = async () => {
       if (currentClass) {
         const res = await axios.get(`/api/attendance/${currentClass.id}`);
         setPastPresentStudents(res.data.attendance);
-
+        setPresent(res.data.present);
         const Totaldata: any = [];
 
         res.data.attendance.forEach((student: any) => {
@@ -221,10 +221,11 @@ const AttendanceClient = ({ courses }: any) => {
     };
     viewAttendance();
   }, [currentClass]);
+
   return (
     <div className="p-4 text-center ">
-      <h1 className="text-4xl mt-4 font-semibold mb-4">Attendance</h1>
-      <h1 className="text-center text-lg">Monitor your mentees attendance</h1>
+      <div><h1 className="text-4xl mt-4 w-60 mx-auto font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-orange-200 to-red-400">Attendance</h1></div>
+      <h1 className="text-center font-semibold text-md text-secondary-400"> ~ Mark and Monitor Students Attendance</h1>
       <AttendanceHeader
         pastpresentStudents={pastpresentStudents}
         courses={courses}
@@ -240,6 +241,7 @@ const AttendanceClient = ({ courses }: any) => {
         fileData={fileData}
         selectedFile={selectedFile}
         handleUpload={handleUpload}
+        count={[present, users.length-present,pastpresentStudents.length-present]}
       />
       {/* Table */}
       {fileData && selectedFile && pastpresentStudents.length == 0 && (
@@ -343,7 +345,8 @@ const AttendanceTable = ({
           </tr>
         </thead>
         <tbody>
-          {presentStudents.map((student: any, index: number) => (
+          {presentStudents.map((student: any, index: number) => {
+            return (
             <tr key={index} className="hover:bg-primary-800 cursor-pointer">
               <td>{index + 1}</td>
               <td className="py-2 pl-10 text-start">
@@ -377,7 +380,7 @@ const AttendanceTable = ({
                         </select>
                       </td> */}
             </tr>
-          ))}
+          )})}
           {users.map((student: any, index: number) => {
             const userInPresentStudents = presentStudents.find(
               (x: any) => x.username === student.username

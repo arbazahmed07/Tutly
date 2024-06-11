@@ -13,7 +13,7 @@ export default function StudentStatClient({
     <div className="m-8 flex flex-col gap-8">
       <div className="flex gap-8">
         <div className="w-1/4 shadow-xl shadow-blue-500/5 rounded-xl px-8">
-          <DoughnutChart attendance={[attendanceDates?.length, attendanceDates?.length+classes?.length]} />
+          <DoughnutChart attendance={[attendanceDates?.length, classes?.length]} />
           <h1 className="py-2 text-center font-bold text-xl text-gray-500">
             Attendance
           </h1>

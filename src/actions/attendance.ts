@@ -139,15 +139,19 @@ export const getAttendanceOfStudent = async(id:string)=>{
       username:id
     },
     select:{
-      createdAt:true
+      class:{
+        select:{
+          createdAt:true
+        }
+      }
     }
   })
   let attendanceDates = <any>[];
   attendance.forEach((attendanceData)=>{
-    attendanceDates.push(attendanceData.createdAt.toISOString().split("T")[0])
+    attendanceDates.push(attendanceData.class.createdAt.toISOString().split("T")[0])
   })
 
-  const getAllClasses = await db.class.findMany({
+ const getAllClasses = await db.class.findMany({
     select: {
       id: true,
       createdAt: true,
@@ -164,3 +168,20 @@ export const getAttendanceOfStudent = async(id:string)=>{
   });
   return {classes,attendanceDates};
 }
+
+export const deleteClassAttendance = async (classId: string) => {
+
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("You must be logged in to attend a class");
+  }
+  if(currentUser.role!=="INSTRUCTOR"){
+    throw new Error("You must be an instructor to delete an attendance");
+  }
+  const attendance = await db.attendance.deleteMany({
+    where:{
+      classId,
+    }
+  })
+  return attendance;
+};

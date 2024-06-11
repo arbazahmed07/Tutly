@@ -10,7 +10,7 @@ import Loading from "@/app/(dashboard)/loading";
 import { usePathname } from "next/navigation";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { BsPersonRaisedHand } from "react-icons/bs";
-import { FcStatistics } from "react-icons/fc";
+import { MdOutlineQueryStats } from "react-icons/md";
 
 export default function HomeLayout({
   children,
@@ -22,7 +22,10 @@ export default function HomeLayout({
   const [menu, setMenu] = useState<boolean>(true);
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
-  const access = currentUser?.role === "MENTOR" ? 1 : currentUser?.role === "INSTRUCTOR" && 2;
+  const access =
+    currentUser?.role === "MENTOR"
+      ? 1
+      : currentUser?.role === "INSTRUCTOR" && 2;
 
   let items;
   if (access) {
@@ -49,20 +52,22 @@ export default function HomeLayout({
       },
       {
         name: "Community",
-        icon: < HiOutlineUserGroup />,
+        icon: <HiOutlineUserGroup />,
         path: "/community",
       },
       {
-        name: "Attendance",
-        icon: < BsPersonRaisedHand />,
-        path: access == 1 ? "/mentor/attendance" : "/instructor/attendance",
-      },
-      {
         name: "Statistics",
-        icon: <FcStatistics/>,
-        path: access == 1 ? "/mentor/statistics" : "/instructor/statistics"
-      }
+        icon: <MdOutlineQueryStats />,
+        path: access == 1 ? "/mentor/statistics" : "/instructor/statistics",
+      },
     ];
+    if (access == 2) {
+      items.push({
+        name: "Attendance",
+        icon: <BsPersonRaisedHand />,
+        path: "/instructor/attendance",
+      });
+    }
   } else {
     items = [
       {
@@ -87,32 +92,38 @@ export default function HomeLayout({
       },
       {
         name: "Community",
-        icon: < HiOutlineUserGroup />,
+        icon: <HiOutlineUserGroup />,
         path: "/community",
       },
       {
         name: "Playgrounds",
         icon: <MdAirplay />,
-        path: "/playground/html-css-js"
+        path: "/playground/html-css-js",
       },
       // {
       //   name: "Statistics",
       //   icon: <FcStatistics/>,
       //   path: "/statistics"
       // }
-    ]
+    ];
   }
   return (
     <div className="w-full">
       <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />
       <div className="flex">
-        {!isCoursePage && <Sidebar items={items} menu={menu} setMenu={setMenu} />}
+        {!isCoursePage && (
+          <Sidebar items={items} menu={menu} setMenu={setMenu} />
+        )}
         <Suspense fallback={<Loading />}>
-          <div className={`w-full ${!isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")}`}>
+          <div
+            className={`w-full ${
+              !isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
+            }`}
+          >
             {children}
           </div>
         </Suspense>
       </div>
     </div>
-  )
+  );
 }
