@@ -143,7 +143,6 @@ export default {
         console.error("Error occurred during sign-in:", error);
         return false;
       }
-
       return true;
     },
     async jwt({ token, user, account, profile }) {
