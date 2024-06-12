@@ -10,8 +10,13 @@ const nextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        protocol: "https",
+        hostname: "mkbso1vsjf6fwnka.public.blob.vercel-storage.com",
+        port: "",
+      },
     ],
-    domains:[
+    domains: [
       "cdn-icons-png.flaticon.com",
       "png.pngtree.com",
       "i.postimg.cc",
@@ -20,8 +25,8 @@ const nextConfig = {
       "www.google.com",
       "images.unsplash.com",
       "images.pexels.com",
-      "plus.unsplash.com"
-    ]
+      "plus.unsplash.com",
+    ],
   },
 };
 

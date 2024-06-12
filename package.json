@@ -24,6 +24,7 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
+    "@vercel/blob": "^0.23.3",
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.2",
@@ -76,4 +77,3 @@
     "typescript": "^5"
   }
 }
-

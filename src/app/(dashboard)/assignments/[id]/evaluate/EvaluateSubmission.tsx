@@ -1,6 +1,7 @@
 "use client"
 
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -134,7 +135,7 @@ const EvaluateSubmission = ({
             <th
               scope="col"
               className="px-2 py-1 text-xs font-medium uppercase">
-              Submission Link
+              View Submission
             </th>
             <th
               scope="col"
@@ -186,13 +187,12 @@ const EvaluateSubmission = ({
               <td className=" sticky left-0 bg-white divide-gray-200 ">{submission.enrolledUser.username}</td>
               <td
                 className="px-2 py-1 whitespace-nowrap">
-                <a
-                  target="_blank"
-                  href={submission.submissionLink}
+                <Link
+                  href={`/playground/html-css-js?submissionId=${submission.id}`}
                   className="text-blue-400 font-semibold break-words"
                 >
-                  LINK
-                </a>
+                  view
+                </Link>
               </td>
               <td className="px-2 py-1 whitespace-nowrap">
                 {submission.submissionDate
