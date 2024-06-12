@@ -14,8 +14,8 @@ generator client {
 // }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
@@ -43,14 +43,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  account       Account[]
-  course        Course[]
-  profile       Profile?
-  doubt         Doubt[]
-  response      Response[]
-  Attendence    Attendance[]
-  enrolledUsers EnrolledUsers[] @relation(name: "user")
+  account         Account[]
+  course          Course[]
+  profile         Profile?
+  doubt           Doubt[]
+  response        Response[]
+  Attendence      Attendance[]
+  enrolledUsers   EnrolledUsers[] @relation(name: "user")
   assignedMentees EnrolledUsers[] @relation(name: "mentor")
+  Session         Session[]
 }
 
 model Profile {
@@ -105,7 +106,8 @@ model EnrolledUsers {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  @@unique([username, courseId,mentorUsername])
+
+  @@unique([username, courseId, mentorUsername])
 }
 
 model Class {
@@ -150,7 +152,7 @@ model Attendance {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([username,classId])
+  @@unique([username, classId])
 }
 
 model Doubt {
@@ -279,4 +281,15 @@ model Account {
   userId String @unique
 
   @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  expires      DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
