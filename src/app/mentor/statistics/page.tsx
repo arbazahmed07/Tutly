@@ -31,19 +31,19 @@ export default async function Statistics() {
   loaderValue += "%";
   return (
     <div className="m-8 flex flex-col gap-8">
-      <div className="flex gap-8">
-        <div className="w-1/4 shadow-xl shadow-blue-500/5 rounded-xl p-8">
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="w-full md:w-1/4 shadow-xl shadow-blue-500/5 rounded-xl p-6">
           <Piechart mentorPieChart={mentorPieChart} />
         </div>
-        <div className="w-3/4 rounded-xl shadow-xl shadow-blue-500/5 flex gap-2">
-          <div className="w-1/3 flex flex-col gap-6 p-14 text-gray-500">
+        <div className="w-3/4 flex flex-col md:flex-row items-center justify-around gap-2">
+          <div className="flex flex-col mx-auto gap-6 p-14 text-gray-500 rounded-xl shadow-xl shadow-blue-500/5">
             <div className="p-4 rounded-xl relative border">
               <h1 className="absolute -top-3 bg-background px-1">
                 Total Students
               </h1>
               <h1 className="text-4xl flex justify-between items-baseline font-bold text-primary-500">
                 {mstudents?.length}
-                <span className="text-gray-500 text-sm">[Mentees]</span>
+                <span className="text-gray-500 text-sm ml-3">[Mentees]</span>
               </h1>
             </div>
             <div className="p-4 rounded-xl relative border">
@@ -55,7 +55,7 @@ export default async function Statistics() {
               </h1>
             </div>
           </div>
-          <div className="w-2/3 p-2">
+          <div className="w-full md:w-3/4 p-2">
             <Barchart
               classes={classes}
               attendanceInEachClass={attendanceInEachClass}
@@ -103,7 +103,7 @@ export default async function Statistics() {
           </h1>
         </div>
       </div>
-      <div className="w-full rounded-xl p-4 shadow-xl shadow-blue-500/5">
+      <div className="w-full rounded-xl p-2 md:p-4 shadow-xl shadow-blue-500/5">
         {!mstudents || mstudents.length === 0 ? (
           <div>No Mentees are assigned!</div>
         ) : (
