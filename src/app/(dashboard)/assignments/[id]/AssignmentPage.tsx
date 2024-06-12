@@ -33,7 +33,7 @@ export default function AssignmentPage({
 
   const userId = searchParams?.get("userId");
   let filteredAssignments = [];
-  if (!userId) {
+  if (userId) {
     filteredAssignments = assignments?.filter(
       (x: any) =>
         x.enrolledUser.username
@@ -193,7 +193,7 @@ export default function AssignmentPage({
             </Link>
           )}
         </div>
-        {userId &&
+        {!userId &&
         assignment.submissions.length > 0 &&
         currentUser?.role === "STUDENT" ? (
           <>
@@ -214,11 +214,9 @@ export default function AssignmentPage({
                     </th>
                     <th
                       scope="col"
-                      className={`${
-                        currentUser?.role === "STUDENT" && "hidden"
-                      } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
+                      className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                     >
-                      Submission Link
+                      View Submission
                     </th>
                     <th
                       scope="col"
@@ -266,9 +264,7 @@ export default function AssignmentPage({
                             {index + 1}
                           </td>
                           <td
-                            className={`${
-                              currentUser?.role === "STUDENT" && "hidden"
-                            } px-6 py-4 whitespace-nowrap`}
+                            className={`px-6 py-4 whitespace-nowrap`}
                           >
                             <Link
                               href={`/playground/html-css-js?submissionId=${submission.id}`}
@@ -296,8 +292,8 @@ export default function AssignmentPage({
               </table>
             </div>
           </>
-        ) : currentUser?.role === "MENTOR" ||
-          currentUser?.role === "INSTRUCTOR" ? (
+        ) : userId && ( currentUser?.role === "MENTOR" ||
+          currentUser?.role === "INSTRUCTOR") ? (
           <>
             <div className="flex justify-between">
               <div className="block mt-5 dark:text-white">Submissions : 👇</div>
@@ -341,7 +337,7 @@ export default function AssignmentPage({
                         currentUser?.role === "STUDENT" && "hidden"
                       } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                     >
-                      Submission Link
+                      View Submission
                     </th>
                     <th
                       scope="col"

@@ -135,7 +135,7 @@ const EvaluateSubmission = ({
             <th
               scope="col"
               className="px-2 py-1 text-xs font-medium uppercase">
-              Submission Link
+              View Submission
             </th>
             <th
               scope="col"
