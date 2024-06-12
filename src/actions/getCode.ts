@@ -1,3 +1,5 @@
+// used to fetch the code from the PR (deprecarated)
+
 import { Octokit } from "@octokit/core";
 
 export const getSubmission = async (prNumber: number) => {
