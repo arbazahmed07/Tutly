@@ -296,7 +296,7 @@ export default function AssignmentPage({
           currentUser?.role === "INSTRUCTOR") ? (
           <>
             <div className="flex justify-between">
-              <div className="block mt-5 dark:text-white">Submissions2 : 👇</div>
+              <div className="block mt-5 dark:text-white">Submissions : 👇</div>
               <div className="flex gap-4">
                 <button
                   onClick={() =>
