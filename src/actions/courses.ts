@@ -217,7 +217,10 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
   const currentUser = await getCurrentUser();
   if(currentUser?.role !== "INSTRUCTOR") return null;
   
-
+  console.log("title",title);
+  console.log("image",image);
+  
+  
   if(!title.trim() || title==="" )
   {
     return null;
@@ -228,7 +231,7 @@ export const createCourse = async ({ title,isPublished,image }: { title: string;
       title: title,
       createdById: currentUser.id,
       isPublished,
-      image ,
+      image : image ,
       enrolledUsers:{
         create:{
           username:currentUser.username,
