@@ -33,7 +33,7 @@ export default function AssignmentPage({
 
   const userId = searchParams?.get("userId");
   let filteredAssignments = [];
-  if (userId) {
+  if (!userId) {
     filteredAssignments = assignments?.filter(
       (x: any) =>
         x.enrolledUser.username
@@ -193,8 +193,7 @@ export default function AssignmentPage({
             </Link>
           )}
         </div>
-        {!userId &&
-        assignment.submissions.length > 0 &&
+        {(userId && assignment.submissions.length > 0) ||
         currentUser?.role === "STUDENT" ? (
           <>
             <h1>
@@ -292,8 +291,9 @@ export default function AssignmentPage({
               </table>
             </div>
           </>
-        ) : userId && ( currentUser?.role === "MENTOR" ||
-          currentUser?.role === "INSTRUCTOR") ? (
+        ) : !userId &&
+          (currentUser?.role === "MENTOR" ||
+            currentUser.role === "INSTRUCTOR") ? (
           <>
             <div className="flex justify-between">
               <div className="block mt-5 dark:text-white">Submissions : 👇</div>
