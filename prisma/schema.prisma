@@ -237,6 +237,8 @@ model submission {
 
   overallFeedback String?
 
+  editTime DateTime @default(dbgenerated("(NOW() + '15 minutes'::interval)"))
+
   submissionLink String?
   submissionDate DateTime @default(now())
 

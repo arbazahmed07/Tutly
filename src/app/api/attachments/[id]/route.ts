@@ -61,6 +61,7 @@ export async function GET(
             id: submission.id,
           };
         }),
+        maxSubmissions: assignment.maxSubmissions,
       },
       currentUser: {
         username: currentUser.username,
