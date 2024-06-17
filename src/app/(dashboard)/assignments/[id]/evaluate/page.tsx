@@ -27,8 +27,7 @@ const page = async ({
       <div className='w-36 max-h-[90vh] m-1 overflow-y-scroll'>
         {
           Array.isArray(submissions) && submissions.map((submission) => {
-            if (!submission?.submissionLink) return null
-            const prNumber = submission.submissionLink.split('/').pop()
+            const id = submission.id
             return (
               <div
                 key={submission.id}
@@ -61,7 +60,7 @@ const PlaygroundPage = async ({
   return (
     <div>
       <EvaluateSubmission
-        submission={submissions.find((submission: any) => submission?.submissionLink && (parseInt(submission?.submissionLink.split('/').pop() || "") == prNumber))}
+        submission={submission}
       />
       <Playground initialFiles={submission.data} />
     </div>

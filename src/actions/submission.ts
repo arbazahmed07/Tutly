@@ -153,9 +153,13 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
   if (!user || user.role == "STUDENT") {
     return null;
   }
+
   const submissions = await db.submission.findMany({
     where: {
       attachmentId: assignmentId,
+      enrolledUser:{
+        mentorUsername: user.username
+      }
     },
     include: {
       enrolledUser: true,
@@ -163,16 +167,7 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
     },
   });
 
-  const filteredSubmissions = submissions.map((submission) => {
-    if(user.role == "INSTRUCTOR") return submission;
-    if(user.role =="MENTOR" && submission.enrolledUser.mentorUsername == user.username) {
-      return submission
-    } else {
-      return null
-    }
-  })
-
-  return filteredSubmissions;
+  return submissions;
 };
 
 
