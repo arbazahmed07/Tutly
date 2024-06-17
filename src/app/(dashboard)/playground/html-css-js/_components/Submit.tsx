@@ -59,24 +59,24 @@ const Submit = ({
       setSubmitting(true);
       toast.loading("Submitting assignment");
 
-      const filePaths: string[] = [];
-      const newFiles: { [key: string]: string } = {};
-      Object.keys(files).forEach((key) => {
-        const file = files[key];
-        if (maxSubmissions > 1) {
-          const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.mentor.username}/assignments/${user.username}/${assignmentDetails.title}.${assignmentDetails.submissions.length + 1}${key}`;
-          filePaths.push(filePath);
-          newFiles[filePath] = file.code
-        } else {
-          const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.mentor.username}/assignments/${user.username}/${assignmentDetails.title}${key}`;
-          filePaths.push(filePath);
-          newFiles[filePath] = file.code;
-        }
-      });
+      // const filePaths: string[] = [];
+      // const newFiles: { [key: string]: string } = {};
+      // Object.keys(files).forEach((key) => {
+      //   const file = files[key];
+      //   if (maxSubmissions > 1) {
+      //     const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.mentor.username}/assignments/${user.username}/${assignmentDetails.title}.${assignmentDetails.submissions.length + 1}${key}`;
+      //     filePaths.push(filePath);
+      //     newFiles[filePath] = file.code
+      //   } else {
+      //     const filePath = `${assignmentDetails.class.course.title}/mentor-${mentorDetails.mentor.username}/assignments/${user.username}/${assignmentDetails.title}${key}`;
+      //     filePaths.push(filePath);
+      //     newFiles[filePath] = file.code;
+      //   }
+      // });
 
       const submission = await axios.post(`/api/assignment/submit`, {
         assignmentDetails,
-        files: newFiles,
+        files: files,
         mentorDetails,
       });
       toast.dismiss();

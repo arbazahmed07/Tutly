@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     const {title,isPublished,image} = await request.json();
-
     try {
         const currentUser = await getCurrentUser();
         if(!currentUser) {

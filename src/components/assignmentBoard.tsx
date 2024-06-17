@@ -2,7 +2,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdOutlineSportsScore } from "react-icons/md";
-import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function StudentWiseAssignments({
   courses,
@@ -22,7 +21,7 @@ export default function StudentWiseAssignments({
   if (!isMounted) {
     return null;
   }
-  // return <pre>{JSON.stringify(assignments, null, 2)}</pre>
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap justify-between items-center gap-3">
@@ -64,7 +63,7 @@ export default function StudentWiseAssignments({
             } `}
             onClick={() => setFilterOption("unreviewed")}
           >
-            <label>UnReviewed</label>
+            <label>Unreviewed</label>
           </button>
           <button
             className={`focus:outline-none cursor-pointer ${
@@ -134,7 +133,7 @@ export default function StudentWiseAssignments({
                                       className="flex gap-6 items-center"
                                       key={index}
                                     >
-                                      <div className="rounded-full p-2.5 bg-yellow-600 hover:bg-yellow-500 cursor-pointer">
+                                      <div className="rounded-full p-1 px-2 bg-yellow-400/45 border border-yellow-300 text-yellow-300 hover:bg-yellow-400/55">
                                         Under review
                                       </div>
                                     </div>
@@ -164,7 +163,11 @@ export default function StudentWiseAssignments({
                                   return (
                                     <div
                                       className="flex gap-6 items-center"
-                                      onClick={()=>router.push(eachSubmission.submissionLink)}
+                                      onClick={() =>
+                                        router.push(
+                                          eachSubmission.submissionLink
+                                        )
+                                      }
                                       key={index}
                                     >
                                       <div className="rounded-full p-1 px-2 bg-green-400/45 border border-green-300 text-green-300 hover:bg-green-400/55 flex items-center cursor-pointer">
