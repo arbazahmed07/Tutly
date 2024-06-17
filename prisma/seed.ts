@@ -3,10 +3,27 @@ const { PrismaClient } = require("@prisma/client");
 const db = new PrismaClient();
 
 async function main() {
-  const students = await db.assignedMentors.createMany({
-    data: [],
+  const submissions = await db.submission.findMany({
+    where: {
+      attachmentId: "",
+      enrolledUser: {
+        mentorUsername: "",
+      },
+    },
   });
-  console.log({ students });
+
+  const points = submissions.map((submission) => {
+    return {
+      submissionId: submission.id,
+      score: 10,
+      category: "OTHER",
+    };
+  });
+
+  const insertedPoints = await db.point.createMany({
+    data: points,
+  });
+  console.log({ insertedPoints });
 }
 main()
   .then(async () => {
