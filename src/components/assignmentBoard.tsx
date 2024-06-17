@@ -2,6 +2,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdOutlineSportsScore } from "react-icons/md";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function StudentWiseAssignments({
   courses,
@@ -21,7 +22,7 @@ export default function StudentWiseAssignments({
   if (!isMounted) {
     return null;
   }
-
+  // return <pre>{JSON.stringify(assignments, null, 2)}</pre>
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap justify-between items-center gap-3">
@@ -63,7 +64,7 @@ export default function StudentWiseAssignments({
             } `}
             onClick={() => setFilterOption("unreviewed")}
           >
-            <label>Unreviewed</label>
+            <label>UnReviewed</label>
           </button>
           <button
             className={`focus:outline-none cursor-pointer ${
@@ -163,11 +164,7 @@ export default function StudentWiseAssignments({
                                   return (
                                     <div
                                       className="flex gap-6 items-center"
-                                      onClick={() =>
-                                        router.push(
-                                          eachSubmission.submissionLink
-                                        )
-                                      }
+                                      onClick={()=>router.push(eachSubmission.submissionLink)}
                                       key={index}
                                     >
                                       <div className="rounded-full p-2.5 bg-green-600 flex items-center cursor-pointer">
@@ -177,17 +174,17 @@ export default function StudentWiseAssignments({
                                     </div>
                                   );
                                 } else {
-                                  return (
-                                    <div
-                                      className="flex gap-6 items-center"
-                                      key={index}
-                                    >
-                                      <div className="rounded-full p-2.5 bg-green-600 flex items-center">
-                                        <h1>Score: {total}</h1>
-                                        <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
-                                      </div>
-                                    </div>
-                                  );
+                                    return (
+                                        <div
+                                          className="flex gap-6 items-center"
+                                          key={index}
+                                        >
+                                          <div className="rounded-full p-2.5 bg-green-600 flex items-center">
+                                            <h1>Score: {total}</h1>
+                                            <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
+                                          </div>
+                                        </div>
+                                      );
                                 }
                               }
                             }
