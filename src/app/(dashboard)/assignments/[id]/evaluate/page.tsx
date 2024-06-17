@@ -20,23 +20,22 @@ const page = async ({
 
   if (!submissions) return (<div>Unauthorized</div>)
 
-  const submission = submissions.find((submission) => submission.id == submissionId)
+  const submission = submissions.find((submission) => submission?.id == submissionId)
 
   return (
     <div className='flex w-full'>
       <div className='w-36 max-h-[90vh] m-1 overflow-y-scroll'>
         {
-          Array.isArray(submissions) && submissions.map((submission) => {
-            if (!submission?.submissionLink) return null
-            const prNumber = submission.submissionLink.split('/').pop()
+          Array.isArray(submissions) && submissions.map((singleSubmission,index) => {
+            if (!singleSubmission) return null
             return (
               <div
-                key={submission.id}
+                key={index}
                 className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
-              ${id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}
+              ${singleSubmission.id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}
               `}>
-                <Link href={`/assignments/${assignmentId}/evaluate?submissionId=${id}`}>
-                  {submission.enrolledUser.username}
+                <Link href={`/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`}>
+                  {singleSubmission.enrolledUser.username}
                 </Link>
               </div>
             )
@@ -61,7 +60,7 @@ const PlaygroundPage = async ({
   return (
     <div>
       <EvaluateSubmission
-        submission={submissions.find((submission: any) => submission?.submissionLink && (parseInt(submission?.submissionLink.split('/').pop() || "") == prNumber))}
+        submission={submission}
       />
       <Playground initialFiles={submission.data} />
     </div>
