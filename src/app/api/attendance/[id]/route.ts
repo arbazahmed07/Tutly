@@ -14,16 +14,32 @@ export async function GET(
     if (currentUser.role === "STUDENT") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const attendance = await db.attendance.findMany({
-      where: {
-        classId: params.id,
-      },
-    });
+
+    const attendance =
+      currentUser.role == "MENTOR"
+        ? await db.attendance.findMany({
+            where: {
+              classId: params.id,
+              user: {
+                enrolledUsers: {
+                  some: {
+                    mentorUsername: currentUser.username,
+                  },
+                },
+              },
+            },
+          })
+        : await db.attendance.findMany({
+            where: {
+              classId: params.id,
+            },
+          });
+
     let present = 0;
     attendance.forEach((element) => {
       if (element.attended) present++;
     });
-    return NextResponse.json({ attendance: attendance,present:present });
+    return NextResponse.json({ attendance: attendance, present: present });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });
   }
