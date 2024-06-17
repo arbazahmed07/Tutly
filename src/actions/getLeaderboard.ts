@@ -61,7 +61,7 @@ export default async function getLeaderboardData() {
       },
     });
 
-    const submissionsUptoLastSunday = submissions.filter(submission => {
+    const submissionsUptoLastSunday = submissions.filter((submission) => {
       const submissionDate = new Date(submission.submissionDate);
       const currentDate = new Date();
       const currentDayOfWeek = currentDate.getDay();
@@ -70,9 +70,8 @@ export default async function getLeaderboardData() {
       lastSunday.setDate(currentDate.getDate() - daysToLastSunday);
       lastSunday.setHours(12, 0, 0, 0);
       return submissionDate < lastSunday;
-  });
-  
-  
+    });
+
     const totalPoints = submissionsUptoLastSunday.reduce(
       (acc: any, curr: any) => {
         const totalPoints = curr.points.reduce(

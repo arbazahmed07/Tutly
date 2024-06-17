@@ -44,6 +44,9 @@ export const getAllAssignedAssignments = async () => {
             },
           },
         },
+        orderBy: {
+          createdAt: "asc",
+        },
       },
     },
   });
@@ -470,6 +473,9 @@ export const getAllAssignmentsByCourseId = async (id: string) => {
             },
           },
         },
+        orderBy:{
+          createdAt: 'asc'
+        }
       },
     },
   });

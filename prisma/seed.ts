@@ -3,8 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const db = new PrismaClient();
 
 async function main() {
-  const students = await db.assignedMentors.createMany({
-    data: [],
+  const students = await db.user.findMany({
   });
   console.log({ students });
 }

@@ -110,7 +110,7 @@ export default function StudentWiseAssignments({
                     <div className="flex gap-3 md:gap-6 items-center text-xs font-medium text-white flex-wrap">
                       {assignment.submissions.length === 0 ? (
                         <div className="flex gap-6 itens-center">
-                          <div className="rounded-full p-2.5 bg-secondary-600">
+                          <div className="rounded-full p-1 px-2 bg-red-400/45 border border-red-300 text-red-300 hover:bg-red-400/55">
                             Not submitted
                           </div>
                         </div>
@@ -145,7 +145,7 @@ export default function StudentWiseAssignments({
                                       className="flex gap-6 items-center"
                                       key={index}
                                     >
-                                      <div className="rounded-full p-2.5 bg-yellow-600 hover:bg-yellow-500">
+                                      <div className="rounded-full p-1 px-2 bg-yellow-400/45 border border-yellow-300 text-yellow-300 hover:bg-yellow-400/55">
                                         Under review
                                       </div>
                                     </div>
@@ -167,7 +167,7 @@ export default function StudentWiseAssignments({
                                       onClick={()=>router.push(eachSubmission.submissionLink)}
                                       key={index}
                                     >
-                                      <div className="rounded-full p-2.5 bg-green-600 flex items-center cursor-pointer">
+                                      <div className="rounded-full p-1 px-2 bg-green-400/45 border border-green-300 text-green-300 hover:bg-green-400/55 flex items-center cursor-pointer">
                                         <h1>Score: {total}</h1>
                                         <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
                                       </div>
@@ -179,7 +179,7 @@ export default function StudentWiseAssignments({
                                           className="flex gap-6 items-center"
                                           key={index}
                                         >
-                                          <div className="rounded-full p-2.5 bg-green-600 flex items-center">
+                                          <div className="rounded-full p-1 px-2 bg-green-400/45 border border-green-200 text-green-200 hover:bg-green-400/55 flex items-center">
                                             <h1>Score: {total}</h1>
                                             <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
                                           </div>
