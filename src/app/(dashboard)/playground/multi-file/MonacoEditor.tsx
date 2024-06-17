@@ -29,7 +29,7 @@ export default function MonacoEditor() {
           language={languageMap[sandpack.activeFile.split(".")[1]] || "plaintext"}
           theme="vs-light"
           key={sandpack.activeFile}
-          defaultValue={code}
+          value={code}
           onChange={(value) => updateCode(value || "")}
         />
       </div>
