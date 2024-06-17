@@ -34,7 +34,7 @@ const page = async ({ params }: { params: { id: string } }) => {
             classItem.attachments.map((attachment) => (
               <div
                 key={attachment?.id}
-                className="text-zinc-600 rounded-lg p-4 bg-slate-200"
+                className="text-zinc-600 rounded-lg p-4 dark:bg-slate-800 backdrop-blur-2xl"
                 style={{
                   boxShadow:
                     "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
@@ -44,7 +44,7 @@ const page = async ({ params }: { params: { id: string } }) => {
                   <Link href={`/assignments/${attachment.id}`} className=" text-base text-blue-600 font-semibold">
                     {attachment?.title}
                   </Link>
-                  <p className="flex gap-2 items-center text-sm font-medium">
+                  <div className="flex gadiv-2 items-center text-sm font-medium">
                     {attachment?.dueDate
                       &&new Date(attachment?.dueDate).toLocaleDateString()
                     }
@@ -53,11 +53,11 @@ const page = async ({ params }: { params: { id: string } }) => {
                       <div className="text-white">
                         { 
                           attachment?.submissions.length!==0
-                          ? <h1 className="bg-green-500 rounded-lg px-3 ml-1 py-1">submitted</h1>
-                          : <h1 className="bg-red-500 rounded-lg px-3 ml-1 py-1">not submitted</h1>
+                          ? <h1 className="bg-green-500/45 text-xs border-2 text-green-400 border-green-700 rounded-full px-2 ml-1 py-1">submitted</h1>
+                          : <h1 className="bg-red-500/45 text-xs border-2 text-red-400 border-red-700 rounded-full px-2 ml-1 py-1">not submitted</h1>
                         }
                       </div>}
-                  </p>
+                  </div>
                 </div>
                 <p className="mb-2 text-sm font-semibold mt-2">
                   {truncateText(attachment?.details ? attachment?.details.slice(0, 200) + '...' : null  || "No Description")}

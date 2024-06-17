@@ -133,7 +133,7 @@ export default function StudentWiseAssignments({
                                       className="flex gap-6 items-center"
                                       key={index}
                                     >
-                                      <div className="rounded-full p-2.5 bg-yellow-600 hover:bg-yellow-500 cursor-pointer">
+                                      <div className="rounded-full p-2.5 bg-yellow-600">
                                         Under review
                                       </div>
                                     </div>
@@ -144,7 +144,7 @@ export default function StudentWiseAssignments({
                                       className="flex gap-6 items-center"
                                       key={index}
                                     >
-                                      <div className="rounded-full p-2.5 bg-yellow-600 hover:bg-yellow-500">
+                                      <div className="rounded-full p-2.5 bg-yellow-600">
                                         Under review
                                       </div>
                                     </div>
@@ -177,17 +177,17 @@ export default function StudentWiseAssignments({
                                     </div>
                                   );
                                 } else {
-                                  return (
-                                    <div
-                                      className="flex gap-6 items-center"
-                                      key={index}
-                                    >
-                                      <div className="rounded-full p-2.5 bg-green-600 flex items-center">
-                                        <h1>Score: {total}</h1>
-                                        <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
-                                      </div>
-                                    </div>
-                                  );
+                                    return (
+                                        <div
+                                          className="flex gap-6 items-center"
+                                          key={index}
+                                        >
+                                          <div className="rounded-full p-2.5 bg-green-600 flex items-center">
+                                            <h1>Score: {total}</h1>
+                                            <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
+                                          </div>
+                                        </div>
+                                      );
                                 }
                               }
                             }
