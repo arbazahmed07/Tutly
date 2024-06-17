@@ -23,7 +23,7 @@ export default async function addPoints({ submissionId, marks }  : { submissionI
             })
         });
 
-        await mergeAndDeleteBranch(submissionId);
+        // await mergeAndDeleteBranch(submissionId);
         
         return allCategories;
         
@@ -36,40 +36,39 @@ export default async function addPoints({ submissionId, marks }  : { submissionI
 const { Octokit } = require('@octokit/rest');
 
 export async function deleteSubmission(submissionId:string){
-    const submission = await db.submission.findUnique({
-        where: {
-            id: submissionId
-        }
-    });
+    // const submission = await db.submission.findUnique({
+    //     where: {
+    //         id: submissionId
+    //     }
+    // });
 
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_PAT,
-    });
+    // const octokit = new Octokit({
+    //     auth: process.env.GITHUB_PAT,
+    // });
 
-    const owner = "GoodKodersUnV";
-    const repo = "LMS-DATA";
-    const prLink = submission?.submissionLink 
+    // const owner = "GoodKodersUnV";
+    // const repo = "LMS-DATA";
+    // const prLink = submission?.submissionLink 
 
-    if (!prLink) {
-        throw new Error("PR Link not found");
-    }
+    // if (!prLink) {
+    //     throw new Error("PR Link not found");
+    // }
 
-    const response = await octokit.pulls.get({
-        owner,
-        repo,
-        pull_number: Number(prLink.split("/").pop())
-    });
+    // const response = await octokit.pulls.get({
+    //     owner,
+    //     repo,
+    //     pull_number: Number(prLink.split("/").pop())
+    // });
 
-    const pr = response.data;
+    // const pr = response.data;
 
-    //todo: change this later
-    if (!pr.merged) {
-        await octokit.git.deleteRef({
-            owner,
-            repo,
-            ref: `heads/${pr.head.ref}`
-        });
-    }
+    // if (!pr.merged) {
+    //     await octokit.git.deleteRef({
+    //         owner,
+    //         repo,
+    //         ref: `heads/${pr.head.ref}`
+    //     });
+    // }
 
     await db.submission.delete({
         where: {
@@ -78,46 +77,46 @@ export async function deleteSubmission(submissionId:string){
     });
 }
 
-export async function mergeAndDeleteBranch (submissionId:string){
-    const submission = await db.submission.findUnique({
-        where: {
-            id: submissionId
-        }
-    });
+// export async function mergeAndDeleteBranch (submissionId:string){
+//     const submission = await db.submission.findUnique({
+//         where: {
+//             id: submissionId
+//         }
+//     });
 
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_PAT,
-      });
+//     const octokit = new Octokit({
+//         auth: process.env.GITHUB_PAT,
+//       });
 
-    const owner = "GoodKodersUnV";
-    const repo = "LMS-DATA";
-    const prLink = submission?.submissionLink 
+//     const owner = "GoodKodersUnV";
+//     const repo = "LMS-DATA";
+//     const prLink = submission?.submissionLink 
 
-    if (!prLink) {
-        throw new Error("PR Link not found");
-    }
+//     if (!prLink) {
+//         throw new Error("PR Link not found");
+//     }
 
-    const response = await octokit.pulls.get({
-        owner,
-        repo,
-        pull_number: Number(prLink.split("/").pop())
-    });
+//     const response = await octokit.pulls.get({
+//         owner,
+//         repo,
+//         pull_number: Number(prLink.split("/").pop())
+//     });
 
-    const pr = response.data;
+//     const pr = response.data;
 
-    if (pr.merged) {
-        return;
-    }
+//     if (pr.merged) {
+//         return;
+//     }
     
-    await octokit.pulls.merge({
-        owner,
-        repo,
-        pull_number: pr.number
-    });
+//     await octokit.pulls.merge({
+//         owner,
+//         repo,
+//         pull_number: pr.number
+//     });
 
-    await octokit.git.deleteRef({
-        owner,
-        repo,
-        ref: `heads/${pr.head.ref}`
-    });
-}
+//     await octokit.git.deleteRef({
+//         owner,
+//         repo,
+//         ref: `heads/${pr.head.ref}`
+//     });
+// }

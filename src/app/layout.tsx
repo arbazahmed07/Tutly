@@ -21,7 +21,9 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   return (
-    <SessionProvider session={session}>
+    <SessionProvider
+      refetchInterval={5 * 60}// 5 minutes
+      session={session}>
       <html lang="en" className="bg-background text-foreground">
         <body className={inter.className}>
           <Provider>{children}</Provider>

@@ -1,4 +1,3 @@
-import { getSubmission } from '@/actions/getCode'
 import { getAssignmentSubmissions } from '@/actions/submission'
 import Playground from '@/app/(dashboard)/playground/multi-file/Playground'
 import Link from 'next/link'
@@ -15,11 +14,13 @@ const page = async ({
 }) => {
 
   const assignmentId = params.id
-  const prNumber = parseInt(searchParams?.prNumber as string)
+  const submissionId = searchParams?.submissionId 
 
   const submissions = await getAssignmentSubmissions(assignmentId)
 
   if (!submissions) return (<div>Unauthorized</div>)
+
+  const submission = submissions.find((submission) => submission.id == submissionId)
 
   return (
     <div className='flex w-full'>
@@ -32,9 +33,9 @@ const page = async ({
               <div
                 key={submission.id}
                 className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
-              ${prNumber == searchParams?.prNumber && 'bg-gray-100 text-blue-500'}
+              ${id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}
               `}>
-                <Link href={`/assignments/${assignmentId}/evaluate?prNumber=${prNumber}`}>
+                <Link href={`/assignments/${assignmentId}/evaluate?submissionId=${id}`}>
                   {submission.enrolledUser.username}
                 </Link>
               </div>
@@ -43,7 +44,7 @@ const page = async ({
         }
       </div>
       <div className='flex-1'>
-        <PlaygroundPage submissions={submissions} prNumber={prNumber} />
+        <PlaygroundPage submission={submission}/>
       </div>
     </div>
   )
@@ -52,21 +53,17 @@ const page = async ({
 export default page
 
 const PlaygroundPage = async ({
-  submissions,
-  prNumber
+  submission
 }: {
-  submissions: any,
-  prNumber: number
+  submission: any,
 }) => {
-  if (!prNumber) return (<div>Invalid PR Number</div>)
-  const data = await getSubmission(prNumber)
-
+  if (!submission) return (<div>No data found</div>)
   return (
     <div>
       <EvaluateSubmission
         submission={submissions.find((submission: any) => submission?.submissionLink && (parseInt(submission?.submissionLink.split('/').pop() || "") == prNumber))}
       />
-      <Playground initialFiles={data} />
+      <Playground initialFiles={submission.data} />
     </div>
   )
 }

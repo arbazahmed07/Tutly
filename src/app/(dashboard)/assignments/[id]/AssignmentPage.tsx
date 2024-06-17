@@ -213,11 +213,9 @@ export default function AssignmentPage({
                     </th>
                     <th
                       scope="col"
-                      className={`${
-                        currentUser?.role === "STUDENT" && "hidden"
-                      } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
+                      className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                     >
-                      Submission Link
+                      View Submission
                     </th>
                     <th
                       scope="col"
@@ -265,17 +263,14 @@ export default function AssignmentPage({
                             {index + 1}
                           </td>
                           <td
-                            className={`${
-                              currentUser?.role === "STUDENT" && "hidden"
-                            } px-6 py-4 whitespace-nowrap`}
+                            className={`px-6 py-4 whitespace-nowrap`}
                           >
-                            <a
-                              target="_blank"
-                              href={submission.submissionLink}
+                            <Link
+                              href={`/playground/html-css-js?submissionId=${submission.id}`}
                               className="text-blue-400 font-semibold break-words"
                             >
-                              LINK
-                            </a>
+                              view
+                            </Link>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {submission.submissionDate
@@ -342,7 +337,7 @@ export default function AssignmentPage({
                         currentUser?.role === "STUDENT" && "hidden"
                       } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                     >
-                      Submission Link
+                      View Submission
                     </th>
                     <th
                       scope="col"
@@ -422,13 +417,12 @@ export default function AssignmentPage({
                             currentUser?.role === "STUDENT" && "hidden"
                           } px-6 py-4 whitespace-nowrap`}
                         >
-                          <a
-                            target="_blank"
-                            href={submission.submissionLink}
+                          <Link
+                            href={`/playground/html-css-js?submissionId=${submission.id}`}
                             className="text-blue-400 font-semibold break-words"
                           >
-                            LINK
-                          </a>
+                            view
+                          </Link>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {submission.submissionDate
