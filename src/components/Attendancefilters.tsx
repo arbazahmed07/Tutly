@@ -17,7 +17,7 @@ interface Student {
   InWaitingRoom: string;
 }
 
-const AttendanceClient = ({ courses }: any) => {
+const AttendanceClient = ({ courses ,role }: any) => {
   const [fileData, setFileData] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [currentCourse, setCurrentCourse] = useState<any>(null);
@@ -227,6 +227,7 @@ const AttendanceClient = ({ courses }: any) => {
       <div><h1 className="text-4xl mt-4 w-60 mx-auto font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-orange-200 to-red-400">Attendance</h1></div>
       <h1 className="text-center font-semibold text-md text-secondary-400"> ~ Mark and Monitor Students Attendance</h1>
       <AttendanceHeader
+       role ={role}
         pastpresentStudents={pastpresentStudents}
         courses={courses}
         currentCourse={currentCourse}

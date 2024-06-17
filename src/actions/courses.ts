@@ -311,6 +311,14 @@ export const getMentorCourses = async () => {
       },
     },
   });
+
+  
+  courses.forEach((course) => {
+    course.classes.sort((a, b) => {
+      return Number(a.createdAt) - Number(b.createdAt);
+    });
+  });
+
   return courses;
 };
 
