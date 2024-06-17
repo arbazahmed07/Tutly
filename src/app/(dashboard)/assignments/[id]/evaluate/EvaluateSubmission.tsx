@@ -134,11 +134,6 @@ const EvaluateSubmission = ({
             </th>
             <th
               scope="col"
-              className="px-2 py-1 text-xs font-medium uppercase">
-              View Submission
-            </th>
-            <th
-              scope="col"
               className="px-2 py-1 text-xs font-medium uppercase"
             >
               Submission Date
@@ -185,15 +180,6 @@ const EvaluateSubmission = ({
           {
             <tr>
               <td className=" sticky left-0 bg-white divide-gray-200 ">{submission.enrolledUser.username}</td>
-              <td
-                className="px-2 py-1 whitespace-nowrap">
-                <Link
-                  href={`/playground/html-css-js?submissionId=${submission.id}`}
-                  className="text-blue-400 font-semibold break-words"
-                >
-                  view
-                </Link>
-              </td>
               <td className="px-2 py-1 whitespace-nowrap">
                 {submission.submissionDate
                   .toISOString()
@@ -291,43 +277,37 @@ const EvaluateSubmission = ({
                 }
               </td>
               {
-                totalScore !== 0 ?
-                  <td className=" text-green-700 font-semibold">
-                    <div className=" flex items-center justify-center">
-                      Evaluated &nbsp; <FaCheck />
+
+                <td className="px-2 py-1 whitespace-nowrap">
+                  {isEditing ? (
+                    <div className="flex items-center justify-center gap-5">
+                      <button
+                        onClick={handleSave}
+                        className="text-blue-600 font-semibold hover:text-blue-700"
+                      >
+                        Save
+                      </button>
+                      <button onClick={() => setIsEditing(false)} className=" text-red-600 hover:text-red-700 font-semibold ">
+                        Cancel
+                      </button>
                     </div>
-                  </td>
-                  :
-                  <td className="px-2 py-1 whitespace-nowrap">
-                    {isEditing ? (
-                      <div className="flex items-center justify-center gap-5">
-                        <button
-                          onClick={handleSave}
-                          className="text-blue-600 font-semibold hover:text-blue-700"
-                        >
-                          Save
-                        </button>
-                        <button onClick={() => setIsEditing(false)} className=" text-red-600 hover:text-red-700 font-semibold ">
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center gap-5">
-                        <button
-                          onClick={handleEdit}
-                          className="text-blue-600 font-semibold"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={handleDelete}
-                          className="text-red-600 hover:text-red-700 font-semibold"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </td>
+                  ) : (
+                    <div className="flex items-center justify-center gap-5">
+                      <button
+                        onClick={handleEdit}
+                        className="text-blue-600 font-semibold"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={handleDelete}
+                        className="text-red-600 hover:text-red-700 font-semibold"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </td>
               }
             </tr>
           }

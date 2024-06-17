@@ -14,7 +14,7 @@ const page = async ({
 }) => {
 
   const assignmentId = params.id
-  const submissionId = searchParams?.submissionId 
+  const submissionId = searchParams?.submissionId
 
   const submissions = await getAssignmentSubmissions(assignmentId)
 
@@ -26,24 +26,25 @@ const page = async ({
     <div className='flex w-full'>
       <div className='w-36 max-h-[90vh] m-1 overflow-y-scroll'>
         {
-          Array.isArray(submissions) && submissions.map((singleSubmission,index) => {
+          Array.isArray(submissions) && submissions.map((singleSubmission, index) => {
             if (!singleSubmission) return null
             return (
-              <div
-                key={index}
-                className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
+              <Link
+                key={index} href={`/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`}>
+                <div
+                  className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
               ${singleSubmission.id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}
+              ${singleSubmission.points.length > 0 && 'text-green-500'}
               `}>
-                <Link href={`/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`}>
                   {singleSubmission.enrolledUser.username}
-                </Link>
-              </div>
+                </div>
+              </Link>
             )
           })
         }
       </div>
       <div className='flex-1'>
-        <PlaygroundPage submission={submission}/>
+        <PlaygroundPage submission={submission} />
       </div>
     </div>
   )

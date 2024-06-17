@@ -164,17 +164,19 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
   });
 
   const filteredSubmissions = submissions.map((submission) => {
-    if(user.role == "INSTRUCTOR") return submission;
-    if(user.role =="MENTOR" && submission.enrolledUser.mentorUsername == user.username) {
-      return submission
+    if (user.role == "INSTRUCTOR") return submission;
+    if (
+      user.role == "MENTOR" &&
+      submission.enrolledUser.mentorUsername == user.username
+    ) {
+      return submission;
     } else {
-      return null
+      return null;
     }
-  })
+  });
 
   return filteredSubmissions;
 };
-
 
 export const getSubmissionById = async (submissionId: string) => {
   const user = await getCurrentUser();
@@ -192,9 +194,10 @@ export const getSubmissionById = async (submissionId: string) => {
     },
   });
 
-  if(!submission && submissionId) {
+  if (!submission && submissionId) {
     return null;
   }
 
   return submission;
-}
+};
+
