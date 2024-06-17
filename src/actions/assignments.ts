@@ -91,6 +91,9 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
             },
           },
         },
+        orderBy: {
+          createdAt: "asc",
+        },
       },
     },
   });
@@ -173,6 +176,9 @@ export const getAllAssignmentsForInstructor = async () => {
             },
           },
         },
+        orderBy:{
+          createdAt: "asc"
+        }
       },
     },
   });
