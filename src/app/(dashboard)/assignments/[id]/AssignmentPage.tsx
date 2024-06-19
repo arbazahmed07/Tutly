@@ -115,6 +115,21 @@ export default function AssignmentPage({
     }
   };
 
+  const handleDelete = async (id: string) => {
+    const response = confirm("Are you sure you want to delete this submission?");
+    if (!response) return;
+    try {
+      toast.loading("Deleting Submission...");
+      const res = await axios.delete(`/api/submissions/${id}`);
+      toast.dismiss();
+      toast.success("Submission deleted successfully");
+      router.refresh()
+    } catch (e: any) {
+      toast.dismiss();
+      toast.error("Failed to delete submission");
+    }
+  }
+
   return (
     <div className="mx-2 md:mx-10 my-2 relative">
       <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 text-white rounded text-sm md:text-lg font-medium">
@@ -128,11 +143,10 @@ export default function AssignmentPage({
         <div className="flex justify-center items-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`p-1 px-2 rounded text-white ${
-                new Date(assignment?.dueDate) > new Date()
-                  ? "bg-primary-600"
-                  : "bg-secondary-500"
-              }`}
+              className={`p-1 px-2 rounded text-white ${new Date(assignment?.dueDate) > new Date()
+                ? "bg-primary-600"
+                : "bg-secondary-500"
+                }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -333,9 +347,8 @@ export default function AssignmentPage({
                     </th>
                     <th
                       scope="col"
-                      className={`${
-                        currentUser?.role === "STUDENT" && "hidden"
-                      } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
+                      className={`${currentUser?.role === "STUDENT" && "hidden"
+                        } px-6 py-3 text-sm font-medium uppercase tracking-wider`}
                     >
                       View Submission
                     </th>
@@ -413,9 +426,8 @@ export default function AssignmentPage({
                           {submission.enrolledUser.username}
                         </td>
                         <td
-                          className={`${
-                            currentUser?.role === "STUDENT" && "hidden"
-                          } px-6 py-4 whitespace-nowrap`}
+                          className={`${currentUser?.role === "STUDENT" && "hidden"
+                            } px-6 py-4 whitespace-nowrap`}
                         >
                           <Link
                             href={`/playground/html-css-js?submissionId=${submission.id}`}
@@ -530,13 +542,7 @@ export default function AssignmentPage({
                           )}
                         </td>
                         {currentUser.role !== "STUDENT" &&
-                          (totalScore !== 0 ? (
-                            <td className=" text-green-700 font-semibold">
-                              <div className=" flex items-center justify-center">
-                                Evaluated &nbsp; <FaCheck />
-                              </div>
-                            </td>
-                          ) : (
+                          (
                             <td className="px-6 py-4 whitespace-nowrap">
                               {editingIndex === index ? (
                                 <div className="  flex items-center justify-center gap-5">
@@ -557,17 +563,26 @@ export default function AssignmentPage({
                                   </button>
                                 </div>
                               ) : (
-                                <button
-                                  onClick={() => {
-                                    handleEdit(index, submission.id);
-                                  }}
-                                  className="text-blue-600 font-semibold"
-                                >
-                                  Edit
-                                </button>
+                                <div className="flex items-center justify-center gap-5">
+
+                                  <button
+                                    onClick={() => {
+                                      handleEdit(index, submission.id);
+                                    }}
+                                    className="text-blue-600 font-semibold"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(submission.id)}
+                                    className="text-red-600 hover:text-red-700 font-semibold"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
                               )}
                             </td>
-                          ))}
+                          )}
                       </tr>
                     );
                   })}

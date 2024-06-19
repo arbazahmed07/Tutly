@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import getCurrentUser from "./getCurrentUser";
 
 export default async function addPoints({
   submissionId,
@@ -49,6 +50,12 @@ export default async function addPoints({
 const { Octokit } = require("@octokit/rest");
 
 export async function deleteSubmission(submissionId: string) {
+
+  const currentUser = await getCurrentUser();
+  if (!currentUser || currentUser.role == "STUDENT") {
+    throw new Error("Unauthorized");
+  }
+
   // const submission = await db.submission.findUnique({
   //     where: {
   //         id: submissionId
