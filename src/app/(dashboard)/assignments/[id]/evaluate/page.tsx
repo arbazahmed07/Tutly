@@ -10,13 +10,17 @@ const page = async ({
 }: {
   params: { id: string },
   searchParams?: { [key: string]: string | string[] | undefined };
-
 }) => {
 
   const assignmentId = params.id
   const submissionId = searchParams?.submissionId
+  const username = searchParams?.username
 
-  const submissions = await getAssignmentSubmissions(assignmentId)
+  let submissions = await getAssignmentSubmissions(assignmentId)
+
+  if(username){
+    submissions = submissions && submissions.filter((submission) => submission?.enrolledUser.username == username)
+  }
 
   if (!submissions) return (<div>Unauthorized</div>)
 
@@ -28,9 +32,10 @@ const page = async ({
         {
           Array.isArray(submissions) && submissions.map((singleSubmission, index) => {
             if (!singleSubmission) return null
+            const hrefLink = username ? `/assignments/${assignmentId}/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}` : `/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`
             return (
               <Link
-                key={index} href={`/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`}>
+                key={index} href={hrefLink}>
                 <div
                   className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
               ${singleSubmission.id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}

@@ -3,6 +3,7 @@ import getCurrentUser from "./getCurrentUser";
 import {
   getCreatedCourses,
   getEnrolledCoursesById,
+  getEnrolledCoursesByUsername,
   getMentorCourses,
 } from "./courses";
 import { orderBy } from "lodash";
@@ -54,14 +55,14 @@ export const getAllAssignedAssignments = async () => {
 };
 
 export const getAllAssignedAssignmentsByUserId = async (id: string) => {
-  const courses = await getEnrolledCoursesById(id);
+  const courses = await getEnrolledCoursesByUsername(id);
 
   const coursesWithAssignments = await db.course.findMany({
     where: {
       enrolledUsers: {
         some: {
           user: {
-            id: id,
+            username: id,
           },
         },
       },
@@ -80,7 +81,7 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
                 where: {
                   enrolledUser: {
                     user: {
-                      id: id,
+                      username: id,
                     },
                   },
                 },

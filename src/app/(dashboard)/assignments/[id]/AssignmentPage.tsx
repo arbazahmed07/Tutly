@@ -31,17 +31,24 @@ export default function AssignmentPage({
 
   const searchParams = useSearchParams();
 
-  const userId = searchParams?.get("userId");
+  const username = searchParams?.get("username");
   let filteredAssignments = [];
-  if (!userId) {
-    filteredAssignments = assignments?.filter(
-      (x: any) =>
-        x.enrolledUser.username
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        x.enrolledUser.username
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
+  // if (!username) {
+  filteredAssignments = assignments?.filter(
+    (x: any) =>
+      x.enrolledUser.username
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      x.enrolledUser.username
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+
+  )
+  // }
+
+  if (username) {
+    filteredAssignments = filteredAssignments.filter(
+      (x: any) => x.enrolledUser.username === username
     );
   }
 
@@ -207,8 +214,7 @@ export default function AssignmentPage({
             </Link>
           )}
         </div>
-        {(userId && assignment.submissions.length > 0) ||
-        currentUser?.role === "STUDENT" ? (
+        {currentUser?.role === "STUDENT" ? (
           <>
             <h1>
               <span className="block mt-5 dark:text-white">
@@ -305,16 +311,20 @@ export default function AssignmentPage({
               </table>
             </div>
           </>
-        ) : !userId &&
-          (currentUser?.role === "MENTOR" ||
-            currentUser.role === "INSTRUCTOR") ? (
+        ) : (currentUser?.role === "MENTOR" ||
+          currentUser.role === "INSTRUCTOR") ? (
           <>
             <div className="flex justify-between">
               <div className="block mt-5 dark:text-white">Submissions : 👇</div>
               <div className="flex gap-4">
                 <button
-                  onClick={() =>
-                    router.push(`/assignments/${params.id}/evaluate`)
+                  onClick={() => {
+                    if (username) {
+                      router.push(`/assignments/${params.id}/evaluate?username=${username}`)
+                    } else {
+                      router.push(`/assignments/${params.id}/evaluate`)
+                    }
+                  }
                   }
                   className="bg-primary-600 inline px-2 py-1 text-sm rounded font-semibold text-white"
                 >

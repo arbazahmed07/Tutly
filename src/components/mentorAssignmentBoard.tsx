@@ -88,9 +88,9 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
                     router.push(
                       `${
                         role === "INSTRUCTOR" ?
-                            `/instructor/assignments/${student.id}`
+                            `/instructor/assignments/${student.username}`
                           :
-                            `/mentor/assignments/${student.id}`                        
+                            `/mentor/assignments/${student.username}`                        
                       }`
                     )
                   }

@@ -194,7 +194,7 @@ export default function StudentWiseAssignments({
                           onClick={() => {
                             if (userId) {
                               router.push(
-                                `/assignments/${assignment.id}?userId=${userId}`
+                                `/assignments/${assignment.id}?username=${userId}`
                               );
                             } else {
                               router.push(`/assignments/${assignment.id}`);
