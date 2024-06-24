@@ -132,6 +132,9 @@ const EvaluateSubmission = ({
             <th className="px-2 py-1 text-xs font-medium uppercase sticky left-0 text-secondary-700 bg-secondary-300 ">
               username
             </th>
+            <th className="px-2 py-1 text-xs font-medium uppercase sticky left-0 text-secondary-700 bg-secondary-300 ">
+              name
+            </th>
             <th
               scope="col"
               className="px-2 py-1 text-xs font-medium uppercase"
@@ -180,6 +183,7 @@ const EvaluateSubmission = ({
           {
             <tr>
               <td className=" sticky left-0 bg-white divide-gray-200 ">{submission.enrolledUser.username}</td>
+              <td className="">{submission.enrolledUser.user.name}</td>
               <td className="px-2 py-1 whitespace-nowrap">
                 {submission.submissionDate
                   .toISOString()

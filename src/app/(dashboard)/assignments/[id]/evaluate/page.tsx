@@ -18,7 +18,7 @@ const page = async ({
 
   let submissions = await getAssignmentSubmissions(assignmentId)
 
-  if(username){
+  if (username) {
     submissions = submissions && submissions.filter((submission) => submission?.enrolledUser.username == username)
   }
 
@@ -41,7 +41,12 @@ const page = async ({
               ${singleSubmission.id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}
               ${singleSubmission.points.length > 0 && 'text-green-500'}
               `}>
-                  {singleSubmission.enrolledUser.username}
+                  <p className='text-sm'>
+                    {singleSubmission.enrolledUser.username}
+                  </p>
+                  <p className='text-xs text-slate-600'>
+                    {singleSubmission.enrolledUser.user.name}
+                  </p>
                 </div>
               </Link>
             )

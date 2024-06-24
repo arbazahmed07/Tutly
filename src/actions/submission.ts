@@ -158,7 +158,11 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
       attachmentId: assignmentId,
     },
     include: {
-      enrolledUser: true,
+      enrolledUser: {
+        include:{
+          user:true
+        }
+      },
       points: true,
     },
   });
@@ -173,6 +177,18 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
     } else {
       return null;
     }
+  });
+
+  filteredSubmissions.sort((a, b) => {
+    if (!a || !b) return 0;
+
+    if (a.enrolledUser.username < b.enrolledUser.username) {
+      return -1;
+    }
+    if (a.enrolledUser.username > b.enrolledUser.username) {
+      return 1;
+    }
+    return 0;
   });
 
   return filteredSubmissions;
