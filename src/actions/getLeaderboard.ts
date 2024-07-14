@@ -152,6 +152,11 @@ export const getInstructorLeaderboardData = async () => {
                 image: true,
               },
             },
+            mentor:{
+              select:{
+                username:true
+              }
+            }
           },
         },
       },

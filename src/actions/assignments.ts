@@ -394,6 +394,20 @@ export const getAllAssignmentDetailsBy = async (id: string) => {
       },
     },
   });
+  const mentees=await db.user.findMany({
+    where:{
+      enrolledUsers:{
+        some:{
+          mentorUsername:currentUser.username
+        }
+      }
+    }
+  })
+  const notSubmittedMentees = mentees.filter((mentee) => {
+    return !assignment?.submissions.some(
+      (submission) => submission.enrolledUser.username === mentee.username
+    );
+  });
 
   const sortedAssignments = assignment?.submissions.sort((a, b) => {
     if (b.enrolledUser.username > a.enrolledUser.username) {
@@ -404,7 +418,7 @@ export const getAllAssignmentDetailsBy = async (id: string) => {
       return 0;
     }
   });
-  return sortedAssignments;
+  return [sortedAssignments,notSubmittedMentees];
 };
 
 export const getAllAssignmentDetailsForInstructor = async (id: string) => {
@@ -437,6 +451,21 @@ export const getAllAssignmentDetailsForInstructor = async (id: string) => {
       },
     },
   });
+  const allStudents = await db.enrolledUsers.findMany({
+    where: {
+      course: {
+        createdById: currentUser.id,
+      },
+      mentorUsername: {
+        not: null,
+      },
+    },
+  })
+  const notSubmittedMentees = allStudents.filter((student) => {
+    return !assignment?.submissions.some(
+      (submission) => submission.enrolledUser.username === student.username
+    );
+  });
 
   const sortedAssignments = assignment?.submissions.sort((a, b) => {
     if (b.enrolledUser.username > a.enrolledUser.username) {
@@ -447,7 +476,7 @@ export const getAllAssignmentDetailsForInstructor = async (id: string) => {
       return 0;
     }
   });
-  return sortedAssignments;
+  return [sortedAssignments, notSubmittedMentees];
 };
 
 export const getAllAssignmentsByCourseId = async (id: string) => {

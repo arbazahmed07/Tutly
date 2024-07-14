@@ -5,6 +5,7 @@ import {
 } from "@/actions/assignments";
 import getCurrentUser from "@/actions/getCurrentUser";
 import AssignmentPage from "./AssignmentPage";
+import { any } from "zod";
 
 export default async function SubmmitAssignment({
   params,
@@ -19,11 +20,11 @@ export default async function SubmmitAssignment({
   }
   const userId = (searchParams?.userId as string) || currentUser.id;
   const assignment = await getAssignmentDetailsByUserId(params.id, userId);
-  let assignments;
+  let assignments,notSubmittedMentees;
   if (currentUser.role === "INSTRUCTOR") {
-    assignments = await getAllAssignmentDetailsForInstructor(params.id);
+    [assignments,notSubmittedMentees] = await getAllAssignmentDetailsForInstructor(params.id);
   } else {
-    assignments = await getAllAssignmentDetailsBy(params.id);
+    [assignments,notSubmittedMentees] = await getAllAssignmentDetailsBy(params.id);
   }
 
   return (
@@ -32,6 +33,7 @@ export default async function SubmmitAssignment({
       currentUser={currentUser}
       params={params}
       assignments={assignments}
+      notSubmittedMentees={notSubmittedMentees}
     />
   );
 }
