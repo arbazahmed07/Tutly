@@ -20,7 +20,7 @@ export default async function SubmmitAssignment({
   const userId = (searchParams?.userId as string) || currentUser.id;
   const assignment = await getAssignmentDetailsByUserId(params.id, userId);
 
-  const { assignments, notSubmittedMentees } :any = currentUser.role === "INSTRUCTOR" ? await getAllAssignmentDetailsForInstructor(params.id) : await getAllAssignmentDetailsBy(params.id);
+  const [assignments, notSubmittedMentees]: any = currentUser.role === "INSTRUCTOR" ? await getAllAssignmentDetailsForInstructor(params.id) : await getAllAssignmentDetailsBy(params.id);
 
   return (
     <AssignmentPage
