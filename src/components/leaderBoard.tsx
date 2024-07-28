@@ -60,12 +60,6 @@ export default function Leaderboard({
         <FaCrown className="h-20 w-20 m-auto text-yellow-400" />
         <h1 className="text-2xl font-semibold text-yellow-300">Leaderboard</h1>
       </div>
-      <div>
-        <h1 className="py-2 text-gray-500 text-sm text-center">
-          The leaderboard is updated on the Sunday immediately following the
-          assignment submission.
-        </h1>
-      </div>
       {/* Mentors list for instructor */}
       {currentUser.role === "INSTRUCTOR" && (
         <div className="flex gap-3 mt-4">

@@ -30,7 +30,11 @@ const files = {
 </html>
 `,
   '/styles.css': "",
-  '/index.js': "",
+  '/index.js': `{
+  // Do not remove the braces; write your code inside the braces.
+
+}
+`,
 };
 
 const Playground = ({
