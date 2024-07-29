@@ -69,6 +69,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
           >
             <div className="p-1 flex justify-between items-center">
               <div className="flex gap-2 md:gap-5 items-center">
+                {index+1}
                 <Image
                   src={student?.image || "/images/placeholder.jpg"}
                   height={40}
