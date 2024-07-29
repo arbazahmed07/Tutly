@@ -5,7 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { FaCheck, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
