@@ -126,6 +126,15 @@ export const createDoubt = async (
       },
     },
   });
+
+  await db.events.create({
+    data: {
+      eventCategory: "DOUBT_CREATION",
+      causedById: currentUser.id,
+      eventCategoryDataId: doubt.id,
+    },
+  });
+
   return doubt;
 };
 
@@ -143,6 +152,14 @@ export const createResponse = async (doubtId: string, description: string) => {
     include: {
       user : true
     }
+  });
+
+  await db.events.create({
+    data: {
+      eventCategory: "DOUBT_RESPONSE",
+      causedById: currentUser.id,
+      eventCategoryDataId: response.id,
+    },
   });
   return response;
 };

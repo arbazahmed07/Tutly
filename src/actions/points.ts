@@ -9,6 +9,10 @@ export default async function addPoints({
   marks: any;
 }) {
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.role == "STUDENT") {
+      throw new Error("Unauthorized");
+    }
     const allCategories = await Promise.all(
       marks.map(async (mark: any) => {
         const existingPoint = await db.point.findFirst({
@@ -18,8 +22,16 @@ export default async function addPoints({
           },
         });
 
+        await db.events.create({
+          data: {
+            eventCategory:"ASSIGNMENT_EVALUATION",
+            causedById: currentUser.id,
+            eventCategoryDataId: submissionId,
+          },
+        });
+
         if (existingPoint) {
-          return db.point.update({
+          return await db.point.update({
             where: {
               id: existingPoint.id,
             },
@@ -28,7 +40,7 @@ export default async function addPoints({
             },
           });
         } else {
-          return db.point.create({
+          return await db.point.create({
             data: {
               submissionId,
               category: mark.category,
