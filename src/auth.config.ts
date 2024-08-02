@@ -1,8 +1,8 @@
 import Google from "next-auth/providers/google";
-import Credentials from "next-auth/providers/credentials"
+import Credentials from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
-import { v4 as uuidv4 } from 'uuid';
-import {type NextAuthConfig } from "next-auth";
+import { v4 as uuidv4 } from "uuid";
+import { type NextAuthConfig } from "next-auth";
 import bcryptjs from "bcryptjs";
 
 export default {
@@ -67,11 +67,21 @@ export default {
           if (!user.password) {
             throw new Error("User has not set a password");
           }
-          const valid = await bcryptjs.compare(password as string, user.password);
+          const valid = await bcryptjs.compare(
+            password as string,
+            user.password
+          );
 
           if (!valid) {
             throw new Error("Invalid username or password");
           }
+
+          await prisma.events.create({
+            data: {
+              eventCategory: "USER_CREDENTIAL_LOGIN",
+              causedById: user.id,
+            },
+          });
 
           return user as any;
         }
@@ -124,9 +134,16 @@ export default {
                 },
               });
             }
+
+            await prisma.events.create({
+              data: {
+                eventCategory: "USER_GOOGLE_LOGIN",
+                causedById: existingUser.id,
+              },
+            });
             return true;
           } else {
-            await prisma.user.create({
+            const newUser = await prisma.user.create({
               data: {
                 username: user.email?.split("@")[0].toUpperCase() as string,
                 email: user.email?.toLowerCase(),
@@ -136,6 +153,14 @@ export default {
                 oneTimePassword: uuidv4(),
               },
             });
+
+            await prisma.events.create({
+              data: {
+                eventCategory: "NEW_USER_GOOGLE_LOGIN",
+                causedById: newUser.id,
+              },
+            });
+
             return true;
           }
         }
