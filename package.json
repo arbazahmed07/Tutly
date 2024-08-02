@@ -15,6 +15,7 @@
     "@codesandbox/sandpack-react": "^2.13.10",
     "@hookform/resolvers": "^3.3.4",
     "@monaco-editor/react": "^4.6.0",
+    "@next/third-parties": "^14.2.5",
     "@octokit/core": "^5.2.0",
     "@octokit/rest": "^20.1.1",
     "@prisma/client": "^5.12.1",

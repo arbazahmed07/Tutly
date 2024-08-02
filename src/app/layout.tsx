@@ -4,6 +4,7 @@ import Provider from "@/providers/Provider";
 import { Inter } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import { GoogleAnalytics } from '@next/third-parties/google'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default async function RootLayout({
         <body className={inter.className}>
           <Provider>{children}</Provider>
         </body>
+        <GoogleAnalytics gaId="G-M4JY8QWX09" />
       </html>
     </SessionProvider>
   );
