@@ -8,6 +8,7 @@ export default function Leaderboard({
   courses,
   currentUser,
   mentors,
+  noOfSubmissions
 }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
@@ -52,7 +53,6 @@ export default function Leaderboard({
 
     setLeaderboardData(leaderboardArray);
   }, [currentCourse, submissions, mentorUsername]);
-
   return (
     <div className="mx-2 md:mx-14 mt-1 flex flex-col gap-4">
       {/* Leaderboard-header */}
@@ -122,7 +122,7 @@ export default function Leaderboard({
               <th className="text-start uppercase text-sm">
                 Points
               </th>
-              <th className="text-start uppercase text-sm">Assignments</th>
+              <th className="text-center uppercase text-sm">Assignments</th>
               <th className="text-start uppercase text-sm">Attendance</th>
             </tr>
           </thead>
@@ -154,7 +154,7 @@ export default function Leaderboard({
                       {data.totalPoints} points
                     </h1>
                   </td>
-                  <td>-</td>
+                  <td className="text-center">{noOfSubmissions[data.username]||0}</td>
                   <td>-</td>
                 </tr>
               );
