@@ -44,6 +44,14 @@ export const createAttachment = async (data : z.infer<typeof attachmentSchema>) 
     },
   });
 
+  await db.events.create({
+    data: {
+      eventCategory:"ATTACHMENT_CREATION",
+      causedById: currentUser.id,
+      eventCategoryDataId: attachment.id,
+    },
+  });
+
   return attachment;
 };
 

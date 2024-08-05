@@ -414,6 +414,14 @@ export const enrollStudentToCourse = async (
       },
     });
 
+    await db.events.create({
+      data: {
+        eventCategory: "STUDENT_ENROLLMENT_IN_COURSE",
+        causedById: currentUser.id,
+        eventCategoryDataId: newEnrollment.id,
+      },
+    });
+
     return newEnrollment;
   } catch (error: any) {
     throw new Error(`Failed to enroll student: ${error.message}`);

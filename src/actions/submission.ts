@@ -114,6 +114,14 @@ export const createSubmission = async (
     },
   });
 
+  await db.events.create({
+    data: {
+      eventCategory: "ASSIGNMENT_SUBMISSION",
+      causedById: user.id,
+      eventCategoryDataId: submission.id,
+    },
+  });
+
   return submission;
 };
 

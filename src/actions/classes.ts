@@ -92,6 +92,14 @@ export const createClass = async (data: any) => {
       });
     }
 
+    await db.events.create({
+      data: {
+        eventCategory:"CLASS_CREATION",
+        causedById: myClass.id,
+        eventCategoryDataId: myClass.id,
+      },
+    });
+
     return myClass;
   } catch (error) {
     console.error("Error creating class:", error);

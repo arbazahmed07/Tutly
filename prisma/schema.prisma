@@ -52,6 +52,7 @@ model User {
   enrolledUsers   EnrolledUsers[] @relation(name: "user")
   assignedMentees EnrolledUsers[] @relation(name: "mentor")
   Session         Session[]
+  Events          Events[]
 }
 
 model Profile {
@@ -291,6 +292,33 @@ model Session {
   userId       String
   user         User     @relation(fields: [userId], references: [id])
   expires      DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum EventCategory {
+  ASSIGNMENT_SUBMISSION
+  ASSIGNMENT_EVALUATION
+  NEW_USER_GOOGLE_LOGIN
+  USER_GOOGLE_LOGIN
+  USER_CREDENTIAL_LOGIN
+  ATTACHMENT_CREATION
+  CLASS_CREATION
+  STUDENT_ENROLLMENT_IN_COURSE
+  DOUBT_CREATION
+  DOUBT_RESPONSE
+}
+
+model Events {
+  id String @id @default(uuid())
+
+  message       String?
+  eventCategory EventCategory
+  eventCategoryDataId String?
+
+  causedById String
+  causedBy   User   @relation(fields: [causedById], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
