@@ -557,20 +557,66 @@ const TotalAttendanceTable = ({
 }: {
   studentsAttendance: any;
 }) => {
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "ascending" | "descending";
+  }>({
+    key: "-1",
+    direction: "ascending",
+  });
+
+  const sortedData = [...studentsAttendance].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === "ascending" ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === "ascending" ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const handleSort = (key: string) => {
+    let direction: "ascending" | "descending" = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
   return (
     <div className="container mx-auto px-4 ">
-      <h1 className="text-2xl font-bold mb-4">Student Data</h1>
+      <h1 className="text-2xl font-bold mb-4 cursor-pointer" onClick={() => setSortConfig({ key: "-1", direction: "ascending" })}>Overall Attendance</h1>
       <div className="overflow-x-auto">
         <table className="w-full border">
           <thead>
             <tr className="bg-blue-500">
-              <th className="p-2 border">Roll Number</th>
-              <th className="p-2 border">Percentage</th>
+              <th
+                className="p-2 border cursor-pointer"
+                onClick={() => handleSort("username")}
+              >
+                Roll Number{" "}
+                {sortConfig.key === "username"
+                  ? sortConfig.direction === "ascending"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </th>
+              <th
+                className="p-2 border cursor-pointer"
+                onClick={() => handleSort("percentage")}
+              >
+                Percentage{" "}
+                {sortConfig.key === "percentage"
+                  ? sortConfig.direction === "ascending"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </th>
               <th className="p-2 border">Status</th>
             </tr>
           </thead>
           <tbody>
-            {studentsAttendance.map((item: any) => (
+            {sortedData.map((item: any) => (
               <tr key={item.username} className="border-b">
                 <td className="p-2 border">{item.username}</td>
                 <td className="p-2 border">{Math.round(item.percentage)}</td>
@@ -581,7 +627,7 @@ const TotalAttendanceTable = ({
                     </span>
                   ) : (
                     <span className="bg-green-200 text-green-700 px-2 py-1 rounded">
-                      Excellant
+                      Excellent
                     </span>
                   )}
                 </td>
@@ -593,3 +639,4 @@ const TotalAttendanceTable = ({
     </div>
   );
 };
+

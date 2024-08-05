@@ -6,7 +6,6 @@ export async function GET(req: NextRequest) {
   try {
     const totalAttendance = await getTotalNumberOfClassesAttended();
     const totalCount = await totalNumberOfClasses();
-    console.log(totalCount, "totalCount at route"); 
     
 
     const jsonData = Object.entries(totalAttendance).map(
