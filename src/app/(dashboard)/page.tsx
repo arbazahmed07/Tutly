@@ -22,14 +22,12 @@ import getCurrentUser from "@/actions/getCurrentUser";
 import OneSignal from "react-onesignal";
 export default async function Home() {
 
-  
-
   useEffect(() => {
     const loadOneSignal = async () => {
       try {
         console.log("Loading OneSignal SDK...");
         await OneSignal.init({
-          appId: process.env.NEXT_PUBLIC_ONE_SIGNAL,
+          appId: process.env.NEXT_PUBLIC_ONE_SIGNAL!,
           allowLocalhostAsSecureOrigin: true,
         });
 
