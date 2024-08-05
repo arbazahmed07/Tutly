@@ -27,7 +27,7 @@ export default async function Home() {
       try {
         console.log("Loading OneSignal SDK...");
         await OneSignal.init({
-          appId: process.env.NEXT_PUBLIC_ONE_SIGNAL,
+          appId: process.env.NEXT_PUBLIC_ONE_SIGNAL!,
           allowLocalhostAsSecureOrigin: true,
         });
 
