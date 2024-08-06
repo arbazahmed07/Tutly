@@ -4,11 +4,12 @@ import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
+import Image from "next/image"; 
 import { FaSearch } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
+import { RiWhatsappLine } from "react-icons/ri";
 
 export default function AssignmentPage({
   params,
@@ -32,6 +33,28 @@ export default function AssignmentPage({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [feedback, setFeedback] = useState<string>("");
 
+  const messages = [
+    "Hi, how are you?",
+    "Complete your assignments on time !!",
+    "Make sure to review the recorded lectures for better understanding",
+    "Good Work in web development,Keep Going",
+    "Don't forget to participate actively in class discussions!",
+    "Ask questions if you need clarification; we’re here to help!",
+    "Maintain proper attendance,your attendance was poor",
+  ];
+  const [modal, setModal] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const handleWhatsAppClick = (phone: string) => {
+    setPhoneNumber(phone);
+    setModal(true);
+  };
+
+  const handleSend = (message: string) => {
+    const url = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${message}&app_absent=0`;
+    window.location.href = url;
+    setModal(false);
+  };
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -402,8 +425,8 @@ export default function AssignmentPage({
                             <td className={`px-6 py-4 whitespace-nowrap`}>
                               <h1>{user.mentorUsername}</h1>
                             </td>
-                            <td className={`px-6 py-4 whitespace-nowrap`}>
-                              <button>-</button>
+                            <td className={`flex justify-center px-6 py-4 whitespace-nowrap`}>
+                              <RiWhatsappLine className="h-6 w-6" onClick={() => handleWhatsAppClick("9160804126")} />
                             </td>
                           </tr>
                         );
@@ -655,6 +678,33 @@ export default function AssignmentPage({
                   </tbody>
                 </table>
               )}
+              {modal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                  <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
+                    <h2 className="text-lg font-semibold mb-4">Select a message to send</h2>
+                    <div className="flex flex-col gap-2">
+                      {messages.map((msg, index) => (
+                        <div key={index} className="flex gap-4 justify-between border-b border-slate-500 mb-2">
+                          <p className="text-sm">{msg}</p>
+                          <button
+                            onClick={() => handleSend(msg)}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            Send
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setModal(false)}
+                      className="mt-4 bg-gray-200 hover:bg-gray-300 rounded px-4 py-2"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
+
             </div>
           </>
         ) : (

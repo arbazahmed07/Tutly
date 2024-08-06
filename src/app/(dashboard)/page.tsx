@@ -1,4 +1,4 @@
-"use client"
+// "use client"
 import React, { useEffect } from 'react';
 import {
   getDashboardData,
@@ -19,45 +19,45 @@ import {
   getEnrolledStudents,
 } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
-import OneSignal from "react-onesignal";
+// import OneSignal from "react-onesignal";
 export default async function Home() {
 
-  
-  useEffect(() => {
-    const loadOneSignal = async () => {
-      try {
-        console.log("Loading OneSignal SDK...");
-        await OneSignal.init({
-          appId: process.env.NEXT_PUBLIC_ONE_SIGNAL,
-          allowLocalhostAsSecureOrigin: true,
-        });
 
-        console.log("OneSignal has been successfully initialized.");
-        OneSignal.Slidedown.promptPush();
-      } catch (error) {
-        console.error("Error initializing OneSignal:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const loadOneSignal = async () => {
+  //     try {
+  //       console.log("Loading OneSignal SDK...");
+  //       await OneSignal.init({
+  //         appId: process.env.NEXT_PUBLIC_ONE_SIGNAL!,
+  //         allowLocalhostAsSecureOrigin: true,
+  //       });
 
-    // Check if OneSignal SDK is already loaded
-    if (!window.OneSignal) {
-      const script = document.createElement('script');
-      script.src = "https://cdn.onesignal.com/sdks/OneSignalSDK.js";
-      script.async = true;
-      script.onload = loadOneSignal;
-      script.onerror = () => console.error("Error loading OneSignal SDK script.");
-      document.head.appendChild(script);
-    } else {
-      loadOneSignal();
-    }
+  //       console.log("OneSignal has been successfully initialized.");
+  //       OneSignal.Slidedown.promptPush();
+  //     } catch (error) {
+  //       console.error("Error initializing OneSignal:", error);
+  //     }
+  //   };
 
-    // Cleanup function
-    return () => {
-      console.log("Cleaning up OneSignal...");
-      // Optionally, you can call OneSignal.logout() if you need to clear the user session
-      // OneSignal.logout();
-    };
-  }, []);
+  //   // Check if OneSignal SDK is already loaded
+  //   if (!window.OneSignal) {
+  //     const script = document.createElement('script');
+  //     script.src = "https://cdn.onesignal.com/sdks/OneSignalSDK.js";
+  //     script.async = true;
+  //     script.onload = loadOneSignal;
+  //     script.onerror = () => console.error("Error loading OneSignal SDK script.");
+  //     document.head.appendChild(script);
+  //   } else {
+  //     loadOneSignal();
+  //   }
+
+  //   // Cleanup function
+  //   return () => {
+  //     console.log("Cleaning up OneSignal...");
+  //     // Optionally, you can call OneSignal.logout() if you need to clear the user session
+  //     // OneSignal.logout();
+  //   };
+  // }, []);
 
 
   const currentUser = await getCurrentUser();

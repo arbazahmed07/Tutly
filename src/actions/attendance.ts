@@ -188,28 +188,42 @@ export const deleteClassAttendance = async (classId: string) => {
 
 export const getTotalNumberOfClassesAttended = async()=>{
   const currentUser = await getCurrentUser();
-  if (!currentUser) {
+  if (!currentUser || currentUser.role !=='INSTRUCTOR') {
     throw new Error("You must be logged in to attend a class");
   }
   
   const attendance = await db.attendance.findMany({
     select:{
       username:true,
-      attended:true
+      user:true,
+      attended:true,
     }
   })
 
   let groupByTotalAttendance = <any>[];
+  
 
   attendance.forEach((attendanceData)=>{
     if(attendanceData.attended){
       if(groupByTotalAttendance[attendanceData.username]){
-        groupByTotalAttendance[attendanceData.username] = groupByTotalAttendance[attendanceData.username]+1;
+        groupByTotalAttendance[attendanceData.username] = {
+          ...groupByTotalAttendance[attendanceData.username],
+          count : groupByTotalAttendance[attendanceData.username].count+1,
+        };
       }else{
-        groupByTotalAttendance[attendanceData.username] = 1;
+        groupByTotalAttendance[attendanceData.username] = {
+          username : attendanceData.username,
+          name : attendanceData.user.name,
+          mail:attendanceData.user.email,
+          image: attendanceData.user.image,
+          role:attendanceData.user.role,
+          count:1,
+        };
       }
     }
   })
+
+  
 
   return groupByTotalAttendance;  
   
