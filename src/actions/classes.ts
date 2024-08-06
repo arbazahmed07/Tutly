@@ -10,16 +10,22 @@ const classSchema = z.object({
   videoLink: z.string().trim().min(1),
   videoType: z.enum(["DRIVE", "YOUTUBE", "ZOOM"]),
   courseId: z.string().trim().min(1),
-  createdAt : z.string().optional(),
+  createdAt: z.string().optional(),
   folderId: z.string().optional(),
   folderName: z.string().optional(),
 });
 
 export const createClass = async (data: any) => {
-  const { classTitle, videoLink, videoType, courseId, folderId, folderName,createdAt } =
-  classSchema.parse(data);
+  const {
+    classTitle,
+    videoLink,
+    videoType,
+    courseId,
+    folderId,
+    folderName,
+    createdAt,
+  } = classSchema.parse(data);
   let myClass;
-  
 
   try {
     // If folderId is provided, connect to the existing folder
@@ -52,7 +58,7 @@ export const createClass = async (data: any) => {
       myClass = await db.class.create({
         data: {
           title: classTitle,
-          createdAt : new Date(createdAt ?? ""),
+          createdAt: new Date(createdAt ?? ""),
           video: {
             create: {
               videoLink: videoLink,
@@ -71,12 +77,11 @@ export const createClass = async (data: any) => {
           },
         },
       });
-    }
-    else {
+    } else {
       myClass = await db.class.create({
         data: {
           title: classTitle,
-          createdAt : new Date(createdAt ?? ""),
+          createdAt: new Date(createdAt ?? ""),
           video: {
             create: {
               videoLink: videoLink,
@@ -94,7 +99,7 @@ export const createClass = async (data: any) => {
 
     await db.events.create({
       data: {
-        eventCategory:"CLASS_CREATION",
+        eventCategory: "CLASS_CREATION",
         causedById: myClass.id,
         eventCategoryDataId: myClass.id,
       },
@@ -109,30 +114,31 @@ export const createClass = async (data: any) => {
 
 export const updateClass = async (data: any) => {
   const currentUser = await getCurrentUser();
-  if(currentUser?.role !== "INSTRUCTOR"){  
+  if (currentUser?.role !== "INSTRUCTOR") {
     throw new Error("You are not authorized to update this class.");
   }
 
-  const { classTitle,videoLink, videoType,folderId,folderName,createdAt } = classSchema.parse(data);
+  const { classTitle, videoLink, videoType, folderId, folderName, createdAt } =
+    classSchema.parse(data);
 
   let newFolderId = undefined;
 
-  if(folderId && folderName){
+  if (folderId && folderName) {
     const res = await db.folder.update({
       where: {
         id: folderId,
       },
       data: {
         title: folderName,
-        createdAt : new Date(createdAt ?? ""),
+        createdAt: new Date(createdAt ?? ""),
       },
     });
     newFolderId = folderId;
-  } else if(folderName){
+  } else if (folderName) {
     const res = await db.folder.create({
       data: {
         title: folderName,
-        createdAt : new Date(createdAt ?? ""),
+        createdAt: new Date(createdAt ?? ""),
       },
     });
     newFolderId = res.id;
@@ -140,15 +146,14 @@ export const updateClass = async (data: any) => {
     newFolderId = folderId;
   }
 
-
   try {
     const myClass = await db.class.update({
       where: {
-        id:data.classId as string,
+        id: data.classId as string,
       },
       data: {
         title: classTitle,
-        createdAt : new Date(createdAt ?? ""),
+        createdAt: new Date(createdAt ?? ""),
         video: {
           update: {
             videoLink: videoLink,
@@ -170,10 +175,9 @@ export const updateClass = async (data: any) => {
   }
 };
 
-
 export const deleteClass = async (classId: string) => {
   const currentUser = await getCurrentUser();
-  if(currentUser?.role !== "INSTRUCTOR"){  
+  if (currentUser?.role !== "INSTRUCTOR") {
     throw new Error("You are not authorized to delete this class.");
   }
 
@@ -189,5 +193,21 @@ export const deleteClass = async (classId: string) => {
   }
 
   return { success: true };
-  
-}
+};
+
+export const totalNumberOfClasses = async () => {
+  const currentUser = await getCurrentUser();
+  if(!currentUser) {
+    throw new Error("You are not authorized to view this page.");
+  }
+
+  try {
+    const res = await db.class.count();
+    return res;
+  } catch (error) {
+    console.error("Error getting total number of classes:", error);
+    throw new Error(
+      "Failed to get total number of classes. Please try again later."
+    );
+  }
+};
