@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import _ from "lodash";
 import toast from "react-hot-toast";
 import axios from "axios";
 import AttendanceHeader from "./AttendanceHeader";
+import Loader from "./Loader";
 
 interface Student {
   Name: string;
@@ -17,7 +18,7 @@ interface Student {
   InWaitingRoom: string;
 }
 
-const AttendanceClient = ({ courses ,role }: any) => {
+const AttendanceClient = ({ courses, role }: any) => {
   const [fileData, setFileData] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [currentCourse, setCurrentCourse] = useState<any>(null);
@@ -192,6 +193,23 @@ const AttendanceClient = ({ courses ,role }: any) => {
   };
   const [pastpresentStudents, setPastPresentStudents] = useState([]);
   const [present, setPresent] = useState(0);
+
+  const [studentsAttendance, setStudentsAttendance] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchStudentsAttendance = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("/api/attendance/getTotalAttendance");
+
+      setStudentsAttendance(res.data);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const viewAttendance = async () => {
       if (currentClass) {
@@ -214,20 +232,27 @@ const AttendanceClient = ({ courses ,role }: any) => {
               InWaitingRoom: student.InWaitingRoom,
             });
           });
-        }
-        );
+        });
         setFileData(Totaldata);
       }
     };
     viewAttendance();
+    fetchStudentsAttendance();
   }, [currentClass]);
 
   return (
     <div className="p-4 text-center ">
-      <div><h1 className="text-4xl mt-4 w-60 mx-auto font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-orange-200 to-red-400">Attendance</h1></div>
-      <h1 className="text-center font-semibold text-md text-secondary-400"> ~ Mark and Monitor Students Attendance</h1>
+      <div>
+        <h1 className="text-4xl mt-4 w-60 mx-auto font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-orange-200 to-red-400">
+          Attendance
+        </h1>
+      </div>
+      <h1 className="text-center font-semibold text-md text-secondary-400">
+        {" "}
+        ~ Mark and Monitor Students Attendance
+      </h1>
       <AttendanceHeader
-       role ={role}
+        role={role}
         pastpresentStudents={pastpresentStudents}
         courses={courses}
         currentCourse={currentCourse}
@@ -242,7 +267,11 @@ const AttendanceClient = ({ courses ,role }: any) => {
         fileData={fileData}
         selectedFile={selectedFile}
         handleUpload={handleUpload}
-        count={[present, users.length-present,pastpresentStudents.length-present]}
+        count={[
+          present,
+          users.length - present,
+          pastpresentStudents.length - present,
+        ]}
       />
       {/* Table */}
       {fileData && selectedFile && pastpresentStudents.length == 0 && (
@@ -259,21 +288,19 @@ const AttendanceClient = ({ courses ,role }: any) => {
         />
       )}
 
-      {
-        pastpresentStudents.length > 0 && (
-          <AttendanceTable
-            presentStudents={presentStudents}
-            users={users}
-            absentStudents={absentStudents}
-            handleStudentClick={handleStudentClick}
-            openEditName={openEditName}
-            setOpenEditName={setOpenEditName}
-            username={username}
-            setUsername={setUsername}
-            handleEditUsername={handleEditUsername}
-          />
-        )
-      }
+      {pastpresentStudents.length > 0 && (
+        <AttendanceTable
+          presentStudents={presentStudents}
+          users={users}
+          absentStudents={absentStudents}
+          handleStudentClick={handleStudentClick}
+          openEditName={openEditName}
+          setOpenEditName={setOpenEditName}
+          username={username}
+          setUsername={setUsername}
+          handleEditUsername={handleEditUsername}
+        />
+      )}
 
       {selectedStudent && (
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50">
@@ -291,14 +318,15 @@ const AttendanceClient = ({ courses ,role }: any) => {
                 </tr>
               </thead>
               <tbody>
-                {selectedStudent.Joins && selectedStudent.Joins.map((join: any, index: number) => (
-                  <tr key={index}>
-                    <td className="border px-4 py-2">{join.ActualName}</td>
-                    <td className="border px-4 py-2">{join.JoinTime}</td>
-                    <td className="border px-4 py-2">{join.LeaveTime}</td>
-                    <td className="border px-4 py-2">{join.Duration}</td>
-                  </tr>
-                ))}
+                {selectedStudent.Joins &&
+                  selectedStudent.Joins.map((join: any, index: number) => (
+                    <tr key={index}>
+                      <td className="border px-4 py-2">{join.ActualName}</td>
+                      <td className="border px-4 py-2">{join.JoinTime}</td>
+                      <td className="border px-4 py-2">{join.LeaveTime}</td>
+                      <td className="border px-4 py-2">{join.Duration}</td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
             <button
@@ -310,12 +338,17 @@ const AttendanceClient = ({ courses ,role }: any) => {
           </div>
         </div>
       )}
+
+      {studentsAttendance.length > 0 && (
+        <div className="mt-5">
+          <TotalAttendanceTable studentsAttendance={studentsAttendance} />
+        </div>
+      )}
     </div>
   );
 };
 
 export default AttendanceClient;
-
 
 const AttendanceTable = ({
   presentStudents,
@@ -348,40 +381,40 @@ const AttendanceTable = ({
         <tbody>
           {presentStudents.map((student: any, index: number) => {
             return (
-            <tr key={index} className="hover:bg-primary-800 cursor-pointer">
-              <td>{index + 1}</td>
-              <td className="py-2 pl-10 text-start">
-                {student.ActualName}
-              </td>
-              <td>{student.username}</td>
-              <td>
-                <p
-                  className={`p-1 m-auto w-10 rounded ${student.Duration < 30
-                    ? "bg-red-500"
-                    : student.Duration < 90
-                      ? "bg-blue-500"
-                      : "bg-green-500"
+              <tr key={index} className="hover:bg-primary-800 cursor-pointer">
+                <td>{index + 1}</td>
+                <td className="py-2 pl-10 text-start">{student.ActualName}</td>
+                <td>{student.username}</td>
+                <td>
+                  <p
+                    className={`p-1 m-auto w-10 rounded ${
+                      student.Duration < 30
+                        ? "bg-red-500"
+                        : student.Duration < 90
+                        ? "bg-blue-500"
+                        : "bg-green-500"
                     }`}
+                  >
+                    {student.Duration}
+                  </p>
+                </td>
+                <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
+                <td>{student.Joins.length}</td>
+                <td
+                  className="cursor-pointer"
+                  onClick={() => handleStudentClick(student)}
                 >
-                  {student.Duration}
-                </p>
-              </td>
-              <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
-              <td>{student.Joins.length}</td>
-              <td
-                className="cursor-pointer"
-                onClick={() => handleStudentClick(student)}
-              >
-                view
-              </td>
-              {/* <td>
+                  view
+                </td>
+                {/* <td>
                         <select>
                           <option value="absent">A</option>
                           <option value="present">P</option>
                         </select>
                       </td> */}
-            </tr>
-          )})}
+              </tr>
+            );
+          })}
           {users.map((student: any, index: number) => {
             const userInPresentStudents = presentStudents.find(
               (x: any) => x.username === student.username
@@ -416,106 +449,194 @@ const AttendanceTable = ({
       </table>
 
       {/* Absent Students Table */}
-      {
-        absentStudents.length > 0 && (
-          <table className="w-[80%] m-auto mt-10">
-            <thead>
-              <tr className="border-b">
-                <th>index</th>
-                <th className="py-2 text-start pl-10 max-w-52 text-pretty">
-                  Joined Name
-                </th>
-                <th className="py-2">username</th>
-                <th>Duration</th>
-                <th>Date</th>
-                <th>Times Joined</th>
-                <th>view</th>
-                <th>Edit</th>
-              </tr>
-            </thead>
-            <tbody>
-              {absentStudents.map(
-                (
-                  student: {
-                    Name: string;
-                    Joins: {
-                      ActualName: string;
-                      JoinTime: string;
-                      Duration: number;
-                    }[];
+      {absentStudents.length > 0 && (
+        <table className="w-[80%] m-auto mt-10">
+          <thead>
+            <tr className="border-b">
+              <th>index</th>
+              <th className="py-2 text-start pl-10 max-w-52 text-pretty">
+                Joined Name
+              </th>
+              <th className="py-2">username</th>
+              <th>Duration</th>
+              <th>Date</th>
+              <th>Times Joined</th>
+              <th>view</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {absentStudents.map(
+              (
+                student: {
+                  Name: string;
+                  Joins: {
+                    ActualName: string;
+                    JoinTime: string;
                     Duration: number;
-                    username: string;
-                  },
-                  index: number
-                ) => (
-                  <tr key={index} className="hover:bg-primary-800">
-                    <td>{index + 1}</td>
-                    <td className="text-start ps-8">
-                      {student.Joins[0].ActualName}
+                  }[];
+                  Duration: number;
+                  username: string;
+                },
+                index: number
+              ) => (
+                <tr key={index} className="hover:bg-primary-800">
+                  <td>{index + 1}</td>
+                  <td className="text-start ps-8">
+                    {student.Joins[0].ActualName}
+                  </td>
+                  {openEditName === Number(index + 1) ? (
+                    <td className="text-start pl-10 py-2 max-w-52">
+                      <input
+                        className="block"
+                        onChange={(e) => setUsername(e.target.value)}
+                        defaultValue={student.username}
+                      />
                     </td>
-                    {openEditName === Number(index + 1) ? (
-                      <td className="text-start pl-10 py-2 max-w-52">
-                        <input
-                          className="block"
-                          onChange={(e) => setUsername(e.target.value)}
-                          defaultValue={student.username}
-                        />
-                      </td>
-                    ) : (
-                      <td className="text-start pl-10 py-2 max-w-52">
-                        {student.username}
-                      </td>
-                    )}
-                    <td>
-                      <p
-                        className={`p-1 m-auto w-10 rounded ${student.Duration < 30
+                  ) : (
+                    <td className="text-start pl-10 py-2 max-w-52">
+                      {student.username}
+                    </td>
+                  )}
+                  <td>
+                    <p
+                      className={`p-1 m-auto w-10 rounded ${
+                        student.Duration < 30
                           ? "bg-red-500"
                           : student.Duration < 90
-                            ? "bg-blue-500"
-                            : "bg-green-500"
-                          }`}
-                      >
-                        {student.Duration}
-                      </p>
-                    </td>
-                    <td>{String(student.Joins[0].JoinTime).split(" ")[0]}</td>
-                    <td>{student.Joins.length}</td>
-
-                    <td
-                      className="cursor-pointer"
-                      onClick={() => handleStudentClick(student)}
+                          ? "bg-blue-500"
+                          : "bg-green-500"
+                      }`}
                     >
-                      view
+                      {student.Duration}
+                    </p>
+                  </td>
+                  <td>{String(student.Joins[0].JoinTime).split(" ")[0]}</td>
+                  <td>{student.Joins.length}</td>
+
+                  <td
+                    className="cursor-pointer"
+                    onClick={() => handleStudentClick(student)}
+                  >
+                    view
+                  </td>
+                  {openEditName !== index + 1 ? (
+                    <td
+                      className="hover:bg-red-400 cursor-pointer"
+                      onClick={
+                        openEditName === 0
+                          ? () => setOpenEditName(index + 1)
+                          : () => setOpenEditName(0)
+                      }
+                    >
+                      edit
                     </td>
-                    {openEditName !== index + 1 ? (
-                      <td
-                        className="hover:bg-red-400 cursor-pointer"
-                        onClick={
-                          openEditName === 0
-                            ? () => setOpenEditName(index + 1)
-                            : () => setOpenEditName(0)
-                        }
-                      >
-                        edit
-                      </td>
-                    ) : (
-                      <td
-                        onClick={() => {
-                          setOpenEditName(0);
-                          handleEditUsername(student.username, username);
-                        }}
-                        className="hover:bg-red-400 cursor-pointer"
-                      >
-                        save
-                      </td>
-                    )}
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-        )
-      }
+                  ) : (
+                    <td
+                      onClick={() => {
+                        setOpenEditName(0);
+                        handleEditUsername(student.username, username);
+                      }}
+                      className="hover:bg-red-400 cursor-pointer"
+                    >
+                      save
+                    </td>
+                  )}
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      )}
     </>
-  )
-}
+  );
+};
+
+const TotalAttendanceTable = ({
+  studentsAttendance,
+}: {
+  studentsAttendance: any;
+}) => {
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "ascending" | "descending";
+  }>({
+    key: "-1",
+    direction: "ascending",
+  });
+
+  const sortedData = [...studentsAttendance].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === "ascending" ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === "ascending" ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const handleSort = (key: string) => {
+    let direction: "ascending" | "descending" = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  return (
+    <div className="container mx-auto px-4 ">
+      <h1 className="text-2xl font-bold mb-4 cursor-pointer" onClick={() => setSortConfig({ key: "-1", direction: "ascending" })}>Overall Attendance</h1>
+      <div className="overflow-x-auto">
+        <table className="w-full border">
+          <thead>
+            <tr className="bg-blue-500">
+              <th
+                className="p-2 border cursor-pointer"
+                onClick={() => handleSort("username")}
+              >
+                Roll Number{" "}
+                {sortConfig.key === "username"
+                  ? sortConfig.direction === "ascending"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </th>
+              <th
+                className="p-2 border cursor-pointer"
+                onClick={() => handleSort("percentage")}
+              >
+                Percentage{" "}
+                {sortConfig.key === "percentage"
+                  ? sortConfig.direction === "ascending"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </th>
+              <th className="p-2 border">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedData.map((item: any) => (
+              <tr key={item.username} className="border-b">
+                <td className="p-2 border">{item.username}</td>
+                <td className="p-2 border">{Math.round(item.percentage)}</td>
+                <td className="p-2 border">
+                  {item.percentage < 60 ? (
+                    <span className="bg-red-200 text-red-700 px-2 py-1 rounded">
+                      Low
+                    </span>
+                  ) : (
+                    <span className="bg-green-200 text-green-700 px-2 py-1 rounded">
+                      Excellent
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
