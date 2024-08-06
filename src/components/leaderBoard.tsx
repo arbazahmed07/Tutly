@@ -3,6 +3,7 @@ import Image from "next/image";
 import { FaCrown } from "react-icons/fa6";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import { useState, useEffect } from "react";
+import { count } from "console";
 
 export default function Leaderboard({
   submissions,
@@ -51,13 +52,14 @@ export default function Leaderboard({
           name: submission.enrolledUser.user.name,
           username: submission.enrolledUser.user.username,
           image: submission.enrolledUser.user.image,
+          rank: submission.rank
         });
       }
     });
 
     const leaderboardArray = Array.from(leaderboardMap.values());
 
-    leaderboardArray.forEach((data: any) => {
+    leaderboardArray.forEach((data: any,index: any) => {
       data.assignments = noOfSubmissions[data.username] || 0;
       data.attendance = attendance[data.username]
         ? (attendance[data.username] * 100) / totalClasses
@@ -110,7 +112,6 @@ export default function Leaderboard({
     }
     return sortConfig.direction === "ascending" ? <FaSortUp /> : <FaSortDown />;
   };
-
   return (
     <div className="mx-2 md:mx-14 mt-1 flex flex-col gap-4">
       {/* Leaderboard-header */}

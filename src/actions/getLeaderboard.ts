@@ -174,9 +174,6 @@ export const getInstructorLeaderboardData = async () => {
       (a: any, b: any) => b.totalPoints - a.totalPoints
     );
 
-    for (let i = 0; i < sortedSubmissions.length; i++) {
-      sortedSubmissions[i].rank = i + 1;
-    }
     return { sortedSubmissions, currentUser, createdCourses } as any;
   } catch (error: any) {
     return null;
@@ -274,6 +271,10 @@ export const getMentorLeaderboardData = async () => {
     const sortedSubmissions = totalPoints.sort(
       (a: any, b: any) => b.totalPoints - a.totalPoints
     );
+
+    for (let i = 0; i < sortedSubmissions.length; i++) {
+      sortedSubmissions[i].rank = i + 1;
+    }
 
     return { sortedSubmissions, currentUser, createdCourses } as any;
   } catch (error: any) {
