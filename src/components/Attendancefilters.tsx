@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import AttendanceHeader from "./AttendanceHeader";
 import Loader from "./Loader";
+import Image from "next/image";
 
 interface Student {
   Name: string;
@@ -202,13 +203,19 @@ const AttendanceClient = ({ courses, role }: any) => {
       setLoading(true);
       const res = await axios.get("/api/attendance/getTotalAttendance");
 
+      
       setStudentsAttendance(res.data);
     } catch (e) {
       console.log(e);
     } finally {
       setLoading(false);
     }
+
   };
+
+  useEffect(() => {
+    fetchStudentsAttendance();
+  }, []);
 
   useEffect(() => {
     const viewAttendance = async () => {
@@ -237,7 +244,6 @@ const AttendanceClient = ({ courses, role }: any) => {
       }
     };
     viewAttendance();
-    fetchStudentsAttendance();
   }, [currentClass]);
 
   return (
@@ -340,7 +346,7 @@ const AttendanceClient = ({ courses, role }: any) => {
       )}
 
       {studentsAttendance.length > 0 && (
-        <div className="mt-5">
+        <div className="mt-28 ">
           <TotalAttendanceTable studentsAttendance={studentsAttendance} />
         </div>
       )}
@@ -365,29 +371,33 @@ const AttendanceTable = ({
 
   return (
     <>
-      <table className="w-[80%] m-auto mt-10">
+      <table className="w-[80%] m-auto mt-10 border">
         <thead>
-          <tr className="border-b">
-            <th>index</th>
-            <th className="py-2 pl-10 text-start">Name</th>
-            <th>Username</th>
-            <th>Duration</th>
-            <th>Date</th>
-            <th>Times Joined</th>
-            <th>view</th>
-            {/* <th>status</th> */}
+          <tr className="border-b bg-blue-600 ">
+            <th>S.No</th>
+            <th className="py-2 pl-10 text-start border-x">Name</th>
+            <th className="border-x" >Username</th>
+            <th className="border-x" >Duration</th>
+            <th className="border-x" >Date</th>
+            <th className="border-x" >Times Joined</th>
+            <th className="border-x" >View</th>
           </tr>
         </thead>
         <tbody>
           {presentStudents.map((student: any, index: number) => {
             return (
-              <tr key={index} className="hover:bg-primary-800 cursor-pointer">
-                <td>{index + 1}</td>
-                <td className="py-2 pl-10 text-start">{student.ActualName}</td>
-                <td>{student.username}</td>
-                <td>
+              <tr
+                key={index}
+                className="hover:bg-primary-800 cursor-pointer border-b"
+              >
+                <td className="border-x">{index + 1}</td>
+                <td className="py-2 pl-10 text-start border-x">
+                  {student.ActualName}
+                </td>
+                <td className="border-x">{student.username}</td>
+                <td className="border-x">
                   <p
-                    className={`p-1 m-auto w-10 rounded ${
+                    className={`p-1 m-auto w-10 rounded  ${
                       student.Duration < 30
                         ? "bg-red-500"
                         : student.Duration < 90
@@ -398,20 +408,14 @@ const AttendanceTable = ({
                     {student.Duration}
                   </p>
                 </td>
-                <td>{student.Joins[0].JoinTime.split(" ")[0]}</td>
-                <td>{student.Joins.length}</td>
+                <td className="border-x">{student.Joins[0].JoinTime.split(" ")[0]}</td>
+                <td className="border-x">{student.Joins.length}</td>
                 <td
-                  className="cursor-pointer"
+                  className="cursor-pointer border-x"
                   onClick={() => handleStudentClick(student)}
                 >
                   view
                 </td>
-                {/* <td>
-                        <select>
-                          <option value="absent">A</option>
-                          <option value="present">P</option>
-                        </select>
-                      </td> */}
               </tr>
             );
           })}
@@ -585,11 +589,18 @@ const TotalAttendanceTable = ({
 
   return (
     <div className="container mx-auto px-4 ">
-      <h1 className="text-2xl font-bold mb-4 cursor-pointer" onClick={() => setSortConfig({ key: "-1", direction: "ascending" })}>Overall Attendance</h1>
+      <h1
+        className="text-2xl font-bold mb-4 cursor-pointer"
+        onClick={() => setSortConfig({ key: "-1", direction: "ascending" })}
+      >
+        Overall Attendance
+      </h1>
       <div className="overflow-x-auto">
         <table className="w-full border">
           <thead>
-            <tr className="bg-blue-500">
+            <tr className="bg-blue-600">
+              <th className="p-2 border cursor-pointer">S.No</th>
+              <th className="p-2 border cursor-pointer">Name</th>
               <th
                 className="p-2 border cursor-pointer"
                 onClick={() => handleSort("username")}
@@ -616,8 +627,21 @@ const TotalAttendanceTable = ({
             </tr>
           </thead>
           <tbody>
-            {sortedData.map((item: any) => (
+            {sortedData.map((item: any, index: number) => (
               <tr key={item.username} className="border-b">
+                <td className="p-0 border-y-0 border-x">{index + 1}</td>
+                <td className="p-2 border-y-0 flex items-center justify-start space-x-4 gap-5">
+                  <Image
+                    src={
+                      item.image || "https://i.postimg.cc/zXj77wQG/image.png"
+                    }
+                    width={40}
+                    height={40}
+                    alt="profile image"
+                    className="rounded-full"
+                  />
+                  {item.name}
+                </td>
                 <td className="p-2 border">{item.username}</td>
                 <td className="p-2 border">{Math.round(item.percentage)}</td>
                 <td className="p-2 border">
@@ -639,4 +663,3 @@ const TotalAttendanceTable = ({
     </div>
   );
 };
-
