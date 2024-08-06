@@ -199,6 +199,9 @@ export const getMentorStudentsById = async (id: string) => {
       course: true,
       enrolledUsers: true,
     },
+    orderBy:{
+      username: "asc"
+    }
   });
 
   return students;

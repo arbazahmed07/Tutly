@@ -228,3 +228,29 @@ export const getTotalNumberOfClassesAttended = async()=>{
   return groupByTotalAttendance;  
   
 }
+export const getAttendanceForLeaderbaord = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("You must be logged in to attend a class");
+  }
+
+  const attendance = await db.attendance.findMany({
+    where: {
+      attended: true,
+    },
+    select: {
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
+    
+  });
+  const groupedAttendance = attendance.reduce((acc: any, curr: any) => {
+    const username = curr.user.username;
+    acc[username] = (acc[username] || 0) + 1;
+    return acc;
+  }, {});
+  return groupedAttendance;
+}

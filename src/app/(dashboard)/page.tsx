@@ -22,7 +22,6 @@ import getCurrentUser from "@/actions/getCurrentUser";
 // import OneSignal from "react-onesignal";
 export default async function Home() {
 
-  
 
   // useEffect(() => {
   //   const loadOneSignal = async () => {

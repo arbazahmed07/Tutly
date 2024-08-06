@@ -162,19 +162,55 @@ export const getInstructorLeaderboardData = async () => {
       },
     });
 
-    const totalPoints = submissions.reduce((acc: any, curr: any) => {
+    const totalPoints = submissions.reduce((acc: any, curr: any,ind:any) => {
       const totalPoints = curr.points.reduce(
         (acc: any, curr: any) => acc + curr.score,
         0
       );
-      return [...acc, { ...curr, totalPoints }];
+      return [...acc, { ...curr, totalPoints}];
     }, []);
 
     const sortedSubmissions = totalPoints.sort(
       (a: any, b: any) => b.totalPoints - a.totalPoints
     );
 
+    for (let i = 0; i < sortedSubmissions.length; i++) {
+      sortedSubmissions[i].rank = i + 1;
+    }
     return { sortedSubmissions, currentUser, createdCourses } as any;
+  } catch (error: any) {
+    return null;
+  }
+};
+
+export const getSubmissionsCountOfAllStudents = async () => {
+  try {
+    const submissions = await db.submission.findMany({
+      select: {
+        enrolledUser:{
+          select:{
+            username:true
+          }
+        },
+        points: true,
+      },
+      where:{
+        points:{
+          some:{
+            score:{
+              gt:0
+            }
+          }
+        }
+      }
+    });
+    const groupedSubmissions = submissions.reduce((acc: any, curr: any) => {
+      const username = curr.enrolledUser.username;
+      acc[username] = (acc[username] || 0) + 1;
+      return acc;
+    }, {});
+
+    return groupedSubmissions;
   } catch (error: any) {
     return null;
   }

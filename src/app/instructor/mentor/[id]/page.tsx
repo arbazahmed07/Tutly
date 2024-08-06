@@ -17,6 +17,7 @@ import {
   import getCurrentUser from "@/actions/getCurrentUser";
   import StudentsInfoForMentor from "@/components/studentsInfoForMentor";
 import { TbCurrentLocation } from "react-icons/tb";
+import { getMentorNameById } from "@/actions/mentors";
   
   export default async function Statistics({params}:any) {
     const mentorPieChart = await getMentorPieChartById(params.id);
@@ -26,6 +27,7 @@ import { TbCurrentLocation } from "react-icons/tb";
     const { assignments, countForEachAssignment }: any =
       await getSubmissionsForMentorByIdLineChart(params.id);
     const mstudents = await getMentorStudentsById(params.id);
+    const mentorName = await getMentorNameById(params.id);
     let loaderValue = !mentorPieChart
       ? 0
       : String(
@@ -34,7 +36,10 @@ import { TbCurrentLocation } from "react-icons/tb";
     loaderValue += "%";
     return (
       <div className="m-8 flex flex-col gap-8">
-        <h1 className="text-blue-400 text-2xl font-bold">Mentor - {params.id}</h1>
+        <div className="text-end">
+          <h1 className="text-blue-400 text-2xl font-bold">{mentorName}</h1>
+          <h1 className="text-blue-400 text-lg font-bold">{params.id}@Mentor</h1>
+        </div>
         <div className="flex gap-8">
           <div className="w-1/4 shadow-xl shadow-blue-500/5 rounded-xl p-8">
             <Piechart mentorPieChart={mentorPieChart} />
