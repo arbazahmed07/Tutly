@@ -219,7 +219,7 @@ export default function Leaderboard({
               if (data.totalPoints === 0) return null;
               return (
                 <tr
-                  className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:text-white hover:from-blue-600 hover:to-sky-500`}
+                  className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:text-white hover:from-blue-600 hover:to-sky-500 ${currentUser.username === data.username&&"from-yellow-500 to-yellow-600"}`}
                   key={index}
                 >
                   <td className="pl-12">{index + 1}</td>
