@@ -215,6 +215,11 @@ export const getTotalNumberOfClassesAttended = async () => {
     });
   } else {
     attendance = await db.attendance.findMany({
+      where:{
+        user:{
+          role: "STUDENT"
+        }
+      },
       select: {
         username: true,
         user: true,
