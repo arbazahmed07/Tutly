@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 import { totalNumberOfClasses } from "./classes";
+import { forEach } from "lodash";
 
 export const postAttendance = async ({
   classId,
@@ -14,10 +15,17 @@ export const postAttendance = async ({
     throw new Error("You must be logged in to attend a class");
   }
   const parsedData = JSON.parse(JSON.stringify(data));
+  // find the maximum duration among all the INSTRUCTION role students
+  let maxInstructionDuration = 0;
+  data.forEach(element => {
+    if (element.Duration > maxInstructionDuration) {
+      maxInstructionDuration = element.Duration;
+    }
+  });
   const postAttendance = await db.attendance.createMany({
     data: [
       ...parsedData.map((student: any) => {
-        if (student.Duration > 60) {
+        if (student.Duration >= ((60*maxInstructionDuration)/100)) {
           return {
             classId,
             username: student.username,
