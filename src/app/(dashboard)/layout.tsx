@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import HomeLayout from "@/components/layouts/home-layout";
 import getCurrentUser from "@/actions/getCurrentUser";
 import CrispChatIntegration from "@/components/crisp";
+import Onesignal from "@/components/oneSignal";
 
 export const metadata: Metadata = {
   title: "LMS",
@@ -18,6 +19,7 @@ export default async function RootLayout({
   return (
     <HomeLayout currentUser={currentUser}>
       {children}
+      <Onesignal/>
       <CrispChatIntegration />
     </HomeLayout>
   );
