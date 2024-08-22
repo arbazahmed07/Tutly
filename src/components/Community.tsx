@@ -42,7 +42,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
           </button>
         ))}
       </div>
-      <div className="flex flex-col gap-2 min-h-screen">
+      <div className="flex flex-col gap-2">
         {filteredallDoubts && (
             <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0]?.doubts} />   
         )}
