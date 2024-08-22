@@ -166,6 +166,7 @@ export const getMentorStudents = async () => {
 
   const students = await db.user.findMany({
     where: {
+      role: "STUDENT",
       enrolledUsers: {
         some: {
           mentorUsername: currentUser.username,

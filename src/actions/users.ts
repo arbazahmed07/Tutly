@@ -4,6 +4,7 @@ import getCurrentUser from "./getCurrentUser";
 export const getAllEnrolledUsers = async(courseId:string) => {
     const enrolledUsers = await db.user.findMany({
         where:{
+            role:"STUDENT",
             enrolledUsers:{
                 some:{
                     courseId:courseId,
