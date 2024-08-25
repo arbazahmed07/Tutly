@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { BsPersonRaisedHand } from "react-icons/bs";
 import { MdOutlineQueryStats } from "react-icons/md";
+import { Role } from "@prisma/client";
 
 export default function HomeLayout({
   children,
@@ -22,6 +23,17 @@ export default function HomeLayout({
   const [menu, setMenu] = useState<boolean>(true);
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
+
+  interface RoleItem {
+    name: string;
+  }
+
+  const roleMap: Record<Role, RoleItem> = {
+    MENTOR: { name: "mentor" },
+    INSTRUCTOR: { name: "instructor" },
+    STUDENT: { name: "student" },
+  };
+
   const access =
     currentUser?.role === "MENTOR"
       ? 1
