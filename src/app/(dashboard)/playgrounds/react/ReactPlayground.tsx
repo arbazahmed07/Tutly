@@ -16,7 +16,7 @@ const ReactPlayground = ({
     <>
       {!filesObj ? (
         <>
-          <h1 className="text-3xl font-bold text-center mt-8">
+          <h1 className="text-2xl text-orange-300 font-bold text-center mt-6">
             React Playground
           </h1>
           <FolderUpload setFilesObj={setFilesObj} />
