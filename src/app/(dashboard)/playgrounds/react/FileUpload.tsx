@@ -13,9 +13,9 @@ const FolderUpload = ({
 }: {
   setFilesObj: (filesObj: { [key: string]: string }) => void
 }) => {
-  // const [files, setFiles] = useState<FileData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const items = e.target.files;
@@ -68,7 +68,6 @@ const FolderUpload = ({
       filesObjWithoutFolderName[newKey] = filesObj[key];
     }
 
-    // setFiles(fileArray);
     setFilesObj(filesObjWithoutFolderName);
   };
 
@@ -101,7 +100,6 @@ const FolderUpload = ({
       filesObjWithoutFolderName[newKey] = filesObj[key];
     }
 
-    // setFiles(fileArray);
     setFilesObj(filesObjWithoutFolderName);
 
   };
@@ -152,16 +150,17 @@ const FolderUpload = ({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          className={`flex flex-col gap-6 items-center justify-center p-10 w-full md:w-[40%] border-2 border-dotted rounded-lg transition-all duration-300 ease-in-out ${isDragging
-              ? "border-indigo-500 bg-indigo-100"
-              : "border-gray-600 bg-white"
+          onClick={() => inputRef.current?.click()}
+          className={`group flex flex-col gap-6 items-center justify-center p-10 w-full md:w-[40%] border-2 border-dotted rounded-lg transition-all duration-300 ease-in-out cursor-pointer ${isDragging
+            ? "border-indigo-500 bg-indigo-100"
+            : "border-gray-600 bg-white"
             }`}
         >
-          <IoCloudUploadOutline className="h-20 w-20 text-blue-500 transition-transform duration-300 ease-in-out transform hover:scale-110 hover:text-blue-700"/>
+          <IoCloudUploadOutline className="h-20 w-20 text-blue-500 transition-transform duration-300 ease-in-out transform group-hover:text-blue-700 group-hover:scale-110" />
 
           <label
             htmlFor="fileInput"
-            className="cursor-pointer text-lg font-semibold text-gray-500 hover:text-blue-600 transition-colors duration-300"
+            className="cursor-pointer text-lg font-semibold text-gray-500 group-hover:text-blue-600 transition-colors ease-in-out  duration-300 "
           >
             {isDragging
               ? "Drop React folder here"
@@ -173,11 +172,11 @@ const FolderUpload = ({
               webkitdirectory="true"
               className="hidden"
               onChange={handleFileSelect}
+              ref={inputRef}
             />
           </label>
         </div>
       </div>
-
 
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -189,30 +188,6 @@ const FolderUpload = ({
           </div>
         </div>
       )}
-
-
-      {/* {files.length > 0 && (
-        <div className="mt-10 animate-fade-in-up">
-          <h2 className="text-3xl font-bold mb-6 text-blue-700 ">
-            Extracted Files:
-          </h2>
-          <ul className="space-y-4">
-            {files.map((file, index) => (
-              <li
-                key={index}
-                className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-              >
-                <h3 className="text-lg font-semibold text-blue-600 mb-2">
-                  {file.path}
-                </h3>
-                <pre className="text-sm text-gray-700 bg-gray-50 p-2 rounded overflow-x-auto">
-                  {file.content}
-                </pre>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )} */}
     </div>
   );
 };
