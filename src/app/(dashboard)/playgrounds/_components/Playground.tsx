@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SandpackProvider, SandpackPreview, SandpackFiles, SandpackPredefinedTemplate } from "@codesandbox/sandpack-react";
 import MonacoEditor from "./MonacoEditor";
 import FileExplorer from "./FileExplorer";
@@ -10,7 +10,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import SandboxConsole from "./SandboxConsole";
-import SubmitAssignment from '@/components/navbar/NavBarActions/SubmitAssignment';
+import SubmitAssignment from "./SubmitAssignment";
 import { TfiFullscreen } from "react-icons/tfi";
 
 const files = {
@@ -30,11 +30,7 @@ const files = {
 </html>
 `,
   '/styles.css': "",
-  '/index.js': `{
-  // Do not remove the braces; write your code inside the braces.
-
-}
-`,
+  '/index.js': "",
 };
 
 const Playground = ({

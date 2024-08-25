@@ -1,6 +1,6 @@
 "use client"
 
-import Submit from '@/app/(dashboard)/playgrounds/html-css-js/_components/Submit';
+import Submit from '@/app/(dashboard)/playgrounds/_components/Submit';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
