@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 interface FileData {
   path: string;
   content: string;
 }
+const imagExtensions = ["jpg", "jpeg", "png", "gif", "svg", "webp", "bmp", "ico", "tiff"];
 
 const FolderUpload: React.FC = () => {
   const [files, setFiles] = useState<FileData[]>([]);
@@ -44,23 +45,48 @@ const FolderUpload: React.FC = () => {
 
   const processDataTransferItems = async (items: DataTransferItemList) => {
     const fileArray: FileData[] = [];
+    const filesObj : {[key: string]: string} = {};
     for (let i = 0; i < items.length; i++) {
       const item = items[i].webkitGetAsEntry();
       if (item) {
         await traverseFileTree(item, "", fileArray);
       }
     }
+
+    for (let file of fileArray) {
+      filesObj[file.path] = file.content;
+    }
+
+    console.log(fileArray);
+    console.log(filesObj);
+
     setFiles(fileArray);
   };
 
   const processFiles = async (files: FileList) => {
     const fileArray: FileData[] = [];
+    const filesObj : {[key: string]: string} = {};
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const filePath = file.webkitRelativePath || file.name;
+
+      // Skip node_modules folder, .git folder, .DS_Store. //todo: add more
+      if (filePath.includes("node_modules") || filePath.includes(".git/") || filePath.includes(".DS_Store")) {
+        continue;
+      }
+
+      // Skip image files
+      if (imagExtensions.some(ext => filePath.endsWith(ext))) {
+        continue;
+      }
+
       const content = await readFileContent(file);
       fileArray.push({ path: filePath, content });
+      filesObj[filePath] = content;
     }
+    
+    console.log(fileArray);
+    console.log(filesObj);
     setFiles(fileArray);
   };
 
@@ -71,6 +97,16 @@ const FolderUpload: React.FC = () => {
   ) => {
     if (item.isFile) {
       const file = await new Promise<File>((resolve) => item.file(resolve));
+      // Skip node_modules folder, .git folder, .DS_Store. //todo: add more
+      if (path.includes("node_modules") || path.includes(".git/") || path.includes(".DS_Store") || file.name.includes(".DS_Store")) {
+        return;
+      }
+
+      // Skip image files
+      if (imagExtensions.some(ext => file.name.endsWith(ext))) {
+        return;
+      }
+
       const content = await readFileContent(file);
       fileArray.push({ path: path + file.name, content });
     } else if (item.isDirectory) {
@@ -124,7 +160,8 @@ const FolderUpload: React.FC = () => {
             <input
               id="fileInput"
               type="file"
-              webkitdirectory=""
+              // @ts-ignore
+              webkitdirectory="true"
               className="hidden"
               onChange={handleFileSelect}
             />
