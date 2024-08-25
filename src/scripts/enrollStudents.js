@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
-
+const dayjs = require("dayjs");
+const fs = require("fs");
 const db = new PrismaClient();
 
 async function main() {
@@ -12,21 +13,41 @@ async function main() {
     select: {
       id: true,
       attachmentId: true,
-      enrolledUser:{
-        select:{
-          username:true,
-          user:{
-            select:{
-              name:true
-            }
+      enrolledUser: {
+        select: {
+          username: true,
+          user: {
+            select: {
+              name: true,
+            },
           },
-          mentorUsername:true
-        }
-      }
+          mentorUsername: true,
+        },
+      },
     },
   });
 
-  // create a object of {username : username , submissions: number , assignments: number(count of unique assignments from submissions)}
+  const attendance = await db.attendance.findMany({
+    where: {
+      attended: true,
+    },
+    select: {
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
+  });
+
+  const groupedAttendance = attendance.reduce((acc, curr) => {
+    const username = curr.user.username;
+    acc[username] = (acc[username] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalClasses = await db.class.count();
+
   const obj = {};
 
   submissions.forEach((submission) => {
@@ -43,35 +64,92 @@ async function main() {
     } else {
       obj[submission.enrolledUser.username].submissions.add(submission.id);
       obj[submission.enrolledUser.username].submissionsLength++;
-      obj[submission.enrolledUser.username].assignments.add(submission.attachmentId);
-      obj[submission.enrolledUser.username].assignmentLength = obj[submission.enrolledUser.username].assignments.size;
-      obj[submission.enrolledUser.username].mentorUsername = submission.enrolledUser.mentorUsername;
+      obj[submission.enrolledUser.username].assignments.add(
+        submission.attachmentId
+      );
+      obj[submission.enrolledUser.username].assignmentLength =
+        obj[submission.enrolledUser.username].assignments.size;
+      obj[submission.enrolledUser.username].mentorUsername =
+        submission.enrolledUser.mentorUsername;
     }
   });
 
-  // print as a table of only this 3 fields username , submissionLength , assignmentLength from obj object
-  const SelectedFields = Object.values(obj).map((ob) => {
+  const points = await db.point.findMany({
+    select: {
+      score: true,
+      submissions: {
+        select: {
+          id: true,
+          enrolledUser: {
+            select: {
+              username: true,
+            },
+          },
+        },
+      },
+    },
+  });  
+
+  Object.values(obj).forEach((ob) => {
+    try {
+      const userPoints = points.filter(
+        (point) => point.submissions ? point.submissions.enrolledUser.username === ob.username : false
+      );
+      ob.score = userPoints.reduce((acc, curr) => acc + curr.score, 0);
+      ob.submissionEvaluatedLength = new Set(
+        userPoints.map((point) => point.submissions.id)
+      ).size;
+    } catch (e) {
+      console.log(ob.username);
+    }
+  });
+
+  Object.values(obj).forEach((ob) => {
+    ob.attendance = (groupedAttendance[ob.username] * 100) / totalClasses;
+  });
+
+ const SelectedFields = Object.values(obj).map((ob) => {
     return {
       username: ob.username,
       name: ob.name,
       submissionLength: ob.submissionsLength,
       assignmentLength: ob.assignmentLength,
+      score: ob.score,
+      submissionEvaluatedLength: ob.submissionEvaluatedLength,
+      attendance: ob.attendance,
       mentorUsername: ob.mentorUsername,
     };
   });
 
-  // sort by number of assignments
   SelectedFields.sort((a, b) => a.name.localeCompare(b.name));
-  SelectedFields.sort((a, b) => a.submissionLength - b.submissionLength);
-  SelectedFields.sort((a, b) => b.assignmentLength - a.assignmentLength);
-  SelectedFields.sort((a, b) => a.mentorUsername.localeCompare(b.mentorUsername));
-
-  console.table(Object.values(SelectedFields));
+  SelectedFields.sort((a, b) => b.score - a.score);
+  SelectedFields.sort((a, b) =>
+    a.mentorUsername.localeCompare(b.mentorUsername)
+  );
 
   // filter assignments length >= 28  or submissions length >= 30
-  const filteredUsers = Object.values(SelectedFields).filter((ob) => ob.assignmentLength >= 28 || ob.submissionLength >=30);
+  const filteredUsers = Object.values(SelectedFields).filter(
+    (ob) => ob.assignmentLength >= 28 || ob.submissionLength >= 30
+  );
 
-  console.log(filteredUsers.length)
+  console.log(filteredUsers.length);
+
+  const csv = Object.values(SelectedFields).map((ob) => {
+    return `${ob.username},${ob.name},${ob.submissionLength},${
+      ob.assignmentLength
+    },${ob.score},${ob.submissionEvaluatedLength},${ob.attendance},${
+      ob.mentorUsername
+    }`;
+  });
+
+  const csvHeader =
+    "username,name,submissionLength,assignmentLength,score,submissionEvaluatedLength,attendance,mentorUsername";
+
+  const currentDateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
+  fs.writeFileSync(
+    `user-stats-${currentDateTime}.csv`,
+    csvHeader + "\n" + csv.join("\n")
+  );
 
   const enrolledUsers = await db.enrolledUsers.createMany({
     data: Object.values(filteredUsers).map((ob) => {
@@ -85,7 +163,6 @@ async function main() {
   });
 
   console.log(enrolledUsers);
-
 }
 main()
   .then(async () => {
