@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import axios from "axios";
+import dayjs from "dayjs";
 
 export default function AttendanceHeader({
   role,
@@ -146,7 +147,7 @@ export default function AttendanceHeader({
                 onClick={() => setOpenClasses(!openClasses)}
                 className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex gap-2 items-center justify-between"
               >
-                <h1>{currentClass.title}</h1>
+                <h1>{currentClass.title}  ({dayjs(currentClass.createdAt).format("DD-MM-YYYY")})</h1>
                 {openClasses ? (
                   <h1>
                     <FaCaretUp />

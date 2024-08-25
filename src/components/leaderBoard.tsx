@@ -59,7 +59,7 @@ export default function Leaderboard({
 
     const leaderboardArray = Array.from(leaderboardMap.values());
 
-    leaderboardArray.forEach((data: any,index: any) => {
+    leaderboardArray.forEach((data: any, index: any) => {
       data.assignments = noOfSubmissions[data.username] || 0;
       data.attendance = attendance[data.username]
         ? (attendance[data.username] * 100) / totalClasses
@@ -126,11 +126,10 @@ export default function Leaderboard({
             <button
               onClick={() => setMentorUsername(mentor.username)}
               key={mentor.id}
-              className={`p-1 px-2 text-primary-500 rounded ${
-                mentor.username === mentorUsername
-                  ? "shadow-sm shadow-primary-500"
-                  : ""
-              }`}
+              className={`p-1 px-2 text-primary-500 rounded ${mentor.username === mentorUsername
+                ? "shadow-sm shadow-primary-500"
+                : ""
+                }`}
             >
               {mentor.username}
             </button>
@@ -143,9 +142,8 @@ export default function Leaderboard({
           <button
             hidden={course.isPublished === false}
             onClick={() => setCurrentCourse(course.id)}
-            className={`rounded p-1 px-2 w-20 sm:w-auto ${
-              currentCourse === course.id && "border rounded"
-            }`}
+            className={`rounded p-1 px-2 w-20 sm:w-auto ${currentCourse === course.id && "border rounded"
+              }`}
             key={course.id}
           >
             <h1 className="truncate max-w-xs text-sm font-medium">
@@ -204,14 +202,15 @@ export default function Leaderboard({
                   Assignments {getSortIcon("assignments")}
                 </div>
               </th>
-              <th
-                className="text-center uppercase text-sm cursor-pointer"
-                onClick={() => handleSort("attendance")}
-              >
-                <div className="flex items-center gap-2">
-                  Attendance {getSortIcon("attendance")}
-                </div>
-              </th>
+              {currentUser.role !== "STUDENT" &&
+                <th
+                  className="text-center uppercase text-sm cursor-pointer"
+                  onClick={() => handleSort("attendance")}
+                >
+                  <div className="flex items-center gap-2">
+                    Attendance {getSortIcon("attendance")}
+                  </div>
+                </th>}
             </tr>
           </thead>
           <tbody>
@@ -219,7 +218,7 @@ export default function Leaderboard({
               if (data.totalPoints === 0) return null;
               return (
                 <tr
-                  className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:text-white hover:from-blue-600 hover:to-sky-500 ${currentUser.username === data.username&&"from-yellow-500 to-yellow-600"}`}
+                  className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:text-white hover:from-blue-600 hover:to-sky-500 ${currentUser.username === data.username && "from-yellow-500 to-yellow-600"}`}
                   key={index}
                 >
                   <td className="pl-12">{index + 1}</td>
@@ -242,7 +241,11 @@ export default function Leaderboard({
                     </h1>
                   </td>
                   <td className="text-center">{data.assignments}</td>
-                  <td className="text-center">{data.attendance.toFixed(2)}%</td>
+
+                  {
+                    currentUser.role !== "STUDENT" &&
+                    <td className="text-center">{data.attendance.toFixed(2)}%</td>
+                  }
                 </tr>
               );
             })}

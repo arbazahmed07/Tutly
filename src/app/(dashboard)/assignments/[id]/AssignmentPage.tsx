@@ -334,7 +334,8 @@ export default function AssignmentPage({
                             {submission.overallFeedback || "NA"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {totalScore || "NA"}
+                            {/* {totalScore || "NA"} */}
+                            {totalScore ? "Submitted" : "NA"}
                           </td>
                         </tr>
                       );

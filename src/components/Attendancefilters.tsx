@@ -5,8 +5,6 @@ import _ from "lodash";
 import toast from "react-hot-toast";
 import axios from "axios";
 import AttendanceHeader from "./AttendanceHeader";
-import Loader from "./Loader";
-import Image from "next/image";
 
 interface Student {
   Name: string;
