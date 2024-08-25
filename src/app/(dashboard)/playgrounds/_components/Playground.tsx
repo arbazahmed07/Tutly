@@ -47,7 +47,7 @@ const Playground = ({
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   return (
-    <div className='h-[95vh] overflow-y-scroll relative'>
+    <div className='h-[95vh] relative'>
       <SandpackProvider
         files={initialFiles || files}
         template={template}
