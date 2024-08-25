@@ -4,7 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image"; 
+import Image from "next/image";
 import { FaSearch } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
@@ -184,11 +184,10 @@ export default function AssignmentPage({
         <div className="flex justify-center items-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`p-1 px-2 rounded text-white ${
-                new Date(assignment?.dueDate) > new Date()
+              className={`p-1 px-2 rounded text-white ${new Date(assignment?.dueDate) > new Date()
                   ? "bg-primary-600"
                   : "bg-secondary-500"
-              }`}
+                }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -236,7 +235,7 @@ export default function AssignmentPage({
               No more responses are accepted!
             </div>
           ) : (
-            <Link href={`/playground/html-css-js?assignmentId=${params.id}`}>
+            <Link href={`/playgrounds/html-css-js?assignmentId=${params.id}`}>
               {assignment?.submissions.length === 0 ? (
                 <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
                   Submit through Playground
@@ -319,7 +318,7 @@ export default function AssignmentPage({
                           </td>
                           <td className={`px-6 py-4 whitespace-nowrap`}>
                             <Link
-                              href={`/playground/html-css-js?submissionId=${submission.id}`}
+                              href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
                               className="text-blue-400 font-semibold break-words"
                             >
                               view
@@ -650,10 +649,10 @@ export default function AssignmentPage({
                               ) : (
                                 <div className="flex items-center justify-center gap-3">
                                   <Link
-                                    href={`/playground/html-css-js?submissionId=${submission.id}`}
+                                    href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
                                     className="rounded-full p-1 hover:text-primary-500 text-lg"
                                   >
-                                    <FaEye/>
+                                    <FaEye />
                                   </Link>
                                   <button
                                     onClick={() => {
@@ -661,13 +660,13 @@ export default function AssignmentPage({
                                     }}
                                     className="rounded-full p-1 hover:text-primary-500 text-md"
                                   >
-                                    <FiEdit/>
+                                    <FiEdit />
                                   </button>
                                   <button
                                     onClick={() => handleDelete(submission.id)}
                                     className="rounded-full p-1 hover:text-white text-lg hover:bg-red-500"
                                   >
-                                    <MdOutlineDelete/>
+                                    <MdOutlineDelete />
                                   </button>
                                 </div>
                               )}

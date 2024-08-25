@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import Playground from '../multi-file/Playground'
+import Playground from '../_components/Playground'
 import getCurrentUser from '@/actions/getCurrentUser'
 import { getSubmissionById } from '@/actions/submission';
 import { SandpackFiles } from '@codesandbox/sandpack-react';

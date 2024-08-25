@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { BsPersonRaisedHand } from "react-icons/bs";
 import { MdOutlineQueryStats } from "react-icons/md";
+import { Role } from "@prisma/client";
 
 export default function HomeLayout({
   children,
@@ -22,6 +23,17 @@ export default function HomeLayout({
   const [menu, setMenu] = useState<boolean>(true);
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
+
+  interface RoleItem {
+    name: string;
+  }
+
+  const roleMap: Record<Role, RoleItem> = {
+    MENTOR: { name: "mentor" },
+    INSTRUCTOR: { name: "instructor" },
+    STUDENT: { name: "student" },
+  };
+
   const access =
     currentUser?.role === "MENTOR"
       ? 1
@@ -96,13 +108,13 @@ export default function HomeLayout({
       {
         name: "Playgrounds",
         icon: <MdAirplay />,
-        path: "/playground/html-css-js",
+        path: "/playgrounds",
       },
       {
         name: "Statistics",
-        icon: <MdOutlineQueryStats/>,
+        icon: <MdOutlineQueryStats />,
         path: "/statistics"
-      }
+      },
     ];
   }
   return (
@@ -114,9 +126,8 @@ export default function HomeLayout({
         )}
         <Suspense fallback={<Loading />}>
           <div
-            className={`w-full ${
-              !isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
-            }`}
+            className={`w-full ${!isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
+              }`}
           >
             {children}
           </div>

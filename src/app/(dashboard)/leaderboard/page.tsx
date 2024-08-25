@@ -6,6 +6,9 @@ import Leaderboard from "@/components/leaderBoard";
 import UnderMaintenance from "@/components/UnderMaintainance";
 
 export default async function Page() {
+
+  return <UnderMaintenance />;
+
   const data: any = await getLeaderboardData();
   const currentUser = await getCurrentUser();
   const noOfSubmissions = await getSubmissionsCountOfAllStudents();
@@ -17,8 +20,7 @@ export default async function Page() {
     const { sortedSubmissions, enrolledCourses } = data;
 
     return (
-      <UnderMaintenance />
-      // <Leaderboard submissions={sortedSubmissions} courses={enrolledCourses} currentUser={currentUser} noOfSubmissions={noOfSubmissions} attendance={attendance} totalClasses={totalClasses}/>
+      <Leaderboard submissions={sortedSubmissions} courses={enrolledCourses} currentUser={currentUser} noOfSubmissions={noOfSubmissions} attendance={attendance} totalClasses={totalClasses}/>
     );
 
   } else {
