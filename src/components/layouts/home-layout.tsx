@@ -102,7 +102,12 @@ export default function HomeLayout({
         name: "Statistics",
         icon: <MdOutlineQueryStats/>,
         path: "/statistics"
-      }
+      },
+      {
+        name: "React", 
+        icon: <MdOutlineQueryStats />,
+        path: "/testing",
+      },
     ];
   }
   return (
