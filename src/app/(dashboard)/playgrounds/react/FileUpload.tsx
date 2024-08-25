@@ -1,5 +1,5 @@
 "use client";
-
+import { IoCloudUploadOutline } from "react-icons/io5";
 import React, { useState } from "react";
 
 interface FileData {
@@ -152,26 +152,20 @@ const FolderUpload = ({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          className={`flex items-center justify-center h-40 w-[50%] border-4 border-dashed rounded-lg transition-all duration-300 ease-in-out ${isDragging
+          className={`flex flex-col gap-6 items-center justify-center p-10 w-full md:w-[40%] border-2 border-dotted rounded-lg transition-all duration-300 ease-in-out ${isDragging
               ? "border-indigo-500 bg-indigo-100"
-              : "border-gray-400 bg-white"
+              : "border-gray-600 bg-white"
             }`}
-          style={{
-            background: "rgba(255, 255, 255, 0.25)",
-            boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
-            backdropFilter: "blur(4.5px)",
-            WebkitBackdropFilter: "blur(4.5px)",
-            borderRadius: "10px",
-            border: "1px solid rgba(255, 255, 255, 0.18)",
-          }}
         >
+          <IoCloudUploadOutline className="h-20 w-20 text-blue-500 transition-transform duration-300 ease-in-out transform hover:scale-110 hover:text-blue-700"/>
+
           <label
             htmlFor="fileInput"
-            className="cursor-pointer text-2xl font-semibold text-gray-300 hover:text-blue-600 transition-colors duration-300"
+            className="cursor-pointer text-lg font-semibold text-gray-500 hover:text-blue-600 transition-colors duration-300"
           >
             {isDragging
-              ? "Drop your folder here"
-              : "Drag and drop a folder here without node_modules"}
+              ? "Drop React folder here"
+              : "Drag and drop react folder here"}
             <input
               id="fileInput"
               type="file"
