@@ -96,17 +96,12 @@ export default function HomeLayout({
       {
         name: "Playgrounds",
         icon: <MdAirplay />,
-        path: "/playground/html-css-js",
+        path: "/playgrounds",
       },
       {
         name: "Statistics",
-        icon: <MdOutlineQueryStats/>,
-        path: "/statistics"
-      },
-      {
-        name: "React", 
         icon: <MdOutlineQueryStats />,
-        path: "/testing",
+        path: "/statistics"
       },
     ];
   }
@@ -119,9 +114,8 @@ export default function HomeLayout({
         )}
         <Suspense fallback={<Loading />}>
           <div
-            className={`w-full ${
-              !isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
-            }`}
+            className={`w-full ${!isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
+              }`}
           >
             {children}
           </div>

@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import FolderUpload from "./FileUpload";
-import Playground from "../playground/multi-file/Playground";
+import Playground from "../multi-file/Playground";
 
 
 const ReactPlayground = ({

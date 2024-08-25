@@ -1,7 +1,7 @@
 "use client"
 
-import { defaultState } from '@/app/(dashboard)/playground/html-css-js/_components/config';
-import { PlaygroundContext } from '@/app/(dashboard)/playground/html-css-js/_components/PlaygroundContext';
+import { defaultState } from '@/app/(dashboard)/playgrounds/html-css-js/_components/config';
+import { PlaygroundContext } from '@/app/(dashboard)/playgrounds/html-css-js/_components/PlaygroundContext';
 import useLocalStorageState from '@/hooks/useLocalStorage';
 import React, { useState } from 'react'
 
