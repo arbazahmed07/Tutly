@@ -8,8 +8,12 @@ interface FileData {
 }
 const imagExtensions = ["jpg", "jpeg", "png", "gif", "svg", "webp", "bmp", "ico", "tiff"];
 
-const FolderUpload: React.FC = () => {
-  const [files, setFiles] = useState<FileData[]>([]);
+const FolderUpload = ({
+  setFilesObj
+}: {
+  setFilesObj: (filesObj: { [key: string]: string }) => void
+}) => {
+  // const [files, setFiles] = useState<FileData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -45,7 +49,7 @@ const FolderUpload: React.FC = () => {
 
   const processDataTransferItems = async (items: DataTransferItemList) => {
     const fileArray: FileData[] = [];
-    const filesObj : {[key: string]: string} = {};
+    const filesObj: { [key: string]: string } = {};
     for (let i = 0; i < items.length; i++) {
       const item = items[i].webkitGetAsEntry();
       if (item) {
@@ -57,15 +61,20 @@ const FolderUpload: React.FC = () => {
       filesObj[file.path] = file.content;
     }
 
-    console.log(fileArray);
-    console.log(filesObj);
+    const filesObjWithoutFolderName: { [key: string]: string } = {};
 
-    setFiles(fileArray);
+    for (let key in filesObj) {
+      const newKey = key.split("/").slice(1).join("/");
+      filesObjWithoutFolderName[newKey] = filesObj[key];
+    }
+
+    // setFiles(fileArray);
+    setFilesObj(filesObjWithoutFolderName);
   };
 
   const processFiles = async (files: FileList) => {
     const fileArray: FileData[] = [];
-    const filesObj : {[key: string]: string} = {};
+    const filesObj: { [key: string]: string } = {};
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const filePath = file.webkitRelativePath || file.name;
@@ -84,10 +93,17 @@ const FolderUpload: React.FC = () => {
       fileArray.push({ path: filePath, content });
       filesObj[filePath] = content;
     }
-    
-    console.log(fileArray);
-    console.log(filesObj);
-    setFiles(fileArray);
+
+    const filesObjWithoutFolderName: { [key: string]: string } = {};
+
+    for (let key in filesObj) {
+      const newKey = key.split("/").slice(1).join("/");
+      filesObjWithoutFolderName[newKey] = filesObj[key];
+    }
+
+    // setFiles(fileArray);
+    setFilesObj(filesObjWithoutFolderName);
+
   };
 
   const traverseFileTree = async (
@@ -130,17 +146,16 @@ const FolderUpload: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-10">
+    <div className=" p-10">
       <div className="flex flex-col items-center">
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          className={`flex items-center justify-center h-40 w-[50%] border-4 border-dashed rounded-lg transition-all duration-300 ease-in-out ${
-            isDragging
+          className={`flex items-center justify-center h-40 w-[50%] border-4 border-dashed rounded-lg transition-all duration-300 ease-in-out ${isDragging
               ? "border-indigo-500 bg-indigo-100"
               : "border-gray-400 bg-white"
-          }`}
+            }`}
           style={{
             background: "rgba(255, 255, 255, 0.25)",
             boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
@@ -169,7 +184,20 @@ const FolderUpload: React.FC = () => {
         </div>
       </div>
 
-      {files.length > 0 && (
+
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
+            <p className="mt-4 text-blue-600 font-semibold">
+              Loading files...
+            </p>
+          </div>
+        </div>
+      )}
+
+
+      {/* {files.length > 0 && (
         <div className="mt-10 animate-fade-in-up">
           <h2 className="text-3xl font-bold mb-6 text-blue-700 ">
             Extracted Files:
@@ -190,18 +218,7 @@ const FolderUpload: React.FC = () => {
             ))}
           </ul>
         </div>
-      )}
-
-      {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
-            <p className="mt-4 text-blue-600 font-semibold">
-              Loading files...
-            </p>
-          </div>
-        </div>
-      )}
+      )} */}
     </div>
   );
 };

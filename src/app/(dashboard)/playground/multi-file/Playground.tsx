@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { SandpackProvider, SandpackPreview, SandpackFiles } from "@codesandbox/sandpack-react";
+import { useEffect, useState } from "react";
+import { SandpackProvider, SandpackPreview, SandpackFiles, SandpackPredefinedTemplate } from "@codesandbox/sandpack-react";
 import MonacoEditor from "./MonacoEditor";
 import FileExplorer from "./FileExplorer";
 import {
@@ -40,19 +40,21 @@ const files = {
 const Playground = ({
   currentUser,
   assignmentId,
-  initialFiles
+  initialFiles,
+  template = "static",
 }: {
   currentUser?: any,
   assignmentId?: string,
-  initialFiles?: SandpackFiles
+  initialFiles?: SandpackFiles,
+  template?: SandpackPredefinedTemplate
 }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   return (
-    <div className='h-full relative'>
+    <div className='h-[95vh] overflow-y-scroll relative'>
       <SandpackProvider
         files={initialFiles || files}
-        template="static"
+        template={template}
         theme="light"
       >
         {isFullScreen && (
@@ -66,12 +68,12 @@ const Playground = ({
             <SandpackPreview
               showNavigator
               showOpenInCodeSandbox={false}
-              className="h-full"
+              className="h-[95vh] overflow-y-scroll"
             />
           </div>
         )}
 
-        <ResizablePanelGroup direction="horizontal" className="h-full border rounded-lg">
+        <ResizablePanelGroup direction="horizontal" className="h-[95vh] overflow-y-scroll border rounded-lg">
           <ResizablePanel defaultSize={14}>
             <FileExplorer />
           </ResizablePanel>
@@ -81,9 +83,9 @@ const Playground = ({
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={43}>
-            <ResizablePanelGroup direction="vertical" className="h-full">
+            <ResizablePanelGroup direction="vertical" className="h-[95vh] overflow-y-scroll">
               <ResizablePanel defaultSize={95}>
-                <div className="h-full relative">
+                <div className="h-[95vh] overflow-y-scroll relative">
                   <div className="border-b bg-white text-black">
                     <h1 className="text-xl font-bold text-center">Preview</h1>
                     <TfiFullscreen
@@ -94,7 +96,7 @@ const Playground = ({
                   <SandpackPreview
                     showOpenNewtab
                     showOpenInCodeSandbox={false}
-                    className="h-full"
+                    className="h-[95vh] overflow-y-scroll"
                   />
                 </div>
               </ResizablePanel>
