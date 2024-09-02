@@ -23,7 +23,7 @@ interface DataItem {
     { username: '23071A0545', name: 'PONNALA ABHINAVA CHAITANYA KUMAR', submissionLength: 36, assignmentLength: 29, score: 351, submissionEvaluatedLength: 36, attendance: '51.72', mentorUsername: '22071A0531' },
     { username: '23071A0503', name: 'AMANCHA AKSHAYA', submissionLength: 34, assignmentLength: 27, score: 333, submissionEvaluatedLength: 34, attendance: '100.00', mentorUsername: '22071A0531' },
   ];
-const page = () => {
+const Page = () => {
     
     const [data, setData] = useState<DataItem[]>(initialData);
     const [sortColumn, setSortColumn] = useState<string>('username');
@@ -219,7 +219,7 @@ const page = () => {
       );
 };
 
-export default page
+export default Page
 
 
 
