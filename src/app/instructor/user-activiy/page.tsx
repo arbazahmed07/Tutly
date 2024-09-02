@@ -6,7 +6,6 @@ import { HiOutlineRectangleStack } from "react-icons/hi2";
 import { CiUser } from "react-icons/ci";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import day from "@/lib/dayjs";
-// import { getAllCourses, getEnrolledCourses } from "@/actions/courses";
 
 const IconMap: Record<EventCategory, JSX.Element> = {
   "ASSIGNMENT_SUBMISSION": <HiOutlineRectangleStack />,

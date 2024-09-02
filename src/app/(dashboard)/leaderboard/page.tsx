@@ -7,7 +7,7 @@ import UnderMaintenance from "@/components/UnderMaintainance";
 
 export default async function Page() {
 
-  return <UnderMaintenance />;
+  // return <UnderMaintenance />;
 
   const data: any = await getLeaderboardData();
   const currentUser = await getCurrentUser();
@@ -18,6 +18,7 @@ export default async function Page() {
   if (data && data.sortedSubmissions && data.enrolledCourses) {
 
     const { sortedSubmissions, enrolledCourses } = data;
+
 
     return (
       <Leaderboard submissions={sortedSubmissions} courses={enrolledCourses} currentUser={currentUser} noOfSubmissions={noOfSubmissions} attendance={attendance} totalClasses={totalClasses}/>

@@ -224,6 +224,12 @@ model Attachment {
   dueDate   DateTime?
 }
 
+enum submissionMode {
+  HTML_CSS_JS
+  REACT
+  EXTERNAL_LINK
+}
+
 model submission {
   id             String        @id @default(uuid())
   enrolledUserId String
@@ -242,6 +248,7 @@ model submission {
 
   submissionLink String?
   submissionDate DateTime @default(now())
+  submissionMode  submissionMode @default(HTML_CSS_JS)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
