@@ -5,6 +5,7 @@ import React from 'react'
 import EvaluateSubmission from './EvaluateSubmission'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { getAssignmentDetails } from '@/actions/assignments'
+import NoDataFound from '@/components/NoDataFound'
 
 const page = async ({
   params,
@@ -65,7 +66,9 @@ const PlaygroundPage = async ({
 }: {
   submission: any,
 }) => {
-  if (!submission) return (<div>No data found</div>)
+  if (!submission) return (
+    <NoDataFound message='No submission found' />
+  )
   return (
     <div>
       <EvaluateSubmission

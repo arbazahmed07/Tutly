@@ -1,7 +1,8 @@
 'use client'
-import  { useState } from 'react'
+import { useState } from 'react'
 import Accordion from "./accordion";
 import Image from 'next/image';
+import NoDataFound from './NoDataFound';
 
 export default function CommunityForum({ allDoubts, currentUser }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(allDoubts[0]?.id);
@@ -9,22 +10,14 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
     (x: any) => x.id === currentCourse
   );
 
-  
-  if(!currentUser) return <div className="text-center">Sign in to view doubts!</div>  
-  if(filteredallDoubts?.length === 0) return <div className="flex flex-col gap-4 w-full">
+
+  if (!currentUser) return <div className="text-center">Sign in to view doubts!</div>
+  if (filteredallDoubts?.length === 0) return (
+    <div className="flex flex-col gap-4 w-full">
       <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg text-white">Community Forum</h1>
-      <p className=' text-xl font-semibold mt-5 mb-5 flex justify-center items-center'>
-        No course is enrolled yet!
-      </p>
-      <Image
-          src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
-          height={400}
-          className="m-auto "
-          width={400}
-          alt=""
-        />
+      <NoDataFound message="No doubts found!" />
     </div>
-  
+  )
   return (
     <div className="flex flex-col gap-4 w-full">
       <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg text-white">Community Forum</h1>
@@ -32,19 +25,18 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
         {allDoubts?.map((course: any) => (
           course.isPublished === true &&
           <button
-          onClick={() => setCurrentCourse(course.id)}
-          className={`rounded p-2 w-20 sm:w-auto ${
-              currentCourse === course?.id && "border rounded"
-            }`}
+            onClick={() => setCurrentCourse(course.id)}
+            className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course?.id && "border rounded"
+              }`}
             key={course?.id}
-            >
+          >
             <h1 className="truncate max-w-xs text-sm font-medium">{course.title}</h1>
           </button>
         ))}
       </div>
       <div className="flex flex-col gap-2">
         {filteredallDoubts && (
-            <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0]?.doubts} />   
+          <Accordion currentCourseId={currentCourse} currentUser={currentUser} doubts={filteredallDoubts[0]?.doubts} />
         )}
       </div>
     </div>

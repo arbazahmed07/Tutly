@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { getAllAssignmentsForInstructor } from "@/actions/assignments";
 import SingleAssignmentBoard from "@/app/mentor/assignments/getbyassignment/assignmentBoard";
+import NoDataFound from "@/components/NoDataFound";
 
 async function GetByAssignment() {
   const { courses, coursesWithAssignments } =
@@ -21,18 +22,7 @@ async function GetByAssignment() {
             />
           </>
         ) : (
-          <div>
-            <p className=" text-xl font-semibold mt-5 flex justify-center items-center">
-              No course is enrolled yet!
-            </p>
-            <Image
-              src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
-              height={400}
-              className="m-auto"
-              width={400}
-              alt=""
-            />
-          </div>
+          <NoDataFound message="No students found!" />
         )}
       </div>
     </div>
