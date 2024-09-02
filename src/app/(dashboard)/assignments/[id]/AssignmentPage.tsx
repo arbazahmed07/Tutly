@@ -10,6 +10,20 @@ import { FiEdit } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
 import { RiWhatsappLine } from "react-icons/ri";
 
+import { FaExternalLinkSquareAlt } from "react-icons/fa";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { DialogClose } from "@radix-ui/react-dialog";
+
 export default function AssignmentPage({
   params,
   currentUser,
@@ -192,10 +206,11 @@ export default function AssignmentPage({
         <div className="flex justify-center items-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`p-1 px-2 rounded text-white ${new Date(assignment?.dueDate) > new Date()
-                ? "bg-primary-600"
-                : "bg-secondary-500"
-                }`}
+              className={`p-1 px-2 rounded text-white ${
+                new Date(assignment?.dueDate) > new Date()
+                  ? "bg-primary-600"
+                  : "bg-secondary-500"
+              }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -234,7 +249,7 @@ export default function AssignmentPage({
         </div>
 
         {currentUser?.role === "STUDENT" ? (
-          <StudentAssignmentSubmission assignment={assignment}/>
+          <StudentAssignmentSubmission assignment={assignment} />
         ) : (
           <>
             <div className="flex justify-between">
@@ -315,8 +330,15 @@ export default function AssignmentPage({
                             <td className={`px-6 py-4 whitespace-nowrap`}>
                               <h1>{user.mentorUsername}</h1>
                             </td>
-                            <td className={`flex justify-center px-6 py-4 whitespace-nowrap`}>
-                              <RiWhatsappLine className="h-6 w-6" onClick={() => handleWhatsAppClick("9160804126")} />
+                            <td
+                              className={`flex justify-center px-6 py-4 whitespace-nowrap`}
+                            >
+                              <RiWhatsappLine
+                                className="h-6 w-6"
+                                onClick={() =>
+                                  handleWhatsAppClick("9160804126")
+                                }
+                              />
                             </td>
                           </tr>
                         );
@@ -409,7 +431,9 @@ export default function AssignmentPage({
                           </td>
                           <td className="sticky left-0 bg-white divide-gray-200">
                             <h1>{submission.enrolledUser.username}</h1>
-                            <h1 className="text-xs">{submission.enrolledUser.mentorUsername}</h1>
+                            <h1 className="text-xs">
+                              {submission.enrolledUser.mentorUsername}
+                            </h1>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {submission.submissionDate
@@ -572,10 +596,15 @@ export default function AssignmentPage({
               {modal && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                   <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
-                    <h2 className="text-lg font-semibold mb-4">Select a message to send</h2>
+                    <h2 className="text-lg font-semibold mb-4">
+                      Select a message to send
+                    </h2>
                     <div className="flex flex-col gap-2">
                       {messages.map((msg, index) => (
-                        <div key={index} className="flex gap-4 justify-between border-b border-slate-500 mb-2">
+                        <div
+                          key={index}
+                          className="flex gap-4 justify-between border-b border-slate-500 mb-2"
+                        >
                           <p className="text-sm">{msg}</p>
                           <button
                             onClick={() => handleSend(msg)}
@@ -595,7 +624,6 @@ export default function AssignmentPage({
                   </div>
                 </div>
               )}
-
             </div>
           </>
         )}
@@ -604,12 +632,41 @@ export default function AssignmentPage({
   );
 }
 
-
 const StudentAssignmentSubmission = async ({
   assignment,
- }: {
+}: {
   assignment: any;
- }) => {
+}) => {
+  const [externalLink, setExternalLink] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async () => {
+
+    try {
+      const maxSubmissions = assignment.maxSubmissions;
+      if (maxSubmissions <= assignment.submissions.length) {
+        toast.error("Assignment has reached maximum number of submissions");
+        return;
+      }
+      toast.loading("Submitting assignment");
+
+      const res = await axios.post("/api/submissions/", {
+        assignmentId: assignment.id,
+        link: externalLink,
+      });
+
+      router.refresh();
+      toast.dismiss();
+      toast.success("Assignment submitted successfully");
+    } catch (e) {
+      toast.dismiss();
+      toast.error("Error submitting assignment");
+    } finally {
+      setExternalLink("");
+      router.refresh();
+    }
+  };
+
   return (
     <>
       <div>
@@ -617,8 +674,11 @@ const StudentAssignmentSubmission = async ({
           <div className="text-white font-semibold text-lg text-center my-5">
             No more responses are accepted!
           </div>
-        ) : (
-          <Link href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`} target="_blank">
+        ) : assignment.submissionMode === "HTML_CSS_JS" ? (
+          <Link
+            href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`}
+            target="_blank"
+          >
             {assignment?.submissions.length === 0 ? (
               <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
                 Submit through Playground
@@ -629,12 +689,55 @@ const StudentAssignmentSubmission = async ({
               </button>
             )}
           </Link>
+        ) : (
+          <div>
+            {assignment?.submissions.length === 0 && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
+                    Submit through External Link
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Add External Link</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label
+                        htmlFor="externalLink"
+                        className="text-right text-lg"
+                      >
+                        Link
+                      </Label>
+                      <Input
+                        id="externalLink"
+                        value={externalLink}
+                        onChange={(e) => setExternalLink(e.target.value)}
+                        placeholder="https://replit.com"
+                        className="col-span-3"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button
+                        type="submit"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+                        onClick={handleSubmit}
+                      >
+                        Send
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         )}
       </div>
       <h1>
-        <span className="block mt-5 dark:text-white">
-          Submissions : 👇
-        </span>
+        <span className="block mt-5 dark:text-white">Submissions : 👇</span>
       </h1>
       <div className="overflow-x-auto">
         <table className="text-center w-full">
@@ -673,57 +776,52 @@ const StudentAssignmentSubmission = async ({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {assignment?.submissions.map(
-              (submission: any, index: any) => {
-                const rValue = submission.points.find(
-                  (point: any) => point.category === "RESPOSIVENESS"
-                );
-                const sValue = submission.points.find(
-                  (point: any) => point.category === "STYLING"
-                );
-                const oValue = submission.points.find(
-                  (point: any) => point.category === "OTHER"
-                );
+            {assignment?.submissions.map((submission: any, index: any) => {
+              const rValue = submission.points.find(
+                (point: any) => point.category === "RESPOSIVENESS"
+              );
+              const sValue = submission.points.find(
+                (point: any) => point.category === "STYLING"
+              );
+              const oValue = submission.points.find(
+                (point: any) => point.category === "OTHER"
+              );
 
-                const totalScore = [rValue, sValue, oValue].reduce(
-                  (acc, currentValue) => {
-                    return acc + (currentValue ? currentValue.score : 0);
-                  },
-                  0
-                );
+              const totalScore = [rValue, sValue, oValue].reduce(
+                (acc, currentValue) => {
+                  return acc + (currentValue ? currentValue.score : 0);
+                },
+                0
+              );
 
-                return (
-                  <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {index + 1}
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap`}>
-                      <Link
-                        href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
-                        className="text-blue-400 font-semibold break-words"
-                      >
-                        view
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {submission.submissionDate
-                        .toISOString()
-                        .split("T")[0] || "NA"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {submission.overallFeedback || "NA"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {/* {totalScore || "NA"} */}
-                      {totalScore ? "Submitted" : "NA"}
-                    </td>
-                  </tr>
-                );
-              }
-            )}
+              return (
+                <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                  <td className={`px-6 py-4 whitespace-nowrap`}>
+                    <Link
+                      href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
+                      className="text-blue-400 font-semibold break-words"
+                    >
+                      view
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {submission.submissionDate.toISOString().split("T")[0] ||
+                      "NA"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {submission.overallFeedback || "NA"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {/* {totalScore || "NA"} */}
+                    {totalScore ? "Submitted" : "NA"}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
     </>
   );
-}
+};

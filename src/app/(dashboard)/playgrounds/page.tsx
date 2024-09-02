@@ -3,19 +3,19 @@
 import Link from "next/link";
 import { RiReactjsFill } from "react-icons/ri";
 import { IoLogoHtml5 } from "react-icons/io5";
-import { FaExternalLinkSquareAlt } from "react-icons/fa";
+// import { FaExternalLinkSquareAlt } from "react-icons/fa";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+//   DialogFooter,
+// } from "@/components/ui/dialog";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
 import toast from "react-hot-toast";
 
 const Page = () => {
@@ -60,7 +60,7 @@ const Page = () => {
           </div>
         </Link>
 
-        <Dialog>
+        {/* <Dialog>
           <DialogTrigger asChild>
             <div className="flex items-center gap-6 w-[350px] p-3 px-5 border-2 dark:bg-white dark:text-black border-slate-300 rounded-lg hover:border-gray-500 cursor-pointer">
               <div>
@@ -105,7 +105,7 @@ const Page = () => {
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
       </div>
     </div>
   );
