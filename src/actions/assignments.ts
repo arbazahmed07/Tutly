@@ -763,3 +763,20 @@ export const getStudentEvaluatedAssigmentsForMentor = async (id: any) => {
     totalPoints: totalPoints,
   };
 };
+
+
+export const getAssignmentDetails = async (id: string) => {
+  const assignment = await db.attachment.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      class: {
+        include: {
+          course: true,
+        },
+      },
+    },
+  });
+  return assignment;
+}
