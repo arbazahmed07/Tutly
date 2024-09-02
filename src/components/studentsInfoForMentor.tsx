@@ -4,7 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 
-export default function StudentsInfoForMentor({ currentUser, mstudents }: any) {
+export default function StudentsInfoForMentor({ currentUser, mstudents ,mentorUsername}: {
+  currentUser: any;
+  mstudents: any;
+  mentorUsername: any;
+}) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredStudents = mstudents.filter(
@@ -30,8 +34,8 @@ export default function StudentsInfoForMentor({ currentUser, mstudents }: any) {
             key={index}
             href={
               currentUser?.role === "INSTRUCTOR"
-                ? `/instructor/mentor/student/${student.username}`
-                : `/mentor/student/${student.username}`
+                ? `/instructor/statistics/mentor/${mentorUsername}/student/${student.username}`
+                : `/mentor/statistics/student/${student.username}`
             }
             className="rounded-xl shadow-blue-500 shadow-sm p-2 w-1/4"
           >

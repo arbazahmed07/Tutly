@@ -14,11 +14,11 @@ import { getAttendanceOfStudent } from "@/actions/attendance";
           (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1])
         );
     loaderValue += "%";
-    const {classes,attendanceDates} = await getAttendanceOfStudent(params.id);
+    const {classes,attendanceDates} = await getAttendanceOfStudent(params.studentId);
   
     return (
       <div>
-        <h1 className="text-blue-400 text-2xl p-10 font-bold">Student - {params.id}</h1>
+        <h1 className="text-blue-400 text-2xl p-10 font-bold">Student - {params.studentId}</h1>
         <StudentStatClient 
         totalEvaluatedAssigmentsOfStudent={evaluated}
         totalPoints={totalPoints}
