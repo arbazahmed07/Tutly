@@ -3,7 +3,6 @@ import Image from "next/image";
 import { FaCrown } from "react-icons/fa6";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import { count } from "console";
 
 export default function Leaderboard({
   submissions,

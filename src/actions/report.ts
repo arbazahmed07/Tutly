@@ -1,13 +1,10 @@
-const { PrismaClient } = require("@prisma/client");
-const dayjs = require("dayjs");
-const fs = require("fs");
-const db = new PrismaClient();
+import { db } from "@/lib/db";
 
-async function main() {
+export const generateReport = async (courseId: string) => {
   const submissions = await db.submission.findMany({
     where: {
       enrolledUser: {
-        courseId: "0878eafa-880d-4cea-b647-e1656df1cc9d",
+        courseId: courseId,
       },
     },
     select: {
@@ -40,7 +37,7 @@ async function main() {
     },
   });
 
-  const groupedAttendance = attendance.reduce((acc, curr) => {
+  const groupedAttendance = attendance.reduce((acc: any, curr) => {
     const username = curr.user.username;
     acc[username] = (acc[username] || 0) + 1;
     return acc;
@@ -48,7 +45,7 @@ async function main() {
 
   const totalClasses = await db.class.count();
 
-  const obj = {};
+  const obj: any = {};
 
   submissions.forEach((submission) => {
     if (!obj[submission.enrolledUser.username]) {
@@ -88,27 +85,29 @@ async function main() {
         },
       },
     },
-  });  
+  });
 
-  Object.values(obj).forEach((ob) => {
+  Object.values(obj).forEach((ob: any) => {
     try {
-      const userPoints = points.filter(
-        (point) => point.submissions ? point.submissions.enrolledUser.username === ob.username : false
+      const userPoints = points.filter((point) =>
+        point.submissions
+          ? point.submissions.enrolledUser.username === ob.username
+          : false
       );
       ob.score = userPoints.reduce((acc, curr) => acc + curr.score, 0);
       ob.submissionEvaluatedLength = new Set(
-        userPoints.map((point) => point.submissions.id)
+        userPoints.map((point) => point.submissions?.id)
       ).size;
     } catch (e) {
       console.log(ob.username);
     }
   });
 
-  Object.values(obj).forEach((ob) => {
+  Object.values(obj).forEach((ob: any) => {
     ob.attendance = (groupedAttendance[ob.username] * 100) / totalClasses;
   });
 
- const SelectedFields = Object.values(obj).map((ob) => {
+  const SelectedFields = Object.values(obj).map((ob: any) => {
     return {
       username: ob.username,
       name: ob.name,
@@ -116,7 +115,7 @@ async function main() {
       assignmentLength: ob.assignmentLength,
       score: ob.score,
       submissionEvaluatedLength: ob.submissionEvaluatedLength,
-      attendance: ob.attendance,
+      attendance: ob.attendance.toFixed(2),
       mentorUsername: ob.mentorUsername,
     };
   });
@@ -127,49 +126,5 @@ async function main() {
     a.mentorUsername.localeCompare(b.mentorUsername)
   );
 
-  // filter assignments length >= 28  or submissions length >= 30
-  const filteredUsers = Object.values(SelectedFields).filter(
-    (ob) => ob.assignmentLength >= 28 || ob.submissionLength >= 30
-  );
-
-  console.log(filteredUsers.length);
-
-  const csv = Object.values(SelectedFields).map((ob) => {
-    return `${ob.username},${ob.name},${ob.submissionLength},${
-      ob.assignmentLength
-    },${ob.score},${ob.submissionEvaluatedLength},${ob.attendance},${
-      ob.mentorUsername
-    }`;
-  });
-
-  const csvHeader =
-    "username,name,submissionLength,assignmentLength,score,submissionEvaluatedLength,attendance,mentorUsername";
-
-  const currentDateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
-  fs.writeFileSync(
-    `user-stats-${currentDateTime}.csv`,
-    csvHeader + "\n" + csv.join("\n")
-  );
-
-  const enrolledUsers = await db.enrolledUsers.createMany({
-    data: Object.values(filteredUsers).map((ob) => {
-      return {
-        courseId: "8580a8d0-cfe1-4bba-b6a3-b74012eb515d",
-        mentorUsername: ob.mentorUsername,
-        username: ob.username,
-      };
-    }),
-    skipDuplicates: true,
-  });
-
-  console.log(enrolledUsers);
-}
-main()
-  .then(async () => {
-    await db.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await db.$disconnect();
-    process.exit(1);
-  });
+  return SelectedFields;
+};

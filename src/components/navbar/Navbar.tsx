@@ -1,13 +1,13 @@
 "use client";
-import React, { Dispatch, SetStateAction, Suspense, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import UserProfile from "./UserProfile";
 import ThemeSwitch from "./ThemeSwitch";
 import { GrMenu } from "react-icons/gr";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import Link from "next/link";
-import Actions from "./Actions";
+
 interface Props {
   // todo: change types
   currentUser?: any;
@@ -52,9 +52,6 @@ const Navbar: React.FC<Props> = ({ currentUser, menu, setMenu }: Props) => {
             </Link>
           </div>
         </div>
-        {/* <Suspense fallback={<div>Loading...</div>}>
-          <Actions currentUser={currentUser} />
-        </Suspense> */}
         <div className="flex gap-3 items-center">
           <h1 className="text-sm font-medium">
             {

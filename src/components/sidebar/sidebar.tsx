@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FcStatistics } from "react-icons/fc";
 
@@ -14,14 +15,6 @@ interface Props {
 
 export default function Sidebar({ items, menu, setMenu }: Props) {
   const pathname = usePathname();
-  const router = useRouter();
-  const Mobile = (link: any) => {
-    router.push(link);
-    setMenu(false);
-  };
-  const Desktop = (link: any) => {
-    router.push(link);
-  };
   return (
     <div
       className={`${
@@ -31,8 +24,9 @@ export default function Sidebar({ items, menu, setMenu }: Props) {
       {items.map((item) => {
         return (
           <div key={item.path}>
-            <div
-              onClick={() => Mobile(item.path)}
+            <Link
+              href={item.path}
+              onClick={() =>  setMenu(false)}
               key={item.path}
               className={`${
                 pathname !== "/"
@@ -46,9 +40,9 @@ export default function Sidebar({ items, menu, setMenu }: Props) {
             >
               <div className={`text-2xl px-2`}>{item.icon}</div>
               <h1 className={`${!menu && "hidden"}`}>{item.name}</h1>
-            </div>
-            <div
-              onClick={() => Desktop(item.path)}
+            </Link>
+            <Link
+              href={item.path}
               key={item.path}
               className={`${
                 pathname === item.path ||
@@ -60,7 +54,7 @@ export default function Sidebar({ items, menu, setMenu }: Props) {
             >
               <div className={`text-2xl px-2`}>{item.icon}</div>
               <h1 className={`${!menu && "hidden"}`}>{item.name}</h1>
-            </div>
+            </Link>
           </div>
         );
       })}

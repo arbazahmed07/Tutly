@@ -1,5 +1,5 @@
 import { getAssignmentSubmissions } from '@/actions/submission'
-import Playground from '@/app/(dashboard)/playground/multi-file/Playground'
+import Playground from '@/app/(dashboard)/playgrounds/_components/Playground'
 import Link from 'next/link'
 import React from 'react'
 import EvaluateSubmission from './EvaluateSubmission'

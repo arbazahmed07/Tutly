@@ -19,7 +19,7 @@ export default function MonacoEditor() {
 
   return (
     <SandpackStack
-      className="h-[90vh] margin-0"
+      className="h-[95vh] margin-0"
     >
       <FileTabs closableTabs />
       <div className="flex-1 pt-2 h-screen">

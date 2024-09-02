@@ -33,7 +33,7 @@ const FileExplorer = () => {
   };
 
   return (
-    <div className="h-full bg-white">
+    <div className="h-[95vh] overflow-y-scroll bg-white">
       <div className="p-2 flex justify-center items-center space-x-2">
         <h2 className="text-lg font-semibold">File Explorer</h2>
         <button
