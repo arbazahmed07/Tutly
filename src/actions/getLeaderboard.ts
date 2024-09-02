@@ -315,13 +315,11 @@ export const getDashboardData = async () => {
 
   const currentUser = leaderboardData.currentUser;
   const enrolledCourses = leaderboardData.enrolledCourses;
-  const sortedSubmissions = leaderboardData.sortedSubmissions;
+  const data = await getLeaderboardData();
+  const { sortedSubmissions } = data;
 
-  const position = sortedSubmissions.findIndex(
-    (x: any) => x.enrolledUser.user.id === currentUser.id
-  );
 
-  const points = sortedSubmissions[position]?.totalPoints;
+
 
   const assignmentsSubmitted = sortedSubmissions.filter(
     (x: any) => x.enrolledUser.user.id === currentUser.id
@@ -329,8 +327,7 @@ export const getDashboardData = async () => {
   // const assignmentsPending =
 
   return {
-    position: position + 1,
-    points,
+    sortedSubmissions,
     assignmentsSubmitted,
     // assignmentsPending,
     currentUser,

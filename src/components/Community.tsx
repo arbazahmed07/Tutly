@@ -13,7 +13,7 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
   if(!currentUser) return <div className="text-center">Sign in to view doubts!</div>  
   if(filteredallDoubts?.length === 0) return <div className="flex flex-col gap-4 w-full">
       <h1 className="text-center py-8 text-4xl font-bold  bg-gradient-to-r from-purple-700 to-pink-700 rounded-lg text-white">Community Forum</h1>
-      <p className=' text-xl font-semibold mt-5 flex justify-center items-center'>
+      <p className=' text-xl font-semibold mt-5 mb-5 flex justify-center items-center'>
         No course is enrolled yet!
       </p>
       <Image
