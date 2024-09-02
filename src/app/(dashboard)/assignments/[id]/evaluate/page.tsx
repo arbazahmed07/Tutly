@@ -3,6 +3,8 @@ import Playground from '@/app/(dashboard)/playgrounds/_components/Playground'
 import Link from 'next/link'
 import React from 'react'
 import EvaluateSubmission from './EvaluateSubmission'
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { getAssignmentDetails } from '@/actions/assignments'
 
 const page = async ({
   params,
@@ -14,7 +16,11 @@ const page = async ({
 
   const assignmentId = params.id
   const submissionId = searchParams?.submissionId
-  const username = searchParams?.username
+  const username = searchParams?.username as string
+
+  const assignment = await getAssignmentDetails(assignmentId)
+
+  if (!assignment) return (<div>Unauthorized</div>)
 
   let submissions = await getAssignmentSubmissions(assignmentId)
 
@@ -24,39 +30,31 @@ const page = async ({
 
   if (!submissions) return (<div>Unauthorized</div>)
 
-  const submission = submissions.find((submission) => submission?.id == submissionId)
+  const submission = submissions.find((submission) => submission?.id == submissionId);
 
   return (
-    <div className='flex w-full'>
-      <div className='w-36 max-h-[90vh] m-1 overflow-y-scroll'>
-        {
-          Array.isArray(submissions) && submissions.map((singleSubmission, index) => {
-            if (!singleSubmission) return null
-            const hrefLink = username ? `/assignments/${assignmentId}/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}` : `/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`
-            return (
-              <Link
-                key={index} href={hrefLink}>
-                <div
-                  className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
-              ${singleSubmission.id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}
-              ${singleSubmission.points.length > 0 && 'text-green-500'}
-              `}>
-                  <p className='text-sm'>
-                    {singleSubmission.enrolledUser.username}
-                  </p>
-                  <p className='text-xs text-slate-600'>
-                    {singleSubmission.enrolledUser.user.name}
-                  </p>
-                </div>
-              </Link>
-            )
-          })
-        }
-      </div>
-      <div className='flex-1'>
+    <ResizablePanelGroup
+      direction="horizontal"
+      className='max-h-[95vh] w-full overflow-hidden'
+    >
+      <ResizablePanel
+        defaultSize={15}
+        className='max-h-[90vh] m-1 overflow-y-scroll'>
+          <SubmissionList
+            assignmentId={assignmentId}
+            assignment={assignment}
+            submissions={submissions}
+            searchParams={searchParams}
+            username={username}
+          />
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel
+        defaultSize={85}
+      >
         <PlaygroundPage submission={submission} />
-      </div>
-    </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   )
 }
 
@@ -74,6 +72,56 @@ const PlaygroundPage = async ({
         submission={submission}
       />
       <Playground initialFiles={submission.data} />
+    </div>
+  )
+}
+
+const SubmissionList = ({
+  assignmentId,
+  assignment,
+  submissions,
+  searchParams,
+  username
+}: {
+  assignmentId: string,
+  assignment: any,
+  submissions: any,
+  searchParams: any,
+  username: string
+}) => {
+  return (
+    <div>
+      <div className='p-2 border-b'>
+        <p className='text-sm font-semibold'>Submissions (max:{assignment.maxSubmissions} )</p>
+      </div>
+
+      {
+        Array.isArray(submissions) && submissions.map((singleSubmission: any, index) => {
+          if (!singleSubmission) return null
+          const hrefLink = username ? `/assignments/${assignmentId}/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}` : `/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`
+          return (
+            <Link
+              key={index} href={hrefLink}>
+              <div
+                className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
+              ${singleSubmission.id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}
+              ${singleSubmission.points.length > 0 && 'text-green-500'}
+              `}>
+                <p className='text-sm'>
+                  {singleSubmission.enrolledUser.username}
+                  {
+                    singleSubmission.submissionCount > 1 &&
+                    ` (${singleSubmission.submissionIndex}/${singleSubmission.submissionCount})`
+                  }
+                </p>
+                <p className='text-xs text-slate-600'>
+                  {singleSubmission.enrolledUser.user.name}
+                </p>
+              </div>
+            </Link>
+          )
+        })
+      }
     </div>
   )
 }

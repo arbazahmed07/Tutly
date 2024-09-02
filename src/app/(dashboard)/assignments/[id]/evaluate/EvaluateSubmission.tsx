@@ -1,11 +1,10 @@
 "use client"
 
+import day from "@/lib/dayjs";
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import {  useState } from "react";
 import toast from "react-hot-toast";
-import { FaCheck } from "react-icons/fa";
 
 const EvaluateSubmission = ({
   submission
@@ -19,7 +18,7 @@ const EvaluateSubmission = ({
     styling: 0,
     other: 0,
   });
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(submission.overallFeedback || null);
 
   const rValue = submission.points.find(
     (point: any) => point.category === "RESPOSIVENESS"
@@ -78,22 +77,29 @@ const EvaluateSubmission = ({
     try {
       toast.loading("Updating Scores...");
 
+      let marks = [];
+      if (editedScores.responsiveness > 0) {
+        marks.push({
+          category: "RESPOSIVENESS",
+          score: editedScores.responsiveness,
+        });
+      }
+      if (editedScores.styling > 0) {
+        marks.push({
+          category: "STYLING",
+          score: editedScores.styling,
+        });
+      }
+      if (editedScores.other > 0) {
+        marks.push({
+          category: "OTHER",
+          score: editedScores.other,
+        });
+      }
+
       const res = await axios.post("/api/points", {
         submissionId: submission.id,
-        marks: [
-          {
-            category: "RESPOSIVENESS",
-            score: editedScores.responsiveness,
-          },
-          {
-            category: "STYLING",
-            score: editedScores.styling,
-          },
-          {
-            category: "OTHER",
-            score: editedScores.other,
-          },
-        ],
+        marks: marks,
       });
       handleFeedback(submission.id);
       setIsEditing(false);
@@ -184,10 +190,8 @@ const EvaluateSubmission = ({
             <tr>
               <td className=" sticky left-0 bg-white divide-gray-200 ">{submission.enrolledUser.username}</td>
               <td className="">{submission.enrolledUser.user.name}</td>
-              <td className="px-2 py-1 whitespace-nowrap">
-                {submission.submissionDate
-                  .toISOString()
-                  .split("T")[0] || "NA"}
+              <td className="px-2 py-1 ">
+                {day(submission.submissionDate).format("DD MMM YYYY hh:mm:ss A")}
               </td>
               <td className="px-2 py-1 whitespace-nowrap">
                 {isEditing ? (
@@ -268,7 +272,7 @@ const EvaluateSubmission = ({
                   isEditing ? (
                     <textarea
                       title="null"
-                      value={submission.feedback}
+                      value={feedback || ""}
                       onChange={(e) => {
                         setFeedback(e.target.value);
                       }}

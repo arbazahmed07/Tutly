@@ -4,7 +4,6 @@ import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { FaSearch } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
@@ -123,22 +122,29 @@ export default function AssignmentPage({
     try {
       toast.loading("Updating Scores...");
 
+      let marks = [];
+      if (editedScores.responsiveness > 0) {
+        marks.push({
+          category: "RESPOSIVENESS",
+          score: editedScores.responsiveness,
+        });
+      }
+      if (editedScores.styling > 0) {
+        marks.push({
+          category: "STYLING",
+          score: editedScores.styling,
+        });
+      }
+      if (editedScores.other > 0) {
+        marks.push({
+          category: "OTHER",
+          score: editedScores.other,
+        });
+      }
+
       const res = await axios.post("/api/points", {
         submissionId: filteredAssignments[index].id,
-        marks: [
-          {
-            category: "RESPOSIVENESS",
-            score: editedScores.responsiveness,
-          },
-          {
-            category: "STYLING",
-            score: editedScores.styling,
-          },
-          {
-            category: "OTHER",
-            score: editedScores.other,
-          },
-        ],
+        marks: marks,
       });
       toast.dismiss();
       toast.success("Scores saved successfully");
@@ -148,6 +154,7 @@ export default function AssignmentPage({
       toast.error("Failed to save scores");
     } finally {
       setEditingIndex(-1);
+      setFeedback("");
       router.refresh();
     }
   };
@@ -166,6 +173,7 @@ export default function AssignmentPage({
     } catch (e: any) {
       toast.dismiss();
       toast.error("Failed to delete submission");
+      setFeedback("");
     }
   };
 
@@ -185,8 +193,8 @@ export default function AssignmentPage({
           {assignment?.dueDate != null && (
             <div
               className={`p-1 px-2 rounded text-white ${new Date(assignment?.dueDate) > new Date()
-                  ? "bg-primary-600"
-                  : "bg-secondary-500"
+                ? "bg-primary-600"
+                : "bg-secondary-500"
                 }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
@@ -225,127 +233,9 @@ export default function AssignmentPage({
           </a>
         </div>
 
-        <div
-          hidden={
-            currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR"
-          }
-        >
-          {assignment?.maxSubmissions <= assignment.submissions.length ? (
-            <div className="text-white font-semibold text-lg text-center my-5">
-              No more responses are accepted!
-            </div>
-          ) : (
-            <Link href={`/playgrounds/html-css-js?assignmentId=${params.id}`}>
-              {assignment?.submissions.length === 0 ? (
-                <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
-                  Submit through Playground
-                </button>
-              ) : (
-                <button className="bg-primary-600 inline p-2 text-sm rounded font-semibold text-white">
-                  Submit another response
-                </button>
-              )}
-            </Link>
-          )}
-        </div>
         {currentUser?.role === "STUDENT" ? (
-          <>
-            <h1>
-              <span className="block mt-5 dark:text-white">
-                Submissions : 👇
-              </span>
-            </h1>
-            <div className="overflow-x-auto">
-              <table className="text-center w-full">
-                <thead className="bg-secondary-300 text-secondary-700">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      sl.no
-                    </th>
-                    <th
-                      scope="col"
-                      className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
-                    >
-                      View Submission
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      Submission Date
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      Feedback
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      Total
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {assignment?.submissions.map(
-                    (submission: any, index: any) => {
-                      const rValue = submission.points.find(
-                        (point: any) => point.category === "RESPOSIVENESS"
-                      );
-                      const sValue = submission.points.find(
-                        (point: any) => point.category === "STYLING"
-                      );
-                      const oValue = submission.points.find(
-                        (point: any) => point.category === "OTHER"
-                      );
-
-                      const totalScore = [rValue, sValue, oValue].reduce(
-                        (acc, currentValue) => {
-                          return acc + (currentValue ? currentValue.score : 0);
-                        },
-                        0
-                      );
-
-                      return (
-                        <tr key={index}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {index + 1}
-                          </td>
-                          <td className={`px-6 py-4 whitespace-nowrap`}>
-                            <Link
-                              href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
-                              className="text-blue-400 font-semibold break-words"
-                            >
-                              view
-                            </Link>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {submission.submissionDate
-                              .toISOString()
-                              .split("T")[0] || "NA"}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {submission.overallFeedback || "NA"}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {/* {totalScore || "NA"} */}
-                            {totalScore ? "Submitted" : "NA"}
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </>
-        ) : currentUser?.role === "MENTOR" ||
-          currentUser.role === "INSTRUCTOR" ? (
+          <StudentAssignmentSubmission assignment={assignment}/>
+        ) : (
           <>
             <div className="flex justify-between">
               <div className="block mt-5 dark:text-white">Submissions : 👇</div>
@@ -616,7 +506,8 @@ export default function AssignmentPage({
                             {editingIndex === index ? (
                               <textarea
                                 title="null"
-                                value={submission.feedback}
+                                value={feedback}
+                                defaultValue={submission.overallFeedback}
                                 onChange={(e) => {
                                   setFeedback(e.target.value);
                                 }}
@@ -707,19 +598,132 @@ export default function AssignmentPage({
 
             </div>
           </>
-        ) : (
-          <div className="p-4 mt-6 font-semibold text-center">
-            <Image
-              src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
-              height={300}
-              className="m-auto"
-              width={300}
-              alt=""
-            />
-            <h1 className="text-white">No submissions yet!</h1>
-          </div>
         )}
       </div>
     </div>
+  );
+}
+
+
+const StudentAssignmentSubmission = async ({
+  assignment,
+ }: {
+  assignment: any;
+ }) => {
+  return (
+    <>
+      <div>
+        {assignment?.maxSubmissions <= assignment.submissions.length ? (
+          <div className="text-white font-semibold text-lg text-center my-5">
+            No more responses are accepted!
+          </div>
+        ) : (
+          <Link href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`} target="_blank">
+            {assignment?.submissions.length === 0 ? (
+              <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
+                Submit through Playground
+              </button>
+            ) : (
+              <button className="bg-primary-600 inline p-2 text-sm rounded font-semibold text-white">
+                Submit another response
+              </button>
+            )}
+          </Link>
+        )}
+      </div>
+      <h1>
+        <span className="block mt-5 dark:text-white">
+          Submissions : 👇
+        </span>
+      </h1>
+      <div className="overflow-x-auto">
+        <table className="text-center w-full">
+          <thead className="bg-secondary-300 text-secondary-700">
+            <tr>
+              <th
+                scope="col"
+                className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+              >
+                sl.no
+              </th>
+              <th
+                scope="col"
+                className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
+              >
+                View Submission
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+              >
+                Submission Date
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+              >
+                Feedback
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
+              >
+                Total
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {assignment?.submissions.map(
+              (submission: any, index: any) => {
+                const rValue = submission.points.find(
+                  (point: any) => point.category === "RESPOSIVENESS"
+                );
+                const sValue = submission.points.find(
+                  (point: any) => point.category === "STYLING"
+                );
+                const oValue = submission.points.find(
+                  (point: any) => point.category === "OTHER"
+                );
+
+                const totalScore = [rValue, sValue, oValue].reduce(
+                  (acc, currentValue) => {
+                    return acc + (currentValue ? currentValue.score : 0);
+                  },
+                  0
+                );
+
+                return (
+                  <tr key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {index + 1}
+                    </td>
+                    <td className={`px-6 py-4 whitespace-nowrap`}>
+                      <Link
+                        href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
+                        className="text-blue-400 font-semibold break-words"
+                      >
+                        view
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {submission.submissionDate
+                        .toISOString()
+                        .split("T")[0] || "NA"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {submission.overallFeedback || "NA"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {/* {totalScore || "NA"} */}
+                      {totalScore ? "Submitted" : "NA"}
+                    </td>
+                  </tr>
+                );
+              }
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
