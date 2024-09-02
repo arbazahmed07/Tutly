@@ -188,17 +188,15 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
     },
   });
 
-  const filteredSubmissions = submissions.map((submission) => {
-    if (user.role == "INSTRUCTOR") return submission;
-    if (
-      user.role == "MENTOR" &&
-      submission.enrolledUser.mentorUsername == user.username
-    ) {
-      return submission;
-    } else {
-      return null;
-    }
-  });
+  let filteredSubmissions: any = [];
+
+  if(user.role == "INSTRUCTOR"){
+    filteredSubmissions = submissions;
+  }
+
+  if(user.role == "MENTOR"){
+    filteredSubmissions = submissions.filter((submission) => submission.enrolledUser.mentorUsername == user.username);
+  }
 
   if (assignment?.maxSubmissions! > 1) {
     const submissionCount = await db.submission.groupBy({

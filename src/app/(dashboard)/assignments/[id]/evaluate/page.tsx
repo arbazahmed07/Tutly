@@ -25,21 +25,21 @@ const page = async ({
   let submissions = await getAssignmentSubmissions(assignmentId)
 
   if (username) {
-    submissions = submissions && submissions.filter((submission) => submission?.enrolledUser.username == username)
+    submissions = submissions && submissions.filter((submission:any) => submission?.enrolledUser.username == username)
   }
 
   if (!submissions) return (<div>Unauthorized</div>)
 
-  const submission = submissions.find((submission) => submission?.id == submissionId);
+  const submission = submissions.find((submission:any) => submission?.id == submissionId);
 
   return (
     <ResizablePanelGroup
       direction="horizontal"
-      className='max-h-[95vh] w-full overflow-hidden'
+      className='max-h-[95vh] w-full'
     >
       <ResizablePanel
         defaultSize={15}
-        className='max-h-[90vh] m-1 overflow-y-scroll'>
+      >
           <SubmissionList
             assignmentId={assignmentId}
             assignment={assignment}
@@ -90,9 +90,12 @@ const SubmissionList = ({
   username: string
 }) => {
   return (
-    <div>
+    <div className='overflow-y-scroll max-h-[90vh]'>
       <div className='p-2 border-b'>
         <p className='text-sm font-semibold'>Submissions (max:{assignment.maxSubmissions} )</p>
+        <p className='text-xs text-slate-600'>
+          {submissions.filter((submission:any) => submission?.points.length == 0).length} un-evaluated / {submissions.length} total
+        </p>
       </div>
 
       {
