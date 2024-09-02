@@ -17,7 +17,7 @@ interface DataItem {
   mentorUsername: string;
 }
 
-const report = () => {
+const Report = () => {
   const [data, setData] = useState<DataItem[]>([]);
   const [sortColumn, setSortColumn] = useState<string>("username");
   const [sortOrder, setSortOrder] = useState<string>("asc");
@@ -346,4 +346,4 @@ const report = () => {
   );
 };
 
-export default report;
+export default Report;
