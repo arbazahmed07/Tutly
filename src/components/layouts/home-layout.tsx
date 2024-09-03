@@ -185,7 +185,7 @@ export default function HomeLayout({
     STUDENT: StudentItems,
   };
 
-  const items = roleMap[currentUser.role as Role] || [];
+  const items = roleMap[currentUser?.role as Role] || [];
 
   return (
     <div className="w-full">
