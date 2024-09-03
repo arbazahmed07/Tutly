@@ -1,8 +1,11 @@
+import React from 'react'
 import Report from '@/components/Report'
 
 const page = () => {
   return (
-    <Report />
+    <Report 
+      hideMentorFilter={true}
+    />
   )
 }
 

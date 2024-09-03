@@ -1,7 +1,15 @@
 import { db } from "@/lib/db";
+import getCurrentUser from "./getCurrentUser";
 
 export const generateReport = async (courseId: string) => {
-  const submissions = await db.submission.findMany({
+
+  const currentUser = await getCurrentUser();
+
+  if(!currentUser || currentUser?.role === "STUDENT") {
+    throw new Error("You are not authorized to generate report");
+  }
+
+  let submissions = await db.submission.findMany({
     where: {
       enrolledUser: {
         courseId: courseId,
@@ -23,6 +31,12 @@ export const generateReport = async (courseId: string) => {
       },
     },
   });
+
+  if (currentUser?.role === "MENTOR") {
+    submissions = submissions.filter(
+      (submission) => submission.enrolledUser.mentorUsername === currentUser.username
+    );
+  }
 
   const attendance = await db.attendance.findMany({
     where: {
