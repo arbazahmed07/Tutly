@@ -2,12 +2,27 @@ import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 
 export const generateReport = async (courseId: string) => {
-
   const currentUser = await getCurrentUser();
 
-  if(!currentUser || currentUser?.role === "STUDENT") {
+  if (!currentUser || currentUser?.role === "STUDENT") {
     throw new Error("You are not authorized to generate report");
   }
+
+  const enrolledUsers = await db.enrolledUsers.findMany({
+    where: {
+      courseId: courseId,
+      user: {
+        role: "STUDENT",
+      },
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
 
   let submissions = await db.submission.findMany({
     where: {
@@ -34,7 +49,8 @@ export const generateReport = async (courseId: string) => {
 
   if (currentUser?.role === "MENTOR") {
     submissions = submissions.filter(
-      (submission) => submission.enrolledUser.mentorUsername === currentUser.username
+      (submission) =>
+        submission.enrolledUser.mentorUsername === currentUser.username
     );
   }
 
@@ -61,28 +77,28 @@ export const generateReport = async (courseId: string) => {
 
   const obj: any = {};
 
+  enrolledUsers.forEach((enrolledUser) => {
+    obj[enrolledUser.username] = {
+      username: enrolledUser.username,
+      name: enrolledUser.user.name,
+      submissions: new Set(),
+      submissionsLength: 0,
+      assignments: new Set(),
+      assignmentLength: 0,
+      mentorUsername: enrolledUser.mentorUsername,
+    };
+  });
+
   submissions.forEach((submission) => {
-    if (!obj[submission.enrolledUser.username]) {
-      obj[submission.enrolledUser.username] = {
-        username: submission.enrolledUser.username,
-        name: submission.enrolledUser.user.name,
-        submissions: new Set([submission.id]),
-        submissionsLength: 1,
-        assignments: new Set([submission.attachmentId]),
-        assignmentLength: 1,
-        mentorUsername: submission.enrolledUser.mentorUsername,
-      };
-    } else {
-      obj[submission.enrolledUser.username].submissions.add(submission.id);
-      obj[submission.enrolledUser.username].submissionsLength++;
-      obj[submission.enrolledUser.username].assignments.add(
-        submission.attachmentId
-      );
-      obj[submission.enrolledUser.username].assignmentLength =
-        obj[submission.enrolledUser.username].assignments.size;
-      obj[submission.enrolledUser.username].mentorUsername =
-        submission.enrolledUser.mentorUsername;
-    }
+    obj[submission.enrolledUser.username].submissions.add(submission.id);
+    obj[submission.enrolledUser.username].submissionsLength++;
+    obj[submission.enrolledUser.username].assignments.add(
+      submission.attachmentId
+    );
+    obj[submission.enrolledUser.username].assignmentLength =
+      obj[submission.enrolledUser.username].assignments.size;
+    obj[submission.enrolledUser.username].mentorUsername =
+      submission.enrolledUser.mentorUsername;
   });
 
   const points = await db.point.findMany({
@@ -118,6 +134,9 @@ export const generateReport = async (courseId: string) => {
   });
 
   Object.values(obj).forEach((ob: any) => {
+    if(!groupedAttendance[ob.username]) {
+      groupedAttendance[ob.username] = 0;
+    }
     ob.attendance = (groupedAttendance[ob.username] * 100) / totalClasses;
   });
 

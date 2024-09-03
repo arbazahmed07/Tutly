@@ -120,6 +120,9 @@ const Report = ({
     const rows = filteredData.map((item) =>
       headers.map((header) => {
         const key = columnMapping[header];
+        if (key === "attendance") {
+          return formatAttendance(item[key]);
+        }
         return item[key] !== undefined ? item[key].toString() : "";
       })
     );
@@ -140,21 +143,21 @@ const Report = ({
   };
 
   const downloadPDF = () => {
-    const doc :any= new jsPDF("landscape", "mm", "a4");
+    const doc: any = new jsPDF("landscape", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
-  
+
     const formattedDate = day().format("ddd DD MMM, YYYY hh:mm A");
     const title = `Report - ${currentCourse?.title} - ${formattedDate}`;
     const titleWidth = doc.getTextWidth(title);
     const titleX = (pageWidth - titleWidth) / 2;
-  
+
     doc.text(title, titleX, 10);
-  
+
     const headers = [
       ["S.No", "Username", "Name", "Assignments", "Submissions", "Evaluated", "Score", "Attendance"],
       ...(!hideMentorFilter ? [["Mentor"]] : []),
     ].flat();
-  
+
     const tableData = filteredData.map((item, index) => [
       index + 1,
       item.username,
@@ -163,10 +166,10 @@ const Report = ({
       item.submissionLength,
       item.submissionEvaluatedLength,
       item.score,
-      item.attendance,
+      formatAttendance(item.attendance),
       ...(!hideMentorFilter ? [item.mentorUsername] : []),
     ]);
-  
+
     doc.autoTable({
       head: [headers],
       body: tableData,
@@ -187,15 +190,15 @@ const Report = ({
       headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255] },
       theme: "striped",
       pageBreak: "auto",
-      didDrawPage: function (data:any) {
+      didDrawPage: function (data: any) {
         doc.setFontSize(8);
         doc.text(`Page ${doc.internal.getCurrentPageInfo().pageNumber}`, data.settings.margin.left, doc.internal.pageSize.height - 10);
       },
     });
-  
+
     doc.save(`Report-${formattedDate}.pdf`);
   };
-  
+
 
   const handleDownload = () => {
     if (selectedFormat === "csv") {
@@ -209,6 +212,13 @@ const Report = ({
     return <Loader />;
   }
 
+  const formatAttendance = (attendance: string): string => {
+    const attendanceNumber = parseFloat(attendance);
+    if (isNaN(attendanceNumber)) {
+      return 'N/A';
+    }
+    return attendanceNumber.toFixed(2) + "%";
+  };
   return (
     <div>
       <div className="flex gap-3 p-8">
@@ -361,7 +371,7 @@ const Report = ({
                     {row.score}
                   </td>
                   <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
-                    {row.attendance}
+                    {formatAttendance(row.attendance)}
                   </td>
                   {hideMentorFilter ? null : (
                     <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
