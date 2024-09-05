@@ -52,6 +52,7 @@
     "react-onesignal": "^3.0.1",
     "react-resizable-panels": "^2.0.19",
     "react-slick": "^0.30.2",
+    "resend": "^4.0.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
