@@ -8,7 +8,7 @@ export const generateReport = async (courseId: string) => {
     throw new Error("You are not authorized to generate report");
   }
 
-  const enrolledUsers = await db.enrolledUsers.findMany({
+  let enrolledUsers = await db.enrolledUsers.findMany({
     where: {
       courseId: courseId,
       user: {
@@ -140,7 +140,7 @@ export const generateReport = async (courseId: string) => {
     ob.attendance = (groupedAttendance[ob.username] * 100) / totalClasses;
   });
 
-  const SelectedFields = Object.values(obj).map((ob: any) => {
+  let SelectedFields = Object.values(obj).map((ob: any) => {
     return {
       username: ob.username,
       name: ob.name,
@@ -158,6 +158,12 @@ export const generateReport = async (courseId: string) => {
   SelectedFields.sort((a, b) =>
     a.mentorUsername.localeCompare(b.mentorUsername)
   );
+
+  if (currentUser?.role === "MENTOR") {
+    SelectedFields = SelectedFields.filter(
+      (selectedField) => selectedField.mentorUsername === currentUser.username
+    );
+  }
 
   return SelectedFields;
 };
