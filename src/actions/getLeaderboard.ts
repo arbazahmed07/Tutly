@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 import {
-  getCreatedCourses,
   getEnrolledCourses,
   getMentorCourses,
 } from "./courses";
@@ -115,14 +114,18 @@ export const getInstructorLeaderboardData = async () => {
       return null;
     }
 
-    const createdCourses = await getCreatedCourses();
-    if (!createdCourses) return null;
+    // const createdCourses = await getCreatedCourses();
+    // if (!createdCourses) return null;
+    const enrolledCourses = await getEnrolledCourses();
+    if (!enrolledCourses) return null;
     const submissions = await db.submission.findMany({
       where: {
         enrolledUser: {
           course: {
-            createdById: currentUser.id,
-          },
+            id: {
+              in: enrolledCourses.map((course: any) => course.id),
+            },
+          }
         },
       },
       select: {
@@ -174,7 +177,7 @@ export const getInstructorLeaderboardData = async () => {
       (a: any, b: any) => b.totalPoints - a.totalPoints
     );
 
-    return { sortedSubmissions, currentUser, createdCourses } as any;
+    return { sortedSubmissions, currentUser, enrolledCourses } as any;
   } catch (error: any) {
     return null;
   }

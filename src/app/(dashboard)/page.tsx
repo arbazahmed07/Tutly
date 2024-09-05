@@ -215,7 +215,7 @@ export default async function Home() {
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
             <PiStudentBold className="m-auto h-24 w-24 text-blue-400" />
             <p className="text-primary-600 font-bold pt-2">{count}</p>
-            <h1 className="p-1 text-sm font-bold">Total no of students</h1>
+            <h1 className="p-1 text-sm font-bold">Total no of students enrolled</h1>
           </div>
         </div>
       </div>

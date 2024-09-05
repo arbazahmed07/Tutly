@@ -13,8 +13,7 @@ export default async function Courses() {
       <div className="flex w-full">
         {courses?.length === 0 ? (
           <div>
-             <NoDataFound message="No courses found!" />
-            {currentUser?.role === "INSTRUCTOR" && <AddCourse />}
+            {currentUser?.role === "INSTRUCTOR" ? <AddCourse /> : <NoDataFound message="No courses found!" />}
           </div>
         ) : (
           <div className="flex flex-wrap">
