@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DialogClose } from "@radix-ui/react-dialog";
+import day from "@/lib/dayjs";
 
 export default function AssignmentPage({
   params,
@@ -296,19 +297,13 @@ export default function AssignmentPage({
                 <table className="text-center w-full">
                   <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
                     <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         sl.no
                       </th>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider sticky left-0 text-secondary-700 bg-secondary-300 ">
                         username
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         mentor
                       </th>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
@@ -350,56 +345,32 @@ export default function AssignmentPage({
                 <table className="text-center w-full">
                   <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
                     <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         sl.no
                       </th>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider sticky left-0 text-secondary-700 bg-secondary-300 ">
                         username
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Date
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Responsive(10)
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Styling(10)
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Others(10)
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Total
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Feedback
                       </th>
                       {currentUser.role !== "STUDENT" && (
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                        >
+                        <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                           Actions
                         </th>
                       )}
@@ -435,10 +406,8 @@ export default function AssignmentPage({
                               {submission.enrolledUser.mentorUsername}
                             </h1>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {submission.submissionDate
-                              .toISOString()
-                              .split("T")[0] || "NA"}
+                          <td className="px-6 text-sm py-4 whitespace-nowrap">
+                            {day(submission.submissionDate).format("DD MMM YYYY, hh:mm:ss A")}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {editingIndex === index ? (
@@ -743,34 +712,19 @@ const StudentAssignmentSubmission = async ({
         <table className="text-center w-full">
           <thead className="bg-secondary-300 text-secondary-700">
             <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                 sl.no
               </th>
-              <th
-                scope="col"
-                className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
-              >
+              <th className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}>
                 View Submission
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                 Submission Date
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                 Feedback
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-              >
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                 Total
               </th>
             </tr>

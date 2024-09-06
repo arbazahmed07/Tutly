@@ -143,6 +143,7 @@ export const getAllAssignmentsForMentor = async () => {
               },
             },
           },
+          createdAt: true,
         },
       },
     },

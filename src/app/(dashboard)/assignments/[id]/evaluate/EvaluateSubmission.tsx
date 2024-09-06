@@ -131,11 +131,11 @@ const EvaluateSubmission = ({
   }
 
   return (
-    <div>
-      <table className="text-center w-full text-black overflow-x-scroll">
+    <div className="overflow-x-scroll">
+      <table className="text-center w-full text-black ">
         <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
           <tr>
-            <th className="px-2 py-1 text-xs font-medium uppercase sticky left-0 text-secondary-700 bg-secondary-300 ">
+            <th className="px-2 py-1 z-10 text-xs font-medium uppercase sticky left-0 text-secondary-700 bg-secondary-300 ">
               username
             </th>
             <th className="px-2 py-1 text-xs font-medium uppercase sticky left-0 text-secondary-700 bg-secondary-300 ">

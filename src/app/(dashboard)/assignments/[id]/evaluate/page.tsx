@@ -6,6 +6,7 @@ import EvaluateSubmission from './EvaluateSubmission'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { getAssignmentDetails } from '@/actions/assignments'
 import NoDataFound from '@/components/NoDataFound'
+import SortBy from './SortBy'
 
 const page = async ({
   params,
@@ -26,12 +27,12 @@ const page = async ({
   let submissions = await getAssignmentSubmissions(assignmentId)
 
   if (username) {
-    submissions = submissions && submissions.filter((submission:any) => submission?.enrolledUser.username == username)
+    submissions = submissions && submissions.filter((submission: any) => submission?.enrolledUser.username == username)
   }
 
   if (!submissions) return (<div>Unauthorized</div>)
 
-  const submission = submissions.find((submission:any) => submission?.id == submissionId);
+  const submission = submissions.find((submission: any) => submission?.id == submissionId);
 
   return (
     <ResizablePanelGroup
@@ -41,13 +42,13 @@ const page = async ({
       <ResizablePanel
         defaultSize={15}
       >
-          <SubmissionList
-            assignmentId={assignmentId}
-            assignment={assignment}
-            submissions={submissions}
-            searchParams={searchParams}
-            username={username}
-          />
+        <SubmissionList
+          assignmentId={assignmentId}
+          assignment={assignment}
+          submissions={submissions}
+          searchParams={searchParams}
+          username={username}
+        />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel
@@ -92,42 +93,73 @@ const SubmissionList = ({
   searchParams: any,
   username: string
 }) => {
+  const sortBy = searchParams?.sortBy || 'username'
+
+  submissions = submissions.sort((a: any, b: any) => {
+    if (sortBy == 'username') {
+      return a.enrolledUser.username.localeCompare(b.enrolledUser.username)
+    } else if (sortBy == 'points') {
+      return b.points.length - a.points.length
+    } else if (sortBy == 'submissionCount') {
+      return a.submissionCount - b.submissionCount
+    } else if (sortBy == 'submissionIndex') {
+      return a.submissionIndex - b.submissionIndex
+    } else if (sortBy == 'submissionDate') {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    }
+  })
+
   return (
     <div className='overflow-y-scroll max-h-[90vh]'>
+      <SortBy assignmentId={assignmentId} searchParams={searchParams} />
       <div className='p-2 border-b'>
         <p className='text-sm font-semibold'>Submissions (max:{assignment.maxSubmissions} )</p>
         <p className='text-xs text-slate-600'>
-          {submissions.filter((submission:any) => submission?.points.length == 0).length} un-evaluated / {submissions.length} total
+          {submissions.filter((submission: any) => submission?.points.length == 0).length} un-evaluated / {submissions.length} total
         </p>
       </div>
+      <div>
+        {
+          Array.isArray(submissions) && submissions.map((singleSubmission: any, index) => {
+            if (!singleSubmission) return null
+            let hrefLink = username ? `/assignments/${assignmentId}/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}` : `/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`
 
-      {
-        Array.isArray(submissions) && submissions.map((singleSubmission: any, index) => {
-          if (!singleSubmission) return null
-          const hrefLink = username ? `/assignments/${assignmentId}/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}` : `/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`
-          return (
-            <Link
-              key={index} href={hrefLink}>
-              <div
-                className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
+            const sortBy = searchParams?.sortBy
+
+            if (sortBy) {
+
+              if (username) {
+                hrefLink = `/assignments/${assignmentId}/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}&sortBy=${sortBy}`
+              } else {
+                hrefLink = `/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}&sortBy=${sortBy}`
+              }
+            }
+
+            return (
+              <Link
+                key={index} href={hrefLink}>
+                <div
+                  className={`p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-blue-500
               ${singleSubmission.id == searchParams?.submissionId && 'bg-gray-100 text-blue-500'}
               ${singleSubmission.points.length > 0 && 'text-green-500'}
               `}>
-                <p className='text-sm'>
-                  {singleSubmission.enrolledUser.username}
-                  {
-                    singleSubmission.submissionCount > 1 &&
-                    ` (${singleSubmission.submissionIndex}/${singleSubmission.submissionCount})`
-                  }
-                </p>
-                <p className='text-xs text-slate-600'>
-                  {singleSubmission.enrolledUser.user.name}
-                </p>
-              </div>
-            </Link>
-          )
-        })
-      }
+                  <p className='text-sm'>
+                    {singleSubmission.enrolledUser.username}
+                    {
+                      singleSubmission.submissionCount > 1 &&
+                      ` (${singleSubmission.submissionIndex}/${singleSubmission.submissionCount})`
+                    }
+                  </p>
+                  <p className='text-xs text-slate-600'>
+                    {singleSubmission.enrolledUser.user.name}
+                  </p>
+                </div>
+              </Link>
+            )
+          })
+        }
+      </div>
+
     </div>
   )
 }
