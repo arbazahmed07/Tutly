@@ -106,9 +106,7 @@ export const createSubmission = async (
 
   const submission = await db.submission.create({
     data: {
-      // id: submissionId,
       attachmentId: assignmentDetails.id,
-      // submissionLink: prUrl,
       enrolledUserId: enrolledUser.id,
       data: files,
     },
