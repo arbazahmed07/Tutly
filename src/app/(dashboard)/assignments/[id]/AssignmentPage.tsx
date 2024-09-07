@@ -47,6 +47,8 @@ export default function AssignmentPage({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [feedback, setFeedback] = useState<string>("");
 
+  console.log("assignments", assignments);
+
   const messages = [
     "Hi, how are you?",
     "Complete your assignments on time !!",
@@ -250,7 +252,10 @@ export default function AssignmentPage({
         </div>
 
         {currentUser?.role === "STUDENT" ? (
-          <StudentAssignmentSubmission assignment={assignment} />
+          <StudentAssignmentSubmission
+            courseId={assignment.courseId}
+            assignment={assignment}
+          />
         ) : (
           <>
             <div className="flex justify-between">
@@ -407,7 +412,9 @@ export default function AssignmentPage({
                             </h1>
                           </td>
                           <td className="px-6 text-sm py-4 whitespace-nowrap">
-                            {day(submission.submissionDate).format("DD MMM YYYY, hh:mm:ss A")}
+                            {day(submission.submissionDate).format(
+                              "DD MMM YYYY, hh:mm:ss A"
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {editingIndex === index ? (
@@ -601,38 +608,41 @@ export default function AssignmentPage({
   );
 }
 
-const StudentAssignmentSubmission = async ({
+const StudentAssignmentSubmission = ({
   assignment,
+  courseId,
 }: {
   assignment: any;
+  courseId: string;
 }) => {
   const [externalLink, setExternalLink] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async () => {
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const maxSubmissions = assignment.maxSubmissions;
       if (maxSubmissions <= assignment.submissions.length) {
-        toast.error("Assignment has reached maximum number of submissions");
+        toast.error("Assignment has reached the maximum number of submissions");
         return;
       }
-      toast.loading("Submitting assignment");
 
-      const res = await axios.post("/api/submissions/", {
+      toast.loading("Submitting assignment...");
+      const res = await axios.post("/api/assignment/submitExternal", {
         assignmentId: assignment.id,
-        link: externalLink,
+        externalLink: externalLink,
+        maxSubmissions: maxSubmissions,
+        courseId: courseId,
       });
 
-      router.refresh();
       toast.dismiss();
       toast.success("Assignment submitted successfully");
+      router.refresh();
     } catch (e) {
       toast.dismiss();
       toast.error("Error submitting assignment");
     } finally {
       setExternalLink("");
-      router.refresh();
     }
   };
 
@@ -648,61 +658,54 @@ const StudentAssignmentSubmission = async ({
             href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`}
             target="_blank"
           >
-            {assignment?.submissions.length === 0 ? (
-              <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
-                Submit through Playground
-              </button>
-            ) : (
-              <button className="bg-primary-600 inline p-2 text-sm rounded font-semibold text-white">
-                Submit another response
-              </button>
-            )}
+            <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
+              {assignment?.submissions.length === 0
+                ? "Submit through Playground"
+                : "Submit another response"}
+            </button>
           </Link>
         ) : (
-          <div>
-            {assignment?.submissions.length === 0 && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
-                    Submit through External Link
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Add External Link</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label
-                        htmlFor="externalLink"
-                        className="text-right text-lg"
-                      >
-                        Link
-                      </Label>
-                      <Input
-                        id="externalLink"
-                        value={externalLink}
-                        onChange={(e) => setExternalLink(e.target.value)}
-                        placeholder="https://replit.com"
-                        className="col-span-3"
-                      />
-                    </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
+                {assignment?.submissions.length === 0
+                  ? "Submit External Link"
+                  : "Submit another response"}
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add External Link</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label
+                      htmlFor="externalLink"
+                      className="text-right text-lg"
+                    >
+                      Link
+                    </Label>
+                    <Input
+                      id="externalLink"
+                      value={externalLink}
+                      onChange={(e) => setExternalLink(e.target.value)}
+                      placeholder="https://replit.com"
+                      className="col-span-3"
+                    />
                   </div>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button
-                        type="submit"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
-                        onClick={handleSubmit}
-                      >
-                        Send
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+                  >
+                    Send
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
       <h1>
@@ -715,7 +718,9 @@ const StudentAssignmentSubmission = async ({
               <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                 sl.no
               </th>
-              <th className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}>
+              <th
+                className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
+              >
                 View Submission
               </th>
               <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
@@ -753,7 +758,12 @@ const StudentAssignmentSubmission = async ({
                   <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                   <td className={`px-6 py-4 whitespace-nowrap`}>
                     <Link
-                      href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
+                      href={
+                        assignment.submissionMode === "HTML_CSS_JS"
+                          ? `/playgrounds/html-css-js?submissionId=${submission.id}`
+                          : submission.submissionLink
+                      }
+                      target="_blank"
                       className="text-blue-400 font-semibold break-words"
                     >
                       view
@@ -767,7 +777,6 @@ const StudentAssignmentSubmission = async ({
                     {submission.overallFeedback || "NA"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {/* {totalScore || "NA"} */}
                     {totalScore ? "Submitted" : "NA"}
                   </td>
                 </tr>

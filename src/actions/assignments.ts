@@ -363,6 +363,7 @@ export const getAssignmentDetailsByUserId = async (
       },
     },
   });
+
   return assignment;
 };
 

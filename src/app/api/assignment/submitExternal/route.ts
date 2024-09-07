@@ -1,41 +1,39 @@
-
 import getCurrentUser from "@/actions/getCurrentUser";
 import { createSubmission } from "@/actions/submission";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(
-  request: NextRequest,
-) {
-  const {
-    assignmentId,
-    externalLink,
-  } = await request.json();
+export async function POST(request: NextRequest) {
+  const { assignmentId, externalLink, maxSubmissions, courseId } =
+    await request.json();
+
 
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
       return NextResponse.json({ error: "User not found" }, { status: 400 });
     }
-    if(currentUser.role !== "STUDENT") {
+    if (currentUser.role !== "STUDENT") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const prevSubmissions = await db.submission.findMany({
+      where: {
+        attachmentId: assignmentId,
+        enrolledUser: {
+          username: currentUser.username,
+        },
+      },
+    });
+
+    if (prevSubmissions.length >= maxSubmissions) {
+      return { message: "Maximum submission limit reached" };
     }
 
     const enrolledUser = await db.enrolledUsers.findFirst({
       where: {
-        course : {
-          attachments : {
-            some : {
-              id : assignmentId
-            }
-          }
-          ,
-          enrolledUsers : {
-            some : {
-              username : currentUser.username
-            }
-          }
-        }
+        courseId: courseId,
+        username: currentUser.username,
       },
     });
 
@@ -46,7 +44,6 @@ export async function POST(
       );
     }
 
-    
 
     const res = await db.submission.create({
       data: {
@@ -55,8 +52,9 @@ export async function POST(
         submissionLink: externalLink,
       },
     });
-    
-    return NextResponse.json({ success: "Assignment submitted successfully"});
+
+
+    return NextResponse.json({ success: "Assignment submitted successfully" });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });
   }
