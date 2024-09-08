@@ -1,5 +1,4 @@
 import getCurrentUser from "@/actions/getCurrentUser";
-import { createSubmission } from "@/actions/submission";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -27,7 +26,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (prevSubmissions.length >= maxSubmissions) {
-      return { message: "Maximum submission limit reached" };
+      return NextResponse.json({ message: "Maximum submission limit reached" });
     }
 
     const enrolledUser = await db.enrolledUsers.findFirst({

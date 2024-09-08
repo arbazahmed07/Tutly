@@ -12,6 +12,9 @@ export async function POST(request: NextRequest) {
     if(currentUser.role !== "INSTRUCTOR") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    
+    
     const attachment = await createAttachment(data);
     return NextResponse.json(attachment);
   } catch (e :any) {
