@@ -8,6 +8,7 @@ const attachmentSchema = z.object({
   }),
   link: z.string().optional(),
   attachmentType: z.enum(["ASSIGNMENT", "GITHUB", "ZOOM", "OTHERS"]),
+  submissionMode: z.enum(["HTML_CSS_JS", "REACT", "EXTERNAL_LINK"]),
   classId: z.string().min(1, {
     message: "Class is required",
   }),
@@ -31,16 +32,18 @@ export const createAttachment = async (data : z.infer<typeof attachmentSchema>) 
     throw new Error("You must be an instructor to upload an attachment");
   }
 
+
   const attachment = await db.attachment.create({
     data: {
       title: data.title,
       classId: data.classId,
       courseId: data.courseId,
       link: data.link,
-      attachmentType: data.attachmentType ,
+      attachmentType: data.attachmentType,
+      submissionMode: data.submissionMode,
       details: data.details,
       dueDate: data.dueDate,
-      maxSubmissions:data.maxSubmissions,
+      maxSubmissions: data.maxSubmissions,
     },
   });
 
@@ -69,7 +72,7 @@ export const getAttachmentByID = async (id: string) => {
       id,
     },
   });
-  
+
   return attachment;
 }
 
