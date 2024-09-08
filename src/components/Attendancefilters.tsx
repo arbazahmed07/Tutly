@@ -5,6 +5,7 @@ import _ from "lodash";
 import toast from "react-hot-toast";
 import axios from "axios";
 import AttendanceHeader from "./AttendanceHeader";
+import OverallAttendanceTable from "./AttendanceTable";
 
 interface Student {
   Name: string;
@@ -17,7 +18,7 @@ interface Student {
   InWaitingRoom: string;
 }
 
-const AttendanceClient = ({ courses, role }: any) => {
+const AttendanceClient = ({ courses, role, attendance }: any) => {
   const [fileData, setFileData] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [currentCourse, setCurrentCourse] = useState<any>(null);
@@ -201,7 +202,6 @@ const AttendanceClient = ({ courses, role }: any) => {
       setLoading(true);
       const res = await axios.get("/api/attendance/getTotalAttendance");
 
-      
       setStudentsAttendance(res.data);
     } catch (e) {
       console.log(e);
@@ -276,6 +276,7 @@ const AttendanceClient = ({ courses, role }: any) => {
           pastpresentStudents.length - present,
         ]}
       />
+
       {/* Table */}
       {fileData && selectedFile && pastpresentStudents.length == 0 && (
         <AttendanceTable
@@ -303,6 +304,10 @@ const AttendanceClient = ({ courses, role }: any) => {
           setUsername={setUsername}
           handleEditUsername={handleEditUsername}
         />
+      )}
+
+      {!currentClass && (
+        <OverallAttendanceTable studentsAttendance={attendance} />
       )}
 
       {selectedStudent && (
@@ -367,11 +372,11 @@ const AttendanceTable = ({
           <tr className="border-b bg-blue-600 ">
             <th>S.No</th>
             <th className="py-2 pl-10 text-start border-x">Name</th>
-            <th className="border-x" >Username</th>
-            <th className="border-x" >Duration</th>
-            <th className="border-x" >Date</th>
-            <th className="border-x" >Times Joined</th>
-            <th className="border-x" >View</th>
+            <th className="border-x">Username</th>
+            <th className="border-x">Duration</th>
+            <th className="border-x">Date</th>
+            <th className="border-x">Times Joined</th>
+            <th className="border-x">View</th>
           </tr>
         </thead>
         <tbody>
@@ -399,7 +404,9 @@ const AttendanceTable = ({
                     {student.Duration}
                   </p>
                 </td>
-                <td className="border-x">{student.Joins[0].JoinTime.split(" ")[0]}</td>
+                <td className="border-x">
+                  {student.Joins[0].JoinTime.split(" ")[0]}
+                </td>
                 <td className="border-x">{student.Joins.length}</td>
                 <td
                   className="cursor-pointer border-x"
