@@ -12,6 +12,7 @@ import { HiOutlineUserGroup } from "react-icons/hi2";
 import { BsPersonRaisedHand } from "react-icons/bs";
 import { MdOutlineQueryStats } from "react-icons/md";
 import { Role } from "@prisma/client";
+import { TbReportAnalytics } from "react-icons/tb";
 
 export default function HomeLayout({
   children,
@@ -24,99 +25,168 @@ export default function HomeLayout({
   const pathname = usePathname();
   const isCoursePage = pathname.startsWith("/courses/");
 
-  interface RoleItem {
+  interface sidebarItem {
     name: string;
+    icon: any;
+    path: string;
+    isActive: boolean;
   }
 
-  const roleMap: Record<Role, RoleItem> = {
-    MENTOR: { name: "mentor" },
-    INSTRUCTOR: { name: "instructor" },
-    STUDENT: { name: "student" },
+  const InstructorItems = [
+    {
+      name: "Dashboard",
+      icon: <RxDashboard />,
+      path: "/",
+      isActive: pathname === "/",
+    },
+    {
+      name: "Courses",
+      icon: <FaChalkboardTeacher />,
+      path: "/courses",
+      isActive: pathname.startsWith("/courses"),
+    },
+    {
+      name: "Assignments",
+      icon: <MdOutlineAssignment />,
+      path: "/instructor/assignments",
+      isActive: pathname.includes("/assignments"),
+    },
+    {
+      name: "Leaderboard",
+      icon: <MdOutlineLeaderboard />,
+      path: "/instructor/leaderboard",
+      isActive: pathname === "/instructor/leaderboard",
+    },
+    {
+      name: "Community",
+      icon: <HiOutlineUserGroup />,
+      path: "/community",
+      isActive: pathname === "/community",
+    },
+    {
+      name: "Attendance",
+      icon: <BsPersonRaisedHand />,
+      path: "/instructor/attendance",
+      isActive: pathname.includes("/attendance"),
+    },
+    {
+      name: "Statistics",
+      icon: <MdOutlineQueryStats />,
+      path: "/instructor/statistics",
+      isActive: pathname.includes("/statistics"),
+    },
+    {
+      name: "Report",
+      icon: <TbReportAnalytics />,
+      path: "/instructor/report",
+      isActive: pathname === "/instructor/report",
+    }
+  ];
+
+  const MentorItems = [
+    {
+      name: "Dashboard",
+      icon: <RxDashboard />,
+      path: "/",
+      isActive: pathname === "/",
+    },
+    {
+      name: "Courses",
+      icon: <FaChalkboardTeacher />,
+      path: "/courses",
+      isActive: pathname.startsWith("/courses"),
+    },
+    {
+      name: "Assignments",
+      icon: <MdOutlineAssignment />,
+      path: "/mentor/assignments",
+      isActive: pathname.includes("/assignments"),
+    },
+    {
+      name: "Leaderboard",
+      icon: <MdOutlineLeaderboard />,
+      path: "/mentor/leaderboard",
+      isActive: pathname === "/mentor/leaderboard",
+    },
+    {
+      name: "Community",
+      icon: <HiOutlineUserGroup />,
+      path: "/community",
+      isActive: pathname === "/community",
+    },
+    {
+      name: "Attendance",
+      icon: <BsPersonRaisedHand />,
+      path: "/mentor/attendance",
+      isActive: pathname === "/mentor/attendance",
+    },
+    {
+      name: "Statistics",
+      icon: <MdOutlineQueryStats />,
+      path: "/mentor/statistics",
+      isActive: pathname.includes("/statistics"),
+    },
+    {
+      name: "Report",
+      icon: <TbReportAnalytics />,
+      path: "/mentor/report",
+      isActive: pathname === "/mentor/report",
+    }
+  ];
+
+  const StudentItems = [
+    {
+      name: "Dashboard",
+      icon: <RxDashboard />,
+      path: "/",
+      isActive: pathname === "/",
+    },
+    {
+      name: "Courses",
+      icon: <FaChalkboardTeacher />,
+      path: "/courses",
+      isActive: pathname.startsWith("/courses"),
+    },
+    {
+      name: "Assignments",
+      icon: <MdOutlineAssignment />,
+      path: "/assignments",
+      isActive: pathname.startsWith("/assignments"),
+    },
+    {
+      name: "Leaderboard",
+      icon: <MdOutlineLeaderboard />,
+      path: "/leaderboard",
+      isActive: pathname.startsWith("/leaderboard"),
+    },
+    {
+      name: "Community",
+      icon: <HiOutlineUserGroup />,
+      path: "/community",
+      isActive: pathname === "/community",
+    },
+    {
+      name: "Playgrounds",
+      icon: <MdAirplay />,
+      path: "/playgrounds",
+      isActive: pathname.startsWith("/playgrounds"),
+    },
+    {
+      name: "Statistics",
+      icon: <MdOutlineQueryStats />,
+      path: "/statistics",
+      isActive: pathname === "/statistics",
+    },
+  ];
+
+  const roleMap: Record<Role, sidebarItem[]> = {
+    MENTOR: MentorItems,
+    INSTRUCTOR: InstructorItems,
+    STUDENT: StudentItems,
   };
 
-  const access =
-    currentUser?.role === "MENTOR"
-      ? 1
-      : currentUser?.role === "INSTRUCTOR" && 2;
+  const items = roleMap[currentUser?.role as Role] || [];
 
-  let items;
-  if (access) {
-    items = [
-      {
-        name: "Dashboard",
-        icon: <RxDashboard />,
-        path: "/",
-      },
-      {
-        name: "Courses",
-        icon: <FaChalkboardTeacher />,
-        path: "/courses",
-      },
-      {
-        name: "Assignments",
-        icon: <MdOutlineAssignment />,
-        path: access == 1 ? "/mentor/assignments" : "/instructor/assignments",
-      },
-      {
-        name: "Leaderboard",
-        icon: <MdOutlineLeaderboard />,
-        path: access == 1 ? "/mentor/leaderboard" : "/instructor/leaderboard",
-      },
-      {
-        name: "Community",
-        icon: <HiOutlineUserGroup />,
-        path: "/community",
-      },
-      {
-        name: "Attendance",
-        icon: <BsPersonRaisedHand />,
-        path: access == 1 ? "/mentor/attendance" : "/instructor/attendance",
-      },
-      {
-        name: "Statistics",
-        icon: <MdOutlineQueryStats />,
-        path: access == 1 ? "/mentor/statistics" : "/instructor/statistics",
-      },
-    ];
-  } else {
-    items = [
-      {
-        name: "Dashboard",
-        icon: <RxDashboard />,
-        path: "/",
-      },
-      {
-        name: "Courses",
-        icon: <FaChalkboardTeacher />,
-        path: "/courses",
-      },
-      {
-        name: "Assignments",
-        icon: <MdOutlineAssignment />,
-        path: "/assignments",
-      },
-      {
-        name: "Leaderboard",
-        icon: <MdOutlineLeaderboard />,
-        path: "/leaderboard",
-      },
-      {
-        name: "Community",
-        icon: <HiOutlineUserGroup />,
-        path: "/community",
-      },
-      {
-        name: "Playgrounds",
-        icon: <MdAirplay />,
-        path: "/playgrounds",
-      },
-      {
-        name: "Statistics",
-        icon: <MdOutlineQueryStats />,
-        path: "/statistics"
-      },
-    ];
-  }
   return (
     <div className="w-full">
       <Navbar currentUser={currentUser} menu={menu} setMenu={setMenu} />

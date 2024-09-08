@@ -75,12 +75,18 @@ export const getEnrolledCourses = async () => {
     },
   });
 
-  const publishedCourses = courses.filter((course) => course.isPublished);
-  const instructorCourses = courses.filter(
-    (course) => course.createdById === currentUser.id
-  );
+  courses.forEach((course) => {
+    course.classes.sort((a, b) => {
+      return Number(a.createdAt) - Number(b.createdAt);
+    });
+  });
 
-  if (currentUser.role === "INSTRUCTOR") return instructorCourses;
+  const publishedCourses = courses.filter((course) => course.isPublished);
+  // const createdCourses = courses.filter(
+  //   (course) => course.createdById === currentUser.id
+  // );
+
+  if (currentUser.role === "INSTRUCTOR") return courses;
   return publishedCourses;
 };
 
@@ -158,8 +164,6 @@ export const getEnrolledCoursesByUsername = async (username: string) => {
   return courses;
 };
 
-
-
 export const getMentorStudents = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
@@ -177,9 +181,9 @@ export const getMentorStudents = async () => {
       course: true,
       enrolledUsers: true,
     },
-    orderBy:{
-      username: "asc"
-    }
+    orderBy: {
+      username: "asc",
+    },
   });
 
   return students;
@@ -200,9 +204,9 @@ export const getMentorStudentsById = async (id: string) => {
       course: true,
       enrolledUsers: true,
     },
-    orderBy:{
-      username: "asc"
-    }
+    orderBy: {
+      username: "asc",
+    },
   });
 
   return students;
@@ -212,12 +216,16 @@ export const getEnrolledStudents = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
+  const courses = (await getEnrolledCourses()) || [];
+
   const students = await db.user.findMany({
     where: {
       enrolledUsers: {
         some: {
           course: {
-            createdById: currentUser.id,
+            id: {
+              in: courses.map((course) => course.id),
+            },
           },
         },
       },
@@ -234,6 +242,7 @@ export const getEnrolledStudents = async () => {
 export const getEnrolledMentees = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
+  const courses = (await getEnrolledCourses()) || [];
 
   const students = await db.user.findMany({
     where: {
@@ -241,7 +250,9 @@ export const getEnrolledMentees = async () => {
       enrolledUsers: {
         some: {
           course: {
-            createdById: currentUser.id,
+            id:{
+              in: courses.map((course) => course.id),
+            }
           },
         },
       },
@@ -265,9 +276,8 @@ export const createCourse = async ({
   image: string;
 }) => {
   const currentUser = await getCurrentUser();
-  if(currentUser?.role !== "INSTRUCTOR") return null;
-  if(!title.trim() || title==="" )
-  {
+  if (currentUser?.role !== "INSTRUCTOR") return null;
+  if (!title.trim() || title === "") {
     return null;
   }
 
@@ -276,12 +286,12 @@ export const createCourse = async ({
       title: title,
       createdById: currentUser.id,
       isPublished,
-      image : image ,
-      enrolledUsers:{
-        create:{
-          username:currentUser.username,
-        }
-      }
+      image: image,
+      enrolledUsers: {
+        create: {
+          username: currentUser.username,
+        },
+      },
     },
   });
   return newCourse;
@@ -341,7 +351,6 @@ export const getMentorCourses = async () => {
     },
   });
 
-  
   courses.forEach((course) => {
     course.classes.sort((a, b) => {
       return Number(a.createdAt) - Number(b.createdAt);

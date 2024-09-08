@@ -1,20 +1,18 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { FcStatistics } from "react-icons/fc";
 
 interface Props {
   items: {
     name: string;
     icon: any;
     path: string;
+    isActive: boolean;
   }[];
   menu: boolean;
   setMenu: (menu: boolean) => void;
 }
 
 export default function Sidebar({ items, menu, setMenu }: Props) {
-  const pathname = usePathname();
   return (
     <div
       className={`${
@@ -28,15 +26,7 @@ export default function Sidebar({ items, menu, setMenu }: Props) {
               href={item.path}
               onClick={() =>  setMenu(false)}
               key={item.path}
-              className={`${
-                pathname !== "/"
-                  ? pathname.startsWith(item.path)
-                  : pathname === item.path ||
-                    (pathname.includes("/assignments") &&
-                      item.name == "Assignments")
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-blue-500 hover:text-white"
-              } m-auto rounded md:hidden px-4 py-3 my-2 flex items-center gap-4 cursor-pointer`}
+              className={`${item.isActive ? "bg-blue-600 text-white" : "hover:bg-blue-500 hover:text-white"} m-auto rounded md:hidden px-4 py-3 my-2 flex items-center gap-4 cursor-pointer`}
             >
               <div className={`text-2xl px-2`}>{item.icon}</div>
               <h1 className={`${!menu && "hidden"}`}>{item.name}</h1>
@@ -44,13 +34,7 @@ export default function Sidebar({ items, menu, setMenu }: Props) {
             <Link
               href={item.path}
               key={item.path}
-              className={`${
-                pathname === item.path ||
-                (pathname.includes("/assignments") &&
-                  item.name == "Assignments")
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-blue-500 hover:text-white"
-              } m-auto rounded hidden md:flex px-3 py-3 my-2 items-center gap-4 cursor-pointer`}
+              className={`${item.isActive ? "bg-blue-600 text-white" : "hover:bg-blue-500 hover:text-white"} m-auto rounded hidden md:flex px-3 py-3 my-2 items-center gap-4 cursor-pointer`}
             >
               <div className={`text-2xl px-2`}>{item.icon}</div>
               <h1 className={`${!menu && "hidden"}`}>{item.name}</h1>

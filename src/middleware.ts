@@ -17,8 +17,9 @@ export default auth((req) => {
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isInstructorRoute = nextUrl.pathname.startsWith("/instructor");
   const isMentorRoute = nextUrl.pathname.startsWith("/mentor");
+  const isEmailRoute = nextUrl.pathname.endsWith("/api/send")
 
-  if (isApiAuthRoute) {
+  if (isApiAuthRoute || isEmailRoute) {
     return;
   }
 

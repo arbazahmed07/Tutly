@@ -4,12 +4,26 @@ import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { FaSearch } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
 import { RiWhatsappLine } from "react-icons/ri";
+
+import { FaExternalLinkSquareAlt } from "react-icons/fa";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { DialogClose } from "@radix-ui/react-dialog";
+import day from "@/lib/dayjs";
 
 export default function AssignmentPage({
   params,
@@ -32,6 +46,8 @@ export default function AssignmentPage({
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [feedback, setFeedback] = useState<string>("");
+
+  console.log("assignments", assignments);
 
   const messages = [
     "Hi, how are you?",
@@ -123,22 +139,29 @@ export default function AssignmentPage({
     try {
       toast.loading("Updating Scores...");
 
+      let marks = [];
+      if (editedScores.responsiveness > 0) {
+        marks.push({
+          category: "RESPOSIVENESS",
+          score: editedScores.responsiveness,
+        });
+      }
+      if (editedScores.styling > 0) {
+        marks.push({
+          category: "STYLING",
+          score: editedScores.styling,
+        });
+      }
+      if (editedScores.other > 0) {
+        marks.push({
+          category: "OTHER",
+          score: editedScores.other,
+        });
+      }
+
       const res = await axios.post("/api/points", {
         submissionId: filteredAssignments[index].id,
-        marks: [
-          {
-            category: "RESPOSIVENESS",
-            score: editedScores.responsiveness,
-          },
-          {
-            category: "STYLING",
-            score: editedScores.styling,
-          },
-          {
-            category: "OTHER",
-            score: editedScores.other,
-          },
-        ],
+        marks: marks,
       });
       toast.dismiss();
       toast.success("Scores saved successfully");
@@ -148,6 +171,7 @@ export default function AssignmentPage({
       toast.error("Failed to save scores");
     } finally {
       setEditingIndex(-1);
+      setFeedback("");
       router.refresh();
     }
   };
@@ -166,6 +190,7 @@ export default function AssignmentPage({
     } catch (e: any) {
       toast.dismiss();
       toast.error("Failed to delete submission");
+      setFeedback("");
     }
   };
 
@@ -184,10 +209,11 @@ export default function AssignmentPage({
         <div className="flex justify-center items-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`p-1 px-2 rounded text-white ${new Date(assignment?.dueDate) > new Date()
+              className={`p-1 px-2 rounded text-white ${
+                new Date(assignment?.dueDate) > new Date()
                   ? "bg-primary-600"
                   : "bg-secondary-500"
-                }`}
+              }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -225,127 +251,12 @@ export default function AssignmentPage({
           </a>
         </div>
 
-        <div
-          hidden={
-            currentUser?.role === "MENTOR" || currentUser?.role === "INSTRUCTOR"
-          }
-        >
-          {assignment?.maxSubmissions <= assignment.submissions.length ? (
-            <div className="text-white font-semibold text-lg text-center my-5">
-              No more responses are accepted!
-            </div>
-          ) : (
-            <Link href={`/playgrounds/html-css-js?assignmentId=${params.id}`}>
-              {assignment?.submissions.length === 0 ? (
-                <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
-                  Submit through Playground
-                </button>
-              ) : (
-                <button className="bg-primary-600 inline p-2 text-sm rounded font-semibold text-white">
-                  Submit another response
-                </button>
-              )}
-            </Link>
-          )}
-        </div>
         {currentUser?.role === "STUDENT" ? (
-          <>
-            <h1>
-              <span className="block mt-5 dark:text-white">
-                Submissions : 👇
-              </span>
-            </h1>
-            <div className="overflow-x-auto">
-              <table className="text-center w-full">
-                <thead className="bg-secondary-300 text-secondary-700">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      sl.no
-                    </th>
-                    <th
-                      scope="col"
-                      className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
-                    >
-                      View Submission
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      Submission Date
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      Feedback
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                    >
-                      Total
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {assignment?.submissions.map(
-                    (submission: any, index: any) => {
-                      const rValue = submission.points.find(
-                        (point: any) => point.category === "RESPOSIVENESS"
-                      );
-                      const sValue = submission.points.find(
-                        (point: any) => point.category === "STYLING"
-                      );
-                      const oValue = submission.points.find(
-                        (point: any) => point.category === "OTHER"
-                      );
-
-                      const totalScore = [rValue, sValue, oValue].reduce(
-                        (acc, currentValue) => {
-                          return acc + (currentValue ? currentValue.score : 0);
-                        },
-                        0
-                      );
-
-                      return (
-                        <tr key={index}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {index + 1}
-                          </td>
-                          <td className={`px-6 py-4 whitespace-nowrap`}>
-                            <Link
-                              href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
-                              className="text-blue-400 font-semibold break-words"
-                            >
-                              view
-                            </Link>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {submission.submissionDate
-                              .toISOString()
-                              .split("T")[0] || "NA"}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {submission.overallFeedback || "NA"}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {/* {totalScore || "NA"} */}
-                            {totalScore ? "Submitted" : "NA"}
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </>
-        ) : currentUser?.role === "MENTOR" ||
-          currentUser.role === "INSTRUCTOR" ? (
+          <StudentAssignmentSubmission
+            courseId={assignment.courseId}
+            assignment={assignment}
+          />
+        ) : (
           <>
             <div className="flex justify-between">
               <div className="block mt-5 dark:text-white">Submissions : 👇</div>
@@ -391,19 +302,13 @@ export default function AssignmentPage({
                 <table className="text-center w-full">
                   <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
                     <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         sl.no
                       </th>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider sticky left-0 text-secondary-700 bg-secondary-300 ">
                         username
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         mentor
                       </th>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
@@ -425,8 +330,15 @@ export default function AssignmentPage({
                             <td className={`px-6 py-4 whitespace-nowrap`}>
                               <h1>{user.mentorUsername}</h1>
                             </td>
-                            <td className={`flex justify-center px-6 py-4 whitespace-nowrap`}>
-                              <RiWhatsappLine className="h-6 w-6" onClick={() => handleWhatsAppClick("9160804126")} />
+                            <td
+                              className={`flex justify-center px-6 py-4 whitespace-nowrap`}
+                            >
+                              <RiWhatsappLine
+                                className="h-6 w-6"
+                                onClick={() =>
+                                  handleWhatsAppClick("9160804126")
+                                }
+                              />
                             </td>
                           </tr>
                         );
@@ -438,56 +350,32 @@ export default function AssignmentPage({
                 <table className="text-center w-full">
                   <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
                     <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         sl.no
                       </th>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider sticky left-0 text-secondary-700 bg-secondary-300 ">
                         username
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Date
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Responsive(10)
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Styling(10)
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Others(10)
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Total
                       </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                      >
+                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         Feedback
                       </th>
                       {currentUser.role !== "STUDENT" && (
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-sm font-medium uppercase tracking-wider"
-                        >
+                        <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                           Actions
                         </th>
                       )}
@@ -519,12 +407,14 @@ export default function AssignmentPage({
                           </td>
                           <td className="sticky left-0 bg-white divide-gray-200">
                             <h1>{submission.enrolledUser.username}</h1>
-                            <h1 className="text-xs">{submission.enrolledUser.mentorUsername}</h1>
+                            <h1 className="text-xs">
+                              {submission.enrolledUser.mentorUsername}
+                            </h1>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {submission.submissionDate
-                              .toISOString()
-                              .split("T")[0] || "NA"}
+                          <td className="px-6 text-sm py-4 whitespace-nowrap">
+                            {day(submission.submissionDate).format(
+                              "DD MMM YYYY, hh:mm:ss A"
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {editingIndex === index ? (
@@ -616,7 +506,8 @@ export default function AssignmentPage({
                             {editingIndex === index ? (
                               <textarea
                                 title="null"
-                                value={submission.feedback}
+                                value={feedback}
+                                defaultValue={submission.overallFeedback}
                                 onChange={(e) => {
                                   setFeedback(e.target.value);
                                 }}
@@ -681,10 +572,15 @@ export default function AssignmentPage({
               {modal && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                   <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
-                    <h2 className="text-lg font-semibold mb-4">Select a message to send</h2>
+                    <h2 className="text-lg font-semibold mb-4">
+                      Select a message to send
+                    </h2>
                     <div className="flex flex-col gap-2">
                       {messages.map((msg, index) => (
-                        <div key={index} className="flex gap-4 justify-between border-b border-slate-500 mb-2">
+                        <div
+                          key={index}
+                          className="flex gap-4 justify-between border-b border-slate-500 mb-2"
+                        >
                           <p className="text-sm">{msg}</p>
                           <button
                             onClick={() => handleSend(msg)}
@@ -704,22 +600,191 @@ export default function AssignmentPage({
                   </div>
                 </div>
               )}
-
             </div>
           </>
-        ) : (
-          <div className="p-4 mt-6 font-semibold text-center">
-            <Image
-              src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
-              height={300}
-              className="m-auto"
-              width={300}
-              alt=""
-            />
-            <h1 className="text-white">No submissions yet!</h1>
-          </div>
         )}
       </div>
     </div>
   );
 }
+
+const StudentAssignmentSubmission = ({
+  assignment,
+  courseId,
+}: {
+  assignment: any;
+  courseId: string;
+}) => {
+  const [externalLink, setExternalLink] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const maxSubmissions = assignment.maxSubmissions;
+      if (maxSubmissions <= assignment.submissions.length) {
+        toast.error("Assignment has reached the maximum number of submissions");
+        return;
+      }
+
+      toast.loading("Submitting assignment...");
+      const res = await axios.post("/api/assignment/submitExternal", {
+        assignmentId: assignment.id,
+        externalLink: externalLink,
+        maxSubmissions: maxSubmissions,
+        courseId: courseId,
+      });
+
+      toast.dismiss();
+      toast.success("Assignment submitted successfully");
+      router.refresh();
+    } catch (e) {
+      toast.dismiss();
+      toast.error("Error submitting assignment");
+    } finally {
+      setExternalLink("");
+    }
+  };
+
+  return (
+    <>
+      <div>
+        {assignment?.maxSubmissions <= assignment.submissions.length ? (
+          <div className="text-white font-semibold text-lg text-center my-5">
+            No more responses are accepted!
+          </div>
+        ) : assignment.submissionMode === "HTML_CSS_JS" ? (
+          <Link
+            href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`}
+            target="_blank"
+          >
+            <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
+              {assignment?.submissions.length === 0
+                ? "Submit through Playground"
+                : "Submit another response"}
+            </button>
+          </Link>
+        ) : (
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
+                {assignment?.submissions.length === 0
+                  ? "Submit External Link"
+                  : "Submit another response"}
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add External Link</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label
+                      htmlFor="externalLink"
+                      className="text-right text-lg"
+                    >
+                      Link
+                    </Label>
+                    <Input
+                      id="externalLink"
+                      value={externalLink}
+                      onChange={(e) => setExternalLink(e.target.value)}
+                      placeholder="https://replit.com"
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+                  >
+                    Send
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+      <h1>
+        <span className="block mt-5 dark:text-white">Submissions : 👇</span>
+      </h1>
+      <div className="overflow-x-auto">
+        <table className="text-center w-full">
+          <thead className="bg-secondary-300 text-secondary-700">
+            <tr>
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
+                sl.no
+              </th>
+              <th
+                className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
+              >
+                View Submission
+              </th>
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
+                Submission Date
+              </th>
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
+                Feedback
+              </th>
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
+                Total
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {assignment?.submissions.map((submission: any, index: any) => {
+              const rValue = submission.points.find(
+                (point: any) => point.category === "RESPOSIVENESS"
+              );
+              const sValue = submission.points.find(
+                (point: any) => point.category === "STYLING"
+              );
+              const oValue = submission.points.find(
+                (point: any) => point.category === "OTHER"
+              );
+
+              const totalScore = [rValue, sValue, oValue].reduce(
+                (acc, currentValue) => {
+                  return acc + (currentValue ? currentValue.score : 0);
+                },
+                0
+              );
+
+              return (
+                <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                  <td className={`px-6 py-4 whitespace-nowrap`}>
+                    <Link
+                      href={
+                        assignment.submissionMode === "HTML_CSS_JS"
+                          ? `/playgrounds/html-css-js?submissionId=${submission.id}`
+                          : submission.submissionLink
+                      }
+                      target="_blank"
+                      className="text-blue-400 font-semibold break-words"
+                    >
+                      view
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {submission.submissionDate.toISOString().split("T")[0] ||
+                      "NA"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {submission.overallFeedback || "NA"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {totalScore ? "Submitted" : "NA"}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+};

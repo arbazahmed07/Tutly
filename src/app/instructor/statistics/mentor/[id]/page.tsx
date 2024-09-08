@@ -114,7 +114,7 @@ import { getMentorNameById } from "@/actions/mentors";
           {!mstudents || mstudents.length === 0 ? (
             <div>No Mentees are assigned!</div>
           ) : (
-            <StudentsInfoForMentor currentUser={currendUser} mstudents={mstudents} />
+            <StudentsInfoForMentor currentUser={currendUser} mstudents={mstudents} mentorUsername={params.id} />
           )}
         </div>
       </div>

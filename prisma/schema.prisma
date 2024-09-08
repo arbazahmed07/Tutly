@@ -206,6 +206,12 @@ enum attachmentType {
   OTHERS
 }
 
+enum submissionMode {
+  HTML_CSS_JS
+  REACT
+  EXTERNAL_LINK
+}
+
 model Attachment {
   id             String         @id @default(uuid())
   title          String         @default("Attachment")
@@ -218,11 +224,15 @@ model Attachment {
   class          Class?         @relation(fields: [classId], references: [id])
   courseId       String?
   course         Course?        @relation(fields: [courseId], references: [id])
+  submissionMode submissionMode @default(HTML_CSS_JS)
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   dueDate   DateTime?
+
 }
+
+
 
 model submission {
   id             String        @id @default(uuid())
