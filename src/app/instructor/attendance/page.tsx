@@ -9,7 +9,8 @@ async function Filters() {
   const attendance = await getAttendanceOfAllStudents();
   if (!currentUser) return null;
   return (
-    <div>
+    
+    <div> 
       <AttendanceClient
         attendance = {attendance}
         courses={courses}
