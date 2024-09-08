@@ -1,15 +1,30 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { MdOutlineSportsScore } from "react-icons/md";
-import { IoMdArrowRoundBack } from "react-icons/io";
 
-export default function SingleAssignmentBoard({ courses, assignments }: any) {
+export default function SingleAssignmentBoard({ courses, assignments }: {
+  courses: any;
+  assignments: {
+    id: string;
+    classes: {
+      id: string;
+      attachments: {
+        id: string;
+        title: string;
+        submissions: {
+          id: string;
+          points: string;
+        }[];
+        createdAt: string;
+      }[];
+      createdAt: string;
+    }[];
+  }[];
+}) {
+
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
-  const [filterOption, setFilterOption] = useState<string>("all");
-  const pathname = usePathname();
 
   useEffect(() => {
     setIsMounted(true);
@@ -18,6 +33,19 @@ export default function SingleAssignmentBoard({ courses, assignments }: any) {
   if (!isMounted) {
     return null;
   }
+
+  assignments.forEach((course: any) => {
+    course.classes.sort((a: any, b: any) => {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+
+    course.classes.forEach((cls: any) => {
+      cls.attachments.sort((a: any, b: any) => {
+        return a.title.localeCompare(b.title);
+      });
+    });
+  });
+
   // return <pre>{JSON.stringify(assignments, null, 2)}</pre>
   return (
     <div className="flex flex-col gap-4">
@@ -48,9 +76,12 @@ export default function SingleAssignmentBoard({ courses, assignments }: any) {
               <div className="flex items-center p-2 md:p-0 md:px-4 justify-around md:justify-between flex-wrap">
                 <div className="flex md:flex-row items-center justify-between w-full flex-wrap">
                   <div className="text-sm">
-                    <h2 className="flex-1 font-medium m-2">
+                    <h2 className="flex-1 font-medium mx-2 my-1">
                       {assignment.title}
                     </h2>
+                    <p className="text-xs text-gray-500 mx-2 mb-1">
+                     {assignment.class?.title}
+                    </p>
                   </div>
                   <div className="flex gap-3 md:gap-6 items-center text-xs font-medium text-white flex-wrap">
                     <div>

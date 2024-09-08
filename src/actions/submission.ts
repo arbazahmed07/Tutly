@@ -106,9 +106,7 @@ export const createSubmission = async (
 
   const submission = await db.submission.create({
     data: {
-      // id: submissionId,
       attachmentId: assignmentDetails.id,
-      // submissionLink: prUrl,
       enrolledUserId: enrolledUser.id,
       data: files,
     },
@@ -161,43 +159,76 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
   if (!user || user.role == "STUDENT") {
     return null;
   }
+
+  const assignment = await db.attachment.findUnique({
+    where: {
+      id: assignmentId,
+    },
+  });
+
   const submissions = await db.submission.findMany({
     where: {
       attachmentId: assignmentId,
     },
     include: {
       enrolledUser: {
-        include:{
-          user:true
-        }
+        include: {
+          user: true,
+        },
       },
       points: true,
+      assignment: true,
+    },
+    orderBy: {
+      enrolledUser: {
+        username: "asc",
+      },
     },
   });
 
-  const filteredSubmissions = submissions.map((submission) => {
-    if (user.role == "INSTRUCTOR") return submission;
-    if (
-      user.role == "MENTOR" &&
-      submission.enrolledUser.mentorUsername == user.username
-    ) {
-      return submission;
-    } else {
-      return null;
-    }
-  });
+  let filteredSubmissions: any = [];
 
-  filteredSubmissions.sort((a, b) => {
-    if (!a || !b) return 0;
+  if(user.role == "INSTRUCTOR"){
+    filteredSubmissions = submissions;
+  }
 
-    if (a.enrolledUser.username < b.enrolledUser.username) {
-      return -1;
-    }
-    if (a.enrolledUser.username > b.enrolledUser.username) {
-      return 1;
-    }
-    return 0;
-  });
+  if(user.role == "MENTOR"){
+    filteredSubmissions = submissions.filter((submission) => submission.enrolledUser.mentorUsername == user.username);
+  }
+
+  if (assignment?.maxSubmissions! > 1) {
+    const submissionCount = await db.submission.groupBy({
+      by: ["enrolledUserId"],
+      where: {
+        attachmentId: assignmentId,
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    filteredSubmissions.forEach((submission: any) => {
+      const submissionCountData = submissionCount.find(
+        (data) => data.enrolledUserId == submission?.enrolledUserId
+      );
+      if (submissionCountData) {
+        submission.submissionCount = submissionCountData._count.id;
+      }
+    });
+
+    filteredSubmissions.forEach((submission: any) => {
+      if(submission){
+        submission.submissionIndex = 1;
+      }
+      if (submission?.submissionCount! > 1) {
+        const submissionIndex =
+          submissions
+            .filter((sub) => sub.enrolledUserId == submission.enrolledUserId)
+            .findIndex((sub) => sub.id == submission.id) || 0;
+        submission.submissionIndex = submissionIndex + 1;
+      }
+    });
+  }
 
   return filteredSubmissions;
 };
@@ -224,4 +255,3 @@ export const getSubmissionById = async (submissionId: string) => {
 
   return submission;
 };
-

@@ -29,6 +29,9 @@ export default async function Statistics() {
         (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1])
       );
   loaderValue += "%";
+
+  if(!currentUser) return null;
+
   return (
     <div className="m-8 flex flex-col gap-8">
       <div className="flex gap-8">
@@ -107,7 +110,7 @@ export default async function Statistics() {
         {!mstudents || mstudents.length === 0 ? (
           <div>No Mentees are assigned!</div>
         ) : (
-          <StudentsInfoForMentor mstudents={mstudents} />
+          <StudentsInfoForMentor currentUser={currentUser} mstudents={mstudents} mentorUsername={currentUser.username} />
         )}
       </div>
     </div>

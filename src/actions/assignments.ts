@@ -1,12 +1,11 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 import {
-  getCreatedCourses,
+  getEnrolledCourses,
   getEnrolledCoursesById,
   getEnrolledCoursesByUsername,
   getMentorCourses,
 } from "./courses";
-import { orderBy } from "lodash";
 
 export const getAllAssignedAssignments = async () => {
   const currentUser = await getCurrentUser();
@@ -144,6 +143,7 @@ export const getAllAssignmentsForMentor = async () => {
               },
             },
           },
+          createdAt: true,
         },
       },
     },
@@ -151,13 +151,15 @@ export const getAllAssignmentsForMentor = async () => {
   return { courses, coursesWithAssignments } as any;
 };
 export const getAllAssignmentsForInstructor = async () => {
-  const courses = await getCreatedCourses();
+  const courses = await getEnrolledCourses() || [];
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
   const coursesWithAssignments = await db.course.findMany({
     where: {
-      createdById: currentUser.id,
+      id:{
+        in:courses.map(course=>course.id)
+      }
     },
     select: {
       id: true,
@@ -361,6 +363,7 @@ export const getAssignmentDetailsByUserId = async (
       },
     },
   });
+
   return assignment;
 };
 
@@ -763,3 +766,20 @@ export const getStudentEvaluatedAssigmentsForMentor = async (id: any) => {
     totalPoints: totalPoints,
   };
 };
+
+
+export const getAssignmentDetails = async (id: string) => {
+  const assignment = await db.attachment.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      class: {
+        include: {
+          course: true,
+        },
+      },
+    },
+  });
+  return assignment;
+}
