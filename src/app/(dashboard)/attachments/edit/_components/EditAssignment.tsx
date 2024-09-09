@@ -40,6 +40,9 @@ const EditAttachmentPage = ({ attachment }: any) => {
     submissionMode,
   } = attachment;
 
+  console.log(attachment);
+  
+
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,6 +82,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
       ...values,
       maxSubmissions: Number(values?.maxSubmissions),
     });
+
 
     if (response.status !== 200) {
       toast.error("An error occurred");
