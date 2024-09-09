@@ -30,10 +30,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
+// Updated form schema
 const formSchema = z.object({
   title: z.string().min(1, {
     message: "Title is required",
@@ -43,17 +43,19 @@ const formSchema = z.object({
     message: "Type is required",
   }),
   class: z.string().min(1, {
-    message: "class is required",
+    message: "Class is required",
   }),
   submissionMode: z.string().min(1, {
     message: "Submission mode is required",
   }),
   courseId: z.string().optional(),
   details: z.string().optional(),
-  dueDate: z.string().optional(),
+  dueDate: z.date().optional(),
   maxSubmissions: z
-    .number()
-    .transform((v) => Number(v) || 0)
+    .string()
+    .refine((value) => !isNaN(Number(value)), {
+      message: "Max Submissions must be a number",
+    })
     .optional(),
 });
 
@@ -72,6 +74,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
 
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
@@ -96,7 +99,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
       courseId: courseId || "",
       details: details || "",
       dueDate: dueDate || "",
-      maxSubmissions: maxSubmissions || 1,
+      maxSubmissions: maxSubmissions ? String(maxSubmissions) : "0",
     },
   });
 
@@ -105,10 +108,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
   const [deleteClicked, setDeleteClicked] = useState(false);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const dueDate =
-      values?.dueDate !== "" && values?.dueDate
-        ? new Date(values?.dueDate)
-        : undefined;
+    const dueDate = values?.dueDate;
 
     const response = await axios.put(`/api/attachments/edit/${attachment.id}`, {
       title: values.title,
@@ -117,7 +117,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
       attachmentType: values.attachmentType,
       details: values.details,
       dueDate: dueDate,
-      maxSubmissions: values?.maxSubmissions,
+      maxSubmissions: Number(values?.maxSubmissions), 
       courseId: courseId as string,
     });
 
@@ -125,7 +125,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
       toast.error("An error occurred");
       return;
     }
-    toast.success("attachment modified");
+    toast.success("Attachment modified");
     router.push(`/assignments/${attachment.id}`);
   };
 
@@ -139,7 +139,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
         toast.error("An error occurred");
         return;
       }
-      toast.success("attachment deleted");
+      toast.success("Attachment deleted");
       router.push(`/courses/${courseId}/class/${classId}`);
     } catch (e: any) {
       setDeleteClicked(false);
@@ -172,7 +172,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription className="text-sm opacity-85 ml-3  hover:opacity-95 select-none">
+                    <FormDescription className="text-sm opacity-85 ml-3 hover:opacity-95 select-none">
                       title cannot be modified
                     </FormDescription>
                     <FormMessage>
@@ -237,6 +237,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
                     <FormControl>
                       <Input
                         type="number"
+                        min={0}
                         className="text-base"
                         disabled={isSubmitting}
                         placeholder="eg., max Submissions..."

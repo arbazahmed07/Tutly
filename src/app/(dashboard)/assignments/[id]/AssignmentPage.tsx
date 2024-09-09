@@ -690,7 +690,7 @@ const StudentAssignmentSubmission = ({
                       id="externalLink"
                       value={externalLink}
                       onChange={(e) => setExternalLink(e.target.value)}
-                      placeholder="https://replit.com"
+                      placeholder="https://codesandbox.io/p/sandbox/..."
                       className="col-span-3"
                     />
                   </div>
