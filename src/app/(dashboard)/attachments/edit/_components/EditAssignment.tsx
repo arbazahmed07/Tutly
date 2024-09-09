@@ -69,7 +69,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
       courseId: courseId || "",
       details: details || "",
       dueDate: dueDate || "",
-      maxSubmissions: maxSubmissions ? String(maxSubmissions) : "0",
+      maxSubmissions: maxSubmissions || "0"
     },
   });
 
