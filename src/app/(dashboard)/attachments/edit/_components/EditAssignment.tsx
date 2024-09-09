@@ -41,7 +41,6 @@ const EditAttachmentPage = ({ attachment }: any) => {
   } = attachment;
 
   console.log(attachment);
-  
 
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +68,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
       courseId: courseId || "",
       details: details || "",
       dueDate: dueDate || "",
-      maxSubmissions: maxSubmissions || "0"
+      maxSubmissions: Number(maxSubmissions) || 0,
     },
   });
 
@@ -82,7 +81,6 @@ const EditAttachmentPage = ({ attachment }: any) => {
       ...values,
       maxSubmissions: Number(values?.maxSubmissions),
     });
-
 
     if (response.status !== 200) {
       toast.error("An error occurred");
