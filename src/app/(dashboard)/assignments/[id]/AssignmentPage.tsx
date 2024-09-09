@@ -673,16 +673,16 @@ const StudentAssignmentSubmission = ({
                   : "Submit another response"}
               </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>Add External Link</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit}>
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-5 items-center gap-4 pb-3">
                     <Label
                       htmlFor="externalLink"
-                      className="text-right text-lg"
+                      className="text-center text-lg"
                     >
                       Link
                     </Label>
@@ -690,8 +690,8 @@ const StudentAssignmentSubmission = ({
                       id="externalLink"
                       value={externalLink}
                       onChange={(e) => setExternalLink(e.target.value)}
-                      placeholder="https://replit.com"
-                      className="col-span-3"
+                      placeholder="https://codesandbox.io/p/sandbox/..."
+                      className="col-span-4 "
                     />
                   </div>
                 </div>
