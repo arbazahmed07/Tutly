@@ -100,8 +100,6 @@ export const editAttachment = async (id: string, data : z.infer<typeof attachmen
     throw new Error("You must be logged in to edit an attachment");
   }
 
-  console.log(data)
-  console.log(data.submissionMode)
 
   const attachment = await db.attachment.update({
     where: {

@@ -40,7 +40,6 @@ const EditAttachmentPage = ({ attachment }: any) => {
     submissionMode,
   } = attachment;
 
-  console.log(attachment);
 
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +63,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
       link: link || "",
       attachmentType: attachmentType || "",
       submissionMode: submissionMode || "",
-      class: classId || "",
+      classId: classId || "",
       courseId: courseId || "",
       details: details || "",
       dueDate: dueDate || "",
@@ -77,6 +76,8 @@ const EditAttachmentPage = ({ attachment }: any) => {
   const [deleteClicked, setDeleteClicked] = useState(false);
 
   const onSubmit = async (values: any) => {
+
+    
     const response = await axios.put(`/api/attachments/edit/${attachment.id}`, {
       ...values,
       maxSubmissions: Number(values?.maxSubmissions),
@@ -227,7 +228,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
               />
               <FormField
                 control={form.control}
-                name="class"
+                name="classId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base">Assign a class</FormLabel>
