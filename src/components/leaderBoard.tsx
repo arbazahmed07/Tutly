@@ -62,11 +62,11 @@ export default function Leaderboard({
 
 
   return (
-    <div className="mx-2 md:mx-14 mt-1 flex flex-col gap-4">
+    <div className="mx-2 md:mx-14 mt-6 mb-10 flex flex-col gap-4">
       {/* Leaderboard-header */}
       <div className="flex flex-col text-center">
-        <FaCrown className="h-20 w-20 m-auto text-yellow-400" />
-        <h1 className="text-2xl font-semibold text-yellow-300">Leaderboard</h1>
+        <FaCrown className="h-20 w-20 m-auto dark:text-yellow-400 text-blue-500" />
+        <h1 className="text-2xl font-semibold dark:text-yellow-400 text-blue-500">Leaderboard</h1>
       </div>
       {/* Mentors list for instructor */}
       {currentUser.role === "INSTRUCTOR" && (
@@ -75,7 +75,7 @@ export default function Leaderboard({
             <button
               onClick={() => setMentorUsername(mentor.username)}
               key={mentor.id}
-              className={`p-1 px-2 text-primary-500 rounded ${mentor.username === mentorUsername
+              className={`p-1 px-2 text-blue-500 dark:text-primary-500 rounded ${mentor.username === mentorUsername
                 ? "shadow-sm shadow-primary-500"
                 : ""
                 }`}
@@ -106,7 +106,7 @@ export default function Leaderboard({
          <NoDataFound message="No data found!" />
       ) : (
         <table>
-          <thead className="bg-slate-600">
+          <thead className="bg-slate-600 text-white">
             <tr>
               <th className="text-start pl-12 py-2 uppercase text-sm">
                 <div className="flex items-center gap-2">
