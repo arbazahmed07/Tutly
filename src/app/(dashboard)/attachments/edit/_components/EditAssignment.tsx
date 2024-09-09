@@ -1,13 +1,10 @@
 "use client";
 
-import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-
 import {
   Form,
   FormControl,
@@ -17,7 +14,6 @@ import {
   FormItem,
   FormDescription,
 } from "@/components/ui/form";
-
 import {
   Select,
   SelectContent,
@@ -25,39 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { Textarea } from "@/components/ui/textarea";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-
-// Updated form schema
-const formSchema = z.object({
-  title: z.string().min(1, {
-    message: "Title is required",
-  }),
-  link: z.string().optional(),
-  attachmentType: z.string().min(1, {
-    message: "Type is required",
-  }),
-  class: z.string().min(1, {
-    message: "Class is required",
-  }),
-  submissionMode: z.string().min(1, {
-    message: "Submission mode is required",
-  }),
-  courseId: z.string().optional(),
-  details: z.string().optional(),
-  dueDate: z.date().optional(),
-  maxSubmissions: z
-    .string()
-    .refine((value) => !isNaN(Number(value)), {
-      message: "Max Submissions must be a number",
-    })
-    .optional(),
-});
 
 const EditAttachmentPage = ({ attachment }: any) => {
   const {
@@ -88,8 +56,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm({
     defaultValues: {
       title: title || "",
       link: link || "",
@@ -103,22 +70,14 @@ const EditAttachmentPage = ({ attachment }: any) => {
     },
   });
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
   const [cancelClicked, setCancelClicked] = useState(false);
   const [deleteClicked, setDeleteClicked] = useState(false);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const dueDate = values?.dueDate;
-
+  const onSubmit = async (values: any) => {
     const response = await axios.put(`/api/attachments/edit/${attachment.id}`, {
-      title: values.title,
-      classId: values.class,
-      link: values.link,
-      attachmentType: values.attachmentType,
-      details: values.details,
-      dueDate: dueDate,
-      maxSubmissions: Number(values?.maxSubmissions), 
-      courseId: courseId as string,
+      ...values,
+      maxSubmissions: Number(values?.maxSubmissions),
     });
 
     if (response.status !== 200) {
@@ -145,7 +104,6 @@ const EditAttachmentPage = ({ attachment }: any) => {
       setDeleteClicked(false);
       toast.error("An error occurred");
       router.push(`/courses/${courseId}/class/${classId}`);
-      return;
     }
   };
 
@@ -173,11 +131,8 @@ const EditAttachmentPage = ({ attachment }: any) => {
                       />
                     </FormControl>
                     <FormDescription className="text-sm opacity-85 ml-3 hover:opacity-95 select-none">
-                      title cannot be modified
+                      Title cannot be modified
                     </FormDescription>
-                    <FormMessage>
-                      {form.formState.errors.title?.message}
-                    </FormMessage>
                   </FormItem>
                 )}
               />
@@ -224,7 +179,6 @@ const EditAttachmentPage = ({ attachment }: any) => {
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -244,9 +198,11 @@ const EditAttachmentPage = ({ attachment }: any) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.maxSubmissions?.message}
-                    </FormMessage>
+                    {errors.maxSubmissions && (
+                      <FormMessage>
+                        Max Submissions must be a number
+                      </FormMessage>
+                    )}
                   </FormItem>
                 )}
               />
@@ -255,10 +211,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base">
-                      Due Date{" "}
-                      <span className="text-sm opacity-80">(optional)</span>
-                    </FormLabel>
+                    <FormLabel className="text-base">Due Date</FormLabel>
                     <FormControl>
                       <Input
                         className="text-sm"
@@ -267,9 +220,6 @@ const EditAttachmentPage = ({ attachment }: any) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.dueDate?.message}
-                    </FormMessage>
                   </FormItem>
                 )}
               />
@@ -296,14 +246,12 @@ const EditAttachmentPage = ({ attachment }: any) => {
                             key={c.id}
                             value={c.id}
                             className="hover:bg-secondary-800"
-                            defaultChecked={c.id === (classId as string)}
                           >
                             {c.title}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -320,34 +268,30 @@ const EditAttachmentPage = ({ attachment }: any) => {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue
-                            className="text-base"
-                            placeholder="Select a type"
-                          />
+                          <SelectValue placeholder="Select a mode" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-secondary-700 text-white">
                         <SelectItem
-                          className="hover:bg-secondary-800 "
+                          className="hover:bg-secondary-800"
                           value="HTML_CSS_JS"
                         >
                           HTML_CSS_JS
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 "
+                          className="hover:bg-secondary-800"
                           value="REACT"
                         >
                           REACT
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 "
+                          className="hover:bg-secondary-800"
                           value="EXTERNAL_LINK"
                         >
                           EXTERNAL_LINK
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-red-700 font-bold " />
                   </FormItem>
                 )}
               />
@@ -366,9 +310,6 @@ const EditAttachmentPage = ({ attachment }: any) => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage>
-                    {form.formState.errors.link?.message}
-                  </FormMessage>
                 </FormItem>
               )}
             />
@@ -386,9 +327,6 @@ const EditAttachmentPage = ({ attachment }: any) => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage>
-                    {form.formState.errors.details?.message}
-                  </FormMessage>
                 </FormItem>
               )}
             />
