@@ -4,6 +4,9 @@ FROM node:18-alpine AS builder
 # Set the working directory inside the container
 WORKDIR /app
 
+RUN apk add --no-cache libc6-compat curl
+
+
 # Copy package.json and package-lock.json files
 COPY package*.json ./
 COPY prisma ./prisma/
@@ -29,6 +32,9 @@ ENV HOSTNAME=0.0.0.0
 
 # Set the working directory
 WORKDIR /app
+
+RUN apk add --no-cache libc6-compat curl
+
 
 # Copy built application from the builder stage
 COPY --from=builder /app/.next ./.next
