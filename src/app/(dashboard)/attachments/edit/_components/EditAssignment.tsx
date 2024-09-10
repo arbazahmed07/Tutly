@@ -59,14 +59,14 @@ const EditAttachmentPage = ({ attachment }: any) => {
 
   const form = useForm({
     defaultValues: {
-      title: title || "",
-      link: link || "",
-      attachmentType: attachmentType || "",
-      submissionMode: submissionMode || "",
-      classId: classId || "",
-      courseId: courseId || "",
-      details: details || "",
-      dueDate: dueDate || "",
+      title: title ,
+      link: link ,
+      attachmentType: attachmentType ,
+      submissionMode: submissionMode ,
+      classId: classId ,
+      courseId: courseId ,
+      details: details ,
+      dueDate: dueDate ,
       maxSubmissions: Number(maxSubmissions) || 0,
     },
   });
@@ -80,6 +80,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
     
     const response = await axios.put(`/api/attachments/edit/${attachment.id}`, {
       ...values,
+      dueDate: values?.dueDate ? new Date(values.dueDate).toISOString() : undefined,
       maxSubmissions: Number(values?.maxSubmissions),
     });
 
