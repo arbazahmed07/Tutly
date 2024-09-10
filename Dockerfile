@@ -42,7 +42,7 @@ COPY .env .env
 RUN npm install --only=production
 
 # Expose the port for the Next.js application
-EXPOSE 3000
+EXPOSE 4000
 
 # Start the application
 CMD ["npm", "start"]
