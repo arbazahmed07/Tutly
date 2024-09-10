@@ -96,6 +96,8 @@ export default function AssignmentPage({
     );
   }
 
+  console.log("here is the filteredAssignments", filteredAssignments);
+
   const handleFeedback = async (submissionId: string) => {
     try {
       const res = await axios.post("/api/feedback", {
@@ -542,7 +544,13 @@ export default function AssignmentPage({
                               ) : (
                                 <div className="flex items-center justify-center gap-3">
                                   <Link
-                                    href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
+                                    href={
+                                      assignment.submissionMode ===
+                                      "HTML_CSS_JS"
+                                        ? `/playgrounds/html-css-js?submissionId=${submission.id}`
+                                        : submission.submissionLink
+                                    }
+                                    target="_blank"
                                     className="rounded-full p-1 hover:text-primary-500 text-lg"
                                   >
                                     <FaEye />
