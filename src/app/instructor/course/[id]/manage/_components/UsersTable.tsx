@@ -271,7 +271,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 </td>
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   <div className="flex items-center space-x-2">
-                    <Image
+                    <Image unoptimized
                       src={user.image || "/images/placeholder.jpg"}
                       alt="user"
                       width={32}
@@ -310,9 +310,9 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 </td>
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   {user.role === "STUDENT" &&
-                  user.enrolledUsers.find(
-                    ({ course }: { course: any }) => course.id === params.id
-                  ) !== undefined ? (
+                    user.enrolledUsers.find(
+                      ({ course }: { course: any }) => course.id === params.id
+                    ) !== undefined ? (
                     <select
                       value={user.mentor}
                       onChange={(e) =>

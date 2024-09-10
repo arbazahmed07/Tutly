@@ -103,7 +103,7 @@ export default function Leaderboard({
       </div>
       {/* Leaderboard*/}
       {leaderboardData.length === 0 ? (
-         <NoDataFound message="No data found!" />
+        <NoDataFound message="No data found!" />
       ) : (
         <table>
           <thead className="bg-slate-600 text-white">
@@ -138,7 +138,7 @@ export default function Leaderboard({
                 >
                   <td className="pl-12">{index + 1}</td>
                   <td className="flex md:gap-4 items-center">
-                    <Image
+                    <Image unoptimized
                       src={data?.image || "/images/placeholder.jpg"}
                       alt={`User ${index + 1}`}
                       width={35}

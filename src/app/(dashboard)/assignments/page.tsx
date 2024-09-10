@@ -14,9 +14,9 @@ export default async function Assignments() {
       <h1 className="text-center text-xl font-bold py-2">ASSIGNMENTS</h1>
 
       {
-        !courses||courses.length===0 ? 
-        <div className="p-4 font-semibold text-center mt-20">
-            <Image
+        !courses || courses.length === 0 ?
+          <div className="p-4 font-semibold text-center mt-20">
+            <Image unoptimized
               src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
               height={400}
               className="m-auto "
@@ -25,7 +25,7 @@ export default async function Assignments() {
             />
             <h1>No Assignments available</h1>
           </div>
-         :
+          :
           <Suspense fallback={<Loader />}>
             <AssignmentBoard reviewed={true} courses={courses} assignments={assignments} />
           </Suspense>
