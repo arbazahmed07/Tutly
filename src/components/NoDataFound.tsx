@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 const NoDataFound = ({
   message = 'No data found'
-}:{
+}: {
   message?: string
 }) => {
   return (
@@ -11,7 +11,7 @@ const NoDataFound = ({
       <p className='text-3xl font-bold text-center mt-5'>
         Oops! {message}
       </p>
-      <Image
+      <Image unoptimized
         src="/notify_nodatafound.svg"
         height={400}
         className="mx-auto mt-8"

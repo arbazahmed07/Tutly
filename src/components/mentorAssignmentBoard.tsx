@@ -14,7 +14,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
 
   const router = useRouter();
 
- 
+
   const sortedStudents = students
     .filter((student: any) =>
       student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
@@ -81,7 +81,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
                 <div className="p-1 flex justify-between items-center">
                   <div className="flex gap-2 md:gap-5 items-center">
                     {index + 1}
-                    <Image
+                    <Image unoptimized
                       src={student?.image || "/images/placeholder.jpg"}
                       height={40}
                       width={40}

@@ -247,7 +247,7 @@ const Report = ({
             <p className="text-xl font-semibold mt-20 mb-5 flex justify-center items-center">
               No data available to generate report!
             </p>
-            <Image
+            <Image unoptimized
               src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
               height={400}
               className="m-auto"
