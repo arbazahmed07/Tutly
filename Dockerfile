@@ -25,6 +25,7 @@ FROM node:18-alpine AS runner
 
 # Set environment variables
 ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
 
 # Set the working directory
 WORKDIR /app
