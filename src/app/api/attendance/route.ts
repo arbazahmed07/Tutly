@@ -3,7 +3,7 @@ import getCurrentUser from "@/actions/getCurrentUser";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-    const {classId,data} = await request.json();
+    const { classId, data, maxInstructionDuration } = await request.json();
     try{
         const currentUser = await getCurrentUser();
         if(!currentUser){
@@ -12,7 +12,11 @@ export async function POST(request: NextRequest) {
         if(currentUser.role === "STUDENT"){
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        const res  =await postAttendance({classId,data});
+        const res = await postAttendance({
+          classId,
+          data,
+          maxInstructionDuration,
+        });
         
         return NextResponse.json({message:"Attendance uploaded successfully!"});
     }catch(e:any){

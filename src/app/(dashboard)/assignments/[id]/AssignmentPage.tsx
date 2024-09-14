@@ -47,8 +47,6 @@ export default function AssignmentPage({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [feedback, setFeedback] = useState<string>("");
 
-  console.log("assignments", assignments);
-
   const messages = [
     "Hi, how are you?",
     "Complete your assignments on time !!",
@@ -97,6 +95,8 @@ export default function AssignmentPage({
       (x: any) => x.enrolledUser.username === username
     );
   }
+
+  console.log("here is the filteredAssignments", filteredAssignments);
 
   const handleFeedback = async (submissionId: string) => {
     try {
@@ -258,33 +258,37 @@ export default function AssignmentPage({
           />
         ) : (
           <>
-            <div className="flex justify-between">
-              <div className="block mt-5 dark:text-white">Submissions : 👇</div>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setNonSubmissions(!nonSubmissions)}
-                  className="text-secondary-400 italic hover:text-white"
-                >
-                  {!nonSubmissions ? (
-                    <h1>Not received from?</h1>
-                  ) : (
-                    <h1>Received from?</h1>
-                  )}
-                </button>
-                <button
-                  onClick={() => {
-                    if (username) {
-                      router.push(
-                        `/assignments/${params.id}/evaluate?username=${username}`
-                      );
-                    } else {
-                      router.push(`/assignments/${params.id}/evaluate`);
-                    }
-                  }}
-                  className="bg-primary-600 inline px-2 py-1 text-sm rounded font-semibold text-white"
-                >
-                  Evaluate
-                </button>
+            <div className="flex justify-between mt-8">
+              <div className="block mt-7 dark:text-white max-sm:me-2 max-sm:text-sm max-sm:w-full ">
+                Submissions : 👇
+              </div>
+              <div className="sm:flex sm:items-center gap-4 max-sm:space-y-3 max-sm:w-full max-sm:justify-between ">
+                <div className="max-sm:w-full max-sm:justify-between max-sm:flex gap-4 ">
+                  <button
+                    onClick={() => setNonSubmissions(!nonSubmissions)}
+                    className="text-secondary-400 italic hover:text-white max-sm:text-sm me-5"
+                  >
+                    {!nonSubmissions ? (
+                      <h1>Not received from?</h1>
+                    ) : (
+                      <h1>Received from?</h1>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (username) {
+                        router.push(
+                          `/assignments/${params.id}/evaluate?username=${username}`
+                        );
+                      } else {
+                        router.push(`/assignments/${params.id}/evaluate`);
+                      }
+                    }}
+                    className="bg-primary-600 inline px-3.5 py-2 text-sm rounded font-semibold text-white"
+                  >
+                    Evaluate
+                  </button>
+                </div>
                 <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
                   <input
                     title="input"
@@ -540,7 +544,13 @@ export default function AssignmentPage({
                               ) : (
                                 <div className="flex items-center justify-center gap-3">
                                   <Link
-                                    href={`/playgrounds/html-css-js?submissionId=${submission.id}`}
+                                    href={
+                                      assignment.submissionMode ===
+                                      "HTML_CSS_JS"
+                                        ? `/playgrounds/html-css-js?submissionId=${submission.id}`
+                                        : submission.submissionLink
+                                    }
+                                    target="_blank"
                                     className="rounded-full p-1 hover:text-primary-500 text-lg"
                                   >
                                     <FaEye />
@@ -673,16 +683,16 @@ const StudentAssignmentSubmission = ({
                   : "Submit another response"}
               </button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>Add External Link</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit}>
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-5 items-center gap-4 pb-3">
                     <Label
                       htmlFor="externalLink"
-                      className="text-right text-lg"
+                      className="text-center text-lg"
                     >
                       Link
                     </Label>
@@ -690,8 +700,8 @@ const StudentAssignmentSubmission = ({
                       id="externalLink"
                       value={externalLink}
                       onChange={(e) => setExternalLink(e.target.value)}
-                      placeholder="https://replit.com"
-                      className="col-span-3"
+                      placeholder="https://codesandbox.io/p/sandbox/..."
+                      className="col-span-4 "
                     />
                   </div>
                 </div>

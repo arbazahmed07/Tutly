@@ -194,19 +194,19 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
               <div className={`flex items-center justify-between w-full p-3 flex-wrap font-medium gap-3`} >
                 <div className='flex justify-start items-center space-x-5 ml-2 relative'>
                   {qa.user.role === 'STUDENT' &&
-                    <Image src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
+                    <Image unoptimized src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
                   }
                   {qa.user.role === 'MENTOR' &&
                     <div className='relative'>
                       <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute -left-3 -top-3 transform -rotate-45' />
 
-                      <Image src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
+                      <Image unoptimized src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
                     </div>
                   }
                   {qa.user.role === 'INSTRUCTOR' &&
                     <div className='relative'>
                       <FaCrown className='text-red-500 hover:text-red-600 drop-shadow-sm shadow-red-500 absolute -left-3 -top-3 transform -rotate-45' />
-                      <Image src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
+                      <Image unoptimized src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
                     </div>
                   }
                   <div className=" flex flex-col justify-start gap-1">
@@ -306,18 +306,18 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                       <div className="flex justify-between items-center">
                         <div className='flex space-x-5'>
                           {r.user?.role === 'STUDENT' &&
-                            <Image src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
+                            <Image unoptimized src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
                           }
                           {r.user?.role === 'MENTOR' &&
                             <div className='relative'>
                               <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute -left-3 -top-3 transform -rotate-45' />
-                              <Image src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
+                              <Image unoptimized src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
                             </div>
                           }
                           {r.user?.role === 'INSTRUCTOR' &&
                             <div className='relative'>
                               <PiCrownSimpleFill className='text-red-400 hover:text-red-500 drop-shadow-sm shadow-red-500 absolute -left-3 -top-3 transform -rotate-45' />
-                              <Image src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
+                              <Image unoptimized src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
                             </div>
                           }
                           <div className=" flex flex-col justify-start gap-1">
