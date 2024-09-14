@@ -42,7 +42,6 @@ export const postAttendance = async ({
     ],
   });
 
-  console.log("Successfully posted attendance");
   return postAttendance;
 };
 export const getAttendanceForMentorByIdBarChart = async (id: string) => {
