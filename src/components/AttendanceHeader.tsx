@@ -14,7 +14,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import axios from "axios";
+import { useState, useEffect } from "react";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 
 export default function AttendanceHeader({
   role,
@@ -33,17 +35,59 @@ export default function AttendanceHeader({
   selectedFile,
   handleUpload,
   count,
+  maxInstructionDuration,
+  setMaxInstructionDuration,
 }: any) {
+  const router = useRouter();
+
   const handleDelete = async (x: any) => {
     try {
       const res = await axios.post("/api/attendance/delete", {
         classId: x,
       });
       toast.success("Attendance deleted successfully");
+      router.refresh();
     } catch (e: any) {
       toast.error("Failed to delete attendance");
     }
   };
+
+  const [clientMaxDuration, setClientMaxDuration] = useState<number>(
+    maxInstructionDuration
+  );
+
+  useEffect(() => {
+    let maxDuration = 0;
+    const calculateMaxDuration = () => {
+      fileData?.forEach((student: any) => {
+        if (student.Duration > maxDuration) {
+          maxDuration = student.Duration;
+        }
+      });
+      setClientMaxDuration(maxDuration);
+      setMaxInstructionDuration(maxDuration);
+    };
+
+    if (fileData) {
+      calculateMaxDuration();
+    }
+  }, [fileData, setMaxInstructionDuration]);
+
+  const handleClientUpload = async () => {
+
+    setMaxInstructionDuration(clientMaxDuration);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    handleUpload();
+  };
+
+  const handleClientMaxDuration = (e: any) => {
+    const newDuration = parseInt(e.target.value);
+    setClientMaxDuration(newDuration);
+    setMaxInstructionDuration(newDuration);
+  };
+
   return (
     <>
       {pastpresentStudents.length > 0 && (
@@ -147,7 +191,10 @@ export default function AttendanceHeader({
                 onClick={() => setOpenClasses(!openClasses)}
                 className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex gap-2 items-center justify-between"
               >
-                <h1>{currentClass.title}  ({dayjs(currentClass.createdAt).format("DD-MM-YYYY")})</h1>
+                <h1>
+                  {currentClass.title} (
+                  {dayjs(currentClass.createdAt).format("DD-MM-YYYY")})
+                </h1>
                 {openClasses ? (
                   <h1>
                     <FaCaretUp />
@@ -184,8 +231,9 @@ export default function AttendanceHeader({
             <div className="flex gap-2 items-center">
               <input
                 type="file"
-                className="bg-primary-600 rounded cursor-pointer w-60 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out"
+                className="bg-primary-600 disabled:bg-gray-700 disabled:cursor-not-allowed rounded cursor-pointer w-60 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out"
                 accept=".csv, .xlsx"
+                disabled={!currentClass}
                 onChange={(e) => {
                   const files = e.target.files;
                   !currentClass
@@ -194,12 +242,24 @@ export default function AttendanceHeader({
                 }}
               />
               {fileData && selectedFile && (
-                <div
-                  onClick={handleUpload}
-                  className="bg-primary-600 rounded cursor-pointer px-2 py-1 flex items-center gap-2 hover:scale-x-105 hover:duration-500"
-                >
-                  upload{" "}
-                  <BiSolidCloudUpload className="text-xl duration-1000" />
+                <div className="flex gap-2 items-center justify-between">
+                  <div>
+                    <input
+                      type="number"
+                      min={"0"}
+                      value={clientMaxDuration}
+                      onChange={handleClientMaxDuration}
+                      placeholder="Max duration"
+                      className="bg-primary-600 rounded cursor-pointer px-2 py-1 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out placeholder:text-gray-300 w-32 placeholder:text-sm"
+                    />
+                  </div>
+                  <div
+                    onClick={handleClientUpload}
+                    className="bg-primary-600 rounded cursor-pointer px-2 py-1 flex items-center gap-2 hover:scale-x-105 hover:duration-500"
+                  >
+                    upload{" "}
+                    <BiSolidCloudUpload className="text-xl duration-1000" />
+                  </div>
                 </div>
               )}
             </div>
