@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState, ChangeEvent, useEffect } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -8,7 +8,6 @@ import Loader from "@/components/Loader";
 import day from "@/lib/dayjs";
 
 interface DataItem {
-
   username: string;
   name: string;
   submissionLength: number;
@@ -37,7 +36,9 @@ const Report = ({
     if (!course) return;
     try {
       const res = await axios.post("/api/report", { courseId: course.id });
-      setData(res.data);
+      const fetchedData = res.data;
+      const sortedData = [...fetchedData].sort((a, b) => a.username.localeCompare(b.username));
+      setData(sortedData);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -199,7 +200,6 @@ const Report = ({
     doc.save(`Report-${formattedDate}.pdf`);
   };
 
-
   const handleDownload = () => {
     if (selectedFormat === "csv") {
       downloadCSV();
@@ -219,6 +219,7 @@ const Report = ({
     }
     return attendanceNumber.toFixed(2) + "%";
   };
+
   return (
     <div>
       <div className="flex gap-3 p-8">
@@ -246,7 +247,7 @@ const Report = ({
             <p className="text-xl font-semibold mt-20 mb-5 flex justify-center items-center">
               No data available to generate report!
             </p>
-            <Image
+            <Image unoptimized
               src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
               height={400}
               className="m-auto"

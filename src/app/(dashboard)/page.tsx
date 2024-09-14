@@ -63,7 +63,7 @@ export default async function Home() {
     });
 
     leaderboardMap = new Map(sortedLeaderboardArray);
-    
+
 
     return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
@@ -77,7 +77,7 @@ export default async function Home() {
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
           <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
-            <Image
+            <Image unoptimized
               src="https://png.pngtree.com/png-clipart/20210312/original/pngtree-game-score-wood-sign-style-png-image_6072790.png"
               alt=""
               height={100}
@@ -92,7 +92,7 @@ export default async function Home() {
             </h1>
           </div>
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-            <Image
+            <Image unoptimized
               src="https://cdn-icons-png.flaticon.com/512/3150/3150115.png"
               alt=""
               height={100}
@@ -103,15 +103,15 @@ export default async function Home() {
               {total === 0
                 ? "NA"
                 : leaderboardMap.get(currentUser.id).rank
-                ? leaderboardMap.get(currentUser.id).rank
-                : "NA"}
+                  ? leaderboardMap.get(currentUser.id).rank
+                  : "NA"}
             </p>
             <h1 className="p-1 text-sm font-bold">
               Your current rank in the Leaderboard.
             </h1>
           </div>
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-            <Image
+            <Image unoptimized
               src="https://i.postimg.cc/439rxz8g/images-removebg-preview.png"
               alt=""
               height={100}

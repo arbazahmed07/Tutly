@@ -64,7 +64,7 @@ export default function CourseCard({ course, currentUser }: any) {
       <div className="h-[150px]  relative text-secondary-700 bg-white rounded-t-lg cursor-pointer" onClick={expired() ? () => router.push(`/courses`) : () => router.push(`/courses/${course.id}`)}>
         <div className="h-full w-full relative">
           {course && (
-            <Image
+            <Image unoptimized
               src={course.image || "https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg"}
               alt="course image"
               layout="fill"
