@@ -17,7 +17,6 @@ import axios from "axios";
 import { useState, useEffect, use } from "react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { max } from "lodash";
 
 export default function AttendanceHeader({
   role,
