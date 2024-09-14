@@ -70,7 +70,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
 
         const modifiedData = data.map((row: any) => ({
           Name: row["Name (Original Name)"],
-          username: String(row["Name (Original Name)"]).substring(0, 10),
+          username: String(row["Name (Original Name)"]).substring(0, 10).toUpperCase(),
           JoinTime: row["Join Time"],
           LeaveTime: row["Leave Time"],
           Duration: row["Duration (Minutes)"],
@@ -178,14 +178,21 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
     });
   };
 
+  const [maxInstructionDuration, setMaxInstructionDuration] = useState(0);
+  
+
   // upload attendance to db
   const handleUpload = async () => {
-    // toast.loading("uploading attendance...")
+    toast.loading("uploading attendance...");
     try {
+
       const res = await axios.post("/api/attendance", {
         classId: currentClass?.id,
         data: presentStudents,
+        maxInstructionDuration,
       });
+      toast.dismiss();
+
       toast.success("Attendance uploaded successfully");
     } catch (e) {
       toast.error("Attendance already uploaded!");
@@ -209,6 +216,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchStudentsAttendance();
@@ -275,6 +283,8 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
           users.length - present,
           pastpresentStudents.length - present,
         ]}
+        maxInstructionDuration={maxInstructionDuration}
+        setMaxInstructionDuration={setMaxInstructionDuration}
       />
 
       {/* Table */}
