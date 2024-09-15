@@ -710,7 +710,7 @@ export const getSubmissionsForMentorLineChart = async (courseId:string) => {
   return { assignments, countForEachAssignment };
 };
 
-export const getStudentEvaluatedAssigments = async () => {
+export const getStudentEvaluatedAssigments = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     return null;
@@ -720,6 +720,9 @@ export const getStudentEvaluatedAssigments = async () => {
       enrolledUser: {
         username: currentUser.username,
       },
+      assignment: {
+        courseId,
+      }
     },
     include: {
       points: true,
@@ -736,15 +739,23 @@ export const getStudentEvaluatedAssigments = async () => {
       totalPoints += point.score;
     });
   });
-  const noOfTotalAssignments = await db.attachment.count({
+  const noOfTotalAssignments = await db.attachment.findMany({
     where: {
       attachmentType: "ASSIGNMENT",
+      courseId,
     },
+    select: {
+      maxSubmissions: true,
+    }
   });
+  let totalAssignments = 0;
+  noOfTotalAssignments.forEach((assignment) => {
+    totalAssignments += (assignment.maxSubmissions||0);
+  })
   return {
     evaluated: assignments.length || 0,
     underReview: underReview,
-    unsubmitted: noOfTotalAssignments - assignments.length - underReview,
+    unsubmitted: totalAssignments - assignments.length - underReview,
     totalPoints: totalPoints,
   };
 };

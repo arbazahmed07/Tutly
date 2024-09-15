@@ -1,36 +1,13 @@
-import {
-  getMentorPieChartData,
-  getStudentEvaluatedAssigments,
-  getSubmissionsForMentorLineChart,
-} from "@/actions/assignments";
-import { getAttendanceForMentorBarChart, getAttendanceOfStudent } from "@/actions/attendance";
-import { getEnrolledStudents, getMentorStudents } from "@/actions/courses";
-import getCurrentUser from "@/actions/getCurrentUser";
-import StudentStatClient from "@/components/studentStatClient";
-import { json } from "stream/consumers";
+"use client"
+import { useRouter } from 'next/navigation'
+import React from 'react'
 
-export default async function Statistics() {
-  const mentorPieChart = await getMentorPieChartData();
-  const { evaluated, underReview, unsubmitted, totalPoints}:any = await getStudentEvaluatedAssigments();
-  let loaderValue = !mentorPieChart
-    ? 0
-    : String(
-        (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1])
-      );
-  loaderValue += "%";
-  const currentUser = await getCurrentUser();
-  if(!currentUser) return <div className="text-center text-xl font-bold">Please Login to view your Statistics</div>
-  const {classes,attendanceDates} = await getAttendanceOfStudent(currentUser.username);
-
+function page() {
+  const router = useRouter();
+  router.push('statistics/0878eafa-880d-4cea-b647-e1656df1cc9d')
   return (
-    <div>
-      <StudentStatClient
-      totalEvaluatedAssigmentsOfStudent={evaluated}
-      totalPoints={totalPoints}
-      forBarChart={[evaluated,underReview,unsubmitted]}
-      classes={classes}
-      attendanceDates={attendanceDates}
-      />
-    </div>
-  );
+    <div>No course enrolled!</div>
+  )
 }
+
+export default page
