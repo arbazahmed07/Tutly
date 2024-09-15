@@ -2,17 +2,60 @@ import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 
 export const getAllCourses = async () => {
+  const currentUser = await getCurrentUser();
   try {
-    const courses = await db.course.findMany({
-      where: {},
-      include: {
-        _count: {
-          select: {
-            classes: true,
+    if(!currentUser) return null;
+    let courses;
+    if(currentUser.role === "INSTRUCTOR") {
+      courses = await db.course.findMany({
+        where: {
+          createdById: currentUser.id,
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
           },
         },
-      },
-    });
+      });
+    } else if(currentUser.role === "MENTOR") {
+      courses = await db.course.findMany({
+        where: {
+          enrolledUsers: {
+            some: {
+              mentorUsername: currentUser.username,
+            },
+          }
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
+          },
+        },
+      });
+    } else {
+      courses = await db.course.findMany({
+        where: {
+          enrolledUsers: {
+            some: {
+              user: {
+                id: currentUser.id,
+              },
+            },
+          }
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
+          },
+        },
+      });
+    }
     return courses;
   } catch (e) {
     console.log("error while fetching courses :", e);
