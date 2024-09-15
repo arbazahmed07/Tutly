@@ -164,7 +164,7 @@ export const getEnrolledCoursesByUsername = async (username: string) => {
   return courses;
 };
 
-export const getMentorStudents = async () => {
+export const getMentorStudents = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -174,6 +174,7 @@ export const getMentorStudents = async () => {
       enrolledUsers: {
         some: {
           mentorUsername: currentUser.username,
+          courseId,
         },
       },
     },

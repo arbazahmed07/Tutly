@@ -742,7 +742,7 @@ export const getStudentEvaluatedAssigments = async () => {
     },
   });
   return {
-    evaluated: assignments.length,
+    evaluated: assignments.length || 0,
     underReview: underReview,
     unsubmitted: noOfTotalAssignments - assignments.length - underReview,
     totalPoints: totalPoints,
@@ -757,11 +757,18 @@ export const getStudentEvaluatedAssigmentsForMentor = async (id: any,courseId:st
     where: {
       enrolledUser: {
         username: id,
-        courseId,
       },
+      assignment: {
+        courseId,
+      }
     },
     include: {
       points: true,
+      assignment: {
+        select: {
+          maxSubmissions: true,
+        }
+      }
     },
   });
   let totalPoints = 0;
@@ -775,16 +782,23 @@ export const getStudentEvaluatedAssigmentsForMentor = async (id: any,courseId:st
       totalPoints += point.score;
     });
   });
-  const noOfTotalAssignments = await db.attachment.count({
+  const noOfTotalAssignments = await db.attachment.findMany({
     where: {
       attachmentType: "ASSIGNMENT",
       courseId,
     },
+    select: {
+      maxSubmissions: true
+    }
   });
+  let totalAssignments = 0;
+  noOfTotalAssignments.forEach((a) => {
+    totalAssignments += (a.maxSubmissions||0);
+  })
   return {
     evaluated: assignments.length || 0,
     underReview: underReview,
-    unsubmitted: noOfTotalAssignments - assignments.length - underReview,
+    unsubmitted: totalAssignments - assignments.length - underReview,
     totalPoints: totalPoints,
   };
 };

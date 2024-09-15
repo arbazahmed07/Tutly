@@ -36,7 +36,7 @@ export default function StudentsInfoForMentor({ currentUser, mstudents ,mentorUs
             href={
               currentUser?.role === "INSTRUCTOR"
                 ? `/instructor/statistics/${courseId}/mentor/${mentorUsername}/student/${student.username}`
-                : `/mentor/statistics/student/${student.username}`
+                : `/mentor/statistics/${courseId}/student/${student.username}`
             }
             className="rounded-xl shadow-blue-500 shadow-sm p-2 w-1/4"
           >
