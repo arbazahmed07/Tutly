@@ -188,7 +188,7 @@ export const getMentorStudents = async () => {
 
   return students;
 };
-export const getMentorStudentsById = async (id: string) => {
+export const getMentorStudentsById = async (id: string,courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -197,6 +197,7 @@ export const getMentorStudentsById = async (id: string) => {
       enrolledUsers: {
         some: {
           mentorUsername: id,
+          courseId,
         },
       },
     },
@@ -212,20 +213,16 @@ export const getMentorStudentsById = async (id: string) => {
   return students;
 };
 
-export const getEnrolledStudents = async () => {
+export const getEnrolledStudents = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-
-  const courses = (await getEnrolledCourses()) || [];
 
   const students = await db.user.findMany({
     where: {
       enrolledUsers: {
         some: {
           course: {
-            id: {
-              in: courses.map((course) => course.id),
-            },
+            id: courseId
           },
         },
       },
@@ -239,10 +236,9 @@ export const getEnrolledStudents = async () => {
 
   return students;
 };
-export const getEnrolledMentees = async () => {
+export const getEnrolledMentees = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-  const courses = (await getEnrolledCourses()) || [];
 
   const students = await db.user.findMany({
     where: {
@@ -250,9 +246,7 @@ export const getEnrolledMentees = async () => {
       enrolledUsers: {
         some: {
           course: {
-            id:{
-              in: courses.map((course) => course.id),
-            }
+            id:courseId
           },
         },
       },

@@ -1,32 +1,26 @@
 import {
     getMentorPieChartById,
-    getMentorPieChartData,
-    getStudentEvaluatedAssigmentsForMentor,
     getSubmissionsForMentorByIdLineChart,
-    getSubmissionsForMentorLineChart,
   } from "@/actions/assignments";
   import Barchart from "@/components/charts/barchart";
-  import Linechart from "@/components/charts/linechart";
   import Piechart from "@/components/charts/piechart";
-  import Radarchart from "@/components/charts/radarchart";
-  import { getAttendanceForMentorBarChart, getAttendanceForMentorByIdBarChart } from "@/actions/attendance";
-  import { getMentorStudents, getMentorStudentsById } from "@/actions/courses";
+  import { getAttendanceForMentorByIdBarChart } from "@/actions/attendance";
+  import { getMentorStudentsById } from "@/actions/courses";
   import { FaSquareArrowUpRight } from "react-icons/fa6";
-  import { FaFilter } from "react-icons/fa6";
   import Link from "next/link";
   import getCurrentUser from "@/actions/getCurrentUser";
   import StudentsInfoForMentor from "@/components/studentsInfoForMentor";
-import { TbCurrentLocation } from "react-icons/tb";
 import { getMentorNameById } from "@/actions/mentors";
   
   export default async function Statistics({params}:any) {
-    const mentorPieChart = await getMentorPieChartById(params.id);
+    const courseId = params.course;
+    const mentorPieChart = await getMentorPieChartById(params.id,courseId);
     const currendUser = await getCurrentUser();
     const { classes, attendanceInEachClass } =
-      await getAttendanceForMentorByIdBarChart(params.id);
+      await getAttendanceForMentorByIdBarChart(params.id,courseId);
     const { assignments, countForEachAssignment }: any =
-      await getSubmissionsForMentorByIdLineChart(params.id);
-    const mstudents = await getMentorStudentsById(params.id);
+      await getSubmissionsForMentorByIdLineChart(params.id,courseId);
+    const mstudents = await getMentorStudentsById(params.id,courseId);
     const mentorName = await getMentorNameById(params.id);
     let loaderValue = !mentorPieChart
       ? 0
@@ -114,7 +108,7 @@ import { getMentorNameById } from "@/actions/mentors";
           {!mstudents || mstudents.length === 0 ? (
             <div>No Mentees are assigned!</div>
           ) : (
-            <StudentsInfoForMentor currentUser={currendUser} mstudents={mstudents} mentorUsername={params.id} />
+            <StudentsInfoForMentor currentUser={currendUser} mstudents={mstudents} mentorUsername={params.id} courseId={courseId} />
           )}
         </div>
       </div>
