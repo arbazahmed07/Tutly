@@ -16,7 +16,11 @@ const DeleteClass = ({ classId, courseId }: { classId: string; courseId: string 
     const handleDeleteClass = async () => {
         setClicked(true);
         try {
-            await axios.delete(`/api/classes/deleteClass/${params.classId}`);
+            await axios.delete(`/api/classes/deleteClass/${params.classId}`, {
+                params: {
+                    courseId: params.courseId
+                }
+            });
             toast.success('Class deleted successfully');
             router.push(`/courses/${params.courseId}`);
             router.refresh();

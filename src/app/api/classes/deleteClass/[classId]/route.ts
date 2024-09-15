@@ -5,13 +5,16 @@ import getCurrentUser from "@/actions/getCurrentUser";
 export async function DELETE(req: NextRequest,{ params }: { params: {classId: string }}) {
     
     try {
+        const courseId = req.nextUrl.searchParams.get('courseId');
         const currentUser = await getCurrentUser();
-        if(!currentUser) {
-            return NextResponse.json({ error: "User not found" }, { status: 400 });
-        }
-        if(currentUser.role !== "INSTRUCTOR") {
+        const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === courseId);
+
+        const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+
+        if(!haveAccess) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+
         const res = await deleteClass(params.classId);
         
         if(res.success)

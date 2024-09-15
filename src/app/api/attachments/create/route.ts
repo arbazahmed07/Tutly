@@ -6,14 +6,11 @@ export async function POST(request: NextRequest) {
   const data = await request.json();
   try {
     const currentUser = await getCurrentUser();
-    if(!currentUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 400 });
-    }
-    if(currentUser.role !== "INSTRUCTOR") {
+    const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === data.courseId);
+    const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+    if(!haveAccess) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    
     
     const attachment = await createAttachment(data);
     return NextResponse.json(attachment);

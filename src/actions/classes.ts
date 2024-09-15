@@ -97,24 +97,19 @@ export const createClass = async (data: any) => {
       });
     }
 
-    await db.events.create({
-      data: {
-        eventCategory: "CLASS_CREATION",
-        causedById: myClass.id,
-        eventCategoryDataId: myClass.id,
-      },
-    });
-
     return myClass;
   } catch (error) {
-    console.error("Error creating class:", error);
     throw new Error("Failed to create class. Please try again later.");
   }
 };
 
 export const updateClass = async (data: any) => {
   const currentUser = await getCurrentUser();
-  if (currentUser?.role !== "INSTRUCTOR") {
+  const isCourseAdmin = currentUser?.adminForCourses?.some(
+    (course) => course.id === data.courseId
+  );
+  const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+  if (!haveAccess) {
     throw new Error("You are not authorized to update this class.");
   }
 
@@ -176,11 +171,6 @@ export const updateClass = async (data: any) => {
 };
 
 export const deleteClass = async (classId: string) => {
-  const currentUser = await getCurrentUser();
-  if (currentUser?.role !== "INSTRUCTOR") {
-    throw new Error("You are not authorized to delete this class.");
-  }
-
   try {
     const res = await db.class.delete({
       where: {

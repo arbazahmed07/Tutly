@@ -5,8 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest, { params }: { params: {courseId: string }}) {
     try {
         const currentUser = await getCurrentUser();
-        if(!currentUser || currentUser.role !== "INSTRUCTOR") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
+
+        const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === params.courseId);
+
+        const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+
+        if(!haveAccess) {
+            return NextResponse.json({ error: "You do not have access to this course" ,isCourseAdmin}, { status: 403 });
         }
         const folders = await foldersByCourseId(params.courseId);
         return NextResponse.json(folders);

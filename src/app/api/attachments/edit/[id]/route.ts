@@ -8,14 +8,14 @@ request: NextRequest,
 ) {
     
 try {
+    const data = await request.json();
     const currentUser = await getCurrentUser();
-    if (!currentUser) {
-        return NextResponse.json({ error: "User not found" }, { status: 400 });
-    }
-    if(currentUser.role !== "INSTRUCTOR") {
+    const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === data.courseId);
+    const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+
+    if(!haveAccess) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const data = await request.json();
 
     const assignment = await editAttachment(params.id,data );
     return NextResponse.json({ assignment });

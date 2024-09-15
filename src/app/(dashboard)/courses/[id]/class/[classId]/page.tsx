@@ -21,6 +21,11 @@ export default async function Class({ params, }: {
     const videoLink = details?.video.videoLink;
     const videoType = details?.video.videoType;
     const currentUser = await getCurrentUser();
+
+    const isCourseAdmin = currentUser?.adminForCourses?.some((course) => course.id === params.id);
+
+    const haveAdminAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+
     let matchType;
 
     switch (videoType) {
@@ -62,7 +67,7 @@ export default async function Class({ params, }: {
                                     <div className="flex justify-start items-center space-x-5">
                                         <p className="text-xl font-semibold">{details?.title}</p>
                                         {
-                                            currentUser?.role === 'INSTRUCTOR' && details &&
+                                            haveAdminAccess && details &&
                                             <div className="flex gap-3 items-center">
                                                 <Link href={`/courses/${params.id}/class/${params.classId}/edit`} >
                                                     <RiEdit2Fill className=" w-5 h-5" />
@@ -89,15 +94,17 @@ export default async function Class({ params, }: {
                     <div className="w-full md:m-0 md:w-96 pb-4">
                         <div className="rounded-xl p-2 w-full h-full" hidden={!details}>
                             <div className=" w-full flex flex-row-reverse items-center">
-                                <div hidden={currentUser?.role === "STUDENT" || currentUser?.role === "MENTOR" || !details} className="text-xl my-2">
-                                    <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`} >
-                                        <Button className="flex justify-between items-center bg-secondary-700 text-white hover:bg-secondary-600"
-                                            variant={"secondary"} >
-                                            Add an assignment&nbsp;
-                                            <FaPlus />
-                                        </Button>
-                                    </Link>
-                                </div>
+                                {haveAdminAccess && details && (
+                                    <div className="text-xl my-2">
+                                        <Link href={`/attachments/new?courseId=${params.id}&classId=${params.classId}`} >
+                                            <Button className="flex justify-between items-center bg-secondary-700 text-white hover:bg-secondary-600"
+                                                variant={"secondary"} >
+                                                Add an assignment&nbsp;
+                                                <FaPlus />
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                )}
                             </div>
                             <table className="border-collapse w-full">
                                 <thead className="mb-4 border-b-2 font-semibold border-secondary-400">

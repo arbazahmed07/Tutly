@@ -421,7 +421,12 @@ export const getAllAssignmentDetailsBy = async (id: string) => {
       return 0;
     }
   });
-  return [sortedAssignments,notSubmittedMentees];
+
+  const isCourseAdmin = currentUser?.adminForCourses?.some(
+    (course) => course.id === assignment?.courseId
+  ) ?? false;
+
+  return [sortedAssignments,notSubmittedMentees,isCourseAdmin];
 };
 
 export const getAllAssignmentDetailsForInstructor = async (id: string) => {
@@ -479,7 +484,10 @@ export const getAllAssignmentDetailsForInstructor = async (id: string) => {
       return 0;
     }
   });
-  return [sortedAssignments, notSubmittedMentees];
+  const isCourseAdmin = currentUser?.adminForCourses?.some(
+    (course) => course.id === assignment?.courseId
+  ) ?? false;
+  return [sortedAssignments, notSubmittedMentees,isCourseAdmin];
 };
 
 export const getAllAssignmentsByCourseId = async (id: string) => {

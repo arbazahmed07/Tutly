@@ -31,12 +31,14 @@ export default function AssignmentPage({
   assignment,
   assignments,
   notSubmittedMentees,
+  isCourseAdmin= false,
 }: {
   params: { id: string };
   currentUser: any;
   assignment: any;
   assignments: any;
   notSubmittedMentees: any;
+  isCourseAdmin: boolean;
 }) {
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedScores, setEditedScores] = useState({
@@ -58,6 +60,9 @@ export default function AssignmentPage({
   ];
   const [modal, setModal] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const haveAdminAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+
+  console.log("isCourseAdmin", isCourseAdmin);
 
   const handleWhatsAppClick = (phone: string) => {
     setPhoneNumber(phone);
@@ -224,7 +229,7 @@ export default function AssignmentPage({
           <h1 className="border rounded-md p-1 text-sm">
             Max responses : {assignment?.maxSubmissions}
           </h1>
-          {currentUser?.role === "INSTRUCTOR" && (
+          {haveAdminAccess && (
             <button
               onClick={() => router.push(`/attachments/edit/${assignment.id}`)}
               className=" p-1 px-3 bg-emerald-700 hover:bg-emerald-800 rounded-md"

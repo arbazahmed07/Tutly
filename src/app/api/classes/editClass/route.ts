@@ -5,13 +5,16 @@ import { NextRequest, NextResponse } from "next/server";
 export async function PUT(request: NextRequest) {
     const data = await request.json();
     try {
+        const courseId = data.courseId;
         const currentUser = await getCurrentUser();
-        if(!currentUser) {
-            return NextResponse.json({ error: "User not found" }, { status: 400 });
-        }
-        if(currentUser.role !== "INSTRUCTOR") {
+        const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === courseId);
+
+        const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+
+        if(!haveAccess) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+
         const myClass = await updateClass(data);
         return NextResponse.json(myClass);
     } catch (e :any) {
