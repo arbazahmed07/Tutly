@@ -55,7 +55,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        const result = (e.target as FileReader).result;
+        const result = (e.target!).result;
         const workbook = XLSX.read(result, {
           type: "binary",
           cellDates: true,
@@ -321,7 +321,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
 
       {selectedStudent && (
         <div className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="w-[60%] rounded-md bg-white p-4 text-gray-700">
+          <div className="w-3/5 rounded-md bg-white p-4 text-gray-700">
             <h2 className="mb-2 text-lg font-semibold">
               Attendance Details for {String(selectedStudent?.Name)}
             </h2>
@@ -335,8 +335,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
                 </tr>
               </thead>
               <tbody>
-                {selectedStudent.Joins &&
-                  selectedStudent.Joins.map((join: any, index: number) => (
+                {selectedStudent.Joins?.map((join: any, index: number) => (
                     <tr key={index}>
                       <td className="border px-4 py-2">{join.ActualName}</td>
                       <td className="border px-4 py-2">{join.JoinTime}</td>
@@ -376,7 +375,7 @@ const AttendanceTable = ({
 
   return (
     <>
-      <table className="m-auto mt-10 w-[80%] border">
+      <table className="m-auto mt-10 w-4/5 border">
         <thead>
           <tr className="border-b bg-blue-600">
             <th>S.No</th>
@@ -461,7 +460,7 @@ const AttendanceTable = ({
 
       {/* Absent Students Table */}
       {absentStudents.length > 0 && (
-        <table className="m-auto mt-10 w-[80%]">
+        <table className="m-auto mt-10 w-4/5">
           <thead>
             <tr className="border-b">
               <th>index</th>

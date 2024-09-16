@@ -39,7 +39,7 @@ const Profile = ({ currentUser }: any) => {
       return;
     }
 
-    if (!currentUser || !currentUser?.email) {
+    if (!currentUser?.email) {
       toast.error("An error occurred while updating the profile");
       return;
     }

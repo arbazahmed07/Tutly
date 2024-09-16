@@ -103,7 +103,7 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
           return (
             <div
               key={(date as Date).toISOString()}
-              className={`relative flex h-4 w-4 transform cursor-pointer items-center justify-center rounded transition duration-300 hover:scale-110 ${cellColorClass}`}
+              className={`relative flex h-4 w-4 cursor-pointer items-center justify-center rounded transition duration-300 hover:scale-110${cellColorClass}`}
               onMouseEnter={() => setHoveredDate(date)}
               onMouseLeave={() => setHoveredDate(null)}
             >

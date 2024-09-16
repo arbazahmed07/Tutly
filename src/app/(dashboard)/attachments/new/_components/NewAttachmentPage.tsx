@@ -118,7 +118,7 @@ const NewAttachmentPage = () => {
       details: values.details,
       dueDate: dueDate?.toISOString(),
       maxSubmissions: values?.maxSubmissions,
-      courseId: courseId as string,
+      courseId: courseId!,
     });
 
     if (response.status !== 200) {
@@ -322,7 +322,7 @@ const NewAttachmentPage = () => {
                             key={c.id}
                             value={c.id}
                             className="text-base hover:bg-secondary-800"
-                            defaultChecked={c.id === (classId as string)}
+                            defaultChecked={c.id === (classId!)}
                           >
                             {c.title}
                           </SelectItem>

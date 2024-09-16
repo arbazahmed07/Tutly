@@ -57,7 +57,7 @@ export async function POST(req: Request) {
         );
       }
 
-      const isPasswordValid = await compare(oldPassword, userExists.password!);
+      const isPasswordValid = await compare(oldPassword, userExists.password);
       if (!isPasswordValid) {
         return NextResponse.json(
           { message: "Old password is incorrect" },

@@ -243,7 +243,7 @@ export default function Accordion({
                   )}
                   {qa.user.role === "MENTOR" && (
                     <div className="relative">
-                      <FaCrown className="absolute -left-3 -top-3 -rotate-45 transform text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
+                      <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
 
                       <Image
                         unoptimized
@@ -257,7 +257,7 @@ export default function Accordion({
                   )}
                   {qa.user.role === "INSTRUCTOR" && (
                     <div className="relative">
-                      <FaCrown className="absolute -left-3 -top-3 -rotate-45 transform text-red-500 shadow-red-500 drop-shadow-sm hover:text-red-600" />
+                      <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-red-500 shadow-red-500 drop-shadow-sm hover:text-red-600" />
                       <Image
                         unoptimized
                         src={qa.user?.image || "/images/placeholder.jpg"}
@@ -395,7 +395,7 @@ export default function Accordion({
                           )}
                           {r.user?.role === "MENTOR" && (
                             <div className="relative">
-                              <FaCrown className="absolute -left-3 -top-3 -rotate-45 transform text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
+                              <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
                               <Image
                                 unoptimized
                                 src={r.user?.image || "/images/placeholder.jpg"}
@@ -408,7 +408,7 @@ export default function Accordion({
                           )}
                           {r.user?.role === "INSTRUCTOR" && (
                             <div className="relative">
-                              <PiCrownSimpleFill className="absolute -left-3 -top-3 -rotate-45 transform text-red-400 shadow-red-500 drop-shadow-sm hover:text-red-500" />
+                              <PiCrownSimpleFill className="absolute -left-3 -top-3 -rotate-45 text-red-400 shadow-red-500 drop-shadow-sm hover:text-red-500" />
                               <Image
                                 unoptimized
                                 src={r.user?.image || "/images/placeholder.jpg"}

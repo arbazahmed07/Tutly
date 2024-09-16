@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, type ChangeEvent, useEffect } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Image from "next/image";
@@ -80,7 +80,7 @@ const Report = ({
     new Set(data.map((item) => item.mentorUsername)),
   );
 
-  const columnMapping: { [key: string]: keyof DataItem } = {
+  const columnMapping: Record<string, keyof DataItem> = {
     Username: "username",
     Name: "name",
     Submissions: "submissionLength",
@@ -352,7 +352,7 @@ const Report = ({
                     className="cursor-pointer truncate border-b border-gray-300 px-5 py-3 dark:border-gray-500"
                   >
                     Mentor
-                    {sortColumn === columnMapping["Mentor"] &&
+                    {sortColumn === columnMapping.Mentor &&
                       (sortOrder === "asc" ? " ↑" : " ↓")}
                   </th>
                 )}

@@ -15,7 +15,7 @@ export default async function Page({ params }: any) {
   let loaderValue = !mentorPieChart
     ? 0
     : String(
-        (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1]),
+        (mentorPieChart[0] * 100) / (mentorPieChart[0] + mentorPieChart[1]),
       );
   loaderValue += "%";
   const { classes, attendanceDates } = await getAttendanceOfStudent(

@@ -39,11 +39,9 @@ const Submit = ({
 
   const handleSubmit = async () => {
     if (
-      !user ||
-      !user.username ||
+      !user?.username ||
       !user.email ||
-      !assignmentDetails ||
-      !assignmentDetails.title
+      !assignmentDetails?.title
     ) {
       toast.error("Error submitting assignment");
       return;

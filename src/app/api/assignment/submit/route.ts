@@ -1,6 +1,6 @@
 import getCurrentUser from "@/actions/getCurrentUser";
 import { createSubmission } from "@/actions/submission";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { assignmentDetails, files, mentorDetails } = await request.json();

@@ -1,6 +1,6 @@
 import { createClass } from "@/actions/classes";
 import getCurrentUser from "@/actions/getCurrentUser";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
