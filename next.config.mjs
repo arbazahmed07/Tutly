@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+import withPWAInit from "@ducanh2912/next-pwa";
+
+const withPWA = withPWAInit({
+  dest: "public",
+});
+
+const nextConfig = withPWA({
   images: {
     remotePatterns: [
       {
@@ -28,6 +34,6 @@ const nextConfig = {
       "plus.unsplash.com",
     ],
   },
-};
+}); 
 
 export default nextConfig;
