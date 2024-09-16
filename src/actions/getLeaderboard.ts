@@ -1,9 +1,6 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import {
-  getEnrolledCourses,
-  getMentorCourses,
-} from "./courses";
+import { getEnrolledCourses, getMentorCourses } from "./courses";
 
 export default async function getLeaderboardData() {
   try {
@@ -75,15 +72,15 @@ export default async function getLeaderboardData() {
       (acc: any, curr: any) => {
         const totalPoints = curr.points.reduce(
           (acc: any, curr: any) => acc + curr.score,
-          0
+          0,
         );
         return [...acc, { ...curr, totalPoints }];
       },
-      []
+      [],
     );
 
     const sortedSubmissions = totalPoints.sort(
-      (a: any, b: any) => b.totalPoints - a.totalPoints
+      (a: any, b: any) => b.totalPoints - a.totalPoints,
     );
 
     return { sortedSubmissions, currentUser, enrolledCourses } as any;
@@ -101,7 +98,7 @@ export const getLeaderboardDataForStudent = async () => {
   const totalPoints = leaderboardData.sortedSubmissions
     .filter(
       (submission: any) =>
-        submission?.enrolledUser?.user?.id === currentUser?.id
+        submission?.enrolledUser?.user?.id === currentUser?.id,
     )
     .reduce((total: any, submission: any) => total + submission.totalPoints, 0);
   return totalPoints;
@@ -125,7 +122,7 @@ export const getInstructorLeaderboardData = async () => {
             id: {
               in: enrolledCourses.map((course: any) => course.id),
             },
-          }
+          },
         },
       },
       select: {
@@ -155,26 +152,26 @@ export const getInstructorLeaderboardData = async () => {
                 image: true,
               },
             },
-            mentor:{
-              select:{
-                username:true
-              }
-            }
+            mentor: {
+              select: {
+                username: true,
+              },
+            },
           },
         },
       },
     });
 
-    const totalPoints = submissions.reduce((acc: any, curr: any,ind:any) => {
+    const totalPoints = submissions.reduce((acc: any, curr: any, ind: any) => {
       const totalPoints = curr.points.reduce(
         (acc: any, curr: any) => acc + curr.score,
-        0
+        0,
       );
-      return [...acc, { ...curr, totalPoints}];
+      return [...acc, { ...curr, totalPoints }];
     }, []);
 
     const sortedSubmissions = totalPoints.sort(
-      (a: any, b: any) => b.totalPoints - a.totalPoints
+      (a: any, b: any) => b.totalPoints - a.totalPoints,
     );
 
     return { sortedSubmissions, currentUser, enrolledCourses } as any;
@@ -187,22 +184,22 @@ export const getSubmissionsCountOfAllStudents = async () => {
   try {
     const submissions = await db.submission.findMany({
       select: {
-        enrolledUser:{
-          select:{
-            username:true
-          }
+        enrolledUser: {
+          select: {
+            username: true,
+          },
         },
         points: true,
       },
-      where:{
-        points:{
-          some:{
-            score:{
-              gt:0
-            }
-          }
-        }
-      }
+      where: {
+        points: {
+          some: {
+            score: {
+              gt: 0,
+            },
+          },
+        },
+      },
     });
     const groupedSubmissions = submissions.reduce((acc: any, curr: any) => {
       const username = curr.enrolledUser.username;
@@ -266,13 +263,13 @@ export const getMentorLeaderboardData = async () => {
     const totalPoints = submissions.reduce((acc: any, curr: any) => {
       const totalPoints = curr.points.reduce(
         (acc: any, curr: any) => acc + curr.score,
-        0
+        0,
       );
       return [...acc, { ...curr, totalPoints }];
     }, []);
 
     const sortedSubmissions = totalPoints.sort(
-      (a: any, b: any) => b.totalPoints - a.totalPoints
+      (a: any, b: any) => b.totalPoints - a.totalPoints,
     );
 
     for (let i = 0; i < sortedSubmissions.length; i++) {
@@ -304,7 +301,7 @@ export const getMentorLeaderboardDataForDashboard = async () => {
       },
     });
     const filteredSubmissions = submissions.filter(
-      (submission: any) => submission.points.length > 0
+      (submission: any) => submission.points.length > 0,
     );
     return filteredSubmissions.length;
   } catch (error: any) {
@@ -321,11 +318,8 @@ export const getDashboardData = async () => {
   const data = await getLeaderboardData();
   const { sortedSubmissions } = data;
 
-
-
-
   const assignmentsSubmitted = sortedSubmissions.filter(
-    (x: any) => x.enrolledUser.user.id === currentUser.id
+    (x: any) => x.enrolledUser.user.id === currentUser.id,
   ).length;
   // const assignmentsPending =
 

@@ -5,11 +5,7 @@
   "semi": true,
   "jsxSingleQuote": false,
   "arrowParens": "always",
-  "tailwindFunctions": [
-    "classNames"
-  ],
+  "tailwindFunctions": ["classNames"],
   "endOfLine": "auto",
-  "plugins": [
-    "prettier-plugin-tailwindcss"
-  ]
+  "plugins": ["prettier-plugin-tailwindcss"]
 }

@@ -37,8 +37,8 @@
     "types/next-auth.d.ts",
     "**/*.cjs",
     ".eslintrc.cjs",
-    "next.config.mjs",
-    ],
+    "next.config.mjs"
+  ],
 
   "exclude": ["node_modules"]
 }

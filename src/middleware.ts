@@ -17,7 +17,7 @@ export default auth((req) => {
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isInstructorRoute = nextUrl.pathname.startsWith("/instructor");
   const isMentorRoute = nextUrl.pathname.startsWith("/mentor");
-  const isEmailRoute = nextUrl.pathname.endsWith("/api/send")
+  const isEmailRoute = nextUrl.pathname.endsWith("/api/send");
 
   if (isApiAuthRoute || isEmailRoute) {
     return;
@@ -39,15 +39,15 @@ export default auth((req) => {
     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
 
     return Response.redirect(
-      new URL(`/signin?callbackUrl=${encodedCallbackUrl}`, nextUrl)
+      new URL(`/signin?callbackUrl=${encodedCallbackUrl}`, nextUrl),
     );
   }
 
-  if (isLoggedIn && (isInstructorRoute && req.auth?.user.role!=="INSTRUCTOR")) {
+  if (isLoggedIn && isInstructorRoute && req.auth?.user.role !== "INSTRUCTOR") {
     return Response.redirect(new URL("/error", nextUrl));
   }
 
-  if (isLoggedIn && (isMentorRoute && req.auth?.user.role!=="MENTOR")) {
+  if (isLoggedIn && isMentorRoute && req.auth?.user.role !== "MENTOR") {
     return Response.redirect(new URL("/error", nextUrl));
   }
 

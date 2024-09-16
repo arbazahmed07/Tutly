@@ -2,7 +2,10 @@
 import { useRef, useEffect } from "react";
 import { Chart } from "chart.js/auto";
 
-export default function Linechart({assignments,countForEachAssignment}:any) {
+export default function Linechart({
+  assignments,
+  countForEachAssignment,
+}: any) {
   const chartRef = useRef<any>(null);
 
   useEffect(() => {
@@ -12,39 +15,39 @@ export default function Linechart({assignments,countForEachAssignment}:any) {
       }
       const context = chartRef.current.getContext("2d");
 
-      const newChart = new Chart(context,{
-        type:"line",
-        data:{
-          labels:assignments,
-          datasets:[
+      const newChart = new Chart(context, {
+        type: "line",
+        data: {
+          labels: assignments,
+          datasets: [
             {
-              label:"submissions",
-              data:countForEachAssignment,
-              backgroundColor: [
-                'rgb(37,99,235)'
-              ],
-              borderColor:'white',
+              label: "submissions",
+              data: countForEachAssignment,
+              backgroundColor: ["rgb(37,99,235)"],
+              borderColor: "white",
               borderWidth: 1,
-            }
-          ]
-        },
-        options:{
-          responsive:true,
-          scales:{
-            x:{
-              type:'linear',
             },
-            y:{
-              beginAtZero:true
-            }
-          }
+          ],
         },
-      })
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: "linear",
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
       chartRef.current.chart = newChart;
     }
-  },[]);
+  }, []);
 
-  return <div className="w-full">
-    <canvas ref={chartRef}/>
-  </div>;
+  return (
+    <div className="w-full">
+      <canvas ref={chartRef} />
+    </div>
+  );
 }

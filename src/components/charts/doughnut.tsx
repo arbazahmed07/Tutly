@@ -2,7 +2,7 @@
 import { useRef, useEffect } from "react";
 import { Chart } from "chart.js/auto";
 
-export default function Doughnutchart({attendance}:{attendance:any}) {
+export default function Doughnutchart({ attendance }: { attendance: any }) {
   const chartRef = useRef<any>(null);
 
   useEffect(() => {
@@ -12,25 +12,25 @@ export default function Doughnutchart({attendance}:{attendance:any}) {
       }
       const context = chartRef.current.getContext("2d");
 
-      const newChart = new Chart(context,{
-        type:"doughnut",
-        data:{
+      const newChart = new Chart(context, {
+        type: "doughnut",
+        data: {
           // labels:classes,
-          datasets:[
+          datasets: [
             {
-              label:"classes",
-              data:attendance,
+              label: "classes",
+              data: attendance,
               backgroundColor: [
-                'rgb(37,99,235)',
+                "rgb(37,99,235)",
                 // 'green',
-                'red'
+                "red",
               ],
-              borderColor:'white',
+              borderColor: "white",
               borderWidth: 0,
-            }
-          ]
+            },
+          ],
         },
-        options:{
+        options: {
           // responsive:true,
           // scales:{
           //   x:{
@@ -46,21 +46,26 @@ export default function Doughnutchart({attendance}:{attendance:any}) {
           //   }
           // }
         },
-      })
+      });
       chartRef.current.chart = newChart;
     }
-  },[]);
+  }, []);
 
-  const attendancePercentage = (attendance[0] * 100 / (attendance[0] + attendance[1])).toFixed(2)
+  const attendancePercentage = (
+    (attendance[0] * 100) /
+    (attendance[0] + attendance[1])
+  ).toFixed(2);
 
   return (
-    <div className="relative w-full mb-2">
+    <div className="relative mb-2 w-full">
       <canvas ref={chartRef} />
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
-          <span className="font-bold text-3xl">{attendancePercentage==='100.00'?"100":attendancePercentage}%</span>
+          <span className="text-3xl font-bold">
+            {attendancePercentage === "100.00" ? "100" : attendancePercentage}%
+          </span>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -15,10 +15,9 @@ export async function GET(req: NextRequest) {
         image: value.image,
         role: value.role,
         percentage: (Number(value.count) * 100) / totalCount,
-      })
+      }),
     );
 
-    
     return NextResponse.json(jsonData, { status: 200 });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });

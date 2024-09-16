@@ -4,9 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
-
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {

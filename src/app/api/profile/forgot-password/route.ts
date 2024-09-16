@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   await db.user.update({
     where: { email: body.email },
     data: {
-      password:null,
+      password: null,
     },
   });
 

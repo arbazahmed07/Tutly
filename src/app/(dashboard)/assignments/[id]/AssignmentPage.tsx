@@ -31,7 +31,7 @@ export default function AssignmentPage({
   assignment,
   assignments,
   notSubmittedMentees,
-  isCourseAdmin= false,
+  isCourseAdmin = false,
 }: {
   params: { id: string };
   currentUser: any;
@@ -60,7 +60,8 @@ export default function AssignmentPage({
   ];
   const [modal, setModal] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const haveAdminAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+  const haveAdminAccess =
+    currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
 
   console.log("isCourseAdmin", isCourseAdmin);
 
@@ -86,18 +87,18 @@ export default function AssignmentPage({
       x.enrolledUser.username
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
-      x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())
+      x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   const filteredNonSubmittedMentees = notSubmittedMentees?.filter(
     (x: any) =>
       x.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      x.username.toLowerCase().includes(searchQuery.toLowerCase())
+      x.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   // }
 
   if (username) {
     filteredAssignments = filteredAssignments.filter(
-      (x: any) => x.enrolledUser.username === username
+      (x: any) => x.enrolledUser.username === username,
     );
   }
 
@@ -118,12 +119,12 @@ export default function AssignmentPage({
   const handleEdit = (index: number, submissionId: string) => {
     setEditingIndex(index);
     const submission = filteredAssignments.find(
-      (x: any) => x.id === submissionId
+      (x: any) => x.id === submissionId,
     );
     const rValue =
       submission &&
       submission.points.find(
-        (point: any) => point.category === "RESPOSIVENESS"
+        (point: any) => point.category === "RESPOSIVENESS",
       );
     const sValue =
       submission &&
@@ -183,7 +184,7 @@ export default function AssignmentPage({
 
   const handleDelete = async (id: string) => {
     const response = confirm(
-      "Are you sure you want to delete this submission?"
+      "Are you sure you want to delete this submission?",
     );
     if (!response) return;
     try {
@@ -202,19 +203,19 @@ export default function AssignmentPage({
   const [nonSubmissions, setNonSubmissions] = useState<boolean>(false);
 
   return (
-    <div className="mx-2 md:mx-10 my-2 relative">
-      <h1 className="text-center p-2 bg-gradient-to-l from-blue-500 to-blue-600 text-white rounded text-sm md:text-lg font-medium">
+    <div className="relative mx-2 my-2 md:mx-10">
+      <h1 className="rounded bg-gradient-to-l from-blue-500 to-blue-600 p-2 text-center text-sm font-medium text-white md:text-lg">
         Assignment Submission : {assignment?.title}
       </h1>
 
-      <div className="flex items-center justify-between my-4 text-xs md:text-sm font-medium">
-        <p className="rounded p-1 px-2 bg-secondary-500 text-white">
+      <div className="my-4 flex items-center justify-between text-xs font-medium md:text-sm">
+        <p className="rounded bg-secondary-500 p-1 px-2 text-white">
           # {assignment?.class?.course?.title}
         </p>
-        <div className="flex justify-center items-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`p-1 px-2 rounded text-white ${
+              className={`rounded p-1 px-2 text-white ${
                 new Date(assignment?.dueDate) > new Date()
                   ? "bg-primary-600"
                   : "bg-secondary-500"
@@ -225,16 +226,16 @@ export default function AssignmentPage({
           )}
         </div>
       </div>
-      <div className=" flex justify-between items-center w-full">
-        <span className="block mt-5">Details : 👇</span>
-        <div className="flex justify-center items-center gap-4">
-          <h1 className="border rounded-md p-1 text-sm">
+      <div className="flex w-full items-center justify-between">
+        <span className="mt-5 block">Details : 👇</span>
+        <div className="flex items-center justify-center gap-4">
+          <h1 className="rounded-md border p-1 text-sm">
             Max responses : {assignment?.maxSubmissions}
           </h1>
           {haveAdminAccess && (
             <button
               onClick={() => router.push(`/attachments/edit/${assignment.id}`)}
-              className=" p-1 px-3 bg-emerald-700 hover:bg-emerald-800 rounded-md"
+              className="rounded-md bg-emerald-700 p-1 px-3 hover:bg-emerald-800"
             >
               edit
             </button>
@@ -245,12 +246,12 @@ export default function AssignmentPage({
         {assignment?.details || "No details given to show"}
       </div>
 
-      <div className="flex flex-col text-black my-4 gap-4">
+      <div className="my-4 flex flex-col gap-4 text-black">
         <div>
           <a
             target="_blank"
             href={`${assignment?.link}`}
-            className="text-sm text-blue-400 font-semibold break-words"
+            className="break-words text-sm font-semibold text-blue-400"
           >
             {assignment?.link}
           </a>
@@ -263,15 +264,15 @@ export default function AssignmentPage({
           />
         ) : (
           <>
-            <div className="flex justify-between mt-8">
-              <div className="block mt-7 dark:text-white max-sm:me-2 max-sm:text-sm max-sm:w-full ">
+            <div className="mt-8 flex justify-between">
+              <div className="mt-7 block dark:text-white max-sm:me-2 max-sm:w-full max-sm:text-sm">
                 Submissions : 👇
               </div>
-              <div className="sm:flex sm:items-center gap-4 max-sm:space-y-3 max-sm:w-full max-sm:justify-between ">
-                <div className="max-sm:w-full max-sm:justify-between max-sm:flex gap-4 ">
+              <div className="gap-4 max-sm:w-full max-sm:justify-between max-sm:space-y-3 sm:flex sm:items-center">
+                <div className="gap-4 max-sm:flex max-sm:w-full max-sm:justify-between">
                   <button
                     onClick={() => setNonSubmissions(!nonSubmissions)}
-                    className="text-secondary-400 italic hover:text-white max-sm:text-sm me-5"
+                    className="me-5 italic text-secondary-400 hover:text-white max-sm:text-sm"
                   >
                     {!nonSubmissions ? (
                       <h1>Not received from?</h1>
@@ -283,38 +284,38 @@ export default function AssignmentPage({
                     onClick={() => {
                       if (username) {
                         router.push(
-                          `/assignments/${params.id}/evaluate?username=${username}`
+                          `/assignments/${params.id}/evaluate?username=${username}`,
                         );
                       } else {
                         router.push(`/assignments/${params.id}/evaluate`);
                       }
                     }}
-                    className="bg-primary-600 inline px-3.5 py-2 text-sm rounded font-semibold text-white"
+                    className="inline rounded bg-primary-600 px-3.5 py-2 text-sm font-semibold text-white"
                   >
                     Evaluate
                   </button>
                 </div>
-                <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
+                <div className="m-auto flex items-center rounded border bg-secondary-200 text-black md:m-0">
                   <input
                     title="input"
-                    className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
+                    className="rounded-l border-r border-black bg-secondary-200 p-2 text-sm font-medium outline-none"
                     placeholder="search username"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
-                  <FaSearch className="h-5 w-5 m-2" />
+                  <FaSearch className="m-2 h-5 w-5" />
                 </div>
               </div>
             </div>
             <div className="overflow-x-auto">
               {nonSubmissions ? (
-                <table className="text-center w-full">
-                  <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
+                <table className="w-full text-center">
+                  <thead className="sticky top-0 bg-secondary-300 text-secondary-700">
                     <tr>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         sl.no
                       </th>
-                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider sticky left-0 text-secondary-700 bg-secondary-300 ">
+                      <th className="sticky left-0 bg-secondary-300 px-6 py-3 text-sm font-medium uppercase tracking-wider text-secondary-700">
                         username
                       </th>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
@@ -325,22 +326,22 @@ export default function AssignmentPage({
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-200 bg-white">
                     {filteredNonSubmittedMentees?.map(
                       (user: any, index: any) => {
                         return (
                           <tr key={index}>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="whitespace-nowrap px-6 py-4">
                               {index + 1}
                             </td>
-                            <td className={`px-6 py-4 whitespace-nowrap`}>
+                            <td className={`whitespace-nowrap px-6 py-4`}>
                               <h1>{user.username}</h1>
                             </td>
-                            <td className={`px-6 py-4 whitespace-nowrap`}>
+                            <td className={`whitespace-nowrap px-6 py-4`}>
                               <h1>{user.mentorUsername}</h1>
                             </td>
                             <td
-                              className={`flex justify-center px-6 py-4 whitespace-nowrap`}
+                              className={`flex justify-center whitespace-nowrap px-6 py-4`}
                             >
                               <RiWhatsappLine
                                 className="h-6 w-6"
@@ -351,18 +352,18 @@ export default function AssignmentPage({
                             </td>
                           </tr>
                         );
-                      }
+                      },
                     )}
                   </tbody>
                 </table>
               ) : (
-                <table className="text-center w-full">
-                  <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
+                <table className="w-full text-center">
+                  <thead className="sticky top-0 bg-secondary-300 text-secondary-700">
                     <tr>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                         sl.no
                       </th>
-                      <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider sticky left-0 text-secondary-700 bg-secondary-300 ">
+                      <th className="sticky left-0 bg-secondary-300 px-6 py-3 text-sm font-medium uppercase tracking-wider text-secondary-700">
                         username
                       </th>
                       <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
@@ -390,42 +391,42 @@ export default function AssignmentPage({
                       )}
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-200 bg-white">
                     {filteredAssignments?.map((submission: any, index: any) => {
                       const rValue = submission.points.find(
-                        (point: any) => point.category === "RESPOSIVENESS"
+                        (point: any) => point.category === "RESPOSIVENESS",
                       );
                       const sValue = submission.points.find(
-                        (point: any) => point.category === "STYLING"
+                        (point: any) => point.category === "STYLING",
                       );
                       const oValue = submission.points.find(
-                        (point: any) => point.category === "OTHER"
+                        (point: any) => point.category === "OTHER",
                       );
 
                       const totalScore = [rValue, sValue, oValue].reduce(
                         (acc, currentValue) => {
                           return acc + (currentValue ? currentValue.score : 0);
                         },
-                        0
+                        0,
                       );
 
                       return (
                         <tr key={index}>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="whitespace-nowrap px-6 py-4">
                             {index + 1}
                           </td>
-                          <td className="sticky left-0 bg-white divide-gray-200">
+                          <td className="sticky left-0 divide-gray-200 bg-white">
                             <h1>{submission.enrolledUser.username}</h1>
                             <h1 className="text-xs">
                               {submission.enrolledUser.mentorUsername}
                             </h1>
                           </td>
-                          <td className="px-6 text-sm py-4 whitespace-nowrap">
+                          <td className="whitespace-nowrap px-6 py-4 text-sm">
                             {day(submission.submissionDate).format(
-                              "DD MMM YYYY, hh:mm:ss A"
+                              "DD MMM YYYY, hh:mm:ss A",
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="whitespace-nowrap px-6 py-4">
                             {editingIndex === index ? (
                               <input
                                 title="null"
@@ -446,13 +447,13 @@ export default function AssignmentPage({
                                 }}
                                 min={0}
                                 max={10}
-                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                                className="w-20 rounded-lg border-2 border-black bg-transparent px-2 text-background"
                               />
                             ) : (
                               rValue?.score || "NA"
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="whitespace-nowrap px-6 py-4">
                             {editingIndex === index ? (
                               <input
                                 title="null"
@@ -473,13 +474,13 @@ export default function AssignmentPage({
                                 }}
                                 min={0}
                                 max={10}
-                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                                className="w-20 rounded-lg border-2 border-black bg-transparent px-2 text-background"
                               />
                             ) : (
                               sValue?.score || "NA"
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="whitespace-nowrap px-6 py-4">
                             {editingIndex === index ? (
                               <input
                                 title="null"
@@ -500,13 +501,13 @@ export default function AssignmentPage({
                                 }}
                                 min={0}
                                 max={10}
-                                className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                                className="w-20 rounded-lg border-2 border-black bg-transparent px-2 text-background"
                               />
                             ) : (
                               oValue?.score || "NA"
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="whitespace-nowrap px-6 py-4">
                             {rValue?.score || sValue?.score || oValue?.score
                               ? totalScore
                               : "NA"}
@@ -520,28 +521,28 @@ export default function AssignmentPage({
                                 onChange={(e) => {
                                   setFeedback(e.target.value);
                                 }}
-                                className="bg-transparent block min-w-16 text-start overflow-y-hidden border-black rounded-lg px-2 border-2 text-background m-2"
+                                className="m-2 block min-w-16 overflow-y-hidden rounded-lg border-2 border-black bg-transparent px-2 text-start text-background"
                               ></textarea>
                             ) : (
                               submission.overallFeedback || "NA"
                             )}
                           </td>
                           {currentUser.role !== "STUDENT" && (
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="whitespace-nowrap px-6 py-4">
                               {editingIndex === index ? (
-                                <div className="  flex items-center justify-center gap-5">
+                                <div className="flex items-center justify-center gap-5">
                                   <button
                                     onClick={() => {
                                       handleSave(index);
                                       handleFeedback(submission.id);
                                     }}
-                                    className="text-blue-600 font-semibold text-sm hover:text-blue-700"
+                                    className="text-sm font-semibold text-blue-600 hover:text-blue-700"
                                   >
                                     Save
                                   </button>
                                   <button
                                     onClick={() => setEditingIndex(-1)}
-                                    className=" text-red-600 hover:text-red-700 text-sm font-semibold "
+                                    className="text-sm font-semibold text-red-600 hover:text-red-700"
                                   >
                                     Cancel
                                   </button>
@@ -556,7 +557,7 @@ export default function AssignmentPage({
                                         : submission.submissionLink
                                     }
                                     target="_blank"
-                                    className="rounded-full p-1 hover:text-primary-500 text-lg"
+                                    className="rounded-full p-1 text-lg hover:text-primary-500"
                                   >
                                     <FaEye />
                                   </Link>
@@ -564,13 +565,13 @@ export default function AssignmentPage({
                                     onClick={() => {
                                       handleEdit(index, submission.id);
                                     }}
-                                    className="rounded-full p-1 hover:text-primary-500 text-md"
+                                    className="text-md rounded-full p-1 hover:text-primary-500"
                                   >
                                     <FiEdit />
                                   </button>
                                   <button
                                     onClick={() => handleDelete(submission.id)}
-                                    className="rounded-full p-1 hover:text-white text-lg hover:bg-red-500"
+                                    className="rounded-full p-1 text-lg hover:bg-red-500 hover:text-white"
                                   >
                                     <MdOutlineDelete />
                                   </button>
@@ -585,16 +586,16 @@ export default function AssignmentPage({
                 </table>
               )}
               {modal && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                  <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
-                    <h2 className="text-lg font-semibold mb-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+                    <h2 className="mb-4 text-lg font-semibold">
                       Select a message to send
                     </h2>
                     <div className="flex flex-col gap-2">
                       {messages.map((msg, index) => (
                         <div
                           key={index}
-                          className="flex gap-4 justify-between border-b border-slate-500 mb-2"
+                          className="mb-2 flex justify-between gap-4 border-b border-slate-500"
                         >
                           <p className="text-sm">{msg}</p>
                           <button
@@ -608,7 +609,7 @@ export default function AssignmentPage({
                     </div>
                     <button
                       onClick={() => setModal(false)}
-                      className="mt-4 bg-gray-200 hover:bg-gray-300 rounded px-4 py-2"
+                      className="mt-4 rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
                     >
                       Close
                     </button>
@@ -665,7 +666,7 @@ const StudentAssignmentSubmission = ({
     <>
       <div>
         {assignment?.maxSubmissions <= assignment.submissions.length ? (
-          <div className="text-white font-semibold text-lg text-center my-5">
+          <div className="my-5 text-center text-lg font-semibold text-white">
             No more responses are accepted!
           </div>
         ) : assignment.submissionMode === "HTML_CSS_JS" ? (
@@ -673,7 +674,7 @@ const StudentAssignmentSubmission = ({
             href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`}
             target="_blank"
           >
-            <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
+            <button className="inline rounded bg-blue-600 p-2 text-sm font-semibold text-white">
               {assignment?.submissions.length === 0
                 ? "Submit through Playground"
                 : "Submit another response"}
@@ -682,7 +683,7 @@ const StudentAssignmentSubmission = ({
         ) : (
           <Dialog>
             <DialogTrigger asChild>
-              <button className="bg-blue-600 inline p-2 text-sm text-white rounded font-semibold">
+              <button className="inline rounded bg-blue-600 p-2 text-sm font-semibold text-white">
                 {assignment?.submissions.length === 0
                   ? "Submit External Link"
                   : "Submit another response"}
@@ -706,14 +707,14 @@ const StudentAssignmentSubmission = ({
                       value={externalLink}
                       onChange={(e) => setExternalLink(e.target.value)}
                       placeholder="https://codesandbox.io/p/sandbox/..."
-                      className="col-span-4 "
+                      className="col-span-4"
                     />
                   </div>
                 </div>
                 <DialogFooter>
                   <Button
                     type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+                    className="bg-blue-500 font-semibold text-white hover:bg-blue-600"
                   >
                     Send
                   </Button>
@@ -724,10 +725,10 @@ const StudentAssignmentSubmission = ({
         )}
       </div>
       <h1>
-        <span className="block mt-5 dark:text-white">Submissions : 👇</span>
+        <span className="mt-5 block dark:text-white">Submissions : 👇</span>
       </h1>
       <div className="overflow-x-auto">
-        <table className="text-center w-full">
+        <table className="w-full text-center">
           <thead className="bg-secondary-300 text-secondary-700">
             <tr>
               <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
@@ -749,29 +750,29 @@ const StudentAssignmentSubmission = ({
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {assignment?.submissions.map((submission: any, index: any) => {
               const rValue = submission.points.find(
-                (point: any) => point.category === "RESPOSIVENESS"
+                (point: any) => point.category === "RESPOSIVENESS",
               );
               const sValue = submission.points.find(
-                (point: any) => point.category === "STYLING"
+                (point: any) => point.category === "STYLING",
               );
               const oValue = submission.points.find(
-                (point: any) => point.category === "OTHER"
+                (point: any) => point.category === "OTHER",
               );
 
               const totalScore = [rValue, sValue, oValue].reduce(
                 (acc, currentValue) => {
                   return acc + (currentValue ? currentValue.score : 0);
                 },
-                0
+                0,
               );
 
               return (
                 <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-                  <td className={`px-6 py-4 whitespace-nowrap`}>
+                  <td className="whitespace-nowrap px-6 py-4">{index + 1}</td>
+                  <td className={`whitespace-nowrap px-6 py-4`}>
                     <Link
                       href={
                         assignment.submissionMode === "HTML_CSS_JS"
@@ -779,19 +780,19 @@ const StudentAssignmentSubmission = ({
                           : submission.submissionLink
                       }
                       target="_blank"
-                      className="text-blue-400 font-semibold break-words"
+                      className="break-words font-semibold text-blue-400"
                     >
                       view
                     </Link>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     {submission.submissionDate.toISOString().split("T")[0] ||
                       "NA"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     {submission.overallFeedback || "NA"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     {totalScore ? "Submitted" : "NA"}
                   </td>
                 </tr>

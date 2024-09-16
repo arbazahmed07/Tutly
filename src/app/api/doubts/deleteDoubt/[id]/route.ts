@@ -2,9 +2,14 @@ import { deleteAnyDoubt } from "@/actions/doubts";
 import getCurrentUser from "@/actions/getCurrentUser";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(request: NextRequest,{params}:{
-  params: { id: string }
-}) {
+export async function DELETE(
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: { id: string };
+  },
+) {
   const { id } = params;
 
   try {

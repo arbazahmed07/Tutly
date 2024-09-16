@@ -106,9 +106,10 @@ export const createClass = async (data: any) => {
 export const updateClass = async (data: any) => {
   const currentUser = await getCurrentUser();
   const isCourseAdmin = currentUser?.adminForCourses?.some(
-    (course) => course.id === data.courseId
+    (course) => course.id === data.courseId,
   );
-  const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+  const haveAccess =
+    currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
   if (!haveAccess) {
     throw new Error("You are not authorized to update this class.");
   }
@@ -187,7 +188,7 @@ export const deleteClass = async (classId: string) => {
 
 export const totalNumberOfClasses = async () => {
   const currentUser = await getCurrentUser();
-  if(!currentUser) {
+  if (!currentUser) {
     throw new Error("You are not authorized to view this page.");
   }
 
@@ -197,7 +198,7 @@ export const totalNumberOfClasses = async () => {
   } catch (error) {
     console.error("Error getting total number of classes:", error);
     throw new Error(
-      "Failed to get total number of classes. Please try again later."
+      "Failed to get total number of classes. Please try again later.",
     );
   }
 };

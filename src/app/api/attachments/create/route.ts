@@ -6,15 +6,18 @@ export async function POST(request: NextRequest) {
   const data = await request.json();
   try {
     const currentUser = await getCurrentUser();
-    const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === data.courseId);
-    const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
-    if(!haveAccess) {
+    const isCourseAdmin = currentUser?.adminForCourses?.some(
+      (course) => course.id === data.courseId,
+    );
+    const haveAccess =
+      currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+    if (!haveAccess) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
+
     const attachment = await createAttachment(data);
     return NextResponse.json(attachment);
-  } catch (e :any) {
+  } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });
   }
 }

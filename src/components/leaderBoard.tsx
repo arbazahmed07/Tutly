@@ -18,7 +18,7 @@ export default function Leaderboard({
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [leaderboardData, setLeaderboardData] = useState<any[]>([]);
   const [mentorUsername, setMentorUsername] = useState<any>(
-    mentors ? mentors[0]?.username : null
+    mentors ? mentors[0]?.username : null,
   );
   useEffect(() => {
     let filteredSubmissions;
@@ -26,11 +26,11 @@ export default function Leaderboard({
       filteredSubmissions = submissions.filter(
         (x: any) =>
           x.enrolledUser.mentor.username === mentorUsername &&
-          x?.assignment?.class?.course?.id === currentCourse
+          x?.assignment?.class?.course?.id === currentCourse,
       );
     } else {
       filteredSubmissions = submissions.filter(
-        (x: any) => x?.assignment?.class?.course?.id === currentCourse
+        (x: any) => x?.assignment?.class?.course?.id === currentCourse,
       );
     }
 
@@ -60,25 +60,27 @@ export default function Leaderboard({
     setLeaderboardData(leaderboardArray);
   }, [currentCourse, submissions, mentorUsername]);
 
-
   return (
-    <div className="mx-2 md:mx-14 mt-6 mb-10 flex flex-col gap-4">
+    <div className="mx-2 mb-10 mt-6 flex flex-col gap-4 md:mx-14">
       {/* Leaderboard-header */}
       <div className="flex flex-col text-center">
-        <FaCrown className="h-20 w-20 m-auto dark:text-yellow-400 text-blue-500" />
-        <h1 className="text-2xl font-semibold dark:text-yellow-400 text-blue-500">Leaderboard</h1>
+        <FaCrown className="m-auto h-20 w-20 text-blue-500 dark:text-yellow-400" />
+        <h1 className="text-2xl font-semibold text-blue-500 dark:text-yellow-400">
+          Leaderboard
+        </h1>
       </div>
       {/* Mentors list for instructor */}
       {currentUser.role === "INSTRUCTOR" && (
-        <div className="flex gap-3 mt-4">
+        <div className="mt-4 flex gap-3">
           {mentors?.map((mentor: any) => (
             <button
               onClick={() => setMentorUsername(mentor.username)}
               key={mentor.id}
-              className={`p-1 px-2 text-blue-500 dark:text-primary-500 rounded ${mentor.username === mentorUsername
-                ? "shadow-sm shadow-primary-500"
-                : ""
-                }`}
+              className={`rounded p-1 px-2 text-blue-500 dark:text-primary-500 ${
+                mentor.username === mentorUsername
+                  ? "shadow-sm shadow-primary-500"
+                  : ""
+              }`}
             >
               {mentor.username}
             </button>
@@ -86,16 +88,17 @@ export default function Leaderboard({
         </div>
       )}
       {/* Courses list */}
-      <div className="flex gap-3 mt-4">
+      <div className="mt-4 flex gap-3">
         {courses?.map((course: any) => (
           <button
             hidden={course.isPublished === false}
             onClick={() => setCurrentCourse(course.id)}
-            className={`rounded p-1 px-2 w-20 sm:w-auto ${currentCourse === course.id && "border rounded"
-              }`}
+            className={`w-20 rounded p-1 px-2 sm:w-auto ${
+              currentCourse === course.id && "rounded border"
+            }`}
             key={course.id}
           >
-            <h1 className="truncate max-w-xs text-sm font-medium">
+            <h1 className="max-w-xs truncate text-sm font-medium">
               {course.title}
             </h1>
           </button>
@@ -108,20 +111,14 @@ export default function Leaderboard({
         <table>
           <thead className="bg-slate-600 text-white">
             <tr>
-              <th className="text-start pl-12 py-2 uppercase text-sm">
-                <div className="flex items-center gap-2">
-                  Rank
-                </div>
+              <th className="py-2 pl-12 text-start text-sm uppercase">
+                <div className="flex items-center gap-2">Rank</div>
               </th>
-              <th className="text-start uppercase text-sm">
-                <div className="flex items-center gap-2">
-                  Name
-                </div>
+              <th className="text-start text-sm uppercase">
+                <div className="flex items-center gap-2">Name</div>
               </th>
-              <th className="text-start uppercase text-sm">
-                <div className="flex items-center gap-2">
-                  Points
-                </div>
+              <th className="text-start text-sm uppercase">
+                <div className="flex items-center gap-2">Points</div>
               </th>
             </tr>
           </thead>
@@ -130,20 +127,22 @@ export default function Leaderboard({
               if (data.totalPoints === 0) return null;
               return (
                 <tr
-                  className={`p-2 px-4 border-b-2 bg-gradient-to-r hover:text-white  ${currentUser.username === data.username
-                    ? "from-yellow-500/65 via-yellow-600/80 to-yellow-700"
-                    : "hover:from-blue-600 hover:to-sky-500"
-                    }`}
+                  className={`border-b-2 bg-gradient-to-r p-2 px-4 hover:text-white ${
+                    currentUser.username === data.username
+                      ? "from-yellow-500/65 via-yellow-600/80 to-yellow-700"
+                      : "hover:from-blue-600 hover:to-sky-500"
+                  }`}
                   key={index}
                 >
                   <td className="pl-12">{index + 1}</td>
-                  <td className="flex md:gap-4 items-center">
-                    <Image unoptimized
+                  <td className="flex items-center md:gap-4">
+                    <Image
+                      unoptimized
                       src={data?.image || "/images/placeholder.jpg"}
                       alt={`User ${index + 1}`}
                       width={35}
                       height={35}
-                      className="w-10 h-10 rounded-full"
+                      className="h-10 w-10 rounded-full"
                     />
                     <div className="py-2">
                       <h1 className="text-md font-medium">{data.name}</h1>
@@ -151,7 +150,7 @@ export default function Leaderboard({
                     </div>
                   </td>
                   <td>
-                    <h1 className="font-medium text-xs md:text-sm">
+                    <h1 className="text-xs font-medium md:text-sm">
                       {data.totalPoints} points
                     </h1>
                   </td>

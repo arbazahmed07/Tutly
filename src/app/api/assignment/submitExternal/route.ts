@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
   const { assignmentId, externalLink, maxSubmissions, courseId } =
     await request.json();
 
-
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
@@ -39,10 +38,9 @@ export async function POST(request: NextRequest) {
     if (!enrolledUser) {
       return NextResponse.json(
         { error: "User not enrolled in the course" },
-        { status: 400 }
+        { status: 400 },
       );
     }
-
 
     const res = await db.submission.create({
       data: {
@@ -51,7 +49,6 @@ export async function POST(request: NextRequest) {
         submissionLink: externalLink,
       },
     });
-
 
     return NextResponse.json({ success: "Assignment submitted successfully" });
   } catch (e: any) {

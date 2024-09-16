@@ -4,9 +4,9 @@ import getCurrentUser from "./getCurrentUser";
 export const getAllCourses = async () => {
   const currentUser = await getCurrentUser();
   try {
-    if(!currentUser) return null;
+    if (!currentUser) return null;
     let courses;
-    if(currentUser.role === "INSTRUCTOR") {
+    if (currentUser.role === "INSTRUCTOR") {
       courses = await db.course.findMany({
         where: {
           createdById: currentUser.id,
@@ -19,14 +19,14 @@ export const getAllCourses = async () => {
           },
         },
       });
-    } else if(currentUser.role === "MENTOR") {
+    } else if (currentUser.role === "MENTOR") {
       courses = await db.course.findMany({
         where: {
           enrolledUsers: {
             some: {
               mentorUsername: currentUser.username,
             },
-          }
+          },
         },
         include: {
           _count: {
@@ -45,7 +45,7 @@ export const getAllCourses = async () => {
                 id: currentUser.id,
               },
             },
-          }
+          },
         },
         include: {
           _count: {
@@ -208,7 +208,7 @@ export const getEnrolledCoursesByUsername = async (username: string) => {
   return courses;
 };
 
-export const getMentorStudents = async (courseId:string) => {
+export const getMentorStudents = async (courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -233,7 +233,7 @@ export const getMentorStudents = async (courseId:string) => {
 
   return students;
 };
-export const getMentorStudentsById = async (id: string,courseId:string) => {
+export const getMentorStudentsById = async (id: string, courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -258,7 +258,7 @@ export const getMentorStudentsById = async (id: string,courseId:string) => {
   return students;
 };
 
-export const getEnrolledStudents = async (courseId:string) => {
+export const getEnrolledStudents = async (courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -267,7 +267,7 @@ export const getEnrolledStudents = async (courseId:string) => {
       enrolledUsers: {
         some: {
           course: {
-            id: courseId
+            id: courseId,
           },
         },
       },
@@ -298,7 +298,7 @@ export const getAllStudents = async () => {
 
   return students;
 };
-export const getEnrolledMentees = async (courseId:string) => {
+export const getEnrolledMentees = async (courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -308,7 +308,7 @@ export const getEnrolledMentees = async (courseId:string) => {
       enrolledUsers: {
         some: {
           course: {
-            id:courseId
+            id: courseId,
           },
         },
       },
@@ -441,7 +441,7 @@ export const getCourseByCourseId = async (id: string) => {
 
 export const enrollStudentToCourse = async (
   courseId: string,
-  username: string
+  username: string,
 ) => {
   try {
     const currentUser = await getCurrentUser();
@@ -499,7 +499,7 @@ export const enrollStudentToCourse = async (
 
 export const unenrollStudentFromCourse = async (
   courseId: string,
-  username: string
+  username: string,
 ) => {
   try {
     const currentUser = await getCurrentUser();
@@ -579,7 +579,7 @@ export const updateRole = async (username: string, role: string) => {
 export const updateMentor = async (
   courseId: string,
   username: string,
-  mentorUsername: string
+  mentorUsername: string,
 ) => {
   try {
     const currentUser = await getCurrentUser();

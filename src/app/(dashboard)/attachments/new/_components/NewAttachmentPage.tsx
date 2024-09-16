@@ -71,7 +71,7 @@ const NewAttachmentPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        `/api/classes/getClassesById/${courseId}`
+        `/api/classes/getClassesById/${courseId}`,
       );
       setClasses(response.data);
       setLoading(false);
@@ -99,8 +99,6 @@ const NewAttachmentPage = () => {
   const { isSubmitting } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    
-    
     const dueDate =
       values?.dueDate !== "" && values?.dueDate
         ? new Date(values?.dueDate)
@@ -132,14 +130,14 @@ const NewAttachmentPage = () => {
   };
   return (
     <div className="h-full w-full p-4 md:p-7">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="flex items-center text-xl md:text-2xl font-semibold mb-6">
+      <div className="mx-auto max-w-4xl">
+        <h1 className="mb-6 flex items-center text-xl font-semibold md:text-2xl">
           Create a new attachment
-          <FaFilePen className="w-5 h-5 ml-4" />
+          <FaFilePen className="ml-4 h-5 w-5" />
         </h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 name="title"
                 control={form.control}
@@ -156,10 +154,10 @@ const NewAttachmentPage = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription className="text-sm opacity-90 hover:opacity-100 select-none">
+                    <FormDescription className="select-none text-sm opacity-90 hover:opacity-100">
                       No spaces are allowed (use underscores)
                     </FormDescription>
-                    <FormMessage className="text-red-700 font-bold" />
+                    <FormMessage className="font-bold text-red-700" />
                   </FormItem>
                 )}
               />
@@ -184,32 +182,32 @@ const NewAttachmentPage = () => {
                       </FormControl>
                       <SelectContent className="bg-secondary-700 text-base text-white">
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="ASSIGNMENT"
                         >
                           Assignment
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="ZOOM"
                         >
                           Zoom
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="GITHUB"
                         >
                           Github
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 textbas"
+                          className="textbas hover:bg-secondary-800"
                           value="OTHERS"
                         >
                           Other
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-red-700 font-bold" />
+                    <FormMessage className="font-bold text-red-700" />
                   </FormItem>
                 )}
               />
@@ -229,7 +227,7 @@ const NewAttachmentPage = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="text-red-700 font-bold" />
+                    <FormMessage className="font-bold text-red-700" />
                   </FormItem>
                 )}
               />
@@ -254,26 +252,26 @@ const NewAttachmentPage = () => {
                       </FormControl>
                       <SelectContent className="bg-secondary-700 text-white">
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="HTML_CSS_JS"
                         >
                           HTML_CSS_JS
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="REACT"
                         >
                           REACT
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="EXTERNAL_LINK"
                         >
                           EXTERNAL_LINK
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-red-700 font-bold " />
+                    <FormMessage className="font-bold text-red-700" />
                   </FormItem>
                 )}
               />
@@ -294,7 +292,7 @@ const NewAttachmentPage = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="text-red-700 font-bold" />
+                    <FormMessage className="font-bold text-red-700" />
                   </FormItem>
                 )}
               />
@@ -318,12 +316,12 @@ const NewAttachmentPage = () => {
                           />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-secondary-700 text-white text-base">
+                      <SelectContent className="bg-secondary-700 text-base text-white">
                         {classes.map((c: any) => (
                           <SelectItem
                             key={c.id}
                             value={c.id}
-                            className="hover:bg-secondary-800 text-base"
+                            className="text-base hover:bg-secondary-800"
                             defaultChecked={c.id === (classId as string)}
                           >
                             {c.title}
@@ -331,7 +329,7 @@ const NewAttachmentPage = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-red-700 font-bold" />
+                    <FormMessage className="font-bold text-red-700" />
                   </FormItem>
                 )}
               />
@@ -350,7 +348,7 @@ const NewAttachmentPage = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-700 font-bold" />
+                  <FormMessage className="font-bold text-red-700" />
                 </FormItem>
               )}
             />
@@ -368,7 +366,7 @@ const NewAttachmentPage = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-700 font-bold" />
+                  <FormMessage className="font-bold text-red-700" />
                 </FormItem>
               )}
             />

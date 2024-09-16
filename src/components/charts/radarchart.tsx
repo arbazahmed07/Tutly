@@ -12,44 +12,38 @@ export default function Radarchart() {
       }
       const context = chartRef.current.getContext("2d");
 
-      const newChart = new Chart(context,{
-        type:"radar",
-        data:{
-          labels:['John','ivuhoi','utdytgu','uyckljho','hxtuygo'],
-          datasets:[
+      const newChart = new Chart(context, {
+        type: "radar",
+        data: {
+          labels: ["John", "ivuhoi", "utdytgu", "uyckljho", "hxtuygo"],
+          datasets: [
             {
-              label:"Info",
-              data:[87,56,12,56,89],
-              backgroundColor: [
-                'rgb(255,99,132,0.2)'
-              ],
-              borderColor:[
-                'rgb(255,99,132)'
-              ],
+              label: "Info",
+              data: [87, 56, 12, 56, 89],
+              backgroundColor: ["rgb(255,99,132,0.2)"],
+              borderColor: ["rgb(255,99,132)"],
               borderWidth: 2,
             },
             {
-                label:"Info 2",
-                data:[65,45,32,42,90],
-                backgroundColor: [
-                  'rgb(255,159,64,0.2)'
-                ],
-                borderColor:[
-                  'rgb(255,99,132)'
-                ],
-                borderWidth: 2,
-              },
-          ]
+              label: "Info 2",
+              data: [65, 45, 32, 42, 90],
+              backgroundColor: ["rgb(255,159,64,0.2)"],
+              borderColor: ["rgb(255,99,132)"],
+              borderWidth: 2,
+            },
+          ],
         },
-        options:{
-          responsive:true,
+        options: {
+          responsive: true,
         },
-      })
+      });
       chartRef.current.chart = newChart;
     }
-  },[]);
+  }, []);
 
-  return <div className="w-full">
-    <canvas ref={chartRef}/>
-  </div>;
+  return (
+    <div className="w-full">
+      <canvas ref={chartRef} />
+    </div>
+  );
 }

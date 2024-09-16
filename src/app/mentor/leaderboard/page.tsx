@@ -1,6 +1,4 @@
-import {
-  getMentorLeaderboardData,
-} from "@/actions/getLeaderboard";
+import { getMentorLeaderboardData } from "@/actions/getLeaderboard";
 import Leaderboard from "@/components/leaderBoard";
 
 export default async function mentorLeaderboard() {

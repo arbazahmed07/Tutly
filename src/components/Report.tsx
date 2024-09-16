@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, ChangeEvent, useEffect } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -37,7 +37,9 @@ const Report = ({
     try {
       const res = await axios.post("/api/report", { courseId: course.id });
       const fetchedData = res.data;
-      const sortedData = [...fetchedData].sort((a, b) => a.username.localeCompare(b.username));
+      const sortedData = [...fetchedData].sort((a, b) =>
+        a.username.localeCompare(b.username),
+      );
       setData(sortedData);
     } catch (error) {
       console.error("Error:", error);
@@ -75,7 +77,7 @@ const Report = ({
   }, [currentCourse]);
 
   const uniqueMentors = Array.from(
-    new Set(data.map((item) => item.mentorUsername))
+    new Set(data.map((item) => item.mentorUsername)),
   );
 
   const columnMapping: { [key: string]: keyof DataItem } = {
@@ -125,7 +127,7 @@ const Report = ({
           return formatAttendance(item[key]);
         }
         return item[key] !== undefined ? item[key].toString() : "";
-      })
+      }),
     );
 
     const csvContent = [
@@ -155,7 +157,16 @@ const Report = ({
     doc.text(title, titleX, 10);
 
     const headers = [
-      ["S.No", "Username", "Name", "Assignments", "Submissions", "Evaluated", "Score", "Attendance"],
+      [
+        "S.No",
+        "Username",
+        "Name",
+        "Assignments",
+        "Submissions",
+        "Evaluated",
+        "Score",
+        "Attendance",
+      ],
       ...(!hideMentorFilter ? [["Mentor"]] : []),
     ].flat();
 
@@ -178,22 +189,26 @@ const Report = ({
       margin: { top: 20 },
       styles: { fontSize: 8 },
       columnStyles: {
-        0: hideMentorFilter ? { cellWidth: 15 } : { cellWidth: 10 },  // S.No
-        1: hideMentorFilter ? { cellWidth: 30 } : { cellWidth: 25 },   // Username
-        2: { cellWidth: 80 },   // Name (Widest Column)
-        3: { cellWidth: 30 },   // Assignments
-        4: { cellWidth: 30 },   // Submissions
-        5: { cellWidth: 30 },   // Evaluated
-        6: { cellWidth: 20 },   // Score
-        7: hideMentorFilter ? { cellWidth: 30 } : { cellWidth: 20 },  // Attendance
-        8: hideMentorFilter ? {} : { cellWidth: 25 },  // Mentor (if included)
+        0: hideMentorFilter ? { cellWidth: 15 } : { cellWidth: 10 }, // S.No
+        1: hideMentorFilter ? { cellWidth: 30 } : { cellWidth: 25 }, // Username
+        2: { cellWidth: 80 }, // Name (Widest Column)
+        3: { cellWidth: 30 }, // Assignments
+        4: { cellWidth: 30 }, // Submissions
+        5: { cellWidth: 30 }, // Evaluated
+        6: { cellWidth: 20 }, // Score
+        7: hideMentorFilter ? { cellWidth: 30 } : { cellWidth: 20 }, // Attendance
+        8: hideMentorFilter ? {} : { cellWidth: 25 }, // Mentor (if included)
       },
       headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255] },
       theme: "striped",
       pageBreak: "auto",
       didDrawPage: function (data: any) {
         doc.setFontSize(8);
-        doc.text(`Page ${doc.internal.getCurrentPageInfo().pageNumber}`, data.settings.margin.left, doc.internal.pageSize.height - 10);
+        doc.text(
+          `Page ${doc.internal.getCurrentPageInfo().pageNumber}`,
+          data.settings.margin.left,
+          doc.internal.pageSize.height - 10,
+        );
       },
     });
 
@@ -215,7 +230,7 @@ const Report = ({
   const formatAttendance = (attendance: string): string => {
     const attendanceNumber = parseFloat(attendance);
     if (isNaN(attendanceNumber)) {
-      return 'N/A';
+      return "N/A";
     }
     return attendanceNumber.toFixed(2) + "%";
   };
@@ -228,26 +243,28 @@ const Report = ({
             course.isPublished === true && (
               <button
                 onClick={() => handleClick(course)}
-                className={`rounded p-2 w-20 sm:w-auto ${currentCourse?.id === course?.id
-                  ? "border border-blue-500 rounded"
-                  : ""
-                  }`}
+                className={`w-20 rounded p-2 sm:w-auto ${
+                  currentCourse?.id === course?.id
+                    ? "rounded border border-blue-500"
+                    : ""
+                }`}
                 key={course?.id}
               >
-                <h1 className="truncate max-w-xs text-sm font-medium">
+                <h1 className="max-w-xs truncate text-sm font-medium">
                   {course.title}
                 </h1>
               </button>
-            )
+            ),
         )}
       </div>
       {data.length === 0 ? (
         <div>
           <div>
-            <p className="text-xl font-semibold mt-20 mb-5 flex justify-center items-center">
+            <p className="mb-5 mt-20 flex items-center justify-center text-xl font-semibold">
               No data available to generate report!
             </p>
-            <Image unoptimized
+            <Image
+              unoptimized
               src="https://i.postimg.cc/N0JMHNDw/undraw-Notify-re-65on-1-removebg-preview.png"
               height={400}
               className="m-auto"
@@ -257,37 +274,35 @@ const Report = ({
           </div>
         </div>
       ) : (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-6">
-          <div className="flex justify-between mb-4">
-            {
-              hideMentorFilter ? (<div className="flex items-center">
+        <div className="relative overflow-x-auto p-6 shadow-md sm:rounded-lg">
+          <div className="mb-4 flex justify-between">
+            {hideMentorFilter ? (
+              <div className="flex items-center">
                 <span className="mr-2">Mentor:</span>
-                <div className="p-2 text-sm text-gray-900 border rounded-lg bg-white">
+                <div className="rounded-lg border bg-white p-2 text-sm text-gray-900">
                   {uniqueMentors.map((mentor) => (
-                    <span key={mentor}>
-                      {mentor}
-                    </span>
+                    <span key={mentor}>{mentor}</span>
                   ))}
                 </div>
-              </div>) : (
-                <div>
-                  <select
-                    id="mentor-select"
-                    title="mentor name"
-                    value={selectedMentor}
-                    onChange={handleMentorChange}
-                    className="p-2 text-sm text-gray-900 border rounded-lg bg-white"
-                  >
-                    <option value="">All Mentors</option>
-                    {uniqueMentors.map((mentor) => (
-                      <option key={mentor} value={mentor}>
-                        {mentor}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )
-            }
+              </div>
+            ) : (
+              <div>
+                <select
+                  id="mentor-select"
+                  title="mentor name"
+                  value={selectedMentor}
+                  onChange={handleMentorChange}
+                  className="rounded-lg border bg-white p-2 text-sm text-gray-900"
+                >
+                  <option value="">All Mentors</option>
+                  {uniqueMentors.map((mentor) => (
+                    <option key={mentor} value={mentor}>
+                      {mentor}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div>
               <select
@@ -295,21 +310,21 @@ const Report = ({
                 title="select format"
                 value={selectedFormat}
                 onChange={handleFormatChange}
-                className="p-2 text-sm text-gray-900 border rounded-l-lg bg-white"
+                className="rounded-l-lg border bg-white p-2 text-sm text-gray-900"
               >
                 <option value="pdf">PDF</option>
                 <option value="csv">CSV</option>
               </select>
               <button
                 onClick={handleDownload}
-                className="p-2 text-sm text-white rounded-r-lg bg-blue-500"
+                className="rounded-r-lg bg-blue-500 p-2 text-sm text-white"
               >
                 Download Report
               </button>
             </div>
           </div>
-          <table className="w-full text-sm border-collapse">
-            <thead className="text-xs bg-blue-500 text-white uppercase rounded-t-lg">
+          <table className="w-full border-collapse text-sm">
+            <thead className="rounded-t-lg bg-blue-500 text-xs uppercase text-white">
               <tr>
                 {[
                   "S.No",
@@ -324,7 +339,7 @@ const Report = ({
                   <th
                     key={column}
                     onClick={() => handleSort(column)}
-                    className="px-5 py-3 cursor-pointer border-b border-gray-300 dark:border-gray-500 truncate"
+                    className="cursor-pointer truncate border-b border-gray-300 px-5 py-3 dark:border-gray-500"
                   >
                     {column}
                     {sortColumn === columnMapping[column] &&
@@ -334,7 +349,7 @@ const Report = ({
                 {hideMentorFilter ? null : (
                   <th
                     onClick={() => handleSort("Mentor")}
-                    className="px-5 py-3 cursor-pointer border-b border-gray-300 dark:border-gray-500 truncate"
+                    className="cursor-pointer truncate border-b border-gray-300 px-5 py-3 dark:border-gray-500"
                   >
                     Mentor
                     {sortColumn === columnMapping["Mentor"] &&
@@ -347,35 +362,36 @@ const Report = ({
               {filteredData.map((row, index) => (
                 <tr
                   key={index}
-                  className={`bg-gray-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-100"
-                    } dark:bg-gray-800`}
+                  className={`bg-gray-50 ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                  } dark:bg-gray-800`}
                 >
-                  <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                  <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {index + 1}
                   </td>
-                  <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                  <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {row.username}
                   </td>
-                  <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                  <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {row.name}
                   </td>
-                  <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                  <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {row.assignmentLength}
                   </td>
-                  <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                  <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {row.submissionLength}
                   </td>
-                  <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                  <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {row.submissionEvaluatedLength}
                   </td>
-                  <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                  <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {row.score}
                   </td>
-                  <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                  <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {formatAttendance(row.attendance)}
                   </td>
                   {hideMentorFilter ? null : (
-                    <td className="px-5 py-3 border-b border-gray-300 dark:border-gray-700 truncate">
+                    <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                       {row.mentorUsername}
                     </td>
                   )}

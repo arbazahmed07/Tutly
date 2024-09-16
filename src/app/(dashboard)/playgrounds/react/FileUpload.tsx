@@ -6,12 +6,22 @@ interface FileData {
   path: string;
   content: string;
 }
-const imagExtensions = ["jpg", "jpeg", "png", "gif", "svg", "webp", "bmp", "ico", "tiff"];
+const imagExtensions = [
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "svg",
+  "webp",
+  "bmp",
+  "ico",
+  "tiff",
+];
 
 const FolderUpload = ({
-  setFilesObj
+  setFilesObj,
 }: {
-  setFilesObj: (filesObj: { [key: string]: string }) => void
+  setFilesObj: (filesObj: { [key: string]: string }) => void;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -79,12 +89,16 @@ const FolderUpload = ({
       const filePath = file.webkitRelativePath || file.name;
 
       // Skip node_modules folder, .git folder, .DS_Store. //todo: add more
-      if (filePath.includes("node_modules") || filePath.includes(".git/") || filePath.includes(".DS_Store")) {
+      if (
+        filePath.includes("node_modules") ||
+        filePath.includes(".git/") ||
+        filePath.includes(".DS_Store")
+      ) {
         continue;
       }
 
       // Skip image files
-      if (imagExtensions.some(ext => filePath.endsWith(ext))) {
+      if (imagExtensions.some((ext) => filePath.endsWith(ext))) {
         continue;
       }
 
@@ -101,23 +115,27 @@ const FolderUpload = ({
     }
 
     setFilesObj(filesObjWithoutFolderName);
-
   };
 
   const traverseFileTree = async (
     item: any,
     path: string,
-    fileArray: FileData[]
+    fileArray: FileData[],
   ) => {
     if (item.isFile) {
       const file = await new Promise<File>((resolve) => item.file(resolve));
       // Skip node_modules folder, .git folder, .DS_Store. //todo: add more
-      if (path.includes("node_modules") || path.includes(".git/") || path.includes(".DS_Store") || file.name.includes(".DS_Store")) {
+      if (
+        path.includes("node_modules") ||
+        path.includes(".git/") ||
+        path.includes(".DS_Store") ||
+        file.name.includes(".DS_Store")
+      ) {
         return;
       }
 
       // Skip image files
-      if (imagExtensions.some(ext => file.name.endsWith(ext))) {
+      if (imagExtensions.some((ext) => file.name.endsWith(ext))) {
         return;
       }
 
@@ -126,7 +144,7 @@ const FolderUpload = ({
     } else if (item.isDirectory) {
       const dirReader = item.createReader();
       const entries = await new Promise<any[]>((resolve) =>
-        dirReader.readEntries(resolve)
+        dirReader.readEntries(resolve),
       );
       for (let entry of entries) {
         await traverseFileTree(entry, path + item.name + "/", fileArray);
@@ -144,23 +162,24 @@ const FolderUpload = ({
   };
 
   return (
-    <div className=" p-10">
+    <div className="p-10">
       <div className="flex flex-col items-center">
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onClick={() => inputRef.current?.click()}
-          className={`group flex flex-col gap-6 items-center justify-center p-10 w-full md:w-[40%] border-2 border-dotted rounded-lg transition-all duration-300 ease-in-out cursor-pointer ${isDragging
-            ? "border-indigo-500 bg-indigo-100"
-            : "border-gray-600 bg-white"
-            }`}
+          className={`group flex w-full cursor-pointer flex-col items-center justify-center gap-6 rounded-lg border-2 border-dotted p-10 transition-all duration-300 ease-in-out md:w-[40%] ${
+            isDragging
+              ? "border-indigo-500 bg-indigo-100"
+              : "border-gray-600 bg-white"
+          }`}
         >
-          <IoCloudUploadOutline className="h-20 w-20 text-blue-500 transition-transform duration-300 ease-in-out transform group-hover:text-blue-700 group-hover:scale-110" />
+          <IoCloudUploadOutline className="h-20 w-20 transform text-blue-500 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:text-blue-700" />
 
           <label
             htmlFor="fileInput"
-            className="cursor-pointer text-lg font-semibold text-gray-500 group-hover:text-blue-600 transition-colors ease-in-out  duration-300 "
+            className="cursor-pointer text-lg font-semibold text-gray-500 transition-colors duration-300 ease-in-out group-hover:text-blue-600"
           >
             {isDragging
               ? "Drop React folder here"
@@ -179,12 +198,10 @@ const FolderUpload = ({
       </div>
 
       {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
-            <p className="mt-4 text-blue-600 font-semibold">
-              Loading files...
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded-lg bg-white p-6 shadow-xl">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-indigo-500"></div>
+            <p className="mt-4 font-semibold text-blue-600">Loading files...</p>
           </div>
         </div>
       )}

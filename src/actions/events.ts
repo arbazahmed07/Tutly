@@ -9,13 +9,17 @@ export const getAllEvents = async () => {
   const events = await db.events.findMany({});
 
   const userIds = events
-    .filter(event => modalMap[event.eventCategory] === "user")
-    .map(event => event.causedById)
+    .filter((event) => modalMap[event.eventCategory] === "user")
+    .map((event) => event.causedById)
     .filter((id): id is string => id !== null && id !== undefined);
 
   const eventCategoryDataIds = events
-    .filter(event => event.eventCategoryDataId !== null && event.eventCategoryDataId !== undefined)
-    .map(event => event.eventCategoryDataId)
+    .filter(
+      (event) =>
+        event.eventCategoryDataId !== null &&
+        event.eventCategoryDataId !== undefined,
+    )
+    .map((event) => event.eventCategoryDataId)
     .filter((id): id is string => id !== null && id !== undefined);
 
   const users = await db.user.findMany({
@@ -40,9 +44,12 @@ export const getAllEvents = async () => {
 
   const courses = await db.course.findMany({
     where: { id: { in: eventCategoryDataIds } },
-    select: { id: true, enrolledUsers: {
-      select: { username: true }
-    } },
+    select: {
+      id: true,
+      enrolledUsers: {
+        select: { username: true },
+      },
+    },
   });
 
   const doubts = await db.doubt.findMany({
@@ -57,17 +64,41 @@ export const getAllEvents = async () => {
 
   const submissions = await db.submission.findMany({
     where: { id: { in: eventCategoryDataIds } },
-    select: { id: true, assignment: { select: { title: true ,id:true} } , enrolledUser:{ select: { user: {select:{username:true,name:true}} ,mentor: {select:{username:true,name:true}} } } },
+    select: {
+      id: true,
+      assignment: { select: { title: true, id: true } },
+      enrolledUser: {
+        select: {
+          user: { select: { username: true, name: true } },
+          mentor: { select: { username: true, name: true } },
+        },
+      },
+    },
   });
 
   const dataMap: Record<string, any> = {
     user: users.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}),
-    attachment: attachments.reduce((acc, attachment) => ({ ...acc, [attachment.id]: attachment }), {}),
-    class: classes.reduce((acc, classItem) => ({ ...acc, [classItem.id]: classItem }), {}),
-    course: courses.reduce((acc, course) => ({ ...acc, [course.id]: course }), {}),
+    attachment: attachments.reduce(
+      (acc, attachment) => ({ ...acc, [attachment.id]: attachment }),
+      {},
+    ),
+    class: classes.reduce(
+      (acc, classItem) => ({ ...acc, [classItem.id]: classItem }),
+      {},
+    ),
+    course: courses.reduce(
+      (acc, course) => ({ ...acc, [course.id]: course }),
+      {},
+    ),
     doubt: doubts.reduce((acc, doubt) => ({ ...acc, [doubt.id]: doubt }), {}),
-    response: responses.reduce((acc, response) => ({ ...acc, [response.doubtId]: response }), {}),
-    submission: submissions.reduce((acc, submission) => ({ ...acc, [submission.id]: submission }),{}),
+    response: responses.reduce(
+      (acc, response) => ({ ...acc, [response.doubtId]: response }),
+      {},
+    ),
+    submission: submissions.reduce(
+      (acc, submission) => ({ ...acc, [submission.id]: submission }),
+      {},
+    ),
   };
 
   for (let i = 0; i < events.length; i++) {
@@ -75,7 +106,9 @@ export const getAllEvents = async () => {
     const message = eventToMessage(event, dataMap);
     events[i].message = message;
     // @ts-ignore
-    events[i].causedByUser = causedByUsers.find(user => user.id === event.causedById);
+    events[i].causedByUser = causedByUsers.find(
+      (user) => user.id === event.causedById,
+    );
   }
 
   return events;

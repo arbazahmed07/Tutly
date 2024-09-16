@@ -44,8 +44,8 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
       setReplyId("");
       setDoubts(
         doubts.map((d: any) =>
-          d.id === id ? { ...d, response: [...d.response, res.data] } : d
-        )
+          d.id === id ? { ...d, response: [...d.response, res.data] } : d,
+        ),
       );
     }
   };
@@ -72,7 +72,7 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
         doubts.map((d: any) => ({
           ...d,
           response: d.response.filter((r: any) => r.id !== replyId),
-        }))
+        })),
       );
     }
   };
@@ -89,11 +89,11 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center mb-5">
-      <h1 className="text-xl font-semibold m-5">Ask your Doubts !!</h1>
-      <div className=" w-full bg-secondary-500 h-[70vh]  p-4 md:p-2 rounded-md ">
+    <div className="mb-5 flex flex-col items-center justify-center">
+      <h1 className="m-5 text-xl font-semibold">Ask your Doubts !!</h1>
+      <div className="h-[70vh] w-full rounded-md bg-secondary-500 p-4 md:p-2">
         {doubts?.map((doubt: any, index: number) => (
-          <div key={index} className="border p-3 my-4 rounded-lg ">
+          <div key={index} className="my-4 rounded-lg border p-3">
             <h2 className="text-xl font-semibold text-secondary-50">
               {doubt.title}
             </h2>
@@ -101,16 +101,16 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
             {doubt.response.map((res: any, index: number) => (
               <div
                 key={index}
-                className="border p-1 my-2 text-wrap overflow-auto rounded-lg flex justify-between items-center"
+                className="my-2 flex items-center justify-between overflow-auto text-wrap rounded-lg border p-1"
               >
                 <div className="">
-                  <p className=" text-secondary-50 break-words">
+                  <p className="break-words text-secondary-50">
                     {res?.description}
                   </p>
                 </div>
                 <div>
                   <button
-                    className="text-lg p-1 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mx-2"
+                    className="mx-2 rounded bg-secondary-400 p-1 text-lg text-white hover:bg-secondary-500 dark:bg-secondary-800 dark:hover:bg-secondary-700"
                     onClick={() => handleDeleteReply(res.id)}
                   >
                     <MdDeleteOutline />
@@ -119,23 +119,23 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
               </div>
             ))}
             <button
-              className="px-3 py-2 text-sm mb-3 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  text-white rounded mr-2"
+              className="mb-3 mr-2 rounded bg-secondary-400 px-3 py-2 text-sm text-white hover:bg-secondary-500 dark:bg-secondary-800 dark:hover:bg-secondary-700"
               onClick={() => handleDeleteDoubt(doubt.id)}
             >
               Delete
             </button>
             {replyId === doubt.id ? (
-              <div className="flex items-center mt-1">
+              <div className="mt-1 flex items-center">
                 <input
                   type="text"
                   placeholder="Enter your reply"
                   value={reply}
                   onKeyDown={handleReplyEnterBtn}
                   onChange={(e) => setReply(e.target.value)}
-                  className="w-full sm:w-auto px-4 py-2 border outline-none border-secondary-300 rounded mr-2 mb-2 sm:mb-0"
+                  className="mb-2 mr-2 w-full rounded border border-secondary-300 px-4 py-2 outline-none sm:mb-0 sm:w-auto"
                 />
                 <button
-                  className="px-4 py-2 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  flex items-center justify-start text-white rounded text-sm"
+                  className="flex items-center justify-start rounded bg-secondary-400 px-4 py-2 text-sm text-white hover:bg-secondary-500 dark:bg-secondary-800 dark:hover:bg-secondary-700"
                   onClick={() => handleReply(doubt.id)}
                 >
                   Reply&nbsp;
@@ -144,7 +144,7 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
               </div>
             ) : (
               <button
-                className="px-3 py-2 mt-1 text-sm  dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500 text-white rounded"
+                className="mt-1 rounded bg-secondary-400 px-3 py-2 text-sm text-white hover:bg-secondary-500 dark:bg-secondary-800 dark:hover:bg-secondary-700"
                 onClick={() => setReplyId(doubt.id)}
               >
                 Reply
@@ -153,7 +153,7 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
           </div>
         ))}
       </div>
-      <div className="flex flex-col items-center mt-4">
+      <div className="mt-4 flex flex-col items-center">
         <div>
           <input
             type="text"
@@ -161,17 +161,17 @@ const UserDoubts = ({ userDoubts, classId }: any) => {
             value={doubt}
             onChange={(e) => setDoubt(e.target.value)}
             onKeyDown={handleDoubtEnterBtn}
-            className="w-full sm:w-96 px-4 py-2 border outline-none border-secondary-300 rounded mb-4"
+            className="mb-4 w-full rounded border border-secondary-300 px-4 py-2 outline-none sm:w-96"
           />
         </div>
-        <div className=" flex w-full flex-row-reverse">
+        <div className="flex w-full flex-row-reverse">
           <div>
             <button
-              className="px-4 py-2 flex justify-end items-center bg-secondary-400 hover:bg-secondary-500 dark:hover:bg-secondary-700  dark:bg-secondary-800 text-sm rounded"
+              className="flex items-center justify-end rounded bg-secondary-400 px-4 py-2 text-sm hover:bg-secondary-500 dark:bg-secondary-800 dark:hover:bg-secondary-700"
               onClick={handleAddDoubt}
             >
               Add Doubt&nbsp;
-              <TbLocationQuestion className=" w-5 h-5" />
+              <TbLocationQuestion className="h-5 w-5" />
             </button>
           </div>
         </div>

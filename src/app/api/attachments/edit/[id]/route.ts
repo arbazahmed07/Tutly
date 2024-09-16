@@ -3,23 +3,25 @@ import getCurrentUser from "@/actions/getCurrentUser";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
-request: NextRequest,
-{ params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: { id: string } },
 ) {
-    
-try {
+  try {
     const data = await request.json();
     const currentUser = await getCurrentUser();
-    const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === data.courseId);
-    const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+    const isCourseAdmin = currentUser?.adminForCourses?.some(
+      (course) => course.id === data.courseId,
+    );
+    const haveAccess =
+      currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
 
-    if(!haveAccess) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!haveAccess) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const assignment = await editAttachment(params.id,data );
+    const assignment = await editAttachment(params.id, data);
     return NextResponse.json({ assignment });
-} catch (e: any) {
+  } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 400 });
-}
+  }
 }

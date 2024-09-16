@@ -12,7 +12,7 @@ async function main() {
     },
   });
 
-  const points = submissions.map((submission :any) => {
+  const points = submissions.map((submission: any) => {
     return {
       submissionId: submission.id,
       score: 10,

@@ -27,7 +27,7 @@ async function main() {
           owner,
           repo,
           pull_number: prNumber,
-        }
+        },
       );
 
       const { data: filesData } = await octokit.request(
@@ -36,7 +36,7 @@ async function main() {
           owner,
           repo,
           pull_number: prNumber,
-        }
+        },
       );
       //todo: temp fix
       let basePath = filesData[0].filename.split("/").slice(0, -1).join("/");
@@ -44,7 +44,7 @@ async function main() {
       // if package.json is present then take it as basepath
       if (filesData.some((file) => file.filename.includes("package.json"))) {
         const packageJsonFile = filesData.find((file) =>
-          file.filename.includes("package.json")
+          file.filename.includes("package.json"),
         );
         if (packageJsonFile) {
           basePath = packageJsonFile.filename.split("/").slice(0, -1).join("/");
@@ -61,7 +61,7 @@ async function main() {
             repo,
             path: file.filename,
             ref: pr.head.sha,
-          }
+          },
         );
 
         const data = response.data;

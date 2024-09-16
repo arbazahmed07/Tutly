@@ -50,7 +50,7 @@ export const generateReport = async (courseId: string) => {
   if (currentUser?.role === "MENTOR") {
     submissions = submissions.filter(
       (submission) =>
-        submission.enrolledUser.mentorUsername === currentUser.username
+        submission.enrolledUser.mentorUsername === currentUser.username,
     );
   }
 
@@ -93,7 +93,7 @@ export const generateReport = async (courseId: string) => {
     obj[submission.enrolledUser.username].submissions.add(submission.id);
     obj[submission.enrolledUser.username].submissionsLength++;
     obj[submission.enrolledUser.username].assignments.add(
-      submission.attachmentId
+      submission.attachmentId,
     );
     obj[submission.enrolledUser.username].assignmentLength =
       obj[submission.enrolledUser.username].assignments.size;
@@ -122,11 +122,11 @@ export const generateReport = async (courseId: string) => {
       const userPoints = points.filter((point) =>
         point.submissions
           ? point.submissions.enrolledUser.username === ob.username
-          : false
+          : false,
       );
       ob.score = userPoints.reduce((acc, curr) => acc + curr.score, 0);
       ob.submissionEvaluatedLength = new Set(
-        userPoints.map((point) => point.submissions?.id)
+        userPoints.map((point) => point.submissions?.id),
       ).size;
     } catch (e) {
       console.log(ob.username);
@@ -134,7 +134,7 @@ export const generateReport = async (courseId: string) => {
   });
 
   Object.values(obj).forEach((ob: any) => {
-    if(!groupedAttendance[ob.username]) {
+    if (!groupedAttendance[ob.username]) {
       groupedAttendance[ob.username] = 0;
     }
     ob.attendance = (groupedAttendance[ob.username] * 100) / totalClasses;
@@ -156,12 +156,12 @@ export const generateReport = async (courseId: string) => {
   SelectedFields.sort((a, b) => a.name.localeCompare(b.name));
   SelectedFields.sort((a, b) => b.score - a.score);
   SelectedFields.sort((a, b) =>
-    a.mentorUsername.localeCompare(b.mentorUsername)
+    a.mentorUsername.localeCompare(b.mentorUsername),
   );
 
   if (currentUser?.role === "MENTOR") {
     SelectedFields = SelectedFields.filter(
-      (selectedField) => selectedField.mentorUsername === currentUser.username
+      (selectedField) => selectedField.mentorUsername === currentUser.username,
     );
   }
 

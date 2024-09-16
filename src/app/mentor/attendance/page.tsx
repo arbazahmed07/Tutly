@@ -12,7 +12,7 @@ async function Filters() {
   return (
     <div>
       <AttendanceClient courses={courses} role={currentUser.role} />
-      <AttendanceTable studentsAttendance={attendance}/>
+      <AttendanceTable studentsAttendance={attendance} />
     </div>
   );
 }

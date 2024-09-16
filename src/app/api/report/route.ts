@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const report = await generateReport(courseId);
 
     return NextResponse.json(report, { status: 200 });
-  } catch (e:any) {
+  } catch (e: any) {
     return NextResponse.json({ message: e.message }, { status: 500 });
   }
 }

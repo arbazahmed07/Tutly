@@ -80,7 +80,7 @@ export default function HomeLayout({
       icon: <TbReportAnalytics />,
       path: "/instructor/report",
       isActive: pathname === "/instructor/report",
-    }
+    },
   ];
 
   const MentorItems = [
@@ -131,7 +131,7 @@ export default function HomeLayout({
       icon: <TbReportAnalytics />,
       path: "/mentor/report",
       isActive: pathname === "/mentor/report",
-    }
+    },
   ];
 
   const StudentItems = [
@@ -196,8 +196,9 @@ export default function HomeLayout({
         )}
         <Suspense fallback={<Loading />}>
           <div
-            className={`w-full ${!isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
-              }`}
+            className={`w-full ${
+              !isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
+            }`}
           >
             {children}
           </div>

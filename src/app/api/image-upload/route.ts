@@ -5,7 +5,6 @@ export async function POST(request: Request): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
   const filename = searchParams.get("filename") || "";
 
-    
   if (filename && request.body) {
     const blob = await put(filename, request.body, {
       access: "public",
@@ -13,6 +12,9 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json(blob);
   } else {
-    return NextResponse.json({ error: "No filename provided" }, { status: 400 });
+    return NextResponse.json(
+      { error: "No filename provided" },
+      { status: 400 },
+    );
   }
 }

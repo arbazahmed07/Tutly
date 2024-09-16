@@ -15,7 +15,7 @@ import Link from "next/link";
 import getCurrentUser from "@/actions/getCurrentUser";
 import StudentsInfoForMentor from "@/components/studentsInfoForMentor";
 
-export default async function Statistics({params}:any) {
+export default async function Statistics({ params }: any) {
   const mentorPieChart = await getMentorPieChartData(params.course);
   const currentUser = await getCurrentUser();
   const { classes, attendanceInEachClass } =
@@ -26,7 +26,7 @@ export default async function Statistics({params}:any) {
   let loaderValue = !mentorPieChart
     ? 0
     : String(
-        (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1])
+        (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1]),
       );
   loaderValue += "%";
 
@@ -35,21 +35,21 @@ export default async function Statistics({params}:any) {
   return (
     <div className="m-8 flex flex-col gap-8">
       <div className="flex gap-8">
-        <div className="w-1/4 shadow-xl shadow-blue-500/5 rounded-xl p-8">
+        <div className="w-1/4 rounded-xl p-8 shadow-xl shadow-blue-500/5">
           <Piechart mentorPieChart={mentorPieChart} />
         </div>
-        <div className="w-3/4 rounded-xl shadow-xl shadow-blue-500/5 flex gap-2">
-          <div className="w-1/3 flex flex-col gap-6 p-14 text-gray-500">
-            <div className="p-4 rounded-xl relative border">
+        <div className="flex w-3/4 gap-2 rounded-xl shadow-xl shadow-blue-500/5">
+          <div className="flex w-1/3 flex-col gap-6 p-14 text-gray-500">
+            <div className="relative rounded-xl border p-4">
               <h1 className="absolute -top-3 bg-background px-1">
                 Total Students
               </h1>
-              <h1 className="text-4xl flex justify-between items-baseline font-bold text-primary-500">
+              <h1 className="flex items-baseline justify-between text-4xl font-bold text-primary-500">
                 {mstudents?.length}
-                <span className="text-gray-500 text-sm">[Mentees]</span>
+                <span className="text-sm text-gray-500">[Mentees]</span>
               </h1>
             </div>
-            <div className="p-4 rounded-xl relative border">
+            <div className="relative rounded-xl border p-4">
               <h1 className="absolute -top-3 bg-background px-1">
                 Total Sessions
               </h1>
@@ -70,7 +70,7 @@ export default async function Statistics({params}:any) {
         </div>
       </div>
       <div className="flex gap-8">
-        <div className="w-3/4 rounded-xl p-4 max-h-[300px] relative shadow-xl shadow-blue-500/5">
+        <div className="relative max-h-[300px] w-3/4 rounded-xl p-4 shadow-xl shadow-blue-500/5">
           <Barchart
             classes={assignments}
             attendanceInEachClass={countForEachAssignment}
@@ -80,14 +80,14 @@ export default async function Statistics({params}:any) {
           />
           <Link
             href="/mentor/assignments/getbyassignment"
-            className="absolute top-2 right-2"
+            className="absolute right-2 top-2"
           >
             <FaSquareArrowUpRight className="text-xl text-gray-500" />
           </Link>
         </div>
-        <div className="w-1/4 shadow-xl shadow-blue-500/5 rounded-xl p-8">
+        <div className="w-1/4 rounded-xl p-8 shadow-xl shadow-blue-500/5">
           <h1 className="pb-14 text-gray-500">Evaluation</h1>
-          <div className="px-16 font-semibold text-blue-500 text-center">
+          <div className="px-16 text-center font-semibold text-blue-500">
             <span className="text-3xl font-bold">
               {mentorPieChart ? mentorPieChart[0] : 0}
             </span>
@@ -95,13 +95,13 @@ export default async function Statistics({params}:any) {
               /{mentorPieChart ? mentorPieChart![0] + mentorPieChart![1] : 0}
             </span>
           </div>
-          <div className="w-[80%] rounded-full border border-gray-700 m-auto my-4">
+          <div className="m-auto my-4 w-[80%] rounded-full border border-gray-700">
             <div
               className={`h-[10px] rounded-full bg-blue-500`}
               style={{ width: loaderValue }}
             ></div>
           </div>
-          <h1 className="p-2 text-gray-500 text-center">
+          <h1 className="p-2 text-center text-gray-500">
             Assignments to be evaluated
           </h1>
         </div>

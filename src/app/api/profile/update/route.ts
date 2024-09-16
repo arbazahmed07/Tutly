@@ -24,7 +24,7 @@ const userSchema = z
 
 export async function POST(req: Request) {
   const currentUser = await getCurrentUser();
-  if(!currentUser) return NextResponse.json("Unauthorized", { status: 401 });
+  if (!currentUser) return NextResponse.json("Unauthorized", { status: 401 });
   try {
     const body = await req.json();
     const { newPassword, confirmPassword, oldPassword, email } =
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     if (newPassword !== confirmPassword) {
       return NextResponse.json(
         { message: "Passwords don't match" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     if (!userExists) {
       return NextResponse.json(
         { message: "User does not exist" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       if (!oldPassword) {
         return NextResponse.json(
           { message: "Please provide old password" },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       if (!isPasswordValid) {
         return NextResponse.json(
           { message: "Old password is incorrect" },
-          { status: 401 }
+          { status: 401 },
         );
       }
     }
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       { message: "User updated successfully" },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });

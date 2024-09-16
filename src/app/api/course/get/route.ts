@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     if (!courses) {
       return NextResponse.json(
         { error: "Failed to fetch courses" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 

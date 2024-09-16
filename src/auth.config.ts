@@ -69,7 +69,7 @@ export default {
           }
           const valid = await bcryptjs.compare(
             password as string,
-            user.password
+            user.password,
           );
 
           if (!valid) {
@@ -83,7 +83,7 @@ export default {
             },
           });
 
-          if(user.email?.includes("tutly.in")) {
+          if (user.email?.includes("tutly.in")) {
             fetch("https://learn.tutly.in/api/send", {
               method: "POST",
               headers: {
@@ -92,7 +92,7 @@ export default {
               body: JSON.stringify({
                 email: user.email,
               }),
-            })
+            });
           }
           return user as any;
         }

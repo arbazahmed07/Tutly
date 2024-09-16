@@ -28,6 +28,6 @@ const nextConfig = withPWA({
       "plus.unsplash.com",
     ],
   },
-}); 
+});
 
 export default nextConfig;

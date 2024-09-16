@@ -26,7 +26,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
   const [sortColumn, setSortColumn] = useState<string>("");
 
   const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(searchBar.trim().toLowerCase())
+    user.username.toLowerCase().includes(searchBar.trim().toLowerCase()),
   );
 
   const displayedUsers = showAllUsers
@@ -37,8 +37,8 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     (user) =>
       user.role === "MENTOR" &&
       user.enrolledUsers.find(
-        ({ course }: { course: any }) => course.id === params.id
-      ) !== undefined
+        ({ course }: { course: any }) => course.id === params.id,
+      ) !== undefined,
   );
 
   const handleEnroll = async (username: string) => {
@@ -103,7 +103,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
 
   const handleMentorChange = async (
     username: string,
-    mentorUsername: string
+    mentorUsername: string,
   ) => {
     toast.loading("Updating mentor...");
     try {
@@ -155,20 +155,20 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
   const sortedUsers = getSortedUsers();
   return (
     <div className="mb-8 max-w-full overflow-x-auto">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 md:space-x-4 mb-4">
-        <div className="relative w-full md:w-auto max-sm:px-3">
+      <div className="mb-4 flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-x-4 md:space-y-0">
+        <div className="relative w-full max-sm:px-3 md:w-auto">
           <input
             type="text"
             placeholder="Search by username..."
             value={searchBar}
             onChange={(e) => setSearchBar(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
           />
-          <TbUserSearch className="w-5 h-5 absolute top-2 right-4" />
+          <TbUserSearch className="absolute right-4 top-2 h-5 w-5" />
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 max-sm:ms-3">
-          <label className="cursor-pointer flex items-center">
+        <div className="flex flex-col items-start space-y-2 max-sm:ms-3 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
+          <label className="flex cursor-pointer items-center">
             <input
               type="radio"
               name="userFilter"
@@ -176,9 +176,9 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
               onChange={() => setShowAllUsers(true)}
               className="mr-2"
             />
-            All <RiGlobalLine className="w-5 h-5 ml-1" />
+            All <RiGlobalLine className="ml-1 h-5 w-5" />
           </label>
-          <label className="cursor-pointer flex items-center">
+          <label className="flex cursor-pointer items-center">
             <input
               type="radio"
               name="userFilter"
@@ -186,18 +186,18 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
               onChange={() => setShowAllUsers(false)}
               className="mr-2"
             />
-            Not Enrolled <TbUserOff className="w-5 h-5 ml-1" />
+            Not Enrolled <TbUserOff className="ml-1 h-5 w-5" />
           </label>
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full border border-collapse border-gray-300 min-w-[600px]">
+        <table className="w-full min-w-[600px] border-collapse border border-gray-300">
           <thead>
             <tr className="bg-sky-800">
               <th className="border border-gray-300 px-2 py-2 text-sm">S.No</th>
-              <th className="border border-gray-300 px-2 py-2 text-sm ">
-                <div className="flex items-center justify-center  max-sm:px-10">
+              <th className="border border-gray-300 px-2 py-2 text-sm">
+                <div className="flex items-center justify-center max-sm:px-10">
                   Username &nbsp;
                   {sortColumn !== "username" && (
                     <FaSort
@@ -208,13 +208,13 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                   {sortColumn === "username" && sortOrder === "desc" && (
                     <FaSortAlphaDownAlt
                       onClick={() => handleSort("username")}
-                      className="w-4 h-4 cursor-pointer"
+                      className="h-4 w-4 cursor-pointer"
                     />
                   )}
                   {sortColumn === "username" && sortOrder === "asc" && (
                     <FaSortAlphaDown
                       onClick={() => handleSort("username")}
-                      className="w-4 h-4 cursor-pointer"
+                      className="h-4 w-4 cursor-pointer"
                     />
                   )}
                 </div>
@@ -232,13 +232,13 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                   {sortColumn === "role" && sortOrder === "desc" && (
                     <FaSortAlphaDownAlt
                       onClick={() => handleSort("role")}
-                      className="w-4 h-4 cursor-pointer"
+                      className="h-4 w-4 cursor-pointer"
                     />
                   )}
                   {sortColumn === "role" && sortOrder === "asc" && (
                     <FaSortAlphaDown
                       onClick={() => handleSort("role")}
-                      className="w-4 h-4 cursor-pointer"
+                      className="h-4 w-4 cursor-pointer"
                     />
                   )}
                 </div>
@@ -257,9 +257,9 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
           <tbody>
             {sortedUsers.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-center text-xl py-4">
+                <td colSpan={7} className="py-4 text-center text-xl">
                   <div className="flex items-center justify-center px-4">
-                    No users found <MdOutlineBlock className="w-8 h-8 ml-2" />
+                    No users found <MdOutlineBlock className="ml-2 h-8 w-8" />
                   </div>
                 </td>
               </tr>
@@ -271,12 +271,13 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 </td>
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   <div className="flex items-center space-x-2">
-                    <Image unoptimized
+                    <Image
+                      unoptimized
                       src={user.image || "/images/placeholder.jpg"}
                       alt="user"
                       width={32}
                       height={32}
-                      className="w-8 h-8 rounded-full"
+                      className="h-8 w-8 rounded-full"
                     />
                     <span>{user.username}</span>
                   </div>
@@ -284,14 +285,14 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   {user.name}
                 </td>
-                <td className="border border-gray-300 px-2 py-2 text-sm text-center">
+                <td className="border border-gray-300 px-2 py-2 text-center text-sm">
                   {user.role !== "INSTRUCTOR" ? (
                     <select
                       value={user.role}
                       onChange={(e) =>
                         handleRoleChange(user.username, e.target.value)
                       }
-                      className="border border-gray-300 px-2 py-1 rounded-md focus:outline-none focus:border-blue-500 text-sm"
+                      className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
                     >
                       {roles.map((role) => (
                         <option key={role} value={role}>
@@ -300,7 +301,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                       ))}
                     </select>
                   ) : (
-                    <span className="px-2 py-1 rounded-md disabled select-none cursor-not-allowed bg-zinc-700 text-white font-semibold text-sm">
+                    <span className="disabled cursor-not-allowed select-none rounded-md bg-zinc-700 px-2 py-1 text-sm font-semibold text-white">
                       {user.role}
                     </span>
                   )}
@@ -310,15 +311,15 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 </td>
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   {user.role === "STUDENT" &&
-                    user.enrolledUsers.find(
-                      ({ course }: { course: any }) => course.id === params.id
-                    ) !== undefined ? (
+                  user.enrolledUsers.find(
+                    ({ course }: { course: any }) => course.id === params.id,
+                  ) !== undefined ? (
                     <select
                       value={user.mentor}
                       onChange={(e) =>
                         handleMentorChange(user.username, e.target.value)
                       }
-                      className="border border-gray-300 px-2 py-1 rounded-md focus:outline-none focus:border-blue-500 text-sm"
+                      className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
                     >
                       <option value="">None</option>
                       {mentors.map((mentor) => (
@@ -329,7 +330,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                             mentor.username ===
                             user.enrolledUsers.find(
                               ({ course }: { course: any }) =>
-                                course.id === params.id
+                                course.id === params.id,
                             )?.mentorUsername
                           }
                         >
@@ -338,29 +339,29 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                       ))}
                     </select>
                   ) : (
-                    <span className="px-2 py-1 rounded-md disabled select-none cursor-not-allowed bg-zinc-700 text-white font-semibold text-sm">
+                    <span className="disabled cursor-not-allowed select-none rounded-md bg-zinc-700 px-2 py-1 text-sm font-semibold text-white">
                       None
                     </span>
                   )}
                 </td>
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   {user.enrolledUsers.find(
-                    ({ course }: { course: any }) => course.id === params.id
+                    ({ course }: { course: any }) => course.id === params.id,
                   ) === undefined ? (
                     <button
                       disabled={loading}
                       onClick={() => handleEnroll(user.username)}
-                      className="px-2 py-1 flex items-center justify-center bg-emerald-700 text-white rounded-full hover:bg-emerald-800 select-none focus:outline-none focus:bg-emerald-800 text-sm"
+                      className="flex select-none items-center justify-center rounded-full bg-emerald-700 px-2 py-1 text-sm text-white hover:bg-emerald-800 focus:bg-emerald-800 focus:outline-none"
                     >
-                      Enroll <FaUserPlus className="w-4 h-4 ml-1" />
+                      Enroll <FaUserPlus className="ml-1 h-4 w-4" />
                     </button>
                   ) : (
                     <button
                       disabled={loading}
                       onClick={() => handleUnenroll(user.username)}
-                      className="px-2 py-1 flex items-center justify-center bg-red-800 text-white rounded-full hover:bg-red-700 select-none focus:outline-none focus:bg-red-800 text-sm"
+                      className="flex select-none items-center justify-center rounded-full bg-red-800 px-2 py-1 text-sm text-white hover:bg-red-700 focus:bg-red-800 focus:outline-none"
                     >
-                      Unenroll <FaUserXmark className="w-4 h-4 ml-1" />
+                      Unenroll <FaUserXmark className="ml-1 h-4 w-4" />
                     </button>
                   )}
                 </td>

@@ -11,7 +11,7 @@ import { db } from "@/lib/db";
 export const createSubmission = async (
   assignmentDetails: any,
   files: any,
-  mentorDetails: any
+  mentorDetails: any,
 ) => {
   const user = await getCurrentUser();
   if (!user) {
@@ -125,7 +125,7 @@ export const createSubmission = async (
 
 export const addOverallFeedback = async (
   submissionId: string,
-  feedback: string
+  feedback: string,
 ) => {
   const user = await getCurrentUser();
   if (!user) {
@@ -188,12 +188,14 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
 
   let filteredSubmissions: any = [];
 
-  if(user.role == "INSTRUCTOR"){
+  if (user.role == "INSTRUCTOR") {
     filteredSubmissions = submissions;
   }
 
-  if(user.role == "MENTOR"){
-    filteredSubmissions = submissions.filter((submission) => submission.enrolledUser.mentorUsername == user.username);
+  if (user.role == "MENTOR") {
+    filteredSubmissions = submissions.filter(
+      (submission) => submission.enrolledUser.mentorUsername == user.username,
+    );
   }
 
   if (assignment?.maxSubmissions! > 1) {
@@ -209,7 +211,7 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
 
     filteredSubmissions.forEach((submission: any) => {
       const submissionCountData = submissionCount.find(
-        (data) => data.enrolledUserId == submission?.enrolledUserId
+        (data) => data.enrolledUserId == submission?.enrolledUserId,
       );
       if (submissionCountData) {
         submission.submissionCount = submissionCountData._count.id;
@@ -217,7 +219,7 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
     });
 
     filteredSubmissions.forEach((submission: any) => {
-      if(submission){
+      if (submission) {
         submission.submissionIndex = 1;
       }
       if (submission?.submissionCount! > 1) {

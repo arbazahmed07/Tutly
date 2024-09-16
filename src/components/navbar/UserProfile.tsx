@@ -11,19 +11,20 @@ import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
 const UserProfile = ({ currentUser }: any) => {
   const router = useRouter();
 
-  const [isOpen, setIsOpen, componentRef] = useClickOutside<HTMLDivElement>(false);
+  const [isOpen, setIsOpen, componentRef] =
+    useClickOutside<HTMLDivElement>(false);
 
   return (
     <div className="">
-      <div className="flex gap-1 sm:gap-3 items-center ">
-
+      <div className="flex items-center gap-1 sm:gap-3">
         <div
           ref={componentRef}
           onClick={() => setIsOpen(!isOpen)}
-          className="relative px-2 py-1 rounded-xl dark:bg-secondary-800 flex items-center gap-2 cursor-pointer shadow-md transition"
+          className="relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1 shadow-md transition dark:bg-secondary-800"
         >
           <div className="">
-            <Image unoptimized
+            <Image
+              unoptimized
               className="rounded-full"
               src={currentUser?.image || "/images/placeholder.jpg"}
               width={30}
@@ -33,8 +34,8 @@ const UserProfile = ({ currentUser }: any) => {
           </div>
           {isOpen ? <FaCaretUp /> : <FaCaretDown />}
           {isOpen && (
-            <div className="absolute rounded-lg text-white bg-blue-500 shadow-md min-w-max overflow-hidden right-0 top-12 text-sm flex flex-col cursor-pointer">
-              <div className="  ">
+            <div className="absolute right-0 top-12 flex min-w-max cursor-pointer flex-col overflow-hidden rounded-lg bg-blue-500 text-sm text-white shadow-md">
+              <div className=" ">
                 <MenuItem
                   onClick={() => {
                     router.push("/profile");
@@ -43,7 +44,10 @@ const UserProfile = ({ currentUser }: any) => {
                 />
                 <hr />
                 <MenuItem
-                  onClick={() => { signOut({ callbackUrl: NEXT_PUBLIC_SIGN_IN_URL }); localStorage.clear(); }}
+                  onClick={() => {
+                    signOut({ callbackUrl: NEXT_PUBLIC_SIGN_IN_URL });
+                    localStorage.clear();
+                  }}
                   label="SignOut"
                 />
               </div>

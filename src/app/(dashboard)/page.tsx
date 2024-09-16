@@ -53,7 +53,7 @@ export default async function Home() {
     });
 
     const sortedLeaderboardArray = Array.from(leaderboardMap.entries()).sort(
-      (a, b) => b[1].totalPoints - a[1].totalPoints
+      (a, b) => b[1].totalPoints - a[1].totalPoints,
     );
 
     sortedLeaderboardArray.forEach((entry, index) => {
@@ -62,42 +62,43 @@ export default async function Home() {
 
     leaderboardMap = new Map(sortedLeaderboardArray);
 
-
     return (
-      <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
+      <div className="m-2 h-60 rounded-lg bg-gradient-to-l from-blue-400 to-blue-600">
         <div className="p-10">
-          <h1 className="text-secondary-50 font-bold text-2xl">
+          <h1 className="text-2xl font-bold text-secondary-50">
             Welcome back {currentUser?.name} 👋
           </h1>
-          <p className="text-secondary-50 font-medium text-base mt-3">
+          <p className="mt-3 text-base font-medium text-secondary-50">
             Here is your report
           </p>
         </div>
-        <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
-          <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
-            <Image unoptimized
+        <div className="mb-10 flex flex-wrap justify-center gap-4 p-2 text-center">
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
+            <Image
+              unoptimized
               src="https://png.pngtree.com/png-clipart/20210312/original/pngtree-game-score-wood-sign-style-png-image_6072790.png"
               alt=""
               height={100}
               width={110}
               className="m-auto"
             />
-            <p className="text-primary-600 font-bold pt-2">
+            <p className="pt-2 font-bold text-primary-600">
               {total === 0 ? "NA" : total}
             </p>
             <h1 className="p-1 text-sm font-bold">
               Your current Score in the Leaderboard.
             </h1>
           </div>
-          <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-            <Image unoptimized
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
+            <Image
+              unoptimized
               src="https://cdn-icons-png.flaticon.com/512/3150/3150115.png"
               alt=""
               height={100}
               width={110}
               className="m-auto"
             />
-            <p className="text-primary-600 font-bold pt-2">
+            <p className="pt-2 font-bold text-primary-600">
               {total === 0
                 ? "NA"
                 : leaderboardMap.get(currentUser.id).rank
@@ -108,15 +109,16 @@ export default async function Home() {
               Your current rank in the Leaderboard.
             </h1>
           </div>
-          <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-            <Image unoptimized
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
+            <Image
+              unoptimized
               src="https://i.postimg.cc/439rxz8g/images-removebg-preview.png"
               alt=""
               height={100}
               width={110}
               className="m-auto"
             />
-            <p className="text-primary-600 font-bold pt-2">
+            <p className="pt-2 font-bold text-primary-600">
               {assignmentsSubmitted}
             </p>
             <h1 className="p-1 text-sm font-bold">
@@ -134,33 +136,33 @@ export default async function Home() {
     // return <pre>{JSON.stringify(mleaderboard, null, 2)}</pre>
 
     return (
-      <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
+      <div className="m-2 h-60 rounded-lg bg-gradient-to-l from-blue-400 to-blue-600">
         <div className="p-10">
-          <h1 className="text-secondary-50 font-bold text-2xl">
+          <h1 className="text-2xl font-bold text-secondary-50">
             Welcome back {currentUser?.name} 👋
           </h1>
-          <p className="text-secondary-50 font-medium text-base mt-3">
+          <p className="mt-3 text-base font-medium text-secondary-50">
             Here is your report
           </p>
         </div>
-        <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
-          <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
+        <div className="mb-10 flex flex-wrap justify-center gap-4 p-2 text-center">
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
             <PiStudentBold className="m-auto h-24 w-24 text-blue-400" />
-            <p className="text-primary-600 font-bold pt-2">
+            <p className="pt-2 font-bold text-primary-600">
               {/* {mstudents?.length} */}for now
             </p>
             <h1 className="p-1 text-sm font-bold">Assigned mentees</h1>
           </div>
-          <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
             <MdOutlineNoteAlt className="m-auto h-24 w-24 text-blue-400" />
-            <p className="text-primary-600 font-bold pt-2">
+            <p className="pt-2 font-bold text-primary-600">
               {mcourses?.length}
             </p>
             <h1 className="p-1 text-sm font-bold">No of courses mentoring</h1>
           </div>
-          <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-            <SiTicktick className="m-auto h-20 w-20 text-blue-400 my-2" />
-            <p className="text-primary-600 font-bold pt-2">{mleaderboard}</p>
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
+            <SiTicktick className="m-auto my-2 h-20 w-20 text-blue-400" />
+            <p className="pt-2 font-bold text-primary-600">{mleaderboard}</p>
             <h1 className="p-1 text-sm font-bold">
               No of assignments evaluated
             </h1>
@@ -188,32 +190,34 @@ export default async function Home() {
     // }
 
     return (
-      <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
+      <div className="m-2 h-60 rounded-lg bg-gradient-to-l from-blue-400 to-blue-600">
         <div className="p-10">
-          <h1 className="text-secondary-50 font-bold text-2xl">
+          <h1 className="text-2xl font-bold text-secondary-50">
             Welcome back {currentUser?.name} 👋
           </h1>
-          <p className="text-secondary-50 font-medium text-base mt-3">
+          <p className="mt-3 text-base font-medium text-secondary-50">
             Here is your report
           </p>
         </div>
-        <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
-          <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
+        <div className="mb-10 flex flex-wrap justify-center gap-4 p-2 text-center">
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
             <MdOutlineNoteAlt className="m-auto h-24 w-24 text-blue-400" />
-            <p className="text-primary-600 font-bold pt-2">{created?.length}</p>
+            <p className="pt-2 font-bold text-primary-600">{created?.length}</p>
             <h1 className="p-1 text-sm font-bold">No of courses created</h1>
           </div>
-          <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
             <SiGoogleclassroom className="m-auto h-24 w-24 text-blue-400" />
-            <p className="text-primary-600 font-bold pt-2">{total}</p>
+            <p className="pt-2 font-bold text-primary-600">{total}</p>
             <h1 className="p-1 text-sm font-bold">
               Total no of classes uploaded
             </h1>
           </div>
-          <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
+          <div className="w-80 rounded-md bg-secondary-50 p-2 text-secondary-900 shadow-xl">
             <PiStudentBold className="m-auto h-24 w-24 text-blue-400" />
-            <p className="text-primary-600 font-bold pt-2">{count}</p>
-            <h1 className="p-1 text-sm font-bold">Total no of students enrolled</h1>
+            <p className="pt-2 font-bold text-primary-600">{count}</p>
+            <h1 className="p-1 text-sm font-bold">
+              Total no of students enrolled
+            </h1>
           </div>
         </div>
       </div>

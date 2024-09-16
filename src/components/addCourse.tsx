@@ -25,8 +25,6 @@ function AddCourse() {
       //   return;
       // }
 
-
-      
       const res = await axios.post("/api/course/create", {
         title: courseTitle,
         isPublished: isPublished,
@@ -34,7 +32,6 @@ function AddCourse() {
       });
       setOpenPopup(!openPopup);
 
-      
       if (
         res.data.error ||
         res.data.error === "Failed to add new Class" ||
@@ -63,7 +60,7 @@ function AddCourse() {
 
   const handleImageUpload = async (e: any) => {
     e.preventDefault();
-    
+
     if (!inputFileRef.current?.files) {
       throw new Error("No file selected");
     }
@@ -84,57 +81,57 @@ function AddCourse() {
     <>
       <div
         onClick={() => setOpenPopup(!openPopup)}
-        className="rounded-lg border cursor-pointer flex flex-col items-center justify-center m-auto md:mx-2 my-3 w-[280px] h-[200px] shadow-lg"
+        className="m-auto my-3 flex h-[200px] w-[280px] cursor-pointer flex-col items-center justify-center rounded-lg border shadow-lg md:mx-2"
       >
-        <div className="text-center cursor-pointer  ">
+        <div className="cursor-pointer text-center">
           <FaPlus className="text-5xl" />
-          <h1 className="text-xl mt-3">Add</h1>
+          <h1 className="mt-3 text-xl">Add</h1>
         </div>
       </div>
       {openPopup && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30 backdrop-filter backdrop-blur-sm">
-          <div className="relative min-w-[300px] sm:min-w-[400px] max-w-[80%] bg-zinc-400  p-4 rounded-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm backdrop-filter">
+          <div className="relative min-w-[300px] max-w-[80%] rounded-lg bg-zinc-400 p-4 sm:min-w-[400px]">
             <div
               onClick={() => setOpenPopup(!openPopup)}
-              className="absolute top-2 right-2 cursor-pointer"
+              className="absolute right-2 top-2 cursor-pointer"
             >
               <RxCross2 className="h-7 w-7" />
             </div>
             <div className="mb-4">
-              <h1 className="text-lg font-semibold text-center my-4">
+              <h1 className="my-4 text-center text-lg font-semibold">
                 ADD NEW COURSE
               </h1>
               <input
                 onChange={(e) => setCourseTitle(e.target.value)}
                 type="text"
-                className="rounded p-2 outline-none block m-auto w-full mb-4"
+                className="m-auto mb-4 block w-full rounded p-2 outline-none"
                 placeholder="Title"
               />
             </div>
             <label className="" htmlFor="publish">
               Publish:
             </label>
-            <div className="space-x-5 flex items-center">
-              <div className="flex justify-start items-center">
+            <div className="flex items-center space-x-5">
+              <div className="flex items-center justify-start">
                 <input
                   type="radio"
                   id="yes"
                   name="publish"
                   value="true"
                   checked={isPublished === true}
-                  className="w-4 h-4 mr-1"
+                  className="mr-1 h-4 w-4"
                   onChange={(e) => setIsPublished(e.target.value === "true")}
                 />
                 <label htmlFor="yes">Yes</label>
               </div>
-              <div className="flex justify-start items-center">
+              <div className="flex items-center justify-start">
                 <input
                   type="radio"
                   id="no"
                   name="publish"
                   value="false"
                   checked={isPublished === false}
-                  className="w-4 h-4 mr-1"
+                  className="mr-1 h-4 w-4"
                   onChange={(e) => setIsPublished(e.target.value === "true")}
                 />
                 <label htmlFor="no">No</label>
@@ -146,17 +143,17 @@ function AddCourse() {
                 disabled
                 type="text"
                 value={blob.url}
-                className="rounded p-2 my-3 outline-none block m-auto w-full"
+                className="m-auto my-3 block w-full rounded p-2 outline-none"
                 placeholder="Paste image link here"
               />
             ) : (
               <form
                 onSubmit={handleImageUpload}
-                className=" my-5  flex items-center justify-center gap-4"
+                className="my-5 flex items-center justify-center gap-4"
               >
                 <div>
                   <input
-                    className=" rounded-sm bg-primary-800 hover:bg-primary-700 text-white "
+                    className="rounded-sm bg-primary-800 text-white hover:bg-primary-700"
                     name="file"
                     ref={inputFileRef}
                     type="file"
@@ -166,7 +163,7 @@ function AddCourse() {
                 </div>
                 <button
                   type="submit"
-                  className=" rounded-md bg-primary-800 hover:bg-primary-700 py-1 px-1.5 text-base"
+                  className="rounded-md bg-primary-800 px-1.5 py-1 text-base hover:bg-primary-700"
                 >
                   Upload
                 </button>
@@ -178,7 +175,7 @@ function AddCourse() {
                 handleSubmit();
                 setText("Creating...");
               }}
-              className="rounded-md font-semibold flex justify-center items-center disabled:bg-secondary-800 disabled:cursor-not-allowed bg-primary-500 hover:bg-primary-600 p-2  my-3 w-full"
+              className="my-3 flex w-full items-center justify-center rounded-md bg-primary-500 p-2 font-semibold hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-secondary-800"
             >
               {text}
               &nbsp;

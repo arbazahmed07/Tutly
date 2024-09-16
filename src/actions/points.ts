@@ -24,7 +24,7 @@ export default async function addPoints({
 
         await db.events.create({
           data: {
-            eventCategory:"ASSIGNMENT_EVALUATION",
+            eventCategory: "ASSIGNMENT_EVALUATION",
             causedById: currentUser.id,
             eventCategoryDataId: submissionId,
           },
@@ -48,7 +48,7 @@ export default async function addPoints({
             },
           });
         }
-      })
+      }),
     );
 
     // await mergeAndDeleteBranch(submissionId);
@@ -62,7 +62,6 @@ export default async function addPoints({
 const { Octokit } = require("@octokit/rest");
 
 export async function deleteSubmission(submissionId: string) {
-
   const currentUser = await getCurrentUser();
   if (!currentUser || currentUser.role == "STUDENT") {
     throw new Error("Unauthorized");

@@ -3,8 +3,8 @@ import addPoints from "@/actions/points";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const user = await getCurrentUser()
-  if(!user || user.role==="STUDENT"){
+  const user = await getCurrentUser();
+  if (!user || user.role === "STUDENT") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
   }
   const { submissionId, marks } = await request.json();
