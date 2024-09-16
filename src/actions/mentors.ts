@@ -9,6 +9,7 @@ export const getMentors = async () => {
   });
   return mentors;
 };
+
 export const getMentorNameById = async (id: string) => {
   const mentor = await db.user.findUnique({
     where: {

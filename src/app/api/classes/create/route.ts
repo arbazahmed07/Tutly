@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       (course) => course.id === data.courseId,
     );
     const haveAccess =
-      currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+      currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
 
     if (!haveAccess) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

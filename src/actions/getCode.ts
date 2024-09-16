@@ -29,7 +29,7 @@ export const getSubmission = async (prNumber: number) => {
       },
     );
     //todo: temp fix
-    let basePath = filesData[0].filename.split("/").slice(0, -1).join("/");
+    let basePath = filesData?.[0]?.filename.split("/").slice(0, -1).join("/") ?? "";
 
     // if package.json is present then take it as basepath
     if (filesData.some((file) => file.filename.includes("package.json"))) {
@@ -43,7 +43,7 @@ export const getSubmission = async (prNumber: number) => {
 
     let files = {};
 
-    for (let file of filesData) {
+    for (const file of filesData) {
       const response = await octokit.request(
         "GET /repos/{owner}/{repo}/contents/{path}",
         {
@@ -54,14 +54,18 @@ export const getSubmission = async (prNumber: number) => {
         },
       );
 
-      const data: any = response.data;
+      const data: unknown = response.data;
 
       const relativePath = file.filename.replace(basePath, "");
 
-      files = {
-        ...files,
-        [relativePath]: Buffer.from(data.content, "base64").toString("utf-8"),
-      };
+      if (typeof data === 'object' && data !== null && 'content' in data && typeof data.content === 'string') {
+        files = {
+          ...files,
+          [relativePath]: Buffer.from(data.content, "base64").toString("utf-8"),
+        };
+      } else {
+        console.error(`Unexpected data format for file: ${relativePath}`);
+      }
     }
 
     return files;

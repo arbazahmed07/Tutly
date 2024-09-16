@@ -12,7 +12,7 @@ export async function GET(
       (course) => course.id === params.courseId,
     );
     const haveAccess =
-      currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+      currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
     if (!haveAccess) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
     }

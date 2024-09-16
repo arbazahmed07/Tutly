@@ -13,7 +13,7 @@ export async function PUT(
       (course) => course.id === data.courseId,
     );
     const haveAccess =
-      currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+      currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
 
     if (!haveAccess) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

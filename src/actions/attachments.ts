@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 import * as z from "zod";
 
-const attachmentSchema = z.object({
+export const attachmentSchema = z.object({
   title: z.string().min(1, {
     message: "Title is required",
   }),
@@ -27,7 +27,7 @@ export const createAttachment = async (
     (course) => course.id === data.courseId,
   );
   const haveAccess =
-    currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+    currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
 
   if (!haveAccess) {
     throw new Error("Unauthorized");

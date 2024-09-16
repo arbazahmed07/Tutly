@@ -1,14 +1,25 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 
-export const generateReport = async (courseId: string) => {
+interface ReportData {
+  username: string;
+  name: string | null;
+  submissionLength: number;
+  assignmentLength: number;
+  score: number;
+  submissionEvaluatedLength: number;
+  attendance: string;
+  mentorUsername: string | null;
+}
+
+export const generateReport = async (courseId: string): Promise<ReportData[]> => {
   const currentUser = await getCurrentUser();
 
   if (!currentUser || currentUser?.role === "STUDENT") {
     throw new Error("You are not authorized to generate report");
   }
 
-  let enrolledUsers = await db.enrolledUsers.findMany({
+  const enrolledUsers = await db.enrolledUsers.findMany({
     where: {
       courseId: courseId,
       user: {
@@ -67,15 +78,26 @@ export const generateReport = async (courseId: string) => {
     },
   });
 
-  const groupedAttendance = attendance.reduce((acc: any, curr) => {
+  const groupedAttendance = attendance.reduce((acc: Record<string, number>, curr) => {
     const username = curr.user.username;
-    acc[username] = (acc[username] || 0) + 1;
+    acc[username] = (acc[username] ?? 0) + 1;
     return acc;
   }, {});
 
   const totalClasses = await db.class.count();
 
-  const obj: any = {};
+  const obj: Record<string, {
+    username: string;
+    name: string | null;
+    submissions: Set<string>;
+    submissionsLength: number;
+    assignments: Set<string>;
+    assignmentLength: number;
+    mentorUsername: string | null;
+    score?: number;
+    submissionEvaluatedLength?: number;
+    attendance?: number;
+  }> = {};
 
   enrolledUsers.forEach((enrolledUser) => {
     obj[enrolledUser.username] = {
@@ -90,15 +112,16 @@ export const generateReport = async (courseId: string) => {
   });
 
   submissions.forEach((submission) => {
-    obj[submission.enrolledUser.username].submissions.add(submission.id);
-    obj[submission.enrolledUser.username].submissionsLength++;
-    obj[submission.enrolledUser.username].assignments.add(
-      submission.attachmentId,
-    );
-    obj[submission.enrolledUser.username].assignmentLength =
-      obj[submission.enrolledUser.username].assignments.size;
-    obj[submission.enrolledUser.username].mentorUsername =
-      submission.enrolledUser.mentorUsername;
+    const userObj = obj[submission.enrolledUser.username];
+    if (userObj) {
+      userObj.submissions.add(submission.id);
+      userObj.submissionsLength++;
+      if (submission.attachmentId) {
+        userObj.assignments.add(submission.attachmentId);
+      }
+      userObj.assignmentLength = userObj.assignments.size;
+      userObj.mentorUsername = submission.enrolledUser.mentorUsername;
+    }
   });
 
   const points = await db.point.findMany({
@@ -117,51 +140,49 @@ export const generateReport = async (courseId: string) => {
     },
   });
 
-  Object.values(obj).forEach((ob: any) => {
+  Object.values(obj).forEach((ob) => {
     try {
       const userPoints = points.filter((point) =>
         point.submissions
           ? point.submissions.enrolledUser.username === ob.username
           : false,
       );
-      ob.score = userPoints.reduce((acc, curr) => acc + curr.score, 0);
+      ob.score = userPoints.reduce((acc, curr) => acc + (curr.score || 0), 0);
       ob.submissionEvaluatedLength = new Set(
-        userPoints.map((point) => point.submissions?.id),
+        userPoints.map((point) => point.submissions?.id).filter((id): id is string => id !== undefined)
       ).size;
     } catch (e) {
       console.log(ob.username);
     }
   });
 
-  Object.values(obj).forEach((ob: any) => {
+  Object.values(obj).forEach((ob) => {
     if (!groupedAttendance[ob.username]) {
       groupedAttendance[ob.username] = 0;
     }
-    ob.attendance = (groupedAttendance[ob.username] * 100) / totalClasses;
+    ob.attendance = ((groupedAttendance[ob.username] ?? 0) * 100) / totalClasses;
   });
 
-  let SelectedFields = Object.values(obj).map((ob: any) => {
-    return {
-      username: ob.username,
-      name: ob.name,
-      submissionLength: ob.submissionsLength,
-      assignmentLength: ob.assignmentLength,
-      score: ob.score,
-      submissionEvaluatedLength: ob.submissionEvaluatedLength,
-      attendance: ob.attendance.toFixed(2),
-      mentorUsername: ob.mentorUsername,
-    };
-  });
+  let SelectedFields: ReportData[] = Object.values(obj).map((ob) => ({
+    username: ob.username,
+    name: ob.name,
+    submissionLength: ob.submissionsLength,
+    assignmentLength: ob.assignmentLength,
+    score: ob.score ?? 0,
+    submissionEvaluatedLength: ob.submissionEvaluatedLength ?? 0,
+    attendance: ob.attendance?.toFixed(2) ?? "0.00",
+    mentorUsername: ob.mentorUsername ?? "",
+  }));
 
-  SelectedFields.sort((a, b) => a.name.localeCompare(b.name));
+  SelectedFields.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
   SelectedFields.sort((a, b) => b.score - a.score);
   SelectedFields.sort((a, b) =>
-    a.mentorUsername.localeCompare(b.mentorUsername),
+    (a.mentorUsername ?? "").localeCompare(b.mentorUsername ?? "")
   );
 
   if (currentUser?.role === "MENTOR") {
     SelectedFields = SelectedFields.filter(
-      (selectedField) => selectedField.mentorUsername === currentUser.username,
+      (selectedField) => selectedField.mentorUsername === currentUser.username
     );
   }
 

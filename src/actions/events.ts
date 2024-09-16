@@ -1,6 +1,24 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import { EventCategory, Events } from "@prisma/client";
+import type { EventCategory, Events } from "@prisma/client";
+
+interface EventData {
+  name?: string;
+  email?: string;
+  title?: string;
+  assignment?: { title: string };
+  enrolledUser?: {
+    user: { name: string; username: string };
+    mentor: { name: string; username: string };
+  };
+  createdBy?: { name?: string; username?: string };
+  username?: string;
+  courseId?: string;
+  id?: string;
+  doubtId?: string;
+}
+
+// TODO: Replace with proper types and efficient query
 
 export const getAllEvents = async () => {
   const currentUser = await getCurrentUser();
@@ -76,7 +94,7 @@ export const getAllEvents = async () => {
     },
   });
 
-  const dataMap: Record<string, any> = {
+  const dataMap: Record<string, unknown> = {
     user: users.reduce((acc, user) => ({ ...acc, [user.id]: user }), {}),
     attachment: attachments.reduce(
       (acc, attachment) => ({ ...acc, [attachment.id]: attachment }),
@@ -101,14 +119,16 @@ export const getAllEvents = async () => {
     ),
   };
 
-  for (let i = 0; i < events.length; i++) {
-    const event = events[i];
-    const message = eventToMessage(event, dataMap);
-    events[i].message = message;
-    // @ts-ignore
-    events[i].causedByUser = causedByUsers.find(
-      (user) => user.id === event.causedById,
-    );
+  for (const event of events) {
+    if (event) {
+      const message = eventToMessage(event, dataMap as Record<string, Record<string, EventData>>);
+      event.message = message;
+      const causedByUser = causedByUsers.find(
+        (user) => user.id === event.causedById,
+      );
+      // @ts-expect-error Type 'User | undefined' is not assignable to type 'never'
+      event.causedByUser = causedByUser;
+    }
   }
 
   return events;
@@ -145,7 +165,7 @@ const modalMap: Record<EventCategory, dbModals> = {
   DOUBT_RESPONSE: "response",
 };
 
-export const eventToMessage = (event: Events, dataMap: Record<string, any>) => {
+export const eventToMessage = (event: Events, dataMap: Record<string, Record<string, EventData>>) => {
   const event_type = event.eventCategory;
 
   const modal = modalMap[event_type];
@@ -155,7 +175,7 @@ export const eventToMessage = (event: Events, dataMap: Record<string, any>) => {
   const dataKey = event.eventCategoryDataId ?? event.causedById;
   if (!dataKey) return `Unknown event type ${event_type}`;
 
-  const data = dataMap[modal][dataKey];
+  const data = dataMap[modal]?.[dataKey];
 
   if (!data) return `Unknown event type ${event_type} - id: ${dataKey}`;
 
@@ -164,23 +184,29 @@ export const eventToMessage = (event: Events, dataMap: Record<string, any>) => {
     case "USER_GOOGLE_LOGIN":
     case "USER_CREDENTIAL_LOGIN":
       return `User ${data.name} - ${data.email} logged in via ${
-        event_type == "USER_CREDENTIAL_LOGIN" ? "credentials" : "Google"
+        event_type === "USER_CREDENTIAL_LOGIN" ? "credentials" : "Google"
       }`;
     case "ASSIGNMENT_SUBMISSION":
-      return `${data.assignment.title} submitted by ${data.enrolledUser.user.name} (${data.enrolledUser.user.username})`;
+      return data.assignment && data.enrolledUser
+        ? `${data.assignment.title} submitted by ${data.enrolledUser.user.name} (${data.enrolledUser.user.username})`
+        : `Unknown assignment submission`;
     case "ASSIGNMENT_EVALUATION":
-      return `Submission for ${data.assignment.title} by ${data.enrolledUser.user.name} (${data.enrolledUser.user.username}) evaluated by mentor ${data.enrolledUser.mentor.name} (${data.enrolledUser.mentor.username})`;
+      return data.assignment && data.enrolledUser
+        ? `Submission for ${data.assignment.title} by ${data.enrolledUser.user.name} (${data.enrolledUser.user.username}) evaluated by mentor ${data.enrolledUser.mentor.name} (${data.enrolledUser.mentor.username})`
+        : `Unknown assignment evaluation`;
     case "ATTACHMENT_CREATION":
-      return `Attachment ${data.title} created by ${data.createdBy?.name} (${data.createdBy?.username})`;
+      return `Attachment ${data.title} created by ${data.createdBy?.name ?? 'Unknown'} (${data.createdBy?.username ?? 'Unknown'})`;
     case "CLASS_CREATION":
-      return `Class ${data.title} created by ${data.createdBy.name} (${data.createdBy.username})`;
+      return data.createdBy
+        ? `Class ${data.title} created by ${data.createdBy.name ?? 'Unknown'} (${data.createdBy.username ?? 'Unknown'})`
+        : `Unknown class creation`;
     case "STUDENT_ENROLLMENT_IN_COURSE":
-      return `Student ${data.username} enrolled in course ${data.courseId}`;
+      return `Student ${data.username ?? 'Unknown'} enrolled in course ${data.courseId ?? 'Unknown'}`;
     case "DOUBT_CREATION":
-      return `Doubt ${data.id} created by ${data.createdBy?.name} (${data.createdBy?.username})`;
+      return `Doubt ${data.id} created by ${data.createdBy?.name ?? 'Unknown'} (${data.createdBy?.username ?? 'Unknown'})`;
     case "DOUBT_RESPONSE":
-      return `Response to doubt ${data.doubtId} created by ${data.createdBy?.name} (${data.createdBy?.username})`;
+      return `Response to doubt ${data.doubtId} created by ${data.createdBy?.name ?? 'Unknown'} (${data.createdBy?.username ?? 'Unknown'})`;
     default:
-      return `Unknown event type ${event_type}`;
+      return `Unknown event type ${event_type as string}`;
   }
 };

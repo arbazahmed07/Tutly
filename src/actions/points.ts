@@ -1,12 +1,16 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
+import type { pointCategory } from "@prisma/client";
 
 export default async function addPoints({
   submissionId,
   marks,
 }: {
   submissionId: string;
-  marks: any;
+  marks: {
+    category: pointCategory;
+    score: number;
+  }[];
 }) {
   try {
     const currentUser = await getCurrentUser();
@@ -14,7 +18,7 @@ export default async function addPoints({
       throw new Error("Unauthorized");
     }
     const allCategories = await Promise.all(
-      marks.map(async (mark: any) => {
+      marks.map(async (mark) => {
         const existingPoint = await db.point.findFirst({
           where: {
             submissionId,
@@ -54,12 +58,13 @@ export default async function addPoints({
     // await mergeAndDeleteBranch(submissionId);
 
     return allCategories;
-  } catch (e: any) {
-    throw new Error(e.message);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error in adding points");
   }
 }
 
-const { Octokit } = require("@octokit/rest");
+// const { Octokit } = require("@octokit/rest");
 
 export async function deleteSubmission(submissionId: string) {
   const currentUser = await getCurrentUser();
