@@ -1,5 +1,5 @@
-const { Octokit } = require("@octokit/rest");
-const { PrismaClient } = require("@prisma/client");
+import { Octokit } from "@octokit/rest";
+import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
 

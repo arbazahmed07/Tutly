@@ -64,7 +64,6 @@ export default async function Statistics({ params }: any) {
               attendanceInEachClass={attendanceInEachClass}
               label={"Attendees"}
               bgColors={["rgb(37,99,235)"]}
-              currentUser={currentUser}
             />
           </div>
         </div>
@@ -76,7 +75,6 @@ export default async function Statistics({ params }: any) {
             attendanceInEachClass={countForEachAssignment}
             label={"Submissions"}
             bgColors={["rgb(37,99,235)"]}
-            currentUser={currentUser}
           />
           <Link
             href="/mentor/assignments/getbyassignment"

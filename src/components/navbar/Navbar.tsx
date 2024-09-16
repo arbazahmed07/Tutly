@@ -1,5 +1,5 @@
 "use client";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { type Dispatch, type SetStateAction, useState } from "react";
 import UserProfile from "./UserProfile";
 import ThemeSwitch from "./ThemeSwitch";
 import { GrMenu } from "react-icons/gr";
@@ -7,10 +7,10 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { usePathname, useRouter } from "next/navigation";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import Link from "next/link";
+import { type User } from "@prisma/client";
 
 interface Props {
-  // todo: change types
-  currentUser?: any;
+  currentUser?: User | null;
   menu: boolean;
   setMenu: Dispatch<SetStateAction<boolean>>;
 }

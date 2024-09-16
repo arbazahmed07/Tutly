@@ -1,60 +1,64 @@
 "use client";
 import { useRef, useEffect } from "react";
-import { Chart } from "chart.js/auto";
+import { Chart, type ChartConfiguration } from "chart.js/auto";
 
-export default function Doughnutchart({ attendance }: { attendance: any }) {
-  const chartRef = useRef<any>(null);
+interface DoughnutchartProps {
+  attendance: number[];
+}
+
+export default function Doughnutchart({ attendance }: DoughnutchartProps) {
+  const chartRef = useRef<HTMLCanvasElement | null>(null);
+  const chartInstanceRef = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartRef.current.chart) {
-        chartRef.current.chart.destroy();
-      }
-      const context = chartRef.current.getContext("2d");
+      const ctx = chartRef.current.getContext("2d");
 
-      const newChart = new Chart(context, {
-        type: "doughnut",
-        data: {
-          // labels:classes,
-          datasets: [
-            {
-              label: "classes",
-              data: attendance,
-              backgroundColor: [
-                "rgb(37,99,235)",
-                // 'green',
-                "red",
-              ],
-              borderColor: "white",
-              borderWidth: 0,
+      if (ctx) {
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.destroy();
+        }
+
+        const config: ChartConfiguration = {
+          type: "doughnut",
+          data: {
+            datasets: [
+              {
+                label: "classes",
+                data: attendance,
+                backgroundColor: [
+                  "rgb(37,99,235)",
+                  "red",
+                ],
+                borderColor: "white",
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: {
+                position: "top",
+              },
             },
-          ],
-        },
-        options: {
-          // responsive:true,
-          // scales:{
-          //   x:{
-          //     type:'category',
-          //   },
-          //   y:{
-          //     beginAtZero:true
-          //   }
-          // },
-          // plugins:{
-          //   legend:{
-          //     position:"top"
-          //   }
-          // }
-        },
-      });
-      chartRef.current.chart = newChart;
-    }
-  }, []);
+          },
+        };
 
-  const attendancePercentage = (
+        chartInstanceRef.current = new Chart(ctx, config);
+      }
+    }
+
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+    };
+  }, [attendance]);
+
+  const attendancePercentage = attendance[0] && attendance[1] ? (
     (attendance[0] * 100) /
     (attendance[0] + attendance[1])
-  ).toFixed(2);
+  ).toFixed(2) : "0.00";
 
   return (
     <div className="relative mb-2 w-full">
