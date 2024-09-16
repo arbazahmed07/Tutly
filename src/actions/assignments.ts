@@ -97,7 +97,7 @@ export const getAllAssignedAssignmentsByUserId = async (id: string) => {
       },
     },
   });
-  return { courses, coursesWithAssignments };
+  return { courses :  courses || [] , coursesWithAssignments: coursesWithAssignments || []};
 };
 
 // for all mentor assignments only for assignments dashboard
@@ -150,6 +150,9 @@ export const getAllAssignmentsForMentor = async () => {
   });
   return { courses, coursesWithAssignments };
 };
+
+
+
 export const getAllAssignmentsForInstructor = async () => {
   const courses = (await getEnrolledCourses()) ?? [];
   const currentUser = await getCurrentUser();

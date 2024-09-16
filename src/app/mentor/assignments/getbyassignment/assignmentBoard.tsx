@@ -2,29 +2,59 @@
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-export default function SingleAssignmentBoard({
-  courses,
-  assignments,
-}: {
-  courses: any;
-  assignments: {
+
+enum Role {
+  Mentor = "MENTOR",
+  Student = "STUDENT",
+  Instructor = "INSTRUCTOR",
+}
+
+type SingleAssignmentBoardProps = {
+  courses: {
     id: string;
+    createdBy: {
+      id: string;
+      name: string | null;
+      username: string;
+      email: string | null;
+      image: string | null;
+      password: string | null;
+      mobile: string | null;
+      role: Role;
+      createdAt: Date;
+      updatedAt: Date;
+    };
     classes: {
       id: string;
+      title: string;
+      videoId: string;
+      courseId: string;
+      folderId: string;
+      createdAt: Date;
+      updatedAt: Date;
+    }[];
+    _count: {
+      classes: number;
+    };
+  }[];
+  assignments: {
+    id: string;
+    class: {
       attachments: {
         id: string;
         title: string;
         submissions: {
-          id: string;
-          points: string;
+          points: number;
         }[];
         createdAt: string;
       }[];
-      createdAt: string;
     }[];
   }[];
-}) {
-  const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
+};
+
+
+const SingleAssignmentBoard: React.FC<SingleAssignmentBoardProps> = ({ courses, assignments }) => {
+  const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id || "");
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
@@ -48,7 +78,6 @@ export default function SingleAssignmentBoard({
     });
   });
 
-  // return <pre>{JSON.stringify(assignments, null, 2)}</pre>
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -125,3 +154,6 @@ export default function SingleAssignmentBoard({
     </div>
   );
 }
+
+
+export default SingleAssignmentBoard; 
