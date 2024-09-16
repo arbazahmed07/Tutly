@@ -9,7 +9,13 @@ import { MdAddToQueue } from "react-icons/md";
 import { FaFolder } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa6";
 
-function ClassSidebar({ params, classes, title, currentUser, isCourseAdmin = false }: {
+function ClassSidebar({
+  params,
+  classes,
+  title,
+  currentUser,
+  isCourseAdmin = false,
+}: {
   params: any;
   classes: any;
   title: any;
@@ -44,32 +50,31 @@ function ClassSidebar({ params, classes, title, currentUser, isCourseAdmin = fal
   return (
     <div className="relative z-10">
       <div
-        className={` min-w-[170px] ${!open && "hidden"
-          } max-sm:absolute sticky sm:top-10 flex flex-col px-2 items-start bg-background py-3 gap-2 h-dvh shadow-xl`}
+        className={` min-w-[170px] ${
+          !open && "hidden"
+        } max-sm:absolute sticky sm:top-10 flex flex-col px-2 items-start bg-background py-3 gap-2 h-dvh shadow-xl`}
       >
         <div className=" flex items-center justify-center">
           <Link href={`/courses/${params.id}`} className="cursor-pointer">
-            <h1 className="p-3 text-sm font-medium border-b-2">
-              {title}
-            </h1>
+            <h1 className="p-3 text-sm font-medium border-b-2">{title}</h1>
           </Link>
         </div>
         {Object.keys(groupedClasses).map((folderId: string) => {
-          const folder = classes.find((c: any) => c.folderId === folderId)?.Folder;
+          const folder = classes.find(
+            (c: any) => c.folderId === folderId
+          )?.Folder;
           if (folder) {
             return (
               <div key={folder.id}>
                 <h2
                   onClick={() => toggleFolder(folder.id)}
-                  className="flex items-center justify-start px-6 py-2 cursor-pointer text-sm font-medium text-gray-400 hover:text-gray-300"
+                  className="flex items-center justify-start px-6 py-2 cursor-pointer text-sm font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
                 >
-                  {
-                    openFolders.includes(folder.id) ?
-                      <FaFolderOpen className=" w-4 h-4" />
-                      :
-                      <FaFolder className=" w-4 h-4" />
-                  }
-
+                  {openFolders.includes(folder.id) ? (
+                    <FaFolderOpen className=" w-4 h-4" />
+                  ) : (
+                    <FaFolder className=" w-4 h-4" />
+                  )}
                   &nbsp; {folder.title}
                 </h2>
                 {openFolders.includes(folder.id) && (
@@ -78,10 +83,11 @@ function ClassSidebar({ params, classes, title, currentUser, isCourseAdmin = fal
                       <Link
                         key={classItem.id}
                         href={`/courses/${params.id}/class/${classItem.id}`}
-                        className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:text-white hover:bg-blue-500 ${pathname ===
-                          `/courses/${params.id}/class/${classItem.id}` &&
+                        className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:text-white hover:bg-blue-500 ${
+                          pathname ===
+                            `/courses/${params.id}/class/${classItem.id}` &&
                           "bg-sky-500 text-white"
-                          }`}
+                        }`}
                       >
                         <MdOndemandVideo />
                         {classItem.title}
@@ -97,10 +103,10 @@ function ClassSidebar({ params, classes, title, currentUser, isCourseAdmin = fal
           <Link
             key={classItem.id}
             href={`/courses/${params.id}/class/${classItem.id}`}
-            className={`px-6 py-2 flex items-center gap-2 cursor-pointer text-white rounded-md hover:bg-blue-500 ${pathname ===
-              `/courses/${params.id}/class/${classItem.id}` &&
+            className={`px-6 py-2 flex items-center gap-2 cursor-pointer text-white rounded-md hover:bg-blue-500 ${
+              pathname === `/courses/${params.id}/class/${classItem.id}` &&
               "bg-sky-500 text-white"
-              }`}
+            }`}
           >
             <MdOndemandVideo />
             {classItem.title}
