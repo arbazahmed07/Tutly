@@ -7,7 +7,12 @@ import { FaCrown } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { LuReply } from "react-icons/lu";
 import { PiCrownSimpleFill } from "react-icons/pi";
-import { RxCross2 } from "react-icons/rx";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button"
 
 
 export default function Accordion({ doubts, currentUser, currentCourseId }: any) {
@@ -162,28 +167,23 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
   return (
     <div className="bg-gradient-to-l w-full md:min-w-[800px]">
       <div className="flex flex-col items-center text-sm font-medium">
-        <div className=' w-full flex flex-row-reverse'>
-          <button onClick={() => { handleShow(); setOpenAccordion(-1); }} className="py-3 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white">
+        <div className='w-full flex flex-row-reverse'>
+           <Button onClick={() => { handleShow(); setOpenAccordion(-1); }} className="py-3 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white">
             {
               currentUser.role === 'STUDENT' ? "Ask a Doubt" : "Raise a Query"
             }
-          </button>
+          </Button>
         </div>
-        {show && (
-          <div ref={addDoubtRef} className="fixed z-50 inset-0 overflow-y-auto bg-secondary-900 bg-opacity-70 flex items-center justify-center">
-            <div className="relative rounded-lg w-full bg-secondary-50 max-w-xl">
-              <div className="p-5" onKeyDown={handleEscKeyDown}>
-                <h3 className="text-lg font-bold  text-secondary-700">Enter your doubt here</h3>
-                <form className="mt-2" onSubmit={handleSubmit} onKeyDown={handleEscKeyDown}>
-
-                  <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e) => handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block p-2.5 w-full rounded-lg outline-none bg-white border-2 text-secondary-950 "></textarea>
-                  <button type="button" onClick={() => setShow(false)} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md mt-3  mr-4">Cancel</button>
-                  <button type="submit" className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md mt-3">Submit</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
+        <Dialog open={show} onOpenChange={() => setShow(false)}>
+          <DialogTitle>Enter your doubt here</DialogTitle>
+          <DialogContent>
+            <form className="mt-2" onSubmit={handleSubmit} onKeyDown={handleEscKeyDown}>
+              <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e) => handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block p-2.5 w-full rounded-lg outline-none bg-white border-2 text-secondary-950 "></textarea>
+              <Button onClick={() => setShow(false)} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md mt-3  mr-4">Cancel</Button>
+            <Button type="submit" onClick={handleSubmit} className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md mt-3">Submit</Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {
@@ -222,7 +222,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                 <div className="flex gap-7 justify-end items-center flex-wrap">
                   {/* your reply for that answer */}
                   <div>
-                    <button
+                    <Button
                       title="Reply"
                       className="p-1"
                       onClick={() => {
@@ -231,16 +231,16 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                       }}
                     >
                       <LuReply className="cursor-pointer w-5 h-5" />
-                    </button>
+                    </Button>
                   </div>
                   <div hidden={currentUser.role !== 'INSTRUCTOR' && qa.user.role === 'INSTRUCTOR'}>
-                    <button
+                    <Button
                       hidden={currentUser.role === 'STUDENT'}
                       className="p-1 mr-2"
                       onClick={() => handleDeleteDoubt(qa.id)}
                     >
                       <MdDelete className='cursor-pointer  w-5 h-5 text-red-500 hover:text-red-600' />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -279,20 +279,20 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                         className="w-full p-2 bg-white text-gray-800 border-2 rounded-lg outline-none text-sm"
                       ></textarea>
                       <div className="flex justify-end text-sm font-medium mt-3">
-                        <button
+                        <Button
                           title="Close"
                           className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mr-2"
                           onClick={() => setReplyId('')}
                         >
                           ✖ <p className="ml-1.5">Cancel</p>
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           title="Send"
                           className="flex items-center gap-2 px-4 py-2 hover:bg-blue-600 bg-blue-500 text-white rounded-lg"
                           onClick={() => handleReply(qa.id)}
                         >
                           ✔ <p className="ml-1.5">Reply</p>
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )
@@ -333,9 +333,9 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                         <div hidden={r.user.role === 'INSTRUCTOR' && currentUser.role !== 'INSTRUCTOR'} >
                           {
                             (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR') &&
-                            <button onClick={() => handleDeleteReply(r.id)}>
+                            <Button onClick={() => handleDeleteReply(r.id)}>
                               <MdDelete className='cursor-pointer w-5 h-5 text-red-500 hover:text-red-600' />
-                            </button>
+                            </Button>
                           }
                         </div>
                       </div>
