@@ -8,6 +8,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const currentUser = await getCurrentUser();
+  if (!currentUser || currentUser.role !== "INSTRUCTOR") {
+    return null;
+  }
   return (
     <HomeLayout currentUser={currentUser}>
       {children}

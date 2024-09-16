@@ -9,7 +9,13 @@ import { MdAddToQueue } from "react-icons/md";
 import { FaFolder } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa6";
 
-function ClassSidebar({ params, classes,title, currentUser }: any) {
+function ClassSidebar({ params, classes, title, currentUser, isCourseAdmin = false }: {
+  params: any;
+  classes: any;
+  title: any;
+  currentUser: any;
+  isCourseAdmin: boolean;
+}) {
   const [openFolders, setOpenFolders] = useState<string[]>([]);
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
@@ -38,9 +44,8 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
   return (
     <div className="relative z-10">
       <div
-        className={` min-w-[170px] ${
-          !open && "hidden"
-        } max-sm:absolute sticky sm:top-10 flex flex-col px-2 items-start bg-background py-3 gap-2 h-dvh shadow-xl`}
+        className={` min-w-[170px] ${!open && "hidden"
+          } max-sm:absolute sticky sm:top-10 flex flex-col px-2 items-start bg-background py-3 gap-2 h-dvh shadow-xl`}
       >
         <div className=" flex items-center justify-center">
           <Link href={`/courses/${params.id}`} className="cursor-pointer">
@@ -59,12 +64,12 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
                   className="flex items-center justify-start px-6 py-2 cursor-pointer text-sm font-medium text-gray-400 hover:text-gray-300"
                 >
                   {
-                    openFolders.includes(folder.id) ? 
+                    openFolders.includes(folder.id) ?
                       <FaFolderOpen className=" w-4 h-4" />
-                      : 
+                      :
                       <FaFolder className=" w-4 h-4" />
                   }
-                  
+
                   &nbsp; {folder.title}
                 </h2>
                 {openFolders.includes(folder.id) && (
@@ -73,11 +78,10 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
                       <Link
                         key={classItem.id}
                         href={`/courses/${params.id}/class/${classItem.id}`}
-                        className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:text-white hover:bg-blue-500 ${
-                          pathname ===
+                        className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:text-white hover:bg-blue-500 ${pathname ===
                           `/courses/${params.id}/class/${classItem.id}` &&
                           "bg-sky-500 text-white"
-                        }`}
+                          }`}
                       >
                         <MdOndemandVideo />
                         {classItem.title}
@@ -93,11 +97,10 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
           <Link
             key={classItem.id}
             href={`/courses/${params.id}/class/${classItem.id}`}
-            className={`px-6 py-2 flex items-center gap-2 cursor-pointer text-white rounded-md hover:bg-blue-500 ${
-              pathname ===
+            className={`px-6 py-2 flex items-center gap-2 cursor-pointer text-white rounded-md hover:bg-blue-500 ${pathname ===
               `/courses/${params.id}/class/${classItem.id}` &&
               "bg-sky-500 text-white"
-            }`}
+              }`}
           >
             <MdOndemandVideo />
             {classItem.title}
@@ -105,15 +108,15 @@ function ClassSidebar({ params, classes,title, currentUser }: any) {
         ))}
         <div className="flex-grow"></div>
         {pathname !== `/courses/${params.id}/class/new` &&
-        currentUser?.role === "INSTRUCTOR" && (
-          <Link
-            href={`/courses/${params.id}/class/new`}
-            className={`px-6 py-2 mb-16 flex items-center gap-2 cursor-pointer rounded-xl text-white bg-blue-500`}
-          >
-            <MdAddToQueue />
-            Add Class
-          </Link>
-        )}
+          (currentUser?.role === "INSTRUCTOR" || isCourseAdmin) && (
+            <Link
+              href={`/courses/${params.id}/class/new`}
+              className={`px-6 py-2 mb-16 flex items-center gap-2 cursor-pointer rounded-xl text-white bg-blue-500`}
+            >
+              <MdAddToQueue />
+              Add Class
+            </Link>
+          )}
 
         <div
           onClick={() => setOpen(!open)}

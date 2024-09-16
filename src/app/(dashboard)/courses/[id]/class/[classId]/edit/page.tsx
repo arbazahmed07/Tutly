@@ -40,7 +40,11 @@ const EditClass = () => {
     const handleGetDetails = async () => {
 
         try {
-            const res = await axios.get(`/api/classes/getClassById/${params.classId}`);
+            const res = await axios.get(`/api/classes/getClassById/${params.classId}`,{
+                params : {
+                    courseId : params.id
+                }
+            });
             setVideoLink(res.data?.video.videoLink);
             setVideoType(res.data?.video.videoType);
             setClassTitle(res.data?.title);

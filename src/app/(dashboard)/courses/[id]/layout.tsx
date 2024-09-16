@@ -13,17 +13,19 @@ export default async function RootLayout({
     params
 }: Readonly<{
     children: React.ReactNode;
-    params:any
+    params: any
 }>) {
     const classes = await getCourseClasses(params.id)
     const currentUser = await getCurrentUser()
     const course = await getCourseByCourseId(params.id)
+    if (!currentUser || !course) return null
 
+    const isCourseAdmin = currentUser?.adminForCourses?.some((course) => course.id === params.id) || false;
 
     return (
         <>
             <div className="flex w-full">
-                <ClassSidebar params={params} currentUser={currentUser} title={course?.title} classes={classes}/>
+                <ClassSidebar params={params} currentUser={currentUser} title={course?.title} classes={classes} isCourseAdmin={isCourseAdmin} />
                 <div className="flex-1">{children}</div>
             </div>
         </>

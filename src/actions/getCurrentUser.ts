@@ -11,6 +11,13 @@ export default async function getCurrentUser() {
       where: {
         username: session.user.username
       },
+      include:{
+        adminForCourses:{
+          select:{
+            id:true
+          }
+        },
+      }
     });
     
     if (!currentUser) {

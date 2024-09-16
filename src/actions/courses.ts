@@ -115,6 +115,7 @@ export const getEnrolledCourses = async () => {
           classes: true,
         },
       },
+      courseAdmins: true,
     },
   });
 
