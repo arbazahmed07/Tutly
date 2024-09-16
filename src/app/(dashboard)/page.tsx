@@ -130,7 +130,7 @@ export default async function Home() {
     );
   } else if (currentUser?.role === "MENTOR") {
     // mentor
-    const mstudents = await getMentorStudents();
+    // const mstudents = await getMentorStudents();
     const mcourses = await getMentorCourses();
     const mleaderboard = await getMentorLeaderboardDataForDashboard();
     // return <pre>{JSON.stringify(mleaderboard, null, 2)}</pre>
@@ -149,7 +149,7 @@ export default async function Home() {
           <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
             <PiStudentBold className="m-auto h-24 w-24 text-blue-400" />
             <p className="text-primary-600 font-bold pt-2">
-              {mstudents?.length}
+              {/* {mstudents?.length} */}for now
             </p>
             <h1 className="p-1 text-sm font-bold">Assigned mentees</h1>
           </div>
@@ -173,7 +173,7 @@ export default async function Home() {
   } else if (currentUser?.role === "INSTRUCTOR") {
     // instructor
     const created = await getAllCourses();
-    const students = await getEnrolledStudents();
+    // const students = await getEnrolledStudents();
     let total = 0;
     let count = 0;
     if (created) {
@@ -181,13 +181,13 @@ export default async function Home() {
         total += courses?._count.classes || 0;
       }
     }
-    if (students) {
-      for (const student of students) {
-        if (student?.role === "STUDENT") {
-          count += 1;
-        }
-      }
-    }
+    // if (students) {
+    //   for (const student of students) {
+    //     if (student?.role === "STUDENT") {
+    //       count += 1;
+    //     }
+    //   }
+    // }
 
     return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
