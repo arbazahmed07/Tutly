@@ -1,7 +1,5 @@
 import {
   getDashboardData,
-  getLeaderboardDataForStudent,
-  getMentorLeaderboardData,
   getMentorLeaderboardDataForDashboard,
 } from "@/actions/getLeaderboard";
 import Image from "next/image";

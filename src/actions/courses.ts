@@ -281,6 +281,23 @@ export const getEnrolledStudents = async (courseId:string) => {
 
   return students;
 };
+
+export const getAllStudents = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  const students = await db.user.findMany({
+    where: {
+      role: "STUDENT",
+    },
+    include: {
+      course: true,
+      enrolledUsers: true,
+    },
+  });
+
+  return students;
+};
 export const getEnrolledMentees = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
