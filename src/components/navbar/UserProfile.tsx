@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { AiOutlineMenu } from "react-icons/ai";
+import React from "react";
 import MenuItem from "./MenuItem";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
@@ -7,8 +6,11 @@ import { useRouter } from "next/navigation";
 import { NEXT_PUBLIC_SIGN_IN_URL } from "@/utils/constants";
 import useClickOutside from "@/hooks/useClickOutside";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
+import {type User } from "@prisma/client";
 
-const UserProfile = ({ currentUser }: any) => {
+const UserProfile = ({ currentUser }: {
+  currentUser?: User | null;
+}) => {
   const router = useRouter();
 
   const [isOpen, setIsOpen, componentRef] =
@@ -26,7 +28,7 @@ const UserProfile = ({ currentUser }: any) => {
             <Image
               unoptimized
               className="rounded-full"
-              src={currentUser?.image || "/images/placeholder.jpg"}
+              src={currentUser?.image ?? "/images/placeholder.jpg"}
               width={30}
               height={30}
               alt="profile img"
@@ -44,8 +46,8 @@ const UserProfile = ({ currentUser }: any) => {
                 />
                 <hr />
                 <MenuItem
-                  onClick={() => {
-                    signOut({ callbackUrl: NEXT_PUBLIC_SIGN_IN_URL });
+                  onClick={async () => {
+                    await signOut({ callbackUrl: NEXT_PUBLIC_SIGN_IN_URL });
                     localStorage.clear();
                   }}
                   label="SignOut"

@@ -58,7 +58,7 @@ function AddCourse() {
     }
   };
 
-  const handleImageUpload = async (e: any) => {
+  const handleImageUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!inputFileRef.current?.files) {

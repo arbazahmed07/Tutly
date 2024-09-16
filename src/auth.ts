@@ -17,7 +17,7 @@ export const {
     strategy: "jwt",
     maxAge: 5 * 60, // 5 minutes
   },
-  secret: process.env.NEXTAUTH_SECRET as string,
+  secret: process.env.NEXTAUTH_SECRET!,
   // trustHost: true,
   ...authConfig,
 });

@@ -4,7 +4,7 @@ import Link from "next/link";
 interface Props {
   items: {
     name: string;
-    icon: any;
+    icon: React.ReactNode;
     path: string;
     isActive: boolean;
   }[];

@@ -8,9 +8,7 @@ const SigninWithGoogle = () => {
   const router = useRouter();
   const loginWithGoogle = async () => {
     const response = await signIn("google", { callbackUrl: "/" });
-    // console.log(response);
     if (response?.ok) {
-      // console.log(response);
       toast.success("Signin successful");
       router.push("/");
     }
@@ -25,9 +23,9 @@ const SigninWithGoogle = () => {
         Or
       </h2>
       <button
-        onClick={(e) => {
+        onClick={async (e) => {
           e.preventDefault();
-          loginWithGoogle();
+          await loginWithGoogle();
         }}
         className="my-2 w-full rounded-lg bg-gray-950 text-sm font-semibold text-white hover:bg-gray-800"
       >
@@ -35,7 +33,7 @@ const SigninWithGoogle = () => {
           <div>
             <FcGoogle />
           </div>
-          Continue with Google
+          <span>Continue with Google</span>
         </div>
       </button>
     </div>

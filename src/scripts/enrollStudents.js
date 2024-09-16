@@ -1,6 +1,6 @@
-const { PrismaClient } = require("@prisma/client");
-const dayjs = require("dayjs");
-const fs = require("fs");
+import { PrismaClient } from "@prisma/client";
+import dayjs from "dayjs";
+import { writeFileSync } from "fs";
 const db = new PrismaClient();
 
 async function main() {
@@ -148,7 +148,7 @@ async function main() {
     "username,name,submissionLength,assignmentLength,score,submissionEvaluatedLength,attendance,mentorUsername";
 
   const currentDateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
-  fs.writeFileSync(
+  writeFileSync(
     `user-stats-${currentDateTime}.csv`,
     csvHeader + "\n" + csv.join("\n"),
   );

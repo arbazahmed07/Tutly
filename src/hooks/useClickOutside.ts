@@ -1,4 +1,4 @@
-import { useEffect, useState, RefObject, useRef } from "react";
+import { useEffect, useState, type RefObject, useRef } from "react";
 
 function useClickOutside<T extends HTMLElement>(
   initialIsOpen: boolean,

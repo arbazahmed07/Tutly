@@ -24,7 +24,7 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
   const generateDatesForYear = (year: number) => {
     const startOfYearDate = startOfYear(new Date(year, 0, 1));
     const endOfYearDate = endOfYear(new Date(year, 0, 1));
-    const allDays: any = eachDayOfInterval({
+    const allDays = eachDayOfInterval({
       start: startOfYearDate,
       end: endOfYearDate,
     }).map((date) => ({
@@ -34,9 +34,8 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
     }));
 
     const paddingDays = getDay(startOfYearDate);
-    const paddedDays = Array.from({ length: paddingDays }, () => null).concat(
-      allDays,
-    );
+
+    const paddedDays = Array.from({ length: paddingDays }, () => null).concat(allDays);
 
     return paddedDays;
   };
