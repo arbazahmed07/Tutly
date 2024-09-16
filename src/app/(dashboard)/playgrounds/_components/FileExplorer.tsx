@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { SandpackFiles, useSandpack } from "@codesandbox/sandpack-react";
+import { type SandpackFiles, useSandpack } from "@codesandbox/sandpack-react";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { SandpackFileExplorer } from "@codesandbox/sandpack-react";
 import { FaCheck, FaTimes } from "react-icons/fa";

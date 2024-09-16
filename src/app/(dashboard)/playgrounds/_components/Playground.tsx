@@ -4,8 +4,8 @@ import { useState } from "react";
 import {
   SandpackProvider,
   SandpackPreview,
-  SandpackFiles,
-  SandpackPredefinedTemplate,
+  type SandpackFiles,
+  type SandpackPredefinedTemplate,
 } from "@codesandbox/sandpack-react";
 import MonacoEditor from "./MonacoEditor";
 import FileExplorer from "./FileExplorer";
@@ -115,7 +115,7 @@ const Playground = ({
           </ResizablePanel>
         </ResizablePanelGroup>
         {assignmentId && (
-          <div className="absolute -top-6 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform">
+          <div className="absolute -top-6 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
             <SubmitAssignment
               currentUser={currentUser}
               assignmentId={assignmentId}

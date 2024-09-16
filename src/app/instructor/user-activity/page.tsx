@@ -1,5 +1,5 @@
 import { getAllEvents } from "@/actions/events";
-import { EventCategory } from "@prisma/client";
+import { type EventCategory } from "@prisma/client";
 import { RiUserReceivedLine } from "react-icons/ri";
 import { BsListTask } from "react-icons/bs";
 import { HiOutlineRectangleStack } from "react-icons/hi2";
@@ -26,7 +26,7 @@ const page = async () => {
   return (
     <div className="relative rounded-lg bg-slate-50 pb-4 shadow-md">
       <div className="relative h-[92vh] w-full overflow-y-scroll px-14">
-        <ul className="relative flex flex-grow flex-col-reverse py-12 pl-6 pr-6 before:absolute before:left-6 before:top-0 before:-translate-x-1/2 before:border before:border-dashed before:border-slate-200 after:absolute after:bottom-6 after:left-6 after:top-6 after:-translate-x-1/2 after:border after:border-slate-200">
+        <ul className="relative flex grow flex-col-reverse py-12 pl-6 pr-6 before:absolute before:left-6 before:top-0 before:-translate-x-1/2 before:border before:border-dashed before:border-slate-200 after:absolute after:bottom-6 after:left-6 after:top-6 after:-translate-x-1/2 after:border after:border-slate-200">
           {events?.map((activity, index) => (
             <li key={index} className="relative mb-4 pl-6">
               <span className="absolute left-0 z-10 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full bg-slate-200 p-2 text-slate-700 ring-2 ring-white">

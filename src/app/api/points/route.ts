@@ -1,6 +1,6 @@
 import getCurrentUser from "@/actions/getCurrentUser";
 import addPoints from "@/actions/points";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const user = await getCurrentUser();

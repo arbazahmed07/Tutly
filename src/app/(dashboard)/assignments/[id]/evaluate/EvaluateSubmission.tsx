@@ -47,16 +47,13 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
   const handleEdit = () => {
     setIsEditing(true);
     const rValue =
-      submission &&
-      submission.points.find(
+      submission?.points.find(
         (point: any) => point.category === "RESPOSIVENESS",
       );
     const sValue =
-      submission &&
-      submission.points.find((point: any) => point.category === "STYLING");
+      submission?.points.find((point: any) => point.category === "STYLING");
     const oValue =
-      submission &&
-      submission.points.find((point: any) => point.category === "OTHER");
+      submission?.points.find((point: any) => point.category === "OTHER");
     setEditedScores({
       responsiveness: rValue ? rValue.score : 0,
       styling: sValue ? sValue.score : 0,
@@ -70,7 +67,7 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
     try {
       toast.loading("Updating Scores...");
 
-      let marks = [];
+      const marks = [];
       if (editedScores.responsiveness > 0) {
         marks.push({
           category: "RESPOSIVENESS",

@@ -106,7 +106,7 @@ export default function AttendanceHeader({
           </div>
         </>
       )}
-      <div className="m-auto flex w-[80%] justify-between">
+      <div className="m-auto flex w-4/5 justify-between">
         <div className="flex items-center gap-2">
           <div className="relative">
             {!currentCourse ? (

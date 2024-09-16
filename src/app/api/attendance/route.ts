@@ -1,6 +1,6 @@
 import { postAttendance } from "@/actions/attendance";
 import getCurrentUser from "@/actions/getCurrentUser";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { classId, data, maxInstructionDuration } = await request.json();

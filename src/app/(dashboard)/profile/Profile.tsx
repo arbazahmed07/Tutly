@@ -32,10 +32,10 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
     <div className="m-5 mt-12 flex flex-col items-center font-semibold dark:text-white md:mt-20">
       <div className="relative">
         {currentUser.role === "MENTOR" && (
-          <FaCrown className="absolute -left-9 -top-9 h-16 w-16 -rotate-45 transform text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
+          <FaCrown className="absolute -left-9 -top-9 h-16 w-16 -rotate-45 text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
         )}
         {currentUser.role === "INSTRUCTOR" && (
-          <FaCrown className="absolute -left-9 -top-9 h-16 w-16 -rotate-45 transform text-red-400 shadow-yellow-500 drop-shadow-sm hover:text-red-500" />
+          <FaCrown className="absolute -left-9 -top-9 h-16 w-16 -rotate-45 text-red-400 shadow-yellow-500 drop-shadow-sm hover:text-red-500" />
         )}
         <Image
           unoptimized
@@ -48,7 +48,7 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
       </div>
 
       <form className="flex flex-col justify-center dark:text-white md:flex-row md:gap-10">
-        <div className="mt-2 w-[100%] dark:text-white md:w-[40%]">
+        <div className="mt-2 w-full dark:text-white md:w-2/5">
           <label className="text-sm dark:text-secondary-50">Username:</label>
           <input
             type="text"
@@ -69,7 +69,7 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
             />
           </label>
         </div>
-        <div className="w-[100%] dark:text-white md:mt-3 md:w-[40%]">
+        <div className="w-full dark:text-white md:mt-3 md:w-2/5">
           <label className="mb-1 block text-sm">
             Name:
             <input

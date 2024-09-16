@@ -6,7 +6,7 @@ import Playground from "../_components/Playground";
 
 const ReactPlayground = ({ currentUser }: { currentUser: any }) => {
   const [filesObj, setFilesObj] = useState<
-    { [key: string]: string } | undefined
+    Record<string, string> | undefined
   >(undefined);
 
   return (

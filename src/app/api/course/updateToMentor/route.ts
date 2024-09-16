@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { updateRole } from "@/actions/courses";
 
 export async function POST(request: NextRequest) {
