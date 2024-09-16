@@ -34,7 +34,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "types/next-auth.d.ts",
     "**/*.cjs",
     ".eslintrc.cjs",
     "next.config.mjs"

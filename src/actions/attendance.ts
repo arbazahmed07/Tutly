@@ -1,7 +1,14 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 import { totalNumberOfClasses } from "./classes";
-import { forEach } from "lodash";
+import day from "@/lib/dayjs";
+import { type InputJsonValue } from "@prisma/client/runtime/library";
+
+interface AttendanceData {
+  Joins: InputJsonValue[];
+  username: string;
+  Duration: number;
+}
 
 export const postAttendance = async ({
   classId,
@@ -9,39 +16,27 @@ export const postAttendance = async ({
   maxInstructionDuration,
 }: {
   classId: string;
-  data: { username: string; Duration: number }[];
+  data: AttendanceData[];
   maxInstructionDuration: number;
 }) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to attend a class");
   }
-  const parsedData = JSON.parse(JSON.stringify(data));
-
+  const parsedData = data;
   const postAttendance = await db.attendance.createMany({
-    data: [
-      ...parsedData.map((student: any) => {
-        if (student.Duration >= (60 * maxInstructionDuration) / 100) {
-          return {
-            classId,
-            username: student.username,
-            attendedDuration: student.Duration,
-            data: student?.Joins,
-            attended: true,
-          };
-        }
-        return {
-          classId,
-          username: student.username,
-          attendedDuration: student.Duration,
-          data: student?.Joins,
-        };
-      }),
-    ],
+    data: parsedData.map((student) => ({
+      classId,
+      username: student.username,
+      attendedDuration: student.Duration,
+      data: student.Joins,
+      attended: student.Duration >= (60 * maxInstructionDuration) / 100,
+    })),
   });
 
   return postAttendance;
 };
+
 export const getAttendanceForMentorByIdBarChart = async (
   id: string,
   courseId: string,
@@ -74,8 +69,8 @@ export const getAttendanceForMentorByIdBarChart = async (
       createdAt: "asc",
     },
   });
-  const classes = <any>[];
-  const attendanceInEachClass = <any>[];
+  const classes: (string | undefined)[] = [];
+  const attendanceInEachClass: number[] = [];
   getAllClasses.forEach((classData) => {
     classes.push(classData.createdAt.toISOString().split("T")[0]);
     const tem = attendance.filter(
@@ -85,6 +80,7 @@ export const getAttendanceForMentorByIdBarChart = async (
   });
   return { classes, attendanceInEachClass };
 };
+
 export const getAttendanceForMentorBarChart = async (courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
@@ -131,10 +127,11 @@ export const getAttendanceForMentorBarChart = async (courseId: string) => {
       createdAt: "asc",
     },
   });
-  const classes = <any>[];
-  const attendanceInEachClass = <any>[];
+  const classes: string[] = [];
+  const attendanceInEachClass: number[] = [];
   getAllClasses.forEach((classData) => {
-    classes.push(classData.createdAt.toISOString().split("T")[0]);
+    const date = day(classData.createdAt).format("DD-MM-YYYY");
+    classes.push(date);
     const tem = attendance.filter(
       (attendanceData) => attendanceData.classId === classData.id,
     );
@@ -176,11 +173,12 @@ export const getAttendanceOfStudent = async (id: string, courseId: string) => {
       },
     },
   });
-  let attendanceDates = <any>[];
+  const attendanceDates: string[] = [];
   attendance.forEach((attendanceData) => {
-    attendanceDates.push(
-      attendanceData.class.createdAt.toISOString().split("T")[0],
-    );
+    const date = day(attendanceData.class.createdAt).format("DD-MM-YYYY");
+    if (attendanceData.class.createdAt) {
+      attendanceDates.push(date);
+    }
   });
 
   const getAllClasses = await db.class.findMany({
@@ -195,12 +193,11 @@ export const getAttendanceOfStudent = async (id: string, courseId: string) => {
       createdAt: "asc",
     },
   });
-  const classes = <any>[];
+  const classes: string[] = [];
   getAllClasses.forEach((classData) => {
-    if (
-      !attendanceDates.includes(classData.createdAt.toISOString().split("T")[0])
-    ) {
-      classes.push(classData.createdAt.toISOString().split("T")[0]);
+    const date = day(classData.createdAt).format("DD-MM-YYYY");
+    if (!attendanceDates.includes(date)) {
+      classes.push(date);
     }
   });
   return { classes, attendanceDates };
@@ -221,6 +218,15 @@ export const deleteClassAttendance = async (classId: string) => {
   });
   return attendance;
 };
+
+interface AttendanceCount {
+  username: string;
+  name: string;
+  mail: string;
+  image: string | null;
+  role: string;
+  count: number;
+}
 
 export const getTotalNumberOfClassesAttended = async () => {
   const currentUser = await getCurrentUser();
@@ -262,20 +268,20 @@ export const getTotalNumberOfClassesAttended = async () => {
     });
   }
 
-  let groupByTotalAttendance = <any>[];
+  const groupByTotalAttendance: Record<string, AttendanceCount> = {};
 
   attendance.forEach((attendanceData) => {
     if (attendanceData.attended) {
-      if (groupByTotalAttendance[attendanceData.username]) {
-        groupByTotalAttendance[attendanceData.username] = {
-          ...groupByTotalAttendance[attendanceData.username],
-          count: groupByTotalAttendance[attendanceData.username].count + 1,
-        };
+      if (attendanceData.username in groupByTotalAttendance) {
+        const userAttendance = groupByTotalAttendance[attendanceData.username];
+        if (userAttendance) {
+          userAttendance.count += 1;
+        }
       } else {
         groupByTotalAttendance[attendanceData.username] = {
           username: attendanceData.username,
-          name: attendanceData.user.name,
-          mail: attendanceData.user.email,
+          name: attendanceData.user.name ?? "",
+          mail: attendanceData.user.email ?? "",
           image: attendanceData.user.image,
           role: attendanceData.user.role,
           count: 1,
@@ -286,6 +292,7 @@ export const getTotalNumberOfClassesAttended = async () => {
 
   return groupByTotalAttendance;
 };
+
 export const getAttendanceForLeaderbaord = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
@@ -304,11 +311,15 @@ export const getAttendanceForLeaderbaord = async () => {
       },
     },
   });
-  const groupedAttendance = attendance.reduce((acc: any, curr: any) => {
-    const username = curr.user.username;
-    acc[username] = (acc[username] || 0) + 1;
-    return acc;
-  }, {});
+
+  const groupedAttendance = attendance.reduce(
+    (acc: Record<string, number>, curr) => {
+      const username = curr.user.username;
+      acc[username] = (acc[username] ?? 0) + 1;
+      return acc;
+    },
+    {},
+  );
   return groupedAttendance;
 };
 
@@ -321,7 +332,7 @@ export const getAttendanceOfAllStudents = async () => {
   const totalCount = await totalNumberOfClasses();
 
   const jsonData = Object.entries(totalAttendance).map(
-    ([username, value]: [string, any]) => ({
+    ([, value]: [string, AttendanceCount]) => ({
       username: value.username,
       name: value.name,
       mail: value.mail,

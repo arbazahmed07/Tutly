@@ -15,7 +15,15 @@ const classSchema = z.object({
   folderName: z.string().optional(),
 });
 
-export const createClass = async (data: any) => {
+export const createClass = async (data: {
+  classTitle: string;
+  videoLink: string;
+  videoType: string;
+  courseId: string;
+  folderId: string;
+  folderName: string;
+  createdAt: string;
+}) => {
   const {
     classTitle,
     videoLink,
@@ -98,18 +106,27 @@ export const createClass = async (data: any) => {
     }
 
     return myClass;
-  } catch (error) {
+  } catch {
     throw new Error("Failed to create class. Please try again later.");
   }
 };
 
-export const updateClass = async (data: any) => {
+export const updateClass = async (data: {
+  classId: string;
+  courseId: string;
+  classTitle: string;
+  videoLink: string;
+  videoType: string;
+  folderId: string;
+  folderName: string;
+  createdAt: string;
+}) => {
   const currentUser = await getCurrentUser();
   const isCourseAdmin = currentUser?.adminForCourses?.some(
     (course) => course.id === data.courseId,
   );
   const haveAccess =
-    currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+    currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
   if (!haveAccess) {
     throw new Error("You are not authorized to update this class.");
   }
@@ -120,7 +137,7 @@ export const updateClass = async (data: any) => {
   let newFolderId = undefined;
 
   if (folderId && folderName) {
-    const res = await db.folder.update({
+    await db.folder.update({
       where: {
         id: folderId,
       },
@@ -145,7 +162,7 @@ export const updateClass = async (data: any) => {
   try {
     const myClass = await db.class.update({
       where: {
-        id: data.classId as string,
+        id: data.classId,
       },
       data: {
         title: classTitle,
@@ -158,7 +175,7 @@ export const updateClass = async (data: any) => {
         },
         Folder: {
           connect: {
-            id: newFolderId as string,
+            id: newFolderId,
           },
         },
       },
@@ -173,7 +190,7 @@ export const updateClass = async (data: any) => {
 
 export const deleteClass = async (classId: string) => {
   try {
-    const res = await db.class.delete({
+    await db.class.delete({
       where: {
         id: classId,
       },

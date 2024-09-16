@@ -492,8 +492,8 @@ export const enrollStudentToCourse = async (
     });
 
     return newEnrollment;
-  } catch (error: any) {
-    throw new Error(`Failed to enroll student: ${error.message}`);
+  } catch {
+    throw new Error(`Failed to enroll student`);
   }
 };
 
@@ -541,8 +541,8 @@ export const unenrollStudentFromCourse = async (
     });
 
     return existingEnrollment;
-  } catch (error: any) {
-    throw new Error(`Failed to unenroll student: ${error.message}`);
+  } catch {
+    throw new Error(`Failed to unenroll student`);
   }
 };
 
@@ -571,8 +571,8 @@ export const updateRole = async (username: string, role: string) => {
     });
 
     return updatedUser;
-  } catch (error: any) {
-    throw new Error(`Failed to update user role: ${error.message}`);
+  } catch {
+    throw new Error(`Failed to update user role`);
   }
 };
 
@@ -607,7 +607,7 @@ export const updateMentor = async (
     });
 
     return updatedUser;
-  } catch (error: any) {
-    throw new Error(`Failed to update mentor: ${error.message}`);
+  } catch {
+    throw new Error(`Failed to update mentor`);
   }
 };
