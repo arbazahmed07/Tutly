@@ -15,11 +15,6 @@ const nextConfig = withPWA({
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
-      {
-        protocol: "https",
-        hostname: "mkbso1vsjf6fwnka.public.blob.vercel-storage.com",
-        port: "",
-      },
     ],
     domains: [
       "cdn-icons-png.flaticon.com",
