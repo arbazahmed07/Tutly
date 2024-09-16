@@ -17,7 +17,7 @@ const page = async ({
   searchParams,
 }: {
   params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Record<string, string | string[] | undefined>;
 }) => {
   const assignmentId = params.id;
   const submissionId = searchParams?.submissionId;

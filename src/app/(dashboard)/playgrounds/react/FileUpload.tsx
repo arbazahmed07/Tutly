@@ -21,7 +21,7 @@ const imagExtensions = [
 const FolderUpload = ({
   setFilesObj,
 }: {
-  setFilesObj: (filesObj: { [key: string]: string }) => void;
+  setFilesObj: (filesObj: Record<string, string>) => void;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -59,7 +59,7 @@ const FolderUpload = ({
 
   const processDataTransferItems = async (items: DataTransferItemList) => {
     const fileArray: FileData[] = [];
-    const filesObj: { [key: string]: string } = {};
+    const filesObj: Record<string, string> = {};
     for (let i = 0; i < items.length; i++) {
       const item = items[i].webkitGetAsEntry();
       if (item) {
@@ -67,13 +67,13 @@ const FolderUpload = ({
       }
     }
 
-    for (let file of fileArray) {
+    for (const file of fileArray) {
       filesObj[file.path] = file.content;
     }
 
-    const filesObjWithoutFolderName: { [key: string]: string } = {};
+    const filesObjWithoutFolderName: Record<string, string> = {};
 
-    for (let key in filesObj) {
+    for (const key in filesObj) {
       const newKey = key.split("/").slice(1).join("/");
       filesObjWithoutFolderName[newKey] = filesObj[key];
     }
@@ -83,7 +83,7 @@ const FolderUpload = ({
 
   const processFiles = async (files: FileList) => {
     const fileArray: FileData[] = [];
-    const filesObj: { [key: string]: string } = {};
+    const filesObj: Record<string, string> = {};
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const filePath = file.webkitRelativePath || file.name;
@@ -107,9 +107,9 @@ const FolderUpload = ({
       filesObj[filePath] = content;
     }
 
-    const filesObjWithoutFolderName: { [key: string]: string } = {};
+    const filesObjWithoutFolderName: Record<string, string> = {};
 
-    for (let key in filesObj) {
+    for (const key in filesObj) {
       const newKey = key.split("/").slice(1).join("/");
       filesObjWithoutFolderName[newKey] = filesObj[key];
     }
@@ -146,7 +146,7 @@ const FolderUpload = ({
       const entries = await new Promise<any[]>((resolve) =>
         dirReader.readEntries(resolve),
       );
-      for (let entry of entries) {
+      for (const entry of entries) {
         await traverseFileTree(entry, path + item.name + "/", fileArray);
       }
     }
@@ -169,13 +169,13 @@ const FolderUpload = ({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onClick={() => inputRef.current?.click()}
-          className={`group flex w-full cursor-pointer flex-col items-center justify-center gap-6 rounded-lg border-2 border-dotted p-10 transition-all duration-300 ease-in-out md:w-[40%] ${
+          className={`group flex w-full cursor-pointer flex-col items-center justify-center gap-6 rounded-lg border-2 border-dotted p-10 transition-all duration-300 ease-in-out md:w-2/5 ${
             isDragging
               ? "border-indigo-500 bg-indigo-100"
               : "border-gray-600 bg-white"
           }`}
         >
-          <IoCloudUploadOutline className="h-20 w-20 transform text-blue-500 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:text-blue-700" />
+          <IoCloudUploadOutline className="h-20 w-20 text-blue-500 transition-transform duration-300 ease-in-out group-hover:scale-110 group-hover:text-blue-700" />
 
           <label
             htmlFor="fileInput"

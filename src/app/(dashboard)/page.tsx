@@ -175,7 +175,7 @@ export default async function Home() {
     const created = await getAllCourses();
     // const students = await getEnrolledStudents();
     let total = 0;
-    let count = 0;
+    const count = 0;
     if (created) {
       for (const courses of created) {
         total += courses?._count.classes || 0;

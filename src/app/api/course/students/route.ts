@@ -2,7 +2,7 @@ import { postAttendance } from "@/actions/attendance";
 import { getMentorStudents } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
 import { getAllEnrolledUsers } from "@/actions/users";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { courseId } = await request.json();

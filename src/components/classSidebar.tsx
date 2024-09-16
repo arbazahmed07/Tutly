@@ -34,7 +34,7 @@ function ClassSidebar({
     }
   };
 
-  const groupedClasses: { [key: string]: any[] } = {};
+  const groupedClasses: Record<string, any[]> = {};
   const classesWithoutFolders: any[] = [];
   classes.forEach((classItem: any) => {
     if (classItem.folderId) {
@@ -112,7 +112,7 @@ function ClassSidebar({
             {classItem.title}
           </Link>
         ))}
-        <div className="flex-grow"></div>
+        <div className="grow"></div>
         {pathname !== `/courses/${params.id}/class/new` &&
           (currentUser?.role === "INSTRUCTOR" || isCourseAdmin) && (
             <Link

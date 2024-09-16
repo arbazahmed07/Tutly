@@ -1,6 +1,6 @@
 import { createCourse } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const { title, isPublished, image } = await request.json();

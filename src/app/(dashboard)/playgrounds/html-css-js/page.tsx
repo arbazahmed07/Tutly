@@ -2,12 +2,12 @@ import React, { Suspense } from "react";
 import Playground from "../_components/Playground";
 import getCurrentUser from "@/actions/getCurrentUser";
 import { getSubmissionById } from "@/actions/submission";
-import { SandpackFiles } from "@codesandbox/sandpack-react";
+import { type SandpackFiles } from "@codesandbox/sandpack-react";
 
 const page = async ({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Record<string, string | string[] | undefined>;
 }) => {
   const currentUser = await getCurrentUser();
   const assignmentId = searchParams?.assignmentId as string;

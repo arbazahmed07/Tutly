@@ -44,7 +44,7 @@ const SignIn = () => {
   return (
     <div className="w-full">
       <form onSubmit={onSubmit} className="flex flex-col gap-y-3">
-        <div className="flex-grow">
+        <div className="grow">
           <input
             type="text"
             placeholder="Username"
@@ -66,12 +66,12 @@ const SignIn = () => {
           />
           {showPassword ? (
             <FaRegEye
-              className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform cursor-pointer text-zinc-700 dark:text-white"
+              className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-700 dark:text-white"
               onClick={() => setShowPassword(false)}
             />
           ) : (
             <FaRegEyeSlash
-              className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 transform cursor-pointer text-zinc-700 dark:text-white"
+              className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 cursor-pointer text-zinc-700 dark:text-white"
               onClick={() => setShowPassword(true)}
             />
           )}

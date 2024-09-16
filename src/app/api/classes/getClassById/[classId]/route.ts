@@ -1,6 +1,6 @@
 import { getClassDetails } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(
   request: NextRequest,

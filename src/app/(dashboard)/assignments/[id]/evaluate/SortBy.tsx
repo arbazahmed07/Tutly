@@ -8,7 +8,7 @@ const SortBy = ({
   searchParams,
 }: {
   assignmentId: string;
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Record<string, string | string[] | undefined>;
 }) => {
   const router = useRouter();
   return (
@@ -20,7 +20,7 @@ const SortBy = ({
         <select
           className="sm:ml-2"
           onChange={(e) => {
-            const sortBy = e.target.value as string;
+            const sortBy = e.target.value;
             const newSearchParams = { ...searchParams, sortBy };
             router.push(
               `/assignments/${assignmentId}/evaluate?${new URLSearchParams(newSearchParams).toString()}`,

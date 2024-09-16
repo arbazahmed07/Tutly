@@ -89,7 +89,7 @@ function AddCourse() {
         </div>
       </div>
       {openPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm backdrop-filter">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm">
           <div className="relative min-w-[300px] max-w-[80%] rounded-lg bg-zinc-400 p-4 sm:min-w-[400px]">
             <div
               onClick={() => setOpenPopup(!openPopup)}

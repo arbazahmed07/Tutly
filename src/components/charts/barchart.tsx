@@ -70,7 +70,7 @@ export default function Barchart({
   }, [classes, attendanceInEachClass, label, bgColors]);
 
   return (
-    <div className="h-full w-[80%]">
+    <div className="h-full w-4/5">
       <canvas ref={chartRef} />
     </div>
   );

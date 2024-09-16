@@ -43,7 +43,7 @@ export default async function Class({
       matchType = null;
       break;
   }
-  const match = videoLink?.match(matchType as RegExp);
+  const match = videoLink?.match(matchType);
   let videoId;
   if (videoLink && match) {
     videoId = match[1];
