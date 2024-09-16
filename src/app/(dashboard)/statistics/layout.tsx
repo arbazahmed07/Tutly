@@ -12,7 +12,6 @@ export default async function RootLayout({
   const currentUser = await getCurrentUser();
   return (
     <div>
-      <pre>{JSON.stringify(currentUser, null, 2)}</pre>
       <CourseTabs courses={courses} currentUser={currentUser} />
       {children}
     </div>
