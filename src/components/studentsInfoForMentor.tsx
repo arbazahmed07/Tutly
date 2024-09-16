@@ -4,10 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 
-export default function StudentsInfoForMentor({ currentUser, mstudents ,mentorUsername}: {
+export default function StudentsInfoForMentor({ currentUser, mstudents ,mentorUsername, courseId}: {
   currentUser: any;
   mstudents: any;
   mentorUsername: any;
+  courseId: any
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -34,8 +35,8 @@ export default function StudentsInfoForMentor({ currentUser, mstudents ,mentorUs
             key={index}
             href={
               currentUser?.role === "INSTRUCTOR"
-                ? `/instructor/statistics/mentor/${mentorUsername}/student/${student.username}`
-                : `/mentor/statistics/student/${student.username}`
+                ? `/instructor/statistics/${courseId}/mentor/${mentorUsername}/student/${student.username}`
+                : `/mentor/statistics/${courseId}/student/${student.username}`
             }
             className="rounded-xl shadow-blue-500 shadow-sm p-2 md:w-1/4"
           >

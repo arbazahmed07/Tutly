@@ -44,7 +44,7 @@ export const postAttendance = async ({
 
   return postAttendance;
 };
-export const getAttendanceForMentorByIdBarChart = async (id: string) => {
+export const getAttendanceForMentorByIdBarChart = async (id: string,courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to attend a class");
@@ -62,6 +62,9 @@ export const getAttendanceForMentorByIdBarChart = async (id: string) => {
     },
   });
   const getAllClasses = await db.class.findMany({
+    where: {
+      courseId,
+    },
     select: {
       id: true,
       createdAt: true,
@@ -81,7 +84,7 @@ export const getAttendanceForMentorByIdBarChart = async (id: string) => {
   });
   return { classes, attendanceInEachClass };
 };
-export const getAttendanceForMentorBarChart = async () => {
+export const getAttendanceForMentorBarChart = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to attend a class");
@@ -98,16 +101,27 @@ export const getAttendanceForMentorBarChart = async () => {
           },
         },
         attended: true,
+        class: {
+          course: {
+            id:courseId
+          }
+        }
       },
     });
   } else {
     attendance = await db.attendance.findMany({
       where: {
         attended: true,
+        class: {
+          courseId,
+        }
       },
     });
   }
   const getAllClasses = await db.class.findMany({
+    where: {
+      courseId,
+    },
     select: {
       id: true,
       createdAt: true,
@@ -141,10 +155,17 @@ export const getAttedanceByClassId = async (id: string) => {
   return attendance;
 };
 
-export const getAttendanceOfStudent = async (id: string) => {
+export const getAttendanceOfStudent = async (id: string,courseId:string) => {
   const attendance = await db.attendance.findMany({
     where: {
       username: id,
+      AND: {
+        class: {
+          course: {
+            id:courseId
+          }
+        }
+      },
     },
     select: {
       class: {
@@ -162,6 +183,9 @@ export const getAttendanceOfStudent = async (id: string) => {
   });
 
   const getAllClasses = await db.class.findMany({
+    where: {
+      courseId,
+    },
     select: {
       id: true,
       createdAt: true,

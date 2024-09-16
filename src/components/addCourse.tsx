@@ -20,10 +20,10 @@ function AddCourse() {
 
   const handleSubmit = async () => {
     try {
-      if(img === ''){
-        toast.error("Please upload an image");
-        return;
-      }
+      // if(img === ''){
+      //   toast.error("Please upload an image");
+      //   return;
+      // }
 
 
       
@@ -173,7 +173,7 @@ function AddCourse() {
               </form>
             )}
             <button
-              disabled={text === "Creating..." || blob === null}
+              disabled={text === "Creating..." || courseTitle === ""}
               onClick={() => {
                 handleSubmit();
                 setText("Creating...");
