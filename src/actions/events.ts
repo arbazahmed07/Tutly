@@ -121,7 +121,10 @@ export const getAllEvents = async () => {
 
   for (const event of events) {
     if (event) {
-      const message = eventToMessage(event, dataMap as Record<string, Record<string, EventData>>);
+      const message = eventToMessage(
+        event,
+        dataMap as Record<string, Record<string, EventData>>,
+      );
       event.message = message;
       const causedByUser = causedByUsers.find(
         (user) => user.id === event.causedById,
@@ -165,7 +168,10 @@ const modalMap: Record<EventCategory, dbModals> = {
   DOUBT_RESPONSE: "response",
 };
 
-export const eventToMessage = (event: Events, dataMap: Record<string, Record<string, EventData>>) => {
+export const eventToMessage = (
+  event: Events,
+  dataMap: Record<string, Record<string, EventData>>,
+) => {
   const event_type = event.eventCategory;
 
   const modal = modalMap[event_type];
@@ -195,17 +201,17 @@ export const eventToMessage = (event: Events, dataMap: Record<string, Record<str
         ? `Submission for ${data.assignment.title} by ${data.enrolledUser.user.name} (${data.enrolledUser.user.username}) evaluated by mentor ${data.enrolledUser.mentor.name} (${data.enrolledUser.mentor.username})`
         : `Unknown assignment evaluation`;
     case "ATTACHMENT_CREATION":
-      return `Attachment ${data.title} created by ${data.createdBy?.name ?? 'Unknown'} (${data.createdBy?.username ?? 'Unknown'})`;
+      return `Attachment ${data.title} created by ${data.createdBy?.name ?? "Unknown"} (${data.createdBy?.username ?? "Unknown"})`;
     case "CLASS_CREATION":
       return data.createdBy
-        ? `Class ${data.title} created by ${data.createdBy.name ?? 'Unknown'} (${data.createdBy.username ?? 'Unknown'})`
+        ? `Class ${data.title} created by ${data.createdBy.name ?? "Unknown"} (${data.createdBy.username ?? "Unknown"})`
         : `Unknown class creation`;
     case "STUDENT_ENROLLMENT_IN_COURSE":
-      return `Student ${data.username ?? 'Unknown'} enrolled in course ${data.courseId ?? 'Unknown'}`;
+      return `Student ${data.username ?? "Unknown"} enrolled in course ${data.courseId ?? "Unknown"}`;
     case "DOUBT_CREATION":
-      return `Doubt ${data.id} created by ${data.createdBy?.name ?? 'Unknown'} (${data.createdBy?.username ?? 'Unknown'})`;
+      return `Doubt ${data.id} created by ${data.createdBy?.name ?? "Unknown"} (${data.createdBy?.username ?? "Unknown"})`;
     case "DOUBT_RESPONSE":
-      return `Response to doubt ${data.doubtId} created by ${data.createdBy?.name ?? 'Unknown'} (${data.createdBy?.username ?? 'Unknown'})`;
+      return `Response to doubt ${data.doubtId} created by ${data.createdBy?.name ?? "Unknown"} (${data.createdBy?.username ?? "Unknown"})`;
     default:
       return `Unknown event type ${event_type as string}`;
   }

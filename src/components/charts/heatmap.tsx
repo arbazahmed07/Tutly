@@ -35,7 +35,9 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
 
     const paddingDays = getDay(startOfYearDate);
 
-    const paddedDays = Array.from({ length: paddingDays }, () => null).concat(allDays);
+    const paddedDays = Array.from({ length: paddingDays }, () => null).concat(
+      allDays,
+    );
 
     return paddedDays;
   };

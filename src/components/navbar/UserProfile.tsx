@@ -6,11 +6,9 @@ import { useRouter } from "next/navigation";
 import { NEXT_PUBLIC_SIGN_IN_URL } from "@/utils/constants";
 import useClickOutside from "@/hooks/useClickOutside";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
-import {type User } from "@prisma/client";
+import { type User } from "@prisma/client";
 
-const UserProfile = ({ currentUser }: {
-  currentUser?: User | null;
-}) => {
+const UserProfile = ({ currentUser }: { currentUser?: User | null }) => {
   const router = useRouter();
 
   const [isOpen, setIsOpen, componentRef] =

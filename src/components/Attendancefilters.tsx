@@ -55,7 +55,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       const reader = new FileReader();
 
       reader.onload = (e) => {
-        const result = (e.target!).result;
+        const result = e.target!.result;
         const workbook = XLSX.read(result, {
           type: "binary",
           cellDates: true,
@@ -336,13 +336,13 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
               </thead>
               <tbody>
                 {selectedStudent.Joins?.map((join: any, index: number) => (
-                    <tr key={index}>
-                      <td className="border px-4 py-2">{join.ActualName}</td>
-                      <td className="border px-4 py-2">{join.JoinTime}</td>
-                      <td className="border px-4 py-2">{join.LeaveTime}</td>
-                      <td className="border px-4 py-2">{join.Duration}</td>
-                    </tr>
-                  ))}
+                  <tr key={index}>
+                    <td className="border px-4 py-2">{join.ActualName}</td>
+                    <td className="border px-4 py-2">{join.JoinTime}</td>
+                    <td className="border px-4 py-2">{join.LeaveTime}</td>
+                    <td className="border px-4 py-2">{join.Duration}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
             <button

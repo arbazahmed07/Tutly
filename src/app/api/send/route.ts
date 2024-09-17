@@ -5,7 +5,8 @@ export async function POST(req: Request) {
   try {
     const email = body.email;
 
-    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip");
+    const ip =
+      req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip");
 
     const device = req.headers.get("user-agent");
 

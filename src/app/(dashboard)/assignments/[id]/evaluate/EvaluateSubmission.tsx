@@ -46,14 +46,15 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
 
   const handleEdit = () => {
     setIsEditing(true);
-    const rValue =
-      submission?.points.find(
-        (point: any) => point.category === "RESPOSIVENESS",
-      );
-    const sValue =
-      submission?.points.find((point: any) => point.category === "STYLING");
-    const oValue =
-      submission?.points.find((point: any) => point.category === "OTHER");
+    const rValue = submission?.points.find(
+      (point: any) => point.category === "RESPOSIVENESS",
+    );
+    const sValue = submission?.points.find(
+      (point: any) => point.category === "STYLING",
+    );
+    const oValue = submission?.points.find(
+      (point: any) => point.category === "OTHER",
+    );
     setEditedScores({
       responsiveness: rValue ? rValue.score : 0,
       styling: sValue ? sValue.score : 0,

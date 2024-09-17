@@ -157,7 +157,7 @@ export default async function Class({
                     </td>
                     <td className="px-4 py-2">
                       {attachment.attachmentType === "ASSIGNMENT" &&
-                        attachment.dueDate
+                      attachment.dueDate
                         ? new Date(attachment.dueDate).toLocaleDateString()
                         : "-"}
                     </td>

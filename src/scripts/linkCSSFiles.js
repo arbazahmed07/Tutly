@@ -6,7 +6,11 @@ async function main() {
   const submission = await db.submission.findMany({});
   for (const sub of submission) {
     const submissionData = sub.data;
-    if (!submissionData || typeof submissionData !== 'object' || !submissionData["/index.html"]) {
+    if (
+      !submissionData ||
+      typeof submissionData !== "object" ||
+      !submissionData["/index.html"]
+    ) {
       continue;
     }
 
@@ -16,7 +20,7 @@ async function main() {
     }
 
     const htmlCode = submissionData["/index.html"];
-    if (typeof htmlCode !== 'string') {
+    if (typeof htmlCode !== "string") {
       continue;
     }
 

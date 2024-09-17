@@ -19,12 +19,17 @@ interface MentorStatisticsPageProps {
   };
 }
 
-export default async function MentorStatisticsPage({ params }: MentorStatisticsPageProps) {
-  const { classes, attendanceInEachClass } = await getAttendanceForMentorByIdBarChart(params.id, params.course);
+export default async function MentorStatisticsPage({
+  params,
+}: MentorStatisticsPageProps) {
+  const { classes, attendanceInEachClass } =
+    await getAttendanceForMentorByIdBarChart(params.id, params.course);
 
   return (
     <div>
-      <h1>Statistics for Mentor {params.id} in Course {params.course}</h1>
+      <h1>
+        Statistics for Mentor {params.id} in Course {params.course}
+      </h1>
 
       <Barchart
         classes={classes}

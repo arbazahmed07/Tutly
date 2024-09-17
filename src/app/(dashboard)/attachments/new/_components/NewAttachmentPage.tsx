@@ -322,7 +322,7 @@ const NewAttachmentPage = () => {
                             key={c.id}
                             value={c.id}
                             className="text-base hover:bg-secondary-800"
-                            defaultChecked={c.id === (classId!)}
+                            defaultChecked={c.id === classId!}
                           >
                             {c.title}
                           </SelectItem>

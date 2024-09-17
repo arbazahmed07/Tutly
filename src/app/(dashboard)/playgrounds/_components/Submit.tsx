@@ -38,11 +38,7 @@ const Submit = ({
   const router = useRouter();
 
   const handleSubmit = async () => {
-    if (
-      !user?.username ||
-      !user.email ||
-      !assignmentDetails?.title
-    ) {
+    if (!user?.username || !user.email || !assignmentDetails?.title) {
       toast.error("Error submitting assignment");
       return;
     }

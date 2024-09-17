@@ -5,9 +5,9 @@ import FolderUpload from "./FileUpload";
 import Playground from "../_components/Playground";
 
 const ReactPlayground = ({ currentUser }: { currentUser: any }) => {
-  const [filesObj, setFilesObj] = useState<
-    Record<string, string> | undefined
-  >(undefined);
+  const [filesObj, setFilesObj] = useState<Record<string, string> | undefined>(
+    undefined,
+  );
 
   return (
     <>

@@ -12,7 +12,9 @@ interface ReportData {
   mentorUsername: string | null;
 }
 
-export const generateReport = async (courseId: string): Promise<ReportData[]> => {
+export const generateReport = async (
+  courseId: string,
+): Promise<ReportData[]> => {
   const currentUser = await getCurrentUser();
 
   if (!currentUser || currentUser?.role === "STUDENT") {
@@ -78,26 +80,32 @@ export const generateReport = async (courseId: string): Promise<ReportData[]> =>
     },
   });
 
-  const groupedAttendance = attendance.reduce((acc: Record<string, number>, curr) => {
-    const username = curr.user.username;
-    acc[username] = (acc[username] ?? 0) + 1;
-    return acc;
-  }, {});
+  const groupedAttendance = attendance.reduce(
+    (acc: Record<string, number>, curr) => {
+      const username = curr.user.username;
+      acc[username] = (acc[username] ?? 0) + 1;
+      return acc;
+    },
+    {},
+  );
 
   const totalClasses = await db.class.count();
 
-  const obj: Record<string, {
-    username: string;
-    name: string | null;
-    submissions: Set<string>;
-    submissionsLength: number;
-    assignments: Set<string>;
-    assignmentLength: number;
-    mentorUsername: string | null;
-    score?: number;
-    submissionEvaluatedLength?: number;
-    attendance?: number;
-  }> = {};
+  const obj: Record<
+    string,
+    {
+      username: string;
+      name: string | null;
+      submissions: Set<string>;
+      submissionsLength: number;
+      assignments: Set<string>;
+      assignmentLength: number;
+      mentorUsername: string | null;
+      score?: number;
+      submissionEvaluatedLength?: number;
+      attendance?: number;
+    }
+  > = {};
 
   enrolledUsers.forEach((enrolledUser) => {
     obj[enrolledUser.username] = {
@@ -149,7 +157,9 @@ export const generateReport = async (courseId: string): Promise<ReportData[]> =>
       );
       ob.score = userPoints.reduce((acc, curr) => acc + (curr.score || 0), 0);
       ob.submissionEvaluatedLength = new Set(
-        userPoints.map((point) => point.submissions?.id).filter((id): id is string => id !== undefined)
+        userPoints
+          .map((point) => point.submissions?.id)
+          .filter((id): id is string => id !== undefined),
       ).size;
     } catch (e) {
       console.log(ob.username);
@@ -160,7 +170,8 @@ export const generateReport = async (courseId: string): Promise<ReportData[]> =>
     if (!groupedAttendance[ob.username]) {
       groupedAttendance[ob.username] = 0;
     }
-    ob.attendance = ((groupedAttendance[ob.username] ?? 0) * 100) / totalClasses;
+    ob.attendance =
+      ((groupedAttendance[ob.username] ?? 0) * 100) / totalClasses;
   });
 
   let SelectedFields: ReportData[] = Object.values(obj).map((ob) => ({
@@ -177,12 +188,12 @@ export const generateReport = async (courseId: string): Promise<ReportData[]> =>
   SelectedFields.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
   SelectedFields.sort((a, b) => b.score - a.score);
   SelectedFields.sort((a, b) =>
-    (a.mentorUsername ?? "").localeCompare(b.mentorUsername ?? "")
+    (a.mentorUsername ?? "").localeCompare(b.mentorUsername ?? ""),
   );
 
   if (currentUser?.role === "MENTOR") {
     SelectedFields = SelectedFields.filter(
-      (selectedField) => selectedField.mentorUsername === currentUser.username
+      (selectedField) => selectedField.mentorUsername === currentUser.username,
     );
   }
 
