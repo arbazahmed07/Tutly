@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import NoDataFound from "./NoDataFound";
+import Link from "next/link";
 
 function MentorAssignmentBoard({ courses, students, role }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
@@ -56,15 +57,23 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
             </button>
           ))}
         </div>
-        <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
-          <input
-            title="input"
-            className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
-            placeholder="Search here"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <FaSearch className="h-5 w-5 m-2" />
+        <div className="flex justify-end px-2 gap-2 items-center">
+          <Link
+            href={"/assignments/evaluate"}
+            className="bg-primary-600 inline px-3.5 py-2 text-sm rounded font-semibold text-white"
+          >
+            Evaluate
+          </Link>
+          <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
+            <input
+              title="input"
+              className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
+              placeholder="Search here"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <FaSearch className="h-5 w-5 m-2" />
+          </div>
         </div>
       </div>
       {

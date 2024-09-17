@@ -15,7 +15,10 @@ export default async function mentorAssignments() {
         {
           courses && courses.length > 0 ? (
             <>
-              <div className="flex justify-end px-2"><Link href={"/mentor/assignments/getbyassignment"} className="text-sm text-secondary-500 font-semibold italic">Get by assignment?</Link></div>
+              <div className="flex justify-end px-2 gap-2 items-center">
+                <Link href={"/mentor/assignments/getbyassignment"} className="text-sm text-secondary-500 font-semibold italic">Get by assignment?
+                </Link>
+              </div>
               <MentorAssignmentBoard students={students} courses={courses} />
             </>
           ) : (
