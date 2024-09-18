@@ -15,7 +15,9 @@ import {
 } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
 const getGreeting = () => {
-  const currentIST = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+  const currentIST = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+  );
   const hour = currentIST.getHours();
 
   if (hour < 12) return "Good morning";
@@ -204,7 +206,7 @@ export default async function Home() {
       <div className="m-2 h-60 rounded-lg bg-gradient-to-l from-blue-400 to-blue-600">
         <div className="p-10">
           <h1 className="text-2xl font-bold text-secondary-50">
-           {greeting} {currentUser?.name} 👋
+            {greeting} {currentUser?.name} 👋
           </h1>
           <p className="mt-3 text-base font-medium text-secondary-50">
             Here is your report

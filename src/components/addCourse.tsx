@@ -82,19 +82,17 @@ function AddCourse() {
     <>
       <Dialog open={openPopup} onOpenChange={setOpenPopup}>
         <DialogTrigger asChild>
-          <div
-            className="rounded-lg border cursor-pointer flex flex-col items-center justify-center m-auto md:mx-2 my-3 w-[280px] h-[200px] shadow-lg bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 text-white"
-          >
-            <div className="text-center cursor-pointer">
+          <div className="m-auto my-3 flex h-[200px] w-[280px] cursor-pointer flex-col items-center justify-center rounded-lg border bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 text-white shadow-lg md:mx-2">
+            <div className="cursor-pointer text-center">
               <FaPlus className="text-5xl" />
-              <h1 className="text-xl mt-3">Add</h1>
+              <h1 className="mt-3 text-xl">Add</h1>
             </div>
           </div>
         </DialogTrigger>
-        <DialogContent className="p-4 box-border dark:text-white bg-zinc-400 text-black rounded-lg shadow-lg">
+        <DialogContent className="box-border rounded-lg bg-zinc-400 p-4 text-black shadow-lg dark:text-white">
           <DialogHeader>
             <DialogTitle>
-              <div className="text-lg font-semibold text-center">
+              <div className="text-center text-lg font-semibold">
                 ADD NEW COURSE
               </div>
             </DialogTitle>
@@ -103,32 +101,32 @@ function AddCourse() {
             <input
               onChange={(e) => setCourseTitle(e.target.value)}
               type="text"
-              className="rounded p-2 outline-none w-full border border-gray-300"
+              className="w-full rounded border border-gray-300 p-2 outline-none"
               placeholder="Title"
             />
           </div>
           <label htmlFor="publish">Publish:</label>
-          <div className="space-x-5 flex items-center">
-            <div className="flex justify-start items-center">
+          <div className="flex items-center space-x-5">
+            <div className="flex items-center justify-start">
               <input
                 type="radio"
                 id="yes"
                 name="publish"
                 value="true"
                 checked={isPublished === true}
-                className="w-4 h-4 mr-1"
+                className="mr-1 h-4 w-4"
                 onChange={(e) => setIsPublished(e.target.value === "true")}
               />
               <label htmlFor="yes">Yes</label>
             </div>
-            <div className="flex justify-start items-center">
+            <div className="flex items-center justify-start">
               <input
                 type="radio"
                 id="no"
                 name="publish"
                 value="false"
                 checked={isPublished === false}
-                className="w-4 h-4 mr-1"
+                className="mr-1 h-4 w-4"
                 onChange={(e) => setIsPublished(e.target.value === "false")}
               />
               <label htmlFor="no">No</label>
@@ -139,18 +137,18 @@ function AddCourse() {
               disabled
               type="text"
               value={blob.url}
-              className="rounded p-2 my-3 outline-none block m-auto w-full"
+              className="m-auto my-3 block w-full rounded p-2 outline-none"
               placeholder="Paste image link here"
             />
           ) : (
             <form
               onSubmit={handleImageUpload}
-              className="my-3 flex items-center justify-center gap-4 "
+              className="my-3 flex items-center justify-center gap-4"
             >
               <div>
                 <input
                   title="file"
-                  className="rounded-sm dark:text-white p-1"
+                  className="rounded-sm p-1 dark:text-white"
                   name="file"
                   ref={inputFileRef}
                   type="file"
@@ -160,7 +158,7 @@ function AddCourse() {
               </div>
               <button
                 type="submit"
-                className="rounded-md bg-blue-500 py-1 px-1.5 text-base text-white"
+                className="rounded-md bg-blue-500 px-1.5 py-1 text-base text-white"
               >
                 Upload
               </button>
@@ -172,7 +170,7 @@ function AddCourse() {
               handleSubmit();
               setText("Creating...");
             }}
-            className="rounded-md font-semibold flex justify-center items-center disabled:bg-blue-500 disabled:cursor-not-allowed p-2 my-3 w-full text-white"
+            className="my-3 flex w-full items-center justify-center rounded-md p-2 font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-500"
           >
             {text}
             &nbsp;
