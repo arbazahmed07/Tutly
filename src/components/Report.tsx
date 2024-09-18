@@ -92,7 +92,7 @@ const Report = ({
   };
 
   const handleSort = (column: string) => {
-    const key = columnMapping[column];
+    const key = columnMapping[column] || "username";
     if (!key) return;
 
     const order = sortColumn === key && sortOrder === "asc" ? "desc" : "asc";
@@ -122,7 +122,7 @@ const Report = ({
     const headers = Object.keys(columnMapping);
     const rows = filteredData.map((item) =>
       headers.map((header) => {
-        const key = columnMapping[header];
+        const key = columnMapping[header] || "username";
         if (key === "attendance") {
           return formatAttendance(item[key]);
         }

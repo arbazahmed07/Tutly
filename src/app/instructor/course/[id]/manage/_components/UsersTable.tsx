@@ -288,6 +288,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 <td className="border border-gray-300 px-2 py-2 text-center text-sm">
                   {user.role !== "INSTRUCTOR" ? (
                     <select
+                      title="role"
                       value={user.role}
                       onChange={(e) =>
                         handleRoleChange(user.username, e.target.value)
@@ -315,6 +316,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                     ({ course }: { course: any }) => course.id === params.id,
                   ) !== undefined ? (
                     <select
+                      title="role"
                       value={user.mentor}
                       onChange={(e) =>
                         handleMentorChange(user.username, e.target.value)
