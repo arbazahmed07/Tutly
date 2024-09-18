@@ -24,20 +24,16 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
   const generateDatesForYear = (year: number) => {
     const startOfYearDate = startOfYear(new Date(year, 0, 1));
     const endOfYearDate = endOfYear(new Date(year, 0, 1));
-    const allDays = eachDayOfInterval({
-      start: startOfYearDate,
-      end: endOfYearDate,
-    }).map((date) => ({
-      date,
-      isPresent: data?.includes(format(date, "yyyy-MM-dd")),
-      isInClass: classes?.includes(format(date, "yyyy-MM-dd")),
-    }));
+    const allDays: any = eachDayOfInterval({ start: startOfYearDate, end: endOfYearDate }).map(
+      (date) => ({
+        date,
+        isPresent: data?.includes(format(date, "yyyy-MM-dd")),
+        isInClass: classes?.includes(format(date, "yyyy-MM-dd")),
+      })
+    );
 
     const paddingDays = getDay(startOfYearDate);
-
-    const paddedDays = Array.from({ length: paddingDays }, () => null).concat(
-      allDays,
-    );
+    const paddedDays = Array.from({ length: paddingDays }, () => null).concat(allDays);
 
     return paddedDays;
   };
@@ -69,28 +65,25 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="mb-2 text-center font-bold text-gray-500">
+      <div className="text-center font-bold mb-2 text-gray-500">
         {currentYear}
       </div>
-      <div className="mb-2 ms-12 flex gap-12">
+      <div className="flex ms-12 gap-12 mb-2">
         {months.map((month, index) => (
           <h1 key={index} className="text-xs text-gray-400">
             {month}
           </h1>
         ))}
       </div>
-      <div className="relative grid grid-flow-col grid-rows-7 gap-1">
+      <div className="grid grid-rows-7 grid-flow-col gap-1 relative">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div
-            key={day}
-            className="px-4 text-center text-sm font-bold text-gray-500"
-          >
+          <div key={day} className="text-center font-bold text-sm text-gray-500 px-4">
             {day}
           </div>
         ))}
         {days.map((dateInfo, index) => {
           if (!dateInfo) {
-            return <div key={index} className="h-4 w-4"></div>;
+            return <div key={index} className="w-4 h-4"></div>;
           }
 
           const { date, isPresent, isInClass } = dateInfo;
@@ -105,13 +98,13 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
           return (
             <div
               key={(date as Date).toISOString()}
-              className={`relative flex h-4 w-4 cursor-pointer items-center justify-center rounded transition duration-300 hover:scale-110${cellColorClass}`}
+              className={`relative w-4 h-4 flex items-center justify-center rounded cursor-pointer transition duration-300 transform hover:scale-110 ${cellColorClass}`}
               onMouseEnter={() => setHoveredDate(date)}
               onMouseLeave={() => setHoveredDate(null)}
             >
               <div className="hidden">{format(date, "d")}</div>
               {hoveredDate && isSameDay(hoveredDate, date) && (
-                <div className="absolute -left-[70px] -top-[15px] z-50 w-20 rounded-l rounded-t bg-black p-1 text-xs text-white">
+                <div className="absolute -top-[15px] -left-[70px] text-xs w-20 p-1 bg-black text-white rounded-t rounded-l z-50">
                   {format(date, "yyyy-MM-dd")}
                 </div>
               )}
@@ -119,15 +112,15 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
           );
         })}
       </div>
-      <div className="my-4 flex items-center gap-4">
+      <div className="flex items-center gap-4 my-4">
         <button
-          className="rounded-full bg-secondary-800 p-2 text-white hover:bg-secondary-700"
+          className="p-2 bg-secondary-800 hover:bg-secondary-700 text-white rounded-full"
           onClick={handlePreviousYear}
         >
           <MdNavigateBefore />
         </button>
         <button
-          className="rounded-full bg-secondary-800 p-2 text-white hover:bg-secondary-700"
+          className="p-2 bg-secondary-800 hover:bg-secondary-700 text-white rounded-full"
           onClick={handleNextYear}
           disabled={currentYear === startOfToday().getFullYear()}
         >
