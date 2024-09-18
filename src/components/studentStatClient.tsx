@@ -13,15 +13,25 @@ interface StudentStatClientProps {
   courseId: string;
 }
 
-export default function StudentStatClient({ studentId, courseId }: StudentStatClientProps) {
+export default function StudentStatClient({
+  studentId,
+  courseId,
+}: StudentStatClientProps) {
   const [assignments, setAssignments] = useState<string[]>([]);
-  const [countForEachAssignment, setCountForEachAssignment] = useState<number[]>([]);
+  const [countForEachAssignment, setCountForEachAssignment] = useState<
+    number[]
+  >([]);
 
   useEffect(() => {
     async function fetchData() {
-      const { classes, attendanceDates } = await getAttendanceOfStudent(studentId, courseId);
+      const { classes, attendanceDates } = await getAttendanceOfStudent(
+        studentId,
+        courseId,
+      );
       setAssignments(classes);
-      setCountForEachAssignment(attendanceDates.map(date => classes.indexOf(date)));
+      setCountForEachAssignment(
+        attendanceDates.map((date) => classes.indexOf(date)),
+      );
     }
 
     fetchData();
@@ -30,7 +40,10 @@ export default function StudentStatClient({ studentId, courseId }: StudentStatCl
   return (
     <div>
       <h1>Student Statistics</h1>
-      <Linechart assignments={assignments} countForEachAssignment={countForEachAssignment} />
+      <Linechart
+        assignments={assignments}
+        countForEachAssignment={countForEachAssignment}
+      />
     </div>
   );
 }

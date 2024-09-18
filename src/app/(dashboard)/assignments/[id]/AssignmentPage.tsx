@@ -121,14 +121,15 @@ export default function AssignmentPage({
     const submission = filteredAssignments.find(
       (x: any) => x.id === submissionId,
     );
-    const rValue =
-      submission?.points.find(
-        (point: any) => point.category === "RESPOSIVENESS",
-      );
-    const sValue =
-      submission?.points.find((point: any) => point.category === "STYLING");
-    const oValue =
-      submission?.points.find((point: any) => point.category === "OTHER");
+    const rValue = submission?.points.find(
+      (point: any) => point.category === "RESPOSIVENESS",
+    );
+    const sValue = submission?.points.find(
+      (point: any) => point.category === "STYLING",
+    );
+    const oValue = submission?.points.find(
+      (point: any) => point.category === "OTHER",
+    );
     setEditedScores({
       responsiveness: rValue ? rValue.score : 0,
       styling: sValue ? sValue.score : 0,
@@ -212,10 +213,11 @@ export default function AssignmentPage({
         <div className="flex items-center justify-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`rounded p-1 px-2 text-white ${new Date(assignment?.dueDate) > new Date()
+              className={`rounded p-1 px-2 text-white ${
+                new Date(assignment?.dueDate) > new Date()
                   ? "bg-primary-600"
                   : "bg-secondary-500"
-                }`}
+              }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -548,7 +550,7 @@ export default function AssignmentPage({
                                   <Link
                                     href={
                                       assignment.submissionMode ===
-                                        "HTML_CSS_JS"
+                                      "HTML_CSS_JS"
                                         ? `/playgrounds/html-css-js?submissionId=${submission.id}`
                                         : submission.submissionLink
                                     }

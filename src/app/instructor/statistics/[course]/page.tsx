@@ -17,7 +17,8 @@ interface StatisticsPageProps {
 }
 
 export default async function StatisticsPage({ params }: StatisticsPageProps) {
-  const { classes, attendanceInEachClass } = await getAttendanceForMentorBarChart(params.course);
+  const { classes, attendanceInEachClass } =
+    await getAttendanceForMentorBarChart(params.course);
 
   return (
     <div>

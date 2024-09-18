@@ -26,10 +26,7 @@ export default function Doughnutchart({ attendance }: DoughnutchartProps) {
               {
                 label: "classes",
                 data: attendance,
-                backgroundColor: [
-                  "rgb(37,99,235)",
-                  "red",
-                ],
+                backgroundColor: ["rgb(37,99,235)", "red"],
                 borderColor: "white",
                 borderWidth: 0,
               },
@@ -55,10 +52,10 @@ export default function Doughnutchart({ attendance }: DoughnutchartProps) {
     };
   }, [attendance]);
 
-  const attendancePercentage = attendance[0] && attendance[1] ? (
-    (attendance[0] * 100) /
-    (attendance[0] + attendance[1])
-  ).toFixed(2) : "0.00";
+  const attendancePercentage =
+    attendance[0] && attendance[1]
+      ? ((attendance[0] * 100) / (attendance[0] + attendance[1])).toFixed(2)
+      : "0.00";
 
   return (
     <div className="relative mb-2 w-full">

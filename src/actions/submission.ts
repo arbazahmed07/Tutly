@@ -1,6 +1,12 @@
 import getCurrentUser from "./getCurrentUser";
 import { db } from "@/lib/db";
-import type { submission, EnrolledUsers, User, Point, Attachment } from "@prisma/client";
+import type {
+  submission,
+  EnrolledUsers,
+  User,
+  Point,
+  Attachment,
+} from "@prisma/client";
 import type { InputJsonValue } from "@prisma/client/runtime/library";
 
 interface AssignmentDetails {

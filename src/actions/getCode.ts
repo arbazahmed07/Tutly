@@ -29,7 +29,8 @@ export const getSubmission = async (prNumber: number) => {
       },
     );
     //todo: temp fix
-    let basePath = filesData?.[0]?.filename.split("/").slice(0, -1).join("/") ?? "";
+    let basePath =
+      filesData?.[0]?.filename.split("/").slice(0, -1).join("/") ?? "";
 
     // if package.json is present then take it as basepath
     if (filesData.some((file) => file.filename.includes("package.json"))) {
@@ -58,7 +59,12 @@ export const getSubmission = async (prNumber: number) => {
 
       const relativePath = file.filename.replace(basePath, "");
 
-      if (typeof data === 'object' && data !== null && 'content' in data && typeof data.content === 'string') {
+      if (
+        typeof data === "object" &&
+        data !== null &&
+        "content" in data &&
+        typeof data.content === "string"
+      ) {
         files = {
           ...files,
           [relativePath]: Buffer.from(data.content, "base64").toString("utf-8"),
