@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { MdAddToQueue } from "react-icons/md";
 import { FaFolder } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa6";
+import { type Class } from "@prisma/client";
 
 function ClassSidebar({
   params,
@@ -34,14 +35,15 @@ function ClassSidebar({
     }
   };
 
-  const groupedClasses: Record<string, any[]> = {};
+  const groupedClasses: Record<string, Class[]> = {};
   const classesWithoutFolders: any[] = [];
-  classes.forEach((classItem: any) => {
-    if (classItem.folderId) {
+  classes?.forEach((classItem: Class) => {
+    if (classItem.folderId ) {
       if (!groupedClasses[classItem.folderId]) {
         groupedClasses[classItem.folderId] = [];
       }
-      groupedClasses[classItem.folderId].push(classItem);
+      
+        groupedClasses[classItem.folderId]?.push(classItem);
     } else {
       classesWithoutFolders.push(classItem);
     }
@@ -79,7 +81,7 @@ function ClassSidebar({
                 </h2>
                 {openFolders.includes(folder.id) && (
                   <div className="ml-4">
-                    {groupedClasses[folderId].map((classItem: any) => (
+                    {groupedClasses[folderId]?.map((classItem: any) => (
                       <Link
                         key={classItem.id}
                         href={`/courses/${params.id}/class/${classItem.id}`}

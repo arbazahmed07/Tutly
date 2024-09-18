@@ -9,6 +9,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { RiEdit2Fill } from "react-icons/ri";
 import DeleteClass from "@/components/DeleteClass";
 import Image from "next/image";
+import NoDataFound from "@/components/NoDataFound";
 
 export default async function Class({
   params,
@@ -28,7 +29,7 @@ export default async function Class({
   );
 
   const haveAdminAccess =
-    currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
+    currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
 
   let matchType;
 
@@ -43,7 +44,7 @@ export default async function Class({
       matchType = null;
       break;
   }
-  const match = videoLink?.match(matchType);
+  const match = videoLink && matchType ? videoLink.match(matchType) : null;
   let videoId;
   if (videoLink && match) {
     videoId = match[1];
@@ -95,6 +96,13 @@ export default async function Class({
               {videoId && videoType === "DRIVE" && (
                 <DriveEmbed embedId={videoId} />
               )}
+              {
+                !videoId && (
+                  <div className="mx-auto p-16 mt-28">
+                    <NoDataFound message="No video uploaded" />
+                  </div>
+                )
+              }
             </div>
           </div>
         </div>

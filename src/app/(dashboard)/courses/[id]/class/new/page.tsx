@@ -15,7 +15,7 @@ const NewClass = () => {
   const [folderName, setFolderName] = useState("");
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
+  const [createdAt, setCreatedAt] = useState(new Date().toISOString().split("T")[0]);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -32,12 +32,15 @@ const NewClass = () => {
       }
     };
 
+
+    setVideoType("DRIVE");
+    setCreatedAt(new Date().toISOString().split("T")[0]);
     fetchFolders();
   }, [params.id]);
 
   const handleCreateClass = async () => {
-    if (!videoLink.trim() || !classTitle.trim() || !videoType) {
-      return toast.error("Please fill all fields");
+    if ( !classTitle.trim() ) {
+      return toast.error("Please fill all necessary fields");
     }
 
     if (/\s/.test(classTitle)) {
@@ -45,6 +48,11 @@ const NewClass = () => {
         "Class title cannot contain spaces ( use hyphen '-' instead) ",
       );
     }
+
+    if(!videoType) {
+      setVideoType("DRIVE");
+    }
+    
 
     setTextValue("Creating Class");
     try {
@@ -69,7 +77,6 @@ const NewClass = () => {
         router.push(`/courses/${params.id}/class/${res.data.id}`);
       }
     } catch (error) {
-      console.error("Error creating class:", error);
       toast.error("Failed to add new class");
     } finally {
       setTextValue("Create Class");
@@ -145,9 +152,7 @@ const NewClass = () => {
         )}
         <Button
           disabled={
-            !videoLink ||
             !classTitle ||
-            !videoType ||
             textValue === "Creating Class"
           }
           className="z-0 flex items-center justify-between bg-secondary-700 text-white hover:bg-secondary-800"

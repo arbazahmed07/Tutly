@@ -7,7 +7,7 @@ const classSchema = z.object({
   classTitle: z.string().trim().min(1, {
     message: "Title is required",
   }),
-  videoLink: z.string().trim().min(1),
+  videoLink: z.string().optional(),
   videoType: z.enum(["DRIVE", "YOUTUBE", "ZOOM"]),
   courseId: z.string().trim().min(1),
   createdAt: z.string().optional(),
@@ -106,8 +106,8 @@ export const createClass = async (data: {
     }
 
     return myClass;
-  } catch {
-    throw new Error("Failed to create class. Please try again later.");
+  } catch(e:any) {
+    throw new Error(e.message);
   }
 };
 
@@ -126,7 +126,7 @@ export const updateClass = async (data: {
     (course) => course.id === data.courseId,
   );
   const haveAccess =
-    currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
+    currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
   if (!haveAccess) {
     throw new Error("You are not authorized to update this class.");
   }

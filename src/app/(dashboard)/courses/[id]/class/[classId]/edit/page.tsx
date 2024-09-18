@@ -62,8 +62,12 @@ const EditClass = () => {
   };
 
   const handleEditClass = async () => {
-    if (!videoLink.trim() || !classTitle.trim() || !videoType) {
+    if (!classTitle.trim() ) {
       return toast.error("Please fill all fields");
+    }
+
+    if(!videoType.trim()) {
+      setVideoType("DRIVE");
     }
 
     setTextValue("Modifying Class...");
@@ -165,9 +169,7 @@ const EditClass = () => {
           )}
           <Button
             disabled={
-              !videoLink ||
               !classTitle ||
-              !videoType ||
               textValue === "Creating Class"
             }
             className="flex items-center justify-between bg-secondary-700 text-white hover:bg-secondary-800"
