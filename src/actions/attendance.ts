@@ -151,6 +151,7 @@ export const getAttendanceOfStudent = async (id: string) => {
       class: {
         select: {
           createdAt: true,
+          id: true,
         },
       },
     },
@@ -163,6 +164,11 @@ export const getAttendanceOfStudent = async (id: string) => {
   });
 
   const getAllClasses = await db.class.findMany({
+    where: {
+      id: {
+        in: attendance.map((attendanceData) => attendanceData.class.id),
+      }
+    },
     select: {
       id: true,
       createdAt: true,
