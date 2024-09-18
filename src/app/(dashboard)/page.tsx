@@ -14,8 +14,17 @@ import {
   getEnrolledStudents,
 } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
+const getGreeting = () => {
+  const currentIST = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+  const hour = currentIST.getHours();
+
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+};
 // import OneSignal from "react-onesignal";
 export default async function Home() {
+  const greeting = getGreeting();
   const currentUser = await getCurrentUser();
   if (currentUser?.role === "STUDENT") {
     // student
@@ -67,11 +76,8 @@ export default async function Home() {
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
           <h1 className="text-secondary-50 font-bold text-2xl">
-            Welcome back {currentUser?.name} 👋
+            {greeting} {currentUser?.name} 👋
           </h1>
-          <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report
-          </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
           <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
@@ -129,6 +135,7 @@ export default async function Home() {
   } else if (currentUser?.role === "MENTOR") {
     // mentor
     // const mstudents = await getMentorStudents();
+    const greeting = getGreeting();
     const mcourses = await getMentorCourses();
     const mleaderboard = await getMentorLeaderboardDataForDashboard();
     // return <pre>{JSON.stringify(mleaderboard, null, 2)}</pre>
@@ -137,11 +144,8 @@ export default async function Home() {
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
           <h1 className="text-secondary-50 font-bold text-2xl">
-            Welcome back {currentUser?.name} 👋
+            {greeting} {currentUser?.name} 👋
           </h1>
-          <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report
-          </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
           <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
@@ -171,6 +175,7 @@ export default async function Home() {
   } else if (currentUser?.role === "INSTRUCTOR") {
     // instructor
     const created = await getAllCourses();
+    const greeting = getGreeting();
     // const students = await getEnrolledStudents();
     let total = 0;
     let count = 0;
@@ -191,11 +196,8 @@ export default async function Home() {
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
           <h1 className="text-secondary-50 font-bold text-2xl">
-            Welcome back {currentUser?.name} 👋
+            {greeting} {currentUser?.name} 👋
           </h1>
-          <p className="text-secondary-50 font-medium text-base mt-3">
-            Here is your report
-          </p>
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
           <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
