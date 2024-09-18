@@ -184,10 +184,10 @@ export const getAttendanceOfStudent = async (id: string, courseId: string) => {
 
   const getAllClasses = await db.class.findMany({
     where: {
+      courseId,
       id: {
         in: attendance.map((attendanceData) => attendanceData.class.id),
       },
-      courseId,
     },
     select: {
       id: true,

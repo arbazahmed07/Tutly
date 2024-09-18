@@ -5,7 +5,8 @@ import {
 import { getAttendanceOfStudent } from "@/actions/attendance";
 import StudentStatClient from "@/components/studentStatClient";
 
-export default async function Page({ params }: any) {
+export default async function Page({ params }: {
+  params: { course: string; studentId: string };}) {
   const mentorPieChart = await getMentorPieChartData(params.course);
   const { evaluated, underReview, unsubmitted, totalPoints }: any =
     await getStudentEvaluatedAssigmentsForMentor(
