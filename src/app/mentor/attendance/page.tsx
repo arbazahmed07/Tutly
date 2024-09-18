@@ -2,7 +2,6 @@ import { getAttendanceOfAllStudents } from "@/actions/attendance";
 import { getMentorCourses } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
 import AttendanceClient from "@/components/Attendancefilters";
-import AttendanceTable from "@/components/AttendanceTable";
 
 async function Filters() {
   const courses = await getMentorCourses();
@@ -11,8 +10,11 @@ async function Filters() {
   if (!currentUser) return null;
   return (
     <div>
-      <AttendanceClient courses={courses} role={currentUser.role} />
-      <AttendanceTable studentsAttendance={attendance} />
+      <AttendanceClient
+        attendance={attendance}
+        courses={courses}
+        role={currentUser.role}
+      />
     </div>
   );
 }

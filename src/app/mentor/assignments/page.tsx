@@ -1,11 +1,9 @@
 import {
   getAllStudents,
   getMentorCourses,
-  getMentorStudents,
 } from "@/actions/courses";
 import MentorAssignmentBoard from "@/components/mentorAssignmentBoard";
 import NoDataFound from "@/components/NoDataFound";
-import Image from "next/image";
 import Link from "next/link";
 export default async function mentorAssignments() {
   const students = await getAllStudents();
