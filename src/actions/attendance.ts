@@ -6,26 +6,24 @@ import { forEach } from "lodash";
 export const postAttendance = async ({
   classId,
   data,
+  maxInstructionDuration,
 }: {
   classId: string;
   data: { username: string; Duration: number }[];
+  maxInstructionDuration : number;
 }) => {
+
+  
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to attend a class");
   }
   const parsedData = JSON.parse(JSON.stringify(data));
-  // find the maximum duration among all the INSTRUCTION role students
-  let maxInstructionDuration = 0;
-  data.forEach(element => {
-    if (element.Duration > maxInstructionDuration) {
-      maxInstructionDuration = element.Duration;
-    }
-  });
+
   const postAttendance = await db.attendance.createMany({
     data: [
       ...parsedData.map((student: any) => {
-        if (student.Duration >= ((60*maxInstructionDuration)/100)) {
+        if (student.Duration >= (60 * maxInstructionDuration) / 100) {
           return {
             classId,
             username: student.username,
@@ -43,9 +41,10 @@ export const postAttendance = async ({
       }),
     ],
   });
+
   return postAttendance;
 };
-export const getAttendanceForMentorByIdBarChart = async (id: string) => {
+export const getAttendanceForMentorByIdBarChart = async (id: string,courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to attend a class");
@@ -63,6 +62,9 @@ export const getAttendanceForMentorByIdBarChart = async (id: string) => {
     },
   });
   const getAllClasses = await db.class.findMany({
+    where: {
+      courseId,
+    },
     select: {
       id: true,
       createdAt: true,
@@ -82,7 +84,7 @@ export const getAttendanceForMentorByIdBarChart = async (id: string) => {
   });
   return { classes, attendanceInEachClass };
 };
-export const getAttendanceForMentorBarChart = async () => {
+export const getAttendanceForMentorBarChart = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to attend a class");
@@ -99,16 +101,27 @@ export const getAttendanceForMentorBarChart = async () => {
           },
         },
         attended: true,
+        class: {
+          course: {
+            id:courseId
+          }
+        }
       },
     });
   } else {
     attendance = await db.attendance.findMany({
       where: {
         attended: true,
+        class: {
+          courseId,
+        }
       },
     });
   }
   const getAllClasses = await db.class.findMany({
+    where: {
+      courseId,
+    },
     select: {
       id: true,
       createdAt: true,
@@ -142,10 +155,17 @@ export const getAttedanceByClassId = async (id: string) => {
   return attendance;
 };
 
-export const getAttendanceOfStudent = async (id: string) => {
+export const getAttendanceOfStudent = async (id: string,courseId:string) => {
   const attendance = await db.attendance.findMany({
     where: {
       username: id,
+      AND: {
+        class: {
+          course: {
+            id:courseId
+          }
+        }
+      },
     },
     select: {
       class: {
@@ -167,7 +187,8 @@ export const getAttendanceOfStudent = async (id: string) => {
     where: {
       id: {
         in: attendance.map((attendanceData) => attendanceData.class.id),
-      }
+      },
+      courseId,
     },
     select: {
       id: true,

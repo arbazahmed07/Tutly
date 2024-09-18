@@ -138,15 +138,15 @@ export const eventToMessage = (event: Events, dataMap: Record<string, any>) => {
     case "ASSIGNMENT_EVALUATION":
       return `Submission for ${data.assignment.title} by ${data.enrolledUser.user.name} (${data.enrolledUser.user.username}) evaluated by mentor ${data.enrolledUser.mentor.name} (${data.enrolledUser.mentor.username})`;
     case "ATTACHMENT_CREATION":
-      return `Attachment ${data.title} created by ${data.createdBy.name} (${data.createdBy.username})`;
+      return `Attachment ${data.title} created by ${data.createdBy?.name} (${data.createdBy?.username})`;
     case "CLASS_CREATION":
       return `Class ${data.title} created by ${data.createdBy.name} (${data.createdBy.username})`;
     case "STUDENT_ENROLLMENT_IN_COURSE":
       return `Student ${data.username} enrolled in course ${data.courseId}`;
     case "DOUBT_CREATION":
-      return `Doubt ${data.id} created by ${data.createdBy.name} (${data.createdBy.username})`;
+      return `Doubt ${data.id} created by ${data.createdBy?.name} (${data.createdBy?.username})`;
     case "DOUBT_RESPONSE":
-      return `Response to doubt ${data.doubtId} created by ${data.createdBy.name} (${data.createdBy.username})`;
+      return `Response to doubt ${data.doubtId} created by ${data.createdBy?.name} (${data.createdBy?.username})`;
     default:
       return `Unknown event type ${event_type}`;
   }

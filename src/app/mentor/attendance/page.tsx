@@ -1,5 +1,5 @@
 import { getAttendanceOfAllStudents } from "@/actions/attendance";
-import { getCreatedCourses, getMentorCourses } from "@/actions/courses";
+import { getMentorCourses } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
 import AttendanceClient from "@/components/Attendancefilters";
 import AttendanceTable from "@/components/AttendanceTable";

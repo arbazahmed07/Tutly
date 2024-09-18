@@ -83,6 +83,17 @@ export default {
             },
           });
 
+          if(user.email?.includes("tutly.in")) {
+            fetch("https://learn.tutly.in/api/send", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: user.email,
+              }),
+            })
+          }
           return user as any;
         }
       },

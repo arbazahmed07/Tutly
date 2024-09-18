@@ -31,17 +31,17 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
 
     return (
         <div className="flex flex-col items-center m-5 mt-12 md:mt-20 font-semibold dark:text-white">
-                <div className='relative'>  
-                    {currentUser.role === 'MENTOR' && 
-                     <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute h-16 w-16 -left-9 -top-9 transform -rotate-45' />
-                    }
-                    {currentUser.role === 'INSTRUCTOR' && 
-                     <FaCrown className='text-red-400 hover:text-red-500 drop-shadow-sm shadow-yellow-500 absolute h-16 w-16 -left-9 -top-9 transform -rotate-45' />
-                    }
-                    <Image src={formData?.image || '/images/placeholder.jpg'} alt="User Image" width={120} height={120} className="rounded-full bg-slate-300 mb-5" />
-                </div>  
-    
-            <form   className="flex flex-col md:flex-row justify-center md:gap-10 dark:text-white">
+            <div className='relative'>
+                {currentUser.role === 'MENTOR' &&
+                    <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute h-16 w-16 -left-9 -top-9 transform -rotate-45' />
+                }
+                {currentUser.role === 'INSTRUCTOR' &&
+                    <FaCrown className='text-red-400 hover:text-red-500 drop-shadow-sm shadow-yellow-500 absolute h-16 w-16 -left-9 -top-9 transform -rotate-45' />
+                }
+                <Image unoptimized src={formData?.image || '/images/placeholder.jpg'} alt="User Image" width={120} height={120} className="rounded-full bg-slate-300 mb-5" />
+            </div>
+
+            <form className="flex flex-col md:flex-row justify-center md:gap-10 dark:text-white">
                 <div className="w-[100%] md:w-[40%] mt-2 dark:text-white">
                     <label className="text-sm  dark:text-secondary-50">Username:</label>
                     <input
@@ -88,7 +88,7 @@ const UserProfile = ({ currentUser }: { currentUser: any }) => {
             </form>
 
             <div className="mt-5 flex flex-row-reverse justify-end  items-center  cursor-pointer bg-primary-500 hover:bg-primary-600 px-3 py-2 rounded-lg" >
-                <button  onClick={() => router.push('/profile/manage-password')} className="text-white " >
+                <button onClick={() => router.push('/profile/manage-password')} className="text-white " >
                     Manage Password
                 </button>
             </div>

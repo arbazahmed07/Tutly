@@ -51,6 +51,7 @@ model User {
   Attendence      Attendance[]
   enrolledUsers   EnrolledUsers[] @relation(name: "user")
   assignedMentees EnrolledUsers[] @relation(name: "mentor")
+  adminForCourses Course[]        @relation("CourseAdmins")
   Session         Session[]
   Events          Events[]
 }
@@ -82,7 +83,8 @@ model Course {
   startDate DateTime  @default(now())
   endDate   DateTime?
 
-  isPublished Boolean @default(false)
+  isPublished  Boolean @default(false)
+  courseAdmins User[]  @relation("CourseAdmins")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -206,6 +208,12 @@ enum attachmentType {
   OTHERS
 }
 
+enum submissionMode {
+  HTML_CSS_JS
+  REACT
+  EXTERNAL_LINK
+}
+
 model Attachment {
   id             String         @id @default(uuid())
   title          String         @default("Attachment")
@@ -218,6 +226,7 @@ model Attachment {
   class          Class?         @relation(fields: [classId], references: [id])
   courseId       String?
   course         Course?        @relation(fields: [courseId], references: [id])
+  submissionMode submissionMode @default(HTML_CSS_JS)
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -313,8 +322,8 @@ enum EventCategory {
 model Events {
   id String @id @default(uuid())
 
-  message       String?
-  eventCategory EventCategory
+  message             String?
+  eventCategory       EventCategory
   eventCategoryDataId String?
 
   causedById String

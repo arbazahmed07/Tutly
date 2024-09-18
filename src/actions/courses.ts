@@ -2,17 +2,60 @@ import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 
 export const getAllCourses = async () => {
+  const currentUser = await getCurrentUser();
   try {
-    const courses = await db.course.findMany({
-      where: {},
-      include: {
-        _count: {
-          select: {
-            classes: true,
+    if(!currentUser) return null;
+    let courses;
+    if(currentUser.role === "INSTRUCTOR") {
+      courses = await db.course.findMany({
+        where: {
+          createdById: currentUser.id,
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
           },
         },
-      },
-    });
+      });
+    } else if(currentUser.role === "MENTOR") {
+      courses = await db.course.findMany({
+        where: {
+          enrolledUsers: {
+            some: {
+              mentorUsername: currentUser.username,
+            },
+          }
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
+          },
+        },
+      });
+    } else {
+      courses = await db.course.findMany({
+        where: {
+          enrolledUsers: {
+            some: {
+              user: {
+                id: currentUser.id,
+              },
+            },
+          }
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
+          },
+        },
+      });
+    }
     return courses;
   } catch (e) {
     console.log("error while fetching courses :", e);
@@ -72,15 +115,22 @@ export const getEnrolledCourses = async () => {
           classes: true,
         },
       },
+      courseAdmins: true,
     },
   });
 
-  const publishedCourses = courses.filter((course) => course.isPublished);
-  const instructorCourses = courses.filter(
-    (course) => course.createdById === currentUser.id
-  );
+  courses.forEach((course) => {
+    course.classes.sort((a, b) => {
+      return Number(a.createdAt) - Number(b.createdAt);
+    });
+  });
 
-  if (currentUser.role === "INSTRUCTOR") return instructorCourses;
+  const publishedCourses = courses.filter((course) => course.isPublished);
+  // const createdCourses = courses.filter(
+  //   (course) => course.createdById === currentUser.id
+  // );
+
+  if (currentUser.role === "INSTRUCTOR") return courses;
   return publishedCourses;
 };
 
@@ -158,9 +208,7 @@ export const getEnrolledCoursesByUsername = async (username: string) => {
   return courses;
 };
 
-
-
-export const getMentorStudents = async () => {
+export const getMentorStudents = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -170,6 +218,7 @@ export const getMentorStudents = async () => {
       enrolledUsers: {
         some: {
           mentorUsername: currentUser.username,
+          courseId,
         },
       },
     },
@@ -177,14 +226,14 @@ export const getMentorStudents = async () => {
       course: true,
       enrolledUsers: true,
     },
-    orderBy:{
-      username: "asc"
-    }
+    orderBy: {
+      username: "asc",
+    },
   });
 
   return students;
 };
-export const getMentorStudentsById = async (id: string) => {
+export const getMentorStudentsById = async (id: string,courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -193,6 +242,7 @@ export const getMentorStudentsById = async (id: string) => {
       enrolledUsers: {
         some: {
           mentorUsername: id,
+          courseId,
         },
       },
     },
@@ -200,15 +250,15 @@ export const getMentorStudentsById = async (id: string) => {
       course: true,
       enrolledUsers: true,
     },
-    orderBy:{
-      username: "asc"
-    }
+    orderBy: {
+      username: "asc",
+    },
   });
 
   return students;
 };
 
-export const getEnrolledStudents = async () => {
+export const getEnrolledStudents = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -217,7 +267,7 @@ export const getEnrolledStudents = async () => {
       enrolledUsers: {
         some: {
           course: {
-            createdById: currentUser.id,
+            id: courseId
           },
         },
       },
@@ -231,7 +281,24 @@ export const getEnrolledStudents = async () => {
 
   return students;
 };
-export const getEnrolledMentees = async () => {
+
+export const getAllStudents = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
+
+  const students = await db.user.findMany({
+    where: {
+      role: "STUDENT",
+    },
+    include: {
+      course: true,
+      enrolledUsers: true,
+    },
+  });
+
+  return students;
+};
+export const getEnrolledMentees = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -241,7 +308,7 @@ export const getEnrolledMentees = async () => {
       enrolledUsers: {
         some: {
           course: {
-            createdById: currentUser.id,
+            id:courseId
           },
         },
       },
@@ -265,9 +332,8 @@ export const createCourse = async ({
   image: string;
 }) => {
   const currentUser = await getCurrentUser();
-  if(currentUser?.role !== "INSTRUCTOR") return null;
-  if(!title.trim() || title==="" )
-  {
+  if (currentUser?.role !== "INSTRUCTOR") return null;
+  if (!title.trim() || title === "") {
     return null;
   }
 
@@ -276,12 +342,12 @@ export const createCourse = async ({
       title: title,
       createdById: currentUser.id,
       isPublished,
-      image : image ,
-      enrolledUsers:{
-        create:{
-          username:currentUser.username,
-        }
-      }
+      image: image,
+      enrolledUsers: {
+        create: {
+          username: currentUser.username,
+        },
+      },
     },
   });
   return newCourse;
@@ -341,7 +407,6 @@ export const getMentorCourses = async () => {
     },
   });
 
-  
   courses.forEach((course) => {
     course.classes.sort((a, b) => {
       return Number(a.createdAt) - Number(b.createdAt);

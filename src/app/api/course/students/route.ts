@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
         if(!currentUser || currentUser.role === "STUDENT") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
         }
-        const users = currentUser.role === "MENTOR" ? await getMentorStudents() : await getAllEnrolledUsers(courseId);
+        const users = currentUser.role === "MENTOR" ? await getMentorStudents(courseId) : await getAllEnrolledUsers(courseId);
         return NextResponse.json(users);
     } catch (e :any) {
         return NextResponse.json({ error: e.message }, { status: 400 });

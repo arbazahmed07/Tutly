@@ -14,7 +14,6 @@ export default async function Page(
 
     const attachment = await getAttachmentByID(params.id);
     
-    
     return <Suspense fallback={<Loader />}>
             <EditAttachmentPage attachment={attachment} />
         </Suspense>

@@ -51,8 +51,16 @@ export default function Doughnutchart({attendance}:{attendance:any}) {
     }
   },[]);
 
-  return <div className="relative max-h-[300px]">
-    <canvas ref={chartRef}/>
-    <div className="absolute flex justify-center items-center top-[45%] left-[35%] font-bold text-3xl">{(attendance[0]*100/(attendance[0]+attendance[1])).toFixed(2)}</div>
-  </div>;
+  const attendancePercentage = (attendance[0] * 100 / (attendance[0] + attendance[1])).toFixed(2)
+
+  return (
+    <div className="relative w-full mb-2">
+      <canvas ref={chartRef} />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center">
+          <span className="font-bold text-3xl">{attendancePercentage==='100.00'?"100":attendancePercentage}%</span>
+        </div>
+      </div>
+    </div>
+  )
 }

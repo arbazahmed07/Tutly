@@ -6,10 +6,16 @@ import { NextResponse,NextRequest } from "next/server";
 export async function GET(request: NextRequest, { params }: { params: { classId: string } }) {
     
     try {
+        const courseId = request.nextUrl.searchParams.get('courseId');
         const currentUser = await getCurrentUser();
-        if(!currentUser ||currentUser.role !== "INSTRUCTOR") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
+        const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === courseId);
+
+        const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+
+        if(!haveAccess) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+
         const myClass = await getClassDetails(params.classId);
         return NextResponse.json(myClass);
     }

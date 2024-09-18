@@ -8,6 +8,7 @@ const attachmentSchema = z.object({
   }),
   link: z.string().optional(),
   attachmentType: z.enum(["ASSIGNMENT", "GITHUB", "ZOOM", "OTHERS"]),
+  submissionMode: z.enum(["HTML_CSS_JS", "REACT", "EXTERNAL_LINK"]),
   classId: z.string().min(1, {
     message: "Class is required",
   }),
@@ -19,17 +20,18 @@ const attachmentSchema = z.object({
 
 export const createAttachment = async (data : z.infer<typeof attachmentSchema>) => {
   const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    throw new Error("You must be logged in to upload an attachment");
+
+  const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === data.courseId);
+  const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+
+  if (!haveAccess) {
+    throw new Error("Unauthorized");
   }
 
   if( data.maxSubmissions &&  data.maxSubmissions<=0){
     throw new Error("Max Submissions must be greater than 0");
   }
 
-  if(currentUser.role !=='INSTRUCTOR'){
-    throw new Error("You must be an instructor to upload an attachment");
-  }
 
   const attachment = await db.attachment.create({
     data: {
@@ -37,10 +39,11 @@ export const createAttachment = async (data : z.infer<typeof attachmentSchema>) 
       classId: data.classId,
       courseId: data.courseId,
       link: data.link,
-      attachmentType: data.attachmentType ,
+      attachmentType: data.attachmentType,
+      submissionMode: data.submissionMode,
       details: data.details,
       dueDate: data.dueDate,
-      maxSubmissions:data.maxSubmissions,
+      maxSubmissions: data.maxSubmissions,
     },
   });
 
@@ -60,16 +63,13 @@ export const getAttachmentByID = async (id: string) => {
   if (!currentUser) {
     throw new Error("You must be logged in to view an attachment");
   }
-  if(currentUser.role !=='INSTRUCTOR'){
-    throw new Error("You must be an instructor to create an attachment");
-  }
   
   const attachment = await db.attachment.findUnique({
     where: {
       id,
     },
   });
-  
+
   return attachment;
 }
 
@@ -97,6 +97,7 @@ export const editAttachment = async (id: string, data : z.infer<typeof attachmen
     throw new Error("You must be logged in to edit an attachment");
   }
 
+
   const attachment = await db.attachment.update({
     where: {
       id,
@@ -107,6 +108,7 @@ export const editAttachment = async (id: string, data : z.infer<typeof attachmen
       courseId: data.courseId,
       link: data.link,
       attachmentType: data.attachmentType ,
+      submissionMode: data.submissionMode,
       details: data.details,
       dueDate: data.dueDate,
       maxSubmissions:data.maxSubmissions,

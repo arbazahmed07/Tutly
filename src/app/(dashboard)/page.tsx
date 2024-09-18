@@ -1,16 +1,11 @@
-// "use client"
-import React, { useEffect } from 'react';
 import {
   getDashboardData,
-  getLeaderboardDataForStudent,
-  getMentorLeaderboardData,
   getMentorLeaderboardDataForDashboard,
 } from "@/actions/getLeaderboard";
 import Image from "next/image";
 import { MdOutlineNoteAlt } from "react-icons/md";
 import { PiStudentBold } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
-import getLeaderboardData from "@/actions/getLeaderboard";
 import { SiTicktick } from "react-icons/si";
 import {
   getMentorStudents,
@@ -21,66 +16,53 @@ import {
 import getCurrentUser from "@/actions/getCurrentUser";
 // import OneSignal from "react-onesignal";
 export default async function Home() {
-
-
-  // useEffect(() => {
-  //   const loadOneSignal = async () => {
-  //     try {
-  //       console.log("Loading OneSignal SDK...");
-  //       await OneSignal.init({
-  //         appId: process.env.NEXT_PUBLIC_ONE_SIGNAL!,
-  //         allowLocalhostAsSecureOrigin: true,
-  //       });
-
-  //       console.log("OneSignal has been successfully initialized.");
-  //       OneSignal.Slidedown.promptPush();
-  //     } catch (error) {
-  //       console.error("Error initializing OneSignal:", error);
-  //     }
-  //   };
-
-  //   // Check if OneSignal SDK is already loaded
-  //   if (!window.OneSignal) {
-  //     const script = document.createElement('script');
-  //     script.src = "https://cdn.onesignal.com/sdks/OneSignalSDK.js";
-  //     script.async = true;
-  //     script.onload = loadOneSignal;
-  //     script.onerror = () => console.error("Error loading OneSignal SDK script.");
-  //     document.head.appendChild(script);
-  //   } else {
-  //     loadOneSignal();
-  //   }
-
-  //   // Cleanup function
-  //   return () => {
-  //     console.log("Cleaning up OneSignal...");
-  //     // Optionally, you can call OneSignal.logout() if you need to clear the user session
-  //     // OneSignal.logout();
-  //   };
-  // }, []);
-
-
   const currentUser = await getCurrentUser();
   if (currentUser?.role === "STUDENT") {
     // student
     const data = await getDashboardData();
-    // const total =await getLeaderboardDataForStudent();
-    let total = 0;
-    // if (leaderboard) {
-    //   for (const score of leaderboard) {
-    //     total += score?.totalPoints || 0;
-    //   }
-    // }
-    // return <pre>{JSON.stringify(total,null,2)}</pre>
     if (!data) return;
     const {
-      position,
-      points,
+      sortedSubmissions,
       assignmentsSubmitted,
       assignmentsPending,
       currentUser,
     } = data;
-    // return <pre>{JSON.stringify(data,null,2)}</pre>
+
+    const position = 0;
+    let total = 0;
+
+    sortedSubmissions.forEach((submission: any) => {
+      if (submission?.enrolledUser?.user?.id === currentUser?.id) {
+        total += submission?.totalPoints;
+      }
+    });
+
+    let leaderboardMap = new Map();
+
+    sortedSubmissions.forEach((submission: any) => {
+      const userId = submission?.enrolledUser?.user?.id;
+      const totalPoints = submission.totalPoints;
+
+      if (leaderboardMap.has(userId)) {
+        leaderboardMap.get(userId).totalPoints += totalPoints;
+      } else {
+        leaderboardMap.set(userId, {
+          totalPoints: totalPoints,
+        });
+      }
+    });
+
+    const sortedLeaderboardArray = Array.from(leaderboardMap.entries()).sort(
+      (a, b) => b[1].totalPoints - a[1].totalPoints
+    );
+
+    sortedLeaderboardArray.forEach((entry, index) => {
+      entry[1].rank = index + 1;
+    });
+
+    leaderboardMap = new Map(sortedLeaderboardArray);
+
+
     return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
@@ -93,7 +75,7 @@ export default async function Home() {
         </div>
         <div className="flex mb-10 p-2 text-center gap-4 justify-center flex-wrap">
           <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
-            <Image
+            <Image unoptimized
               src="https://png.pngtree.com/png-clipart/20210312/original/pngtree-game-score-wood-sign-style-png-image_6072790.png"
               alt=""
               height={100}
@@ -101,14 +83,14 @@ export default async function Home() {
               className="m-auto"
             />
             <p className="text-primary-600 font-bold pt-2">
-            {total===0?"NA":total}
+              {total === 0 ? "NA" : total}
             </p>
             <h1 className="p-1 text-sm font-bold">
               Your current Score in the Leaderboard.
             </h1>
           </div>
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-            <Image
+            <Image unoptimized
               src="https://cdn-icons-png.flaticon.com/512/3150/3150115.png"
               alt=""
               height={100}
@@ -116,14 +98,18 @@ export default async function Home() {
               className="m-auto"
             />
             <p className="text-primary-600 font-bold pt-2">
-              {total===0?"NA":position ? position : "NA"}
+              {total === 0
+                ? "NA"
+                : leaderboardMap.get(currentUser.id).rank
+                  ? leaderboardMap.get(currentUser.id).rank
+                  : "NA"}
             </p>
             <h1 className="p-1 text-sm font-bold">
               Your current rank in the Leaderboard.
             </h1>
           </div>
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
-            <Image
+            <Image unoptimized
               src="https://i.postimg.cc/439rxz8g/images-removebg-preview.png"
               alt=""
               height={100}
@@ -142,12 +128,12 @@ export default async function Home() {
     );
   } else if (currentUser?.role === "MENTOR") {
     // mentor
-    const mstudents = await getMentorStudents();
+    // const mstudents = await getMentorStudents();
     const mcourses = await getMentorCourses();
     const mleaderboard = await getMentorLeaderboardDataForDashboard();
     // return <pre>{JSON.stringify(mleaderboard, null, 2)}</pre>
-    
-      return (
+
+    return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
         <div className="p-10">
           <h1 className="text-secondary-50 font-bold text-2xl">
@@ -161,7 +147,7 @@ export default async function Home() {
           <div className="w-80 rounded-md shadow-xl p-2 bg-secondary-50 text-secondary-900">
             <PiStudentBold className="m-auto h-24 w-24 text-blue-400" />
             <p className="text-primary-600 font-bold pt-2">
-              {mstudents?.length}
+              {/* {mstudents?.length} */}for now
             </p>
             <h1 className="p-1 text-sm font-bold">Assigned mentees</h1>
           </div>
@@ -174,9 +160,7 @@ export default async function Home() {
           </div>
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
             <SiTicktick className="m-auto h-20 w-20 text-blue-400 my-2" />
-            <p className="text-primary-600 font-bold pt-2">
-              {mleaderboard}
-            </p>
+            <p className="text-primary-600 font-bold pt-2">{mleaderboard}</p>
             <h1 className="p-1 text-sm font-bold">
               No of assignments evaluated
             </h1>
@@ -187,7 +171,7 @@ export default async function Home() {
   } else if (currentUser?.role === "INSTRUCTOR") {
     // instructor
     const created = await getAllCourses();
-    const students = await getEnrolledStudents();
+    // const students = await getEnrolledStudents();
     let total = 0;
     let count = 0;
     if (created) {
@@ -195,13 +179,13 @@ export default async function Home() {
         total += courses?._count.classes || 0;
       }
     }
-    if (students) {
-      for (const student of students) {
-        if (student?.role === "STUDENT") {
-          count += 1;
-        }
-      }
-    }
+    // if (students) {
+    //   for (const student of students) {
+    //     if (student?.role === "STUDENT") {
+    //       count += 1;
+    //     }
+    //   }
+    // }
 
     return (
       <div className="h-60 bg-gradient-to-l from-blue-400 to-blue-600 m-2 rounded-lg">
@@ -229,7 +213,7 @@ export default async function Home() {
           <div className="w-80 rounded-md shadow-xl bg-secondary-50 text-secondary-900 p-2">
             <PiStudentBold className="m-auto h-24 w-24 text-blue-400" />
             <p className="text-primary-600 font-bold pt-2">{count}</p>
-            <h1 className="p-1 text-sm font-bold">Total no of students</h1>
+            <h1 className="p-1 text-sm font-bold">Total no of students enrolled</h1>
           </div>
         </div>
       </div>

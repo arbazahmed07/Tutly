@@ -122,6 +122,7 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
         <button
           className="p-2 bg-secondary-800 hover:bg-secondary-700 text-white rounded-full"
           onClick={handleNextYear}
+          disabled={currentYear === startOfToday().getFullYear()}
         >
           <MdNavigateNext />
         </button>

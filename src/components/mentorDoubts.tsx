@@ -1,6 +1,5 @@
 "use client";
 import axios from "axios";
-import { Fullscreen } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -102,9 +101,8 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
           return (
             <button
               onClick={() => setCurrentCourse(course.id)}
-              className={`rounded p-2 w-20 sm:w-auto ${
-                currentCourse === course.id && "border"
-              }`}
+              className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "border"
+                }`}
               key={course.id}
             >
               <h1 className="truncate max-w-xs text-sm font-medium">
@@ -126,7 +124,7 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
                   <div className="flex justify-between items-center">
                     <div className="flex gap-2">
                       <div>
-                        <Image
+                        <Image unoptimized
                           src={doubt.user.image}
                           width={30}
                           height={30}
@@ -183,7 +181,7 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
                   <div>{doubt.description}</div>
                 </div>
                 <div className="ml-16 my-1">
-                  {doubt.response.map((res: any ,index:number) => {
+                  {doubt.response.map((res: any, index: number) => {
                     return (
                       <div key={index} className="rounded border px-4 my-1 p-2 flex flex-col gap-2">
                         <h1 className="flex items-center text-sm"><ImReply />&nbsp; Reply</h1>
@@ -198,7 +196,7 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
                             {res.updatedAt.toLocaleString().split(", ")[1]}
                           </h1>
                         </div>
-                        </div>
+                      </div>
                     );
                   })}
                 </div>
