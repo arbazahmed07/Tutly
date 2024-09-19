@@ -1,10 +1,10 @@
-import { getMentorCourses, getMentorStudents } from "@/actions/courses";
+import { getAllStudents, getMentorCourses, getMentorStudents } from "@/actions/courses";
 import MentorAssignmentBoard from "@/components/mentorAssignmentBoard";
 import NoDataFound from "@/components/NoDataFound";
 import Image from "next/image";
 import Link from "next/link";
 export default async function mentorAssignments() {
-  const students = await getMentorStudents();
+  const students = await getAllStudents();
   const courses = await getMentorCourses();
   if (!courses || !students) return <div className="text-center">Sign in to view assignments!</div>
 

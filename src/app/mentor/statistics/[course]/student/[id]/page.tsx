@@ -6,10 +6,9 @@ import { getAttendanceOfStudent } from "@/actions/attendance";
   import StudentStatClient from "@/components/studentStatClient";
   
   export default async function Page({params}:any) {
-    const { evaluated, underReview, unsubmitted, totalPoints}:any = await getStudentEvaluatedAssigmentsForMentor(params.id);
-  const {classes,attendanceDates} = await getAttendanceOfStudent(params.id);
+    const { evaluated, underReview, unsubmitted, totalPoints}:any = await getStudentEvaluatedAssigmentsForMentor(params.id,params.course);
+  const {classes,attendanceDates} = await getAttendanceOfStudent(params.id,params.course);
 
-  
     return (
       <div>
         <h1 className="text-blue-400 text-2xl p-10 font-bold">Student - {params.id}</h1>

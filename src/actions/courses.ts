@@ -2,17 +2,60 @@ import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 
 export const getAllCourses = async () => {
+  const currentUser = await getCurrentUser();
   try {
-    const courses = await db.course.findMany({
-      where: {},
-      include: {
-        _count: {
-          select: {
-            classes: true,
+    if(!currentUser) return null;
+    let courses;
+    if(currentUser.role === "INSTRUCTOR") {
+      courses = await db.course.findMany({
+        where: {
+          createdById: currentUser.id,
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
           },
         },
-      },
-    });
+      });
+    } else if(currentUser.role === "MENTOR") {
+      courses = await db.course.findMany({
+        where: {
+          enrolledUsers: {
+            some: {
+              mentorUsername: currentUser.username,
+            },
+          }
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
+          },
+        },
+      });
+    } else {
+      courses = await db.course.findMany({
+        where: {
+          enrolledUsers: {
+            some: {
+              user: {
+                id: currentUser.id,
+              },
+            },
+          }
+        },
+        include: {
+          _count: {
+            select: {
+              classes: true,
+            },
+          },
+        },
+      });
+    }
     return courses;
   } catch (e) {
     console.log("error while fetching courses :", e);
@@ -165,7 +208,7 @@ export const getEnrolledCoursesByUsername = async (username: string) => {
   return courses;
 };
 
-export const getMentorStudents = async () => {
+export const getMentorStudents = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -175,6 +218,7 @@ export const getMentorStudents = async () => {
       enrolledUsers: {
         some: {
           mentorUsername: currentUser.username,
+          courseId,
         },
       },
     },
@@ -189,7 +233,7 @@ export const getMentorStudents = async () => {
 
   return students;
 };
-export const getMentorStudentsById = async (id: string) => {
+export const getMentorStudentsById = async (id: string,courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
 
@@ -198,6 +242,7 @@ export const getMentorStudentsById = async (id: string) => {
       enrolledUsers: {
         some: {
           mentorUsername: id,
+          courseId,
         },
       },
     },
@@ -213,20 +258,16 @@ export const getMentorStudentsById = async (id: string) => {
   return students;
 };
 
-export const getEnrolledStudents = async () => {
+export const getEnrolledStudents = async (courseId:string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-
-  const courses = (await getEnrolledCourses()) || [];
 
   const students = await db.user.findMany({
     where: {
       enrolledUsers: {
         some: {
           course: {
-            id: {
-              in: courses.map((course) => course.id),
-            },
+            id: courseId
           },
         },
       },
@@ -240,10 +281,26 @@ export const getEnrolledStudents = async () => {
 
   return students;
 };
-export const getEnrolledMentees = async () => {
+
+export const getAllStudents = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-  const courses = (await getEnrolledCourses()) || [];
+
+  const students = await db.user.findMany({
+    where: {
+      role: "STUDENT",
+    },
+    include: {
+      course: true,
+      enrolledUsers: true,
+    },
+  });
+
+  return students;
+};
+export const getEnrolledMentees = async (courseId:string) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return null;
 
   const students = await db.user.findMany({
     where: {
@@ -251,9 +308,7 @@ export const getEnrolledMentees = async () => {
       enrolledUsers: {
         some: {
           course: {
-            id:{
-              in: courses.map((course) => course.id),
-            }
+            id:courseId
           },
         },
       },
