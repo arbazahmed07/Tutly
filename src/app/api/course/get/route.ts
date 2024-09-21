@@ -1,7 +1,7 @@
 import { getAllCourses } from "@/actions/courses";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const courses = await getAllCourses();
 
@@ -13,7 +13,10 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ courses }, { status: 200 });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error getting courses" },
+      { status: 400 },
+    );
   }
 }

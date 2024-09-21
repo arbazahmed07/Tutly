@@ -70,7 +70,10 @@ export async function GET(
       },
       mentorDetails,
     });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error fetching assignment" },
+      { status: 400 },
+    );
   }
 }

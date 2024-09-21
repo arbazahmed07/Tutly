@@ -19,7 +19,10 @@ export async function DELETE(
     }
     await deleteAnyDoubt(id);
     return NextResponse.json({ id });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error deleting doubt" },
+      { status: 400 },
+    );
   }
 }

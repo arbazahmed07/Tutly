@@ -4,11 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
   request: NextRequest,
-  {
-    params,
-  }: {
-    params: { id: string };
-  },
+  { params }: { params: { id: string } },
 ) {
   const { id } = params;
 
@@ -19,7 +15,10 @@ export async function DELETE(
     }
     await deleteResponse(id);
     return NextResponse.json({ id });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error deleting response" },
+      { status: 400 },
+    );
   }
 }

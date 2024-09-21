@@ -24,7 +24,10 @@ export async function DELETE(
 
     if (res.success)
       return NextResponse.json({ message: "Class deleted successfully" });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to delete class" },
+      { status: 400 },
+    );
   }
 }

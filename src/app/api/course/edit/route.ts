@@ -2,8 +2,15 @@ import { updateCourse } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
 import { type NextRequest, NextResponse } from "next/server";
 
+interface CourseType {
+  id: string;
+  title: string;
+  isPublished: boolean;
+  image: string;
+}
+
 export async function PUT(req: NextRequest) {
-  const { id, title, isPublished, image } = await req.json();
+  const { id, title, isPublished, image } = (await req.json()) as CourseType;
 
   try {
     const currentUser = await getCurrentUser();
@@ -23,7 +30,10 @@ export async function PUT(req: NextRequest) {
     }
 
     return NextResponse.json({ course });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error updating course" },
+      { status: 400 },
+    );
   }
 }

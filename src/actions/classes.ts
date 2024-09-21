@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import * as z from "zod";
 import getCurrentUser from "./getCurrentUser";
+import { type Class } from "@prisma/client";
 
 // Define the schema for class data
 const classSchema = z.object({
@@ -15,15 +16,7 @@ const classSchema = z.object({
   folderName: z.string().optional(),
 });
 
-export const createClass = async (data: {
-  classTitle: string;
-  videoLink: string;
-  videoType: string;
-  courseId: string;
-  folderId: string;
-  folderName: string;
-  createdAt: string;
-}) => {
+export const createClass = async (data: Partial<Class>) => {
   const {
     classTitle,
     videoLink,
@@ -106,12 +99,12 @@ export const createClass = async (data: {
     }
 
     return myClass;
-  } catch(e:any) {
-    throw new Error(e.message);
+  } catch {
+    throw new Error("Error creating class");
   }
 };
 
-export const updateClass = async (data: {
+export interface EditClassType {
   classId: string;
   courseId: string;
   classTitle: string;
@@ -120,7 +113,9 @@ export const updateClass = async (data: {
   folderId: string;
   folderName: string;
   createdAt: string;
-}) => {
+}
+
+export const updateClass = async (data: EditClassType) => {
   const currentUser = await getCurrentUser();
   const isCourseAdmin = currentUser?.adminForCourses?.some(
     (course) => course.id === data.courseId,

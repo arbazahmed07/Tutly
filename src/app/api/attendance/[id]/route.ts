@@ -40,7 +40,10 @@ export async function GET(
       if (element.attended) present++;
     });
     return NextResponse.json({ attendance: attendance, present: present });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error getting attendance" },
+      { status: 400 },
+    );
   }
 }

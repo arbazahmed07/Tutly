@@ -16,7 +16,10 @@ export async function DELETE(
     }
     const assignment = await deleteAttachment(params.id);
     return NextResponse.json({ assignment });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error deleting attachment" },
+      { status: 400 },
+    );
   }
 }

@@ -1,5 +1,6 @@
 import { editAttachment } from "@/actions/attachments";
 import getCurrentUser from "@/actions/getCurrentUser";
+import { type Attachment } from "@prisma/client";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
@@ -7,7 +8,7 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   try {
-    const data = await request.json();
+    const data = (await request.json()) as Attachment;
     const currentUser = await getCurrentUser();
     const isCourseAdmin = currentUser?.adminForCourses?.some(
       (course) => course.id === data.courseId,
@@ -21,7 +22,10 @@ export async function PUT(
 
     const assignment = await editAttachment(params.id, data);
     return NextResponse.json({ assignment });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error editing attachment" },
+      { status: 400 },
+    );
   }
 }

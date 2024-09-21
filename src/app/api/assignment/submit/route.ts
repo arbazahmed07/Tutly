@@ -1,9 +1,21 @@
 import getCurrentUser from "@/actions/getCurrentUser";
-import { createSubmission } from "@/actions/submission";
+import {
+  type AssignmentDetails,
+  createSubmission,
+  type MentorDetails,
+} from "@/actions/submission";
 import { type NextRequest, NextResponse } from "next/server";
+import { type InputJsonValue } from "@prisma/client/runtime/library";
+
+interface SubmissionData {
+  assignmentDetails: AssignmentDetails;
+  files: InputJsonValue;
+  mentorDetails: MentorDetails;
+}
 
 export async function POST(request: NextRequest) {
-  const { assignmentDetails, files, mentorDetails } = await request.json();
+  const data = (await request.json()) as SubmissionData;
+  const { assignmentDetails, files, mentorDetails } = data;
 
   try {
     const currentUser = await getCurrentUser();
@@ -13,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (currentUser.role !== "STUDENT") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const response: any = await createSubmission(
+    const response = await createSubmission(
       assignmentDetails,
       files,
       mentorDetails,
@@ -25,7 +37,10 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json({ success: "Assignment submitted successfully" });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error submitting assignment" },
+      { status: 400 },
+    );
   }
 }

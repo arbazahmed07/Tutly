@@ -10,7 +10,10 @@ export async function DELETE(
 
     await deleteSubmission(submissionId);
     return NextResponse.json({ message: "Submission deleted" });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error deleting submission" },
+      { status: 400 },
+    );
   }
 }

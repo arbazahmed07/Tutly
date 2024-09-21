@@ -24,7 +24,10 @@ export async function GET(
     }
     const folders = await foldersByCourseId(params.courseId);
     return NextResponse.json(folders);
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error getting folders" },
+      { status: 400 },
+    );
   }
 }

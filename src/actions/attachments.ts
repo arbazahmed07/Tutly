@@ -1,26 +1,8 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import * as z from "zod";
+import { type Attachment } from "@prisma/client";
 
-export const attachmentSchema = z.object({
-  title: z.string().min(1, {
-    message: "Title is required",
-  }),
-  link: z.string().optional(),
-  attachmentType: z.enum(["ASSIGNMENT", "GITHUB", "ZOOM", "OTHERS"]),
-  submissionMode: z.enum(["HTML_CSS_JS", "REACT", "EXTERNAL_LINK"]),
-  classId: z.string().min(1, {
-    message: "Class is required",
-  }),
-  courseId: z.string().optional(),
-  details: z.string().optional(),
-  dueDate: z.string().optional(),
-  maxSubmissions: z.number().int().positive().optional(),
-});
-
-export const createAttachment = async (
-  data: z.infer<typeof attachmentSchema>,
-) => {
+export const createAttachment = async (data: Attachment) => {
   const currentUser = await getCurrentUser();
 
   const isCourseAdmin = currentUser?.adminForCourses?.some(
@@ -95,10 +77,7 @@ export const deleteAttachment = async (id: string) => {
   return attachment;
 };
 
-export const editAttachment = async (
-  id: string,
-  data: z.infer<typeof attachmentSchema>,
-) => {
+export const editAttachment = async (id: string, data: Attachment) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to edit an attachment");

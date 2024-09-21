@@ -27,7 +27,10 @@ export async function GET(
       };
     });
     return NextResponse.json(classes);
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error getting classes" },
+      { status: 400 },
+    );
   }
 }

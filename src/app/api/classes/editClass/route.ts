@@ -1,9 +1,9 @@
-import { updateClass } from "@/actions/classes";
+import { type EditClassType, updateClass } from "@/actions/classes";
 import getCurrentUser from "@/actions/getCurrentUser";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function PUT(request: NextRequest) {
-  const data = await request.json();
+  const data = (await request.json()) as EditClassType;
   try {
     const courseId = data.courseId;
     const currentUser = await getCurrentUser();
@@ -20,7 +20,10 @@ export async function PUT(request: NextRequest) {
 
     const myClass = await updateClass(data);
     return NextResponse.json(myClass);
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error updating class" },
+      { status: 400 },
+    );
   }
 }

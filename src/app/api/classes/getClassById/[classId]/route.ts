@@ -22,7 +22,7 @@ export async function GET(
 
     const myClass = await getClassDetails(params.classId);
     return NextResponse.json(myClass);
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json({ error: "Error getting class" }, { status: 400 });
   }
 }

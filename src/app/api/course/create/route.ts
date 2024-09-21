@@ -2,8 +2,14 @@ import { createCourse } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
 import { type NextRequest, NextResponse } from "next/server";
 
+interface CourseType {
+  title: string;
+  isPublished: boolean;
+  image: string;
+}
+
 export async function POST(request: NextRequest) {
-  const { title, isPublished, image } = await request.json();
+  const { title, isPublished, image } = (await request.json()) as CourseType;
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
@@ -22,7 +28,10 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(course);
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error creating course" },
+      { status: 400 },
+    );
   }
 }

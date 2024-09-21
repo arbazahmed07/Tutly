@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
+import { type Role } from "@prisma/client";
 
 export const getAllCourses = async () => {
   const currentUser = await getCurrentUser();
@@ -546,7 +547,7 @@ export const unenrollStudentFromCourse = async (
   }
 };
 
-export const updateRole = async (username: string, role: string) => {
+export const updateRole = async (username: string, role: Role) => {
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser || currentUser.role !== "INSTRUCTOR") {

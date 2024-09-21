@@ -1,9 +1,10 @@
 import { createClass } from "@/actions/classes";
 import getCurrentUser from "@/actions/getCurrentUser";
+import { type Class } from "@prisma/client";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const data = await request.json();
+  const data = (await request.json()) as Class;
 
   try {
     const currentUser = await getCurrentUser();
@@ -19,7 +20,10 @@ export async function POST(request: NextRequest) {
 
     const myClass = await createClass(data);
     return NextResponse.json(myClass);
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to create class" },
+      { status: 400 },
+    );
   }
 }

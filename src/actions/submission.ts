@@ -9,7 +9,7 @@ import type {
 } from "@prisma/client";
 import type { InputJsonValue } from "@prisma/client/runtime/library";
 
-interface AssignmentDetails {
+export interface AssignmentDetails {
   id: string;
   maxSubmissions: number;
   class: {
@@ -17,7 +17,7 @@ interface AssignmentDetails {
   };
 }
 
-interface MentorDetails {
+export interface MentorDetails {
   mentor: {
     username: string;
   };

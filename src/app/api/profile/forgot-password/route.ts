@@ -2,12 +2,16 @@ import getCurrentUser from "@/actions/getCurrentUser";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+interface ForgotPasswordType {
+  email: string;
+}
+
 export async function POST(req: Request) {
   const currentUser = await getCurrentUser();
   if (!currentUser) return NextResponse.json("Unauthorized");
 
   const id = currentUser?.id;
-  const body = await req.json();
+  const body = (await req.json()) as ForgotPasswordType;
 
   await db.user.update({
     where: { email: body.email },
