@@ -96,13 +96,11 @@ export default async function Class({
               {videoId && videoType === "DRIVE" && (
                 <DriveEmbed embedId={videoId} />
               )}
-              {
-                !videoId && (
-                  <div className="mx-auto p-16 mt-28">
-                    <NoDataFound message="No video uploaded" />
-                  </div>
-                )
-              }
+              {!videoId && (
+                <div className="mx-auto mt-28 p-16">
+                  <NoDataFound message="No video uploaded" />
+                </div>
+              )}
             </div>
           </div>
         </div>

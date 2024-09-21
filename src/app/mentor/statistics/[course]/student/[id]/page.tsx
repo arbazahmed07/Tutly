@@ -25,18 +25,25 @@ interface PageParams {
 }
 
 export default async function Page({ params }: PageParams) {
-  const evaluatedData: StudentEvaluatedAssignments | null = 
+  const evaluatedData: StudentEvaluatedAssignments | null =
     await getStudentEvaluatedAssigmentsForMentor(params.id, params.course);
   const { evaluated, underReview, unsubmitted, totalPoints } =
-    evaluatedData ?? { evaluated: 0, underReview: 0, unsubmitted: 0, totalPoints: 0 };
+    evaluatedData ?? {
+      evaluated: 0,
+      underReview: 0,
+      unsubmitted: 0,
+      totalPoints: 0,
+    };
 
   const attendanceData: AttendanceData | null = await getAttendanceOfStudent(
     params.id,
-    params.course
+    params.course,
   );
 
-  const { classes, attendanceDates } =
-    attendanceData ?? { classes: [], attendanceDates: [] };
+  const { classes, attendanceDates } = attendanceData ?? {
+    classes: [],
+    attendanceDates: [],
+  };
 
   return (
     <div>

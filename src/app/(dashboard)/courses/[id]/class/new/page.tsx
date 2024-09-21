@@ -15,7 +15,9 @@ const NewClass = () => {
   const [folderName, setFolderName] = useState("");
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState("");
-  const [createdAt, setCreatedAt] = useState(new Date().toISOString().split("T")[0]);
+  const [createdAt, setCreatedAt] = useState(
+    new Date().toISOString().split("T")[0],
+  );
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -32,14 +34,13 @@ const NewClass = () => {
       }
     };
 
-
     setVideoType("DRIVE");
     setCreatedAt(new Date().toISOString().split("T")[0]);
     fetchFolders();
   }, [params.id]);
 
   const handleCreateClass = async () => {
-    if ( !classTitle.trim() ) {
+    if (!classTitle.trim()) {
       return toast.error("Please fill all necessary fields");
     }
 
@@ -49,10 +50,9 @@ const NewClass = () => {
       );
     }
 
-    if(!videoType) {
+    if (!videoType) {
       setVideoType("DRIVE");
     }
-    
 
     setTextValue("Creating Class");
     try {
@@ -151,10 +151,7 @@ const NewClass = () => {
           />
         )}
         <Button
-          disabled={
-            !classTitle ||
-            textValue === "Creating Class"
-          }
+          disabled={!classTitle || textValue === "Creating Class"}
           className="z-0 flex items-center justify-between bg-secondary-700 text-white hover:bg-secondary-800"
           onClick={handleCreateClass}
         >

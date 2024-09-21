@@ -2,9 +2,9 @@ import { getMentorLeaderboardData } from "@/actions/getLeaderboard";
 import Leaderboard from "@/components/leaderBoard";
 
 export default async function mentorLeaderboard() {
-  const data:any = await getMentorLeaderboardData();
+  const data: any = await getMentorLeaderboardData();
   // <pre>{JSON.stringify(data, null, 2)}</pre>;
-  if (data && data.sortedSubmissions && data.createdCourses) {
+  if (data?.sortedSubmissions && data.createdCourses) {
     const { sortedSubmissions, createdCourses } = data;
 
     return (

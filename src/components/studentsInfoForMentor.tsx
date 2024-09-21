@@ -27,6 +27,7 @@ export default function StudentsInfoForMentor({
     <div className="mx-3">
       <div className="relative mb-3 flex w-full items-center justify-end">
         <input
+          title="text"
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}

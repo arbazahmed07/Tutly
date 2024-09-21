@@ -5,7 +5,7 @@ import SingleAssignmentBoard from "@/app/mentor/assignments/getbyassignment/assi
 import NoDataFound from "@/components/NoDataFound";
 
 async function GetByAssignment() {
-  const { courses, coursesWithAssignments }:any =
+  const { courses, coursesWithAssignments }: any =
     await getAllAssignmentsForInstructor();
   // return <pre>{JSON.stringify(courses)}</pre>
   return (

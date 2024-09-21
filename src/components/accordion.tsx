@@ -19,9 +19,9 @@ export default function Accordion({
   currentUser,
   currentCourseId,
 }: any) {
-  const [openAccordion, setOpenAccordion] = useState(-1);
-  const [show, setShow] = useState(false);
-  const [message, setMessage] = useState("");
+  const [openAccordion, setOpenAccordion] = useState<number>(-1);
+  const [show, setShow] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
   const [dbts, setDbts] = useState(doubts || []);
   const [doubt, setDoubt] = useState<string>("");
@@ -335,13 +335,12 @@ export default function Accordion({
                         </Button>
                       </div>
                     </div>
-                  </div>
                 )}
               </div>
-              {openAccordion === index && qa.response.length > 0 && (
+              {openAccordion === index && qa?.response.length > 0 && (
                 <div className="rounded-lg bg-white p-3 text-black">
                   <p className="mb-2 text-sm font-semibold">Replies :</p>
-                  {qa.response.map((r: any, responseIndex: number) => (
+                  {qa?.response.map((r: any, responseIndex: number) => (
                     <div
                       key={responseIndex}
                       className="mb-2 rounded-lg border-2 p-4 text-zinc-600 hover:bg-zinc-200"

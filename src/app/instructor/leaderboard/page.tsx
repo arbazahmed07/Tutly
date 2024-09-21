@@ -4,10 +4,10 @@ import { getMentors } from "@/actions/mentors";
 import Leaderboard from "@/components/leaderBoard";
 
 export default async function instructorLeaderboard() {
-  const data:any = await getInstructorLeaderboardData();
-  const currentUser:any= await getCurrentUser();
+  const data: any = await getInstructorLeaderboardData();
+  const currentUser: any = await getCurrentUser();
   const mentors = await getMentors();
-  if (data && data.sortedSubmissions && data.enrolledCourses) {
+  if (data?.sortedSubmissions && data.enrolledCourses) {
     const { sortedSubmissions, enrolledCourses } = data;
 
     return (

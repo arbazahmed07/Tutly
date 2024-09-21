@@ -17,9 +17,9 @@ interface StatisticsParams {
   };
 }
 
-interface PieChartData{
-  0:number,
-  1:number
+interface PieChartData {
+  0: number;
+  1: number;
 }
 
 interface AttendanceData {
@@ -33,19 +33,24 @@ interface SubmissionsData {
 }
 
 export default async function Statistics({ params }: StatisticsParams) {
-  const mentorPieChart: number[] | null = await getMentorPieChartData(params.course);
+  const mentorPieChart: number[] | null = await getMentorPieChartData(
+    params.course,
+  );
   const currentUser = await getCurrentUser();
 
-  const attendanceData: AttendanceData | null = await getAttendanceForMentorBarChart(params.course);
-  const submissionData: SubmissionsData | null = await getSubmissionsForMentorLineChart(params.course);
+  const attendanceData: AttendanceData | null =
+    await getAttendanceForMentorBarChart(params.course);
+  const submissionData: SubmissionsData | null =
+    await getSubmissionsForMentorLineChart(params.course);
   const mstudents = await getMentorStudents(params.course);
 
   // Use default values if data is null or undefined
-  const pieChartData:any = mentorPieChart ?? [0, 0];
+  const pieChartData: any = mentorPieChart ?? [0, 0];
   const totalPieChartValue = pieChartData[0] + pieChartData[1];
-  const loaderValue = totalPieChartValue > 0 
-    ? `${((pieChartData[0] * 100) / totalPieChartValue).toFixed(2)}%` 
-    : "0%";
+  const loaderValue =
+    totalPieChartValue > 0
+      ? `${((pieChartData[0] * 100) / totalPieChartValue).toFixed(2)}%`
+      : "0%";
 
   if (!currentUser) return null;
 
@@ -78,7 +83,9 @@ export default async function Statistics({ params }: StatisticsParams) {
           <div className="w-2/3 p-2">
             <Barchart
               classes={attendanceData?.classes ?? []}
-              attendanceInEachClass={attendanceData?.attendanceInEachClass ?? []}
+              attendanceInEachClass={
+                attendanceData?.attendanceInEachClass ?? []
+              }
               label={"Attendees"}
               bgColors={["rgb(37,99,235)"]}
             />
@@ -93,23 +100,22 @@ export default async function Statistics({ params }: StatisticsParams) {
             label={"Submissions"}
             bgColors={["rgb(37,99,235)"]}
           />
-          <Link href="/mentor/assignments/getbyassignment" className="absolute right-2 top-2">
+          <Link
+            href="/mentor/assignments/getbyassignment"
+            className="absolute right-2 top-2"
+          >
             <FaSquareArrowUpRight className="text-xl text-gray-500" />
           </Link>
         </div>
         <div className="w-1/4 rounded-xl p-8 shadow-xl shadow-blue-500/5">
           <h1 className="pb-14 text-gray-500">Evaluation</h1>
           <div className="px-16 text-center font-semibold text-blue-500">
-            <span className="text-3xl font-bold">
-              {pieChartData[0]}
-            </span>
-            <span>
-              /{totalPieChartValue}
-            </span>
+            <span className="text-3xl font-bold">{pieChartData[0]}</span>
+            <span>/{totalPieChartValue}</span>
           </div>
           <div className="m-auto my-4 w-4/5 rounded-full border border-gray-700">
             <div
-              className={`h-[10px] w-[${loaderValue}] rounded-full bg-blue-500`}
+              className={`w-[ h-[10px]${loaderValue}] rounded-full bg-blue-500`}
             ></div>
           </div>
           <h1 className="p-2 text-center text-gray-500">

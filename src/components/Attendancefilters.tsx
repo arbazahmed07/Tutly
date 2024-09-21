@@ -60,9 +60,8 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
           type: "binary",
           cellDates: true,
         });
-        const worksheetName = workbook.SheetNames[0];
+        const worksheetName = workbook.SheetNames[0]
         const worksheet = workbook.Sheets[worksheetName];
-
         const data = XLSX.utils.sheet_to_json(worksheet, {
           defval: "",
           range: { s: { c: 0, r: 3 }, e: { c: 6, r: 10000 } },
@@ -493,11 +492,12 @@ const AttendanceTable = ({
                 <tr key={index} className="hover:bg-primary-800">
                   <td>{index + 1}</td>
                   <td className="ps-8 text-start">
-                    {student.Joins[0].ActualName}
+                    {student.Joins[0]?.ActualName}
                   </td>
                   {openEditName === Number(index + 1) ? (
                     <td className="max-w-52 py-2 pl-10 text-start">
                       <input
+                        title="username"
                         className="block"
                         onChange={(e) => setUsername(e.target.value)}
                         defaultValue={student.username}
@@ -521,7 +521,7 @@ const AttendanceTable = ({
                       {student.Duration}
                     </p>
                   </td>
-                  <td>{String(student.Joins[0].JoinTime).split(" ")[0]}</td>
+                  <td>{String(student.Joins[0]?.JoinTime).split(" ")[0]}</td>
                   <td>{student.Joins.length}</td>
 
                   <td

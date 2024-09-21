@@ -15,7 +15,7 @@ export default function AttendanceTable({
     direction: "ascending",
   });
 
-    const sortedData = Array.isArray(studentsAttendance)
+  const sortedData = Array.isArray(studentsAttendance)
     ? [...studentsAttendance].sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === "ascending" ? -1 : 1;

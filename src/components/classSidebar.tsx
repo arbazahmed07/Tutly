@@ -38,12 +38,12 @@ function ClassSidebar({
   const groupedClasses: Record<string, Class[]> = {};
   const classesWithoutFolders: any[] = [];
   classes?.forEach((classItem: Class) => {
-    if (classItem.folderId ) {
+    if (classItem.folderId) {
       if (!groupedClasses[classItem.folderId]) {
         groupedClasses[classItem.folderId] = [];
       }
-      
-        groupedClasses[classItem.folderId]?.push(classItem);
+
+      groupedClasses[classItem.folderId]?.push(classItem);
     } else {
       classesWithoutFolders.push(classItem);
     }

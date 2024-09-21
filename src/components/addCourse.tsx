@@ -68,7 +68,7 @@ function AddCourse() {
 
     const file = inputFileRef.current.files[0];
 
-    const response = await fetch(`/api/image-upload?filename=${file.name}`, {
+    const response = await fetch(`/api/image-upload?filename=${file?.name}`, {
       method: "POST",
       body: file,
     });

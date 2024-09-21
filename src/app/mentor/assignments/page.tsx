@@ -1,7 +1,4 @@
-import {
-  getAllStudents,
-  getMentorCourses,
-} from "@/actions/courses";
+import { getAllStudents, getMentorCourses } from "@/actions/courses";
 import MentorAssignmentBoard from "@/components/mentorAssignmentBoard";
 import NoDataFound from "@/components/NoDataFound";
 import Link from "next/link";

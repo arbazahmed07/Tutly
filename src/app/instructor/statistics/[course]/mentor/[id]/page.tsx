@@ -25,7 +25,7 @@ export default async function Statistics({ params }: any) {
   let loaderValue = !mentorPieChart
     ? 0
     : String(
-        (mentorPieChart![0] * 100) / (mentorPieChart![0] + mentorPieChart![1]),
+        (mentorPieChart[0] * 100) / (mentorPieChart[0] + mentorPieChart[1]),
       );
   loaderValue += "%";
   return (
@@ -90,7 +90,7 @@ export default async function Statistics({ params }: any) {
               /{mentorPieChart ? mentorPieChart[0] + mentorPieChart[1] : 0}
             </span>
           </div>
-          <div className="m-auto my-4 w-[80%] rounded-full border border-gray-700">
+          <div className="m-auto my-4 w-4/5 rounded-full border border-gray-700">
             <div
               className={`h-[10px] rounded-full bg-blue-500`}
               style={{ width: loaderValue }}
