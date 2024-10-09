@@ -63,7 +63,7 @@ export default function CourseCard({ course, currentUser }: any) {
   return (
     <div
       key={course.id}
-      className="m-auto mt-3 w-[280px] rounded-lg border md:mx-2 shadow-lg"
+      className="m-auto mt-3 w-[280px] rounded-lg border shadow-lg md:mx-2"
     >
       <div
         className="relative h-[150px] cursor-pointer rounded-t-lg bg-white text-secondary-700"

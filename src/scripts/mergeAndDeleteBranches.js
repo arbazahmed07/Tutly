@@ -2,7 +2,13 @@ import { Octokit } from "@octokit/rest";
 
 const octokit = new Octokit({ auth: "" });
 
-async function mergeAndDeleteBranches(owner, repo, tag1, tag2) {
+/**
+ * @param {string} owner
+ * @param {string} repo
+ * @param {string} _tag1
+ * @param {string} _tag2
+ */
+async function mergeAndDeleteBranches(owner, repo, _tag1, _tag2) {
   try {
     let prs = [];
     let page = 1;

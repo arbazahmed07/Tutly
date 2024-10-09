@@ -36,12 +36,11 @@
     ".next/types/**/*.ts",
     "**/*.cjs",
     ".eslintrc.cjs",
-    "next.config.mjs"
+    "next.config.mjs",
+    "src/scripts/**/*.js"
   ],
 
   "exclude": [
-    "node_modules",
-    // todo: temp fix to type errors in scripts , remove this
-    "src/scripts/**/*.js"
+    "node_modules"
   ]
 }

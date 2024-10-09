@@ -236,9 +236,11 @@ export default function AttendanceHeader({
                 disabled={!currentClass}
                 onChange={(e) => {
                   const files = e.target.files;
-                  !currentClass
-                    ? toast.error("select class")
-                    : files && files.length > 0 && onSelectFile(files[0]);
+                  if (!currentClass) {
+                    toast.error("select class");
+                  } else if (files && files.length > 0) {
+                    onSelectFile(files[0]);
+                  }
                 }}
               />
               {fileData && selectedFile && (

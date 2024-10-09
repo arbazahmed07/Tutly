@@ -60,10 +60,10 @@ const FolderUpload = ({
   const processDataTransferItems = async (items: DataTransferItemList) => {
     const fileArray: FileData[] = [];
     const filesObj: Record<string, string> = {};
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i].webkitGetAsEntry();
-      if (item) {
-        await traverseFileTree(item, "", fileArray);
+    for (const item of Array.from(items)) {
+      const entry = item.webkitGetAsEntry();
+      if (entry) {
+        await traverseFileTree(entry, "", fileArray);
       }
     }
 
@@ -84,8 +84,7 @@ const FolderUpload = ({
   const processFiles = async (files: FileList) => {
     const fileArray: FileData[] = [];
     const filesObj: Record<string, string> = {};
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    for (const file of Array.from(files)) {
       const filePath = file.webkitRelativePath || file.name;
 
       // Skip node_modules folder, .git folder, .DS_Store. //todo: add more
@@ -187,7 +186,6 @@ const FolderUpload = ({
             <input
               id="fileInput"
               type="file"
-              // @ts-ignore
               webkitdirectory="true"
               className="hidden"
               onChange={handleFileSelect}
@@ -198,7 +196,7 @@ const FolderUpload = ({
       </div>
 
       {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-opacity/50 fixed inset-0 z-50 flex items-center justify-center bg-black">
           <div className="rounded-lg bg-white p-6 shadow-xl">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-indigo-500"></div>
             <p className="mt-4 font-semibold text-blue-600">Loading files...</p>

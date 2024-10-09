@@ -14,7 +14,7 @@ async function main() {
       continue;
     }
 
-    const newCode = submissionData["/index.html"]["code"];
+    const newCode = submissionData["/index.html"].code;
     if (newCode) {
       continue;
     }

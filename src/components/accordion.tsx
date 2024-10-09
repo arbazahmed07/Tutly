@@ -164,8 +164,8 @@ export default function Accordion({
   return (
     <div className="w-full bg-gradient-to-l md:min-w-[800px]">
       <div className="flex flex-col items-center text-sm font-medium">
-        <div className='w-full flex flex-row-reverse'>
-           <Button onClick={() => { handleShow(); setOpenAccordion(-1); }} className="py-3 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white">
+        <div className='flex w-full flex-row-reverse'>
+           <Button onClick={() => { handleShow(); setOpenAccordion(-1); }} className="rounded-md bg-blue-500 px-4 py-3 text-white hover:bg-blue-600">
             {
               currentUser.role === 'STUDENT' ? "Ask a Doubt" : "Raise a Query"
             }
@@ -175,9 +175,9 @@ export default function Accordion({
           <DialogTitle>Enter your doubt here</DialogTitle>
           <DialogContent>
             <form className="mt-2" onSubmit={handleSubmit} onKeyDown={handleEscKeyDown}>
-              <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e) => handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block p-2.5 w-full rounded-lg outline-none bg-white border-2 text-secondary-950 "></textarea>
-              <Button onClick={() => setShow(false)} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md mt-3  mr-4">Cancel</Button>
-            <Button type="submit" onClick={handleSubmit} className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md mt-3">Submit</Button>
+              <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e) => handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block w-full rounded-lg border-2 bg-white p-2.5 text-secondary-950 outline-none "></textarea>
+              <Button onClick={() => setShow(false)} className="mr-4 mt-3 rounded-md bg-red-500 px-6 py-2 text-white  hover:bg-red-600">Cancel</Button>
+            <Button type="submit" onClick={handleSubmit} className="mt-3 rounded-md bg-blue-500 px-6 py-2 text-white hover:bg-blue-600">Submit</Button>
             </form>
           </DialogContent>
         </Dialog>
@@ -262,16 +262,16 @@ export default function Accordion({
                         setReplyId(qa.id);
                       }}
                     >
-                      <LuReply className="cursor-pointer w-5 h-5" />
+                      <LuReply className="h-5 w-5 cursor-pointer" />
                     </Button>
                   </div>
                   <div hidden={currentUser.role !== 'INSTRUCTOR' && qa.user.role === 'INSTRUCTOR'}>
                     <Button
                       hidden={currentUser.role === 'STUDENT'}
-                      className="p-1 mr-2"
+                      className="mr-2 p-1"
                       onClick={() => handleDeleteDoubt(qa.id)}
                     >
-                      <MdDelete className='cursor-pointer  w-5 h-5 text-red-500 hover:text-red-600' />
+                      <MdDelete className='h-5  w-5 cursor-pointer text-red-500 hover:text-red-600' />
                     </Button>
                   </div>
                 </div>
@@ -300,10 +300,10 @@ export default function Accordion({
                 </div>
               )}
               {/* Replies */}
-              <div className="flex px-3 mt-2 items-center">
+              <div className="mt-2 flex items-center px-3">
                 {
                   popover && replyId === qa?.id && (
-                    <div className="bg-white border-2 rounded-lg p-3 w-full">
+                    <div className="w-full rounded-lg border-2 bg-white p-3">
                       <textarea
                         placeholder="Enter your reply"
                         value={reply}
@@ -316,19 +316,19 @@ export default function Accordion({
                           }
                         }}
                         onChange={(e) => setReply(e.target.value)}
-                        className="w-full p-2 bg-white text-gray-800 border-2 rounded-lg outline-none text-sm"
+                        className="w-full rounded-lg border-2 bg-white p-2 text-sm text-gray-800 outline-none"
                       ></textarea>
-                      <div className="flex justify-end text-sm font-medium mt-3">
+                      <div className="mt-3 flex justify-end text-sm font-medium">
                         <Button
                           title="Close"
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mr-2"
+                          className="mr-2 flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                           onClick={() => setReplyId('')}
                         >
                           ✖ <p className="ml-1.5">Cancel</p>
                         </Button>
                         <Button
                           title="Send"
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-blue-600 bg-blue-500 text-white rounded-lg"
+                          className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                           onClick={() => handleReply(qa.id)}
                         >
                           ✔ <p className="ml-1.5">Reply</p>
@@ -404,7 +404,7 @@ export default function Accordion({
                           {
                             (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR') &&
                             <Button onClick={() => handleDeleteReply(r.id)}>
-                              <MdDelete className='cursor-pointer w-5 h-5 text-red-500 hover:text-red-600' />
+                              <MdDelete className='h-5 w-5 cursor-pointer text-red-500 hover:text-red-600' />
                             </Button>
                           }
                         </div>
