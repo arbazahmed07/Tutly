@@ -14,7 +14,7 @@ export async function GET(
     );
 
     const haveAccess =
-      currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
+      currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
 
     if (!haveAccess) {
       return NextResponse.json(

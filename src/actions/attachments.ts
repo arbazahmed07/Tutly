@@ -9,7 +9,7 @@ export const createAttachment = async (data: Attachment) => {
     (course) => course.id === data.courseId,
   );
   const haveAccess =
-    currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
+    currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
 
   if (!haveAccess) {
     throw new Error("Unauthorized");

@@ -61,7 +61,7 @@ export default function AssignmentPage({
   const [modal, setModal] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const haveAdminAccess =
-    currentUser && (currentUser.role === "INSTRUCTOR" ?? isCourseAdmin);
+    currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
 
   console.log("isCourseAdmin", isCourseAdmin);
 
@@ -213,11 +213,10 @@ export default function AssignmentPage({
         <div className="flex items-center justify-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`rounded p-1 px-2 text-white ${
-                new Date(assignment?.dueDate) > new Date()
+              className={`rounded p-1 px-2 text-white ${new Date(assignment?.dueDate) > new Date()
                   ? "bg-primary-600"
                   : "bg-secondary-500"
-              }`}
+                }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -550,7 +549,7 @@ export default function AssignmentPage({
                                   <Link
                                     href={
                                       assignment.submissionMode ===
-                                      "HTML_CSS_JS"
+                                        "HTML_CSS_JS"
                                         ? `/playgrounds/html-css-js?submissionId=${submission.id}`
                                         : submission.submissionLink
                                     }
