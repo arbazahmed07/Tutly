@@ -22,7 +22,6 @@ export interface MentorDetails {
     username: string;
   };
 }
-
 export const createSubmission = async (
   assignmentDetails: AssignmentDetails,
   files: InputJsonValue,
@@ -191,6 +190,109 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
         submission.submissionIndex = submissionIndex + 1;
       }
     });
+  }
+
+  return filteredSubmissions;
+};
+
+interface SubmissionWithDetails extends submission {
+  enrolledUser: EnrolledUsers & {
+    user: User;
+  };
+  points: Point[];
+  assignment: Attachment;
+  submissionCount?: number;
+  submissionIndex?: number;
+}
+
+export const getAllAssignmentSubmissions = async () => {
+  const user = await getCurrentUser();
+  if (!user || user.role === "STUDENT") {
+    return null;
+  }
+
+  const submissions = await db.submission.findMany({
+    include: {
+      enrolledUser: {
+        include: {
+          user: true,
+        },
+      },
+      points: true,
+      assignment: true,
+    },
+    orderBy: {
+      enrolledUser: {
+        username: "asc",
+      },
+    },
+  });
+
+  let filteredSubmissions: SubmissionWithDetails[] = [];
+
+  if (user.role === "INSTRUCTOR") {
+    // @ts-ignore
+    filteredSubmissions = submissions;
+  }
+
+  if (user.role === "MENTOR") {
+    // @ts-ignore
+    filteredSubmissions = submissions.filter(
+      (submission) => submission.enrolledUser.mentorUsername === user.username
+    );
+  }
+
+  const submissionsByAssignment = filteredSubmissions.reduce(
+    (acc, submission) => {
+      if (!acc[submission.attachmentId]) {
+        acc[submission.attachmentId] = [];
+      }
+      acc[submission.attachmentId]?.push(submission);
+      return acc;
+    },
+    {} as Record<string, SubmissionWithDetails[]>
+  );
+
+  for (const [attachmentId, assignmentSubmissions] of Object.entries(
+    submissionsByAssignment
+  )) {
+    const assignment = await db.attachment.findUnique({
+      where: {
+        id: attachmentId,
+      },
+    });
+
+    if (assignment?.maxSubmissions && assignment.maxSubmissions > 1) {
+      const submissionCount = await db.submission.groupBy({
+        by: ["enrolledUserId"],
+        where: {
+          attachmentId: attachmentId,
+        },
+        _count: {
+          id: true,
+        },
+      });
+
+      assignmentSubmissions.forEach((submission) => {
+        const submissionCountData = submissionCount.find(
+          (data) => data.enrolledUserId === submission.enrolledUserId
+        );
+        if (submissionCountData) {
+          submission.submissionCount = submissionCountData._count.id;
+        }
+      });
+
+      assignmentSubmissions.forEach((submission) => {
+        submission.submissionIndex = 1;
+        if (submission.submissionCount && submission.submissionCount > 1) {
+          const submissionIndex =
+            assignmentSubmissions
+              .filter((sub) => sub.enrolledUserId === submission.enrolledUserId)
+              .findIndex((sub) => sub.id === submission.id) || 0;
+          submission.submissionIndex = submissionIndex + 1;
+        }
+      });
+    }
   }
 
   return filteredSubmissions;

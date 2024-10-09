@@ -191,6 +191,29 @@ export const getAllAssignmentsForInstructor = async () => {
   });
   return { courses, coursesWithAssignments };
 };
+
+export const getAllAssignments = async () => {
+  const courses = (await getEnrolledCourses()) ?? [];
+
+  const attachments = await db.attachment.findMany({
+    where: {
+      attachmentType: "ASSIGNMENT",
+      courseId: {
+        in: courses.map((course) => course.id),
+      },
+    },
+    include: {
+      course: true,
+    },
+    orderBy:{
+      createdAt: "desc"
+    },
+  },
+);
+
+  return attachments ?? [];
+};
+
 export const getAllAssignedAssignmentsForMentor = async (id: string) => {
   const courses = await getEnrolledCoursesById(id);
   const currentUser = await getCurrentUser();
