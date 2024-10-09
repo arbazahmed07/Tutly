@@ -11,7 +11,6 @@ const Page = () => {
 
   const handleSubmit = async () => {
     try {
-      
       console.log(externalLink);
       toast.success("Link submitted successfully");
     } catch (error) {
@@ -24,9 +23,9 @@ const Page = () => {
     <div className="m-auto p-6">
       <div className="flex flex-wrap gap-10">
         <Link href="/playgrounds/html-css-js">
-          <div className="flex items-center gap-6 w-[350px] p-3 px-5 border-2 dark:bg-white dark:text-black border-slate-300 rounded-lg hover:border-gray-500">
+          <div className="flex w-[350px] items-center gap-6 rounded-lg border-2 border-slate-300 p-3 px-5 hover:border-gray-500 dark:bg-white dark:text-black">
             <div>
-              <IoLogoHtml5 className="bg-slate-200 rounded-md h-20 w-20 p-2 text-orange-600" />
+              <IoLogoHtml5 className="h-20 w-20 rounded-md bg-slate-200 p-2 text-orange-600" />
             </div>
             <div>
               <h1 className="text-lg font-bold">HTML/CSS/JS</h1>
@@ -37,9 +36,9 @@ const Page = () => {
           </div>
         </Link>
         <Link href="/playgrounds/react">
-          <div className="flex items-center gap-6 w-[350px] p-3 px-5 border-2 dark:bg-white dark:text-black border-slate-300 rounded-lg hover:border-gray-500">
+          <div className="flex w-[350px] items-center gap-6 rounded-lg border-2 border-slate-300 p-3 px-5 hover:border-gray-500 dark:bg-white dark:text-black">
             <div>
-              <RiReactjsFill className="bg-slate-200 rounded-md h-20 w-20 p-1.5 text-sky-400" />
+              <RiReactjsFill className="h-20 w-20 rounded-md bg-slate-200 p-1.5 text-sky-400" />
             </div>
             <div>
               <h1 className="text-lg font-bold">React.js</h1>

@@ -1,12 +1,11 @@
 import { deleteAttachment } from "@/actions/attachments";
 import getCurrentUser from "@/actions/getCurrentUser";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
-
   try {
     const currentUser = await getCurrentUser();
     if (!currentUser) {
@@ -17,7 +16,10 @@ export async function DELETE(
     }
     const assignment = await deleteAttachment(params.id);
     return NextResponse.json({ assignment });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error deleting attachment" },
+      { status: 400 },
+    );
   }
 }

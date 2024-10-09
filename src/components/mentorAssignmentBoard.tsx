@@ -10,25 +10,28 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sortCriteria, setSortCriteria] = useState<'username' | 'name'>('username');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortCriteria, setSortCriteria] = useState<"username" | "name">(
+    "username",
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const router = useRouter();
 
-
   const sortedStudents = students
-    .filter((student: any) =>
-      student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
-      (student.name.toLowerCase().includes(searchQuery.toLowerCase()) || student.username.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(
+      (student: any) =>
+        student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
+        (student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          student.username.toLowerCase().includes(searchQuery.toLowerCase())),
     )
     .sort((a: any, b: any) => {
       let comparison = 0;
-      if (sortCriteria === 'name') {
+      if (sortCriteria === "name") {
         comparison = a.name.localeCompare(b.name);
       } else {
         comparison = a.username.localeCompare(b.username);
       }
-      return sortOrder === 'asc' ? comparison : -comparison;
+      return sortOrder === "asc" ? comparison : -comparison;
     });
 
   useEffect(() => {
@@ -41,17 +44,18 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
 
   return (
     <div className="flex flex-col gap-4 p-2 md:pt-5">
-      <div className="flex justify-between gap-3 flex-wrap items-center">
-        <div className="flex gap-3 flex-wrap items-center">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {courses?.map((course: any) => (
             <button
               hidden={course.isPublished === false}
               onClick={() => setCurrentCourse(course.id)}
-              className={`rounded p-2 ${currentCourse === course.id && "border rounded"
-                }`}
+              className={`rounded p-2 ${
+                currentCourse === course.id && "rounded border"
+              }`}
               key={course.id}
             >
-              <h1 className="truncate max-w-xs text-sm font-medium">
+              <h1 className="max-w-xs truncate text-sm font-medium">
                 {course.title}
               </h1>
             </button>
@@ -76,79 +80,83 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
           </div>
         </div>
       </div>
-      {
-        sortedStudents.length > 0 ? (
-          sortedStudents
-            .filter((student: any) =>
-              student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
-            ).map((student: any, index: number) => (
-              <div
-                hidden={student.role === 'INSTRUCTOR' || student.role === 'MENTOR'}
-                key={index}
-                className={`${index < sortedStudents.length - 1 && "border-b pb-3"}`}
-              >
-                <div className="p-1 flex justify-between items-center">
-                  <div className="flex gap-2 md:gap-5 items-center">
-                    {index + 1}
-                    <Image unoptimized
-                      src={student?.image || "/images/placeholder.jpg"}
-                      height={40}
-                      width={40}
-                      alt=""
-                      className="rounded-full"
-                    />
-                    <div>
-                      <h1
-                        className="text-xs md:text-sm font-medium cursor-pointer"
-                        onClick={() => {
-                          if (sortCriteria === 'name') {
-                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-                          } else {
-                            setSortCriteria('name');
-                            setSortOrder('asc');
-                          }
-                        }}
-                      >
-                        {student.name}
-                      </h1>
-                      <h1
-                        className="text-xs font-medium cursor-pointer"
-                        onClick={() => {
-                          if (sortCriteria === 'username') {
-                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-                          } else {
-                            setSortCriteria('username');
-                            setSortOrder('asc');
-                          }
-                        }}
-                      >
-                        {student.username}
-                      </h1>
-                    </div>
-                  </div>
-                  {
-                    student?.role === 'STUDENT' &&
-                    <div
-                      onClick={() =>
-                        router.push(
-                          `${role === "INSTRUCTOR" ?
-                            `/instructor/assignments/${student.username}`
-                            :
-                            `/mentor/assignments/${student.username}`
-                          }`
-                        )
-                      }
-                      className="bg-blue-600 text-white p-2 text-sm font-medium rounded-lg cursor-pointer"
+      {sortedStudents.length > 0 ? (
+        sortedStudents
+          .filter((student: any) =>
+            student.enrolledUsers?.find(
+              (x: any) => x.courseId === currentCourse,
+            ),
+          )
+          .map((student: any, index: number) => (
+            <div
+              hidden={
+                student.role === "INSTRUCTOR" || student.role === "MENTOR"
+              }
+              key={index}
+              className={`${index < sortedStudents.length - 1 && "border-b pb-3"}`}
+            >
+              <div className="flex items-center justify-between p-1">
+                <div className="flex items-center gap-2 md:gap-5">
+                  {index + 1}
+                  <Image
+                    unoptimized
+                    src={student?.image || "/images/placeholder.jpg"}
+                    height={40}
+                    width={40}
+                    alt=""
+                    className="rounded-full"
+                  />
+                  <div>
+                    <h1
+                      className="cursor-pointer text-xs font-medium md:text-sm"
+                      onClick={() => {
+                        if (sortCriteria === "name") {
+                          setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+                        } else {
+                          setSortCriteria("name");
+                          setSortOrder("asc");
+                        }
+                      }}
                     >
-                      Assignments
-                    </div>
-                  }
+                      {student.name}
+                    </h1>
+                    <h1
+                      className="cursor-pointer text-xs font-medium"
+                      onClick={() => {
+                        if (sortCriteria === "username") {
+                          setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+                        } else {
+                          setSortCriteria("username");
+                          setSortOrder("asc");
+                        }
+                      }}
+                    >
+                      {student.username}
+                    </h1>
+                  </div>
                 </div>
+                {student?.role === "STUDENT" && (
+                  <div
+                    onClick={() =>
+                      router.push(
+                        `${
+                          role === "INSTRUCTOR"
+                            ? `/instructor/assignments/${student.username}`
+                            : `/mentor/assignments/${student.username}`
+                        }`,
+                      )
+                    }
+                    className="cursor-pointer rounded-lg bg-blue-600 p-2 text-sm font-medium text-white"
+                  >
+                    Assignments
+                  </div>
+                )}
               </div>
-            ))
-        ) : (
-          <NoDataFound message="No students found!" />
-        )}
+            </div>
+          ))
+      ) : (
+        <NoDataFound message="No students found!" />
+      )}
     </div>
   );
 }

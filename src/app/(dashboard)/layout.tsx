@@ -16,4 +16,3 @@ export default async function RootLayout({
     </HomeLayout>
   );
 }
-

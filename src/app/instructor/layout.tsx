@@ -11,10 +11,5 @@ export default async function RootLayout({
   if (!currentUser || currentUser.role !== "INSTRUCTOR") {
     return null;
   }
-  return (
-    <HomeLayout currentUser={currentUser}>
-      {children}
-    </HomeLayout>
-  );
+  return <HomeLayout currentUser={currentUser}>{children}</HomeLayout>;
 }
-

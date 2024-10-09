@@ -1,37 +1,23 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
-import * as z from "zod";
+import { type Attachment } from "@prisma/client";
 
-const attachmentSchema = z.object({
-  title: z.string().min(1, {
-    message: "Title is required",
-  }),
-  link: z.string().optional(),
-  attachmentType: z.enum(["ASSIGNMENT", "GITHUB", "ZOOM", "OTHERS"]),
-  submissionMode: z.enum(["HTML_CSS_JS", "REACT", "EXTERNAL_LINK"]),
-  classId: z.string().min(1, {
-    message: "Class is required",
-  }),
-  courseId: z.string().optional(),
-  details: z.string().optional(),
-  dueDate: z.string().optional(),
-  maxSubmissions: z.number().int().positive().optional(),
-});
-
-export const createAttachment = async (data : z.infer<typeof attachmentSchema>) => {
+export const createAttachment = async (data: Attachment) => {
   const currentUser = await getCurrentUser();
 
-  const isCourseAdmin = currentUser?.adminForCourses?.some(course => course.id === data.courseId);
-  const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+  const isCourseAdmin = currentUser?.adminForCourses?.some(
+    (course) => course.id === data.courseId,
+  );
+  const haveAccess =
+    currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
 
   if (!haveAccess) {
     throw new Error("Unauthorized");
   }
 
-  if( data.maxSubmissions &&  data.maxSubmissions<=0){
+  if (data.maxSubmissions && data.maxSubmissions <= 0) {
     throw new Error("Max Submissions must be greater than 0");
   }
-
 
   const attachment = await db.attachment.create({
     data: {
@@ -49,7 +35,7 @@ export const createAttachment = async (data : z.infer<typeof attachmentSchema>) 
 
   await db.events.create({
     data: {
-      eventCategory:"ATTACHMENT_CREATION",
+      eventCategory: "ATTACHMENT_CREATION",
       causedById: currentUser.id,
       eventCategoryDataId: attachment.id,
     },
@@ -63,7 +49,7 @@ export const getAttachmentByID = async (id: string) => {
   if (!currentUser) {
     throw new Error("You must be logged in to view an attachment");
   }
-  
+
   const attachment = await db.attachment.findUnique({
     where: {
       id,
@@ -71,14 +57,14 @@ export const getAttachmentByID = async (id: string) => {
   });
 
   return attachment;
-}
+};
 
 export const deleteAttachment = async (id: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to delete an attachment");
   }
-  if(currentUser.role !=='INSTRUCTOR'){
+  if (currentUser.role !== "INSTRUCTOR") {
     throw new Error("You must be an instructor to delete an attachment");
   }
 
@@ -89,14 +75,13 @@ export const deleteAttachment = async (id: string) => {
   });
 
   return attachment;
-}
+};
 
-export const editAttachment = async (id: string, data : z.infer<typeof attachmentSchema>) => {
+export const editAttachment = async (id: string, data: Attachment) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to edit an attachment");
   }
-
 
   const attachment = await db.attachment.update({
     where: {
@@ -107,13 +92,13 @@ export const editAttachment = async (id: string, data : z.infer<typeof attachmen
       classId: data.classId,
       courseId: data.courseId,
       link: data.link,
-      attachmentType: data.attachmentType ,
+      attachmentType: data.attachmentType,
       submissionMode: data.submissionMode,
       details: data.details,
       dueDate: data.dueDate,
-      maxSubmissions:data.maxSubmissions,
+      maxSubmissions: data.maxSubmissions,
     },
   });
 
   return attachment;
-}
+};

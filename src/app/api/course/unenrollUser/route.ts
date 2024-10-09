@@ -1,14 +1,22 @@
 import { unenrollStudentFromCourse } from "@/actions/courses";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function POST (request : NextRequest) {
-    const { courseId, username } = await request.json();
+interface UnenrollUserType {
+  courseId: string;
+  username: string;
+}
 
-    try {
-        const user = await unenrollStudentFromCourse(courseId, username);
-        
-        return NextResponse.json(user);
-    } catch (e : any) {
-        return NextResponse.json({ error: e.message }, { status: 400 });
-    }
+export async function POST(request: NextRequest) {
+  const { courseId, username } = (await request.json()) as UnenrollUserType;
+
+  try {
+    const user = await unenrollStudentFromCourse(courseId, username);
+
+    return NextResponse.json(user);
+  } catch {
+    return NextResponse.json(
+      { error: "Error unenrolling user" },
+      { status: 400 },
+    );
+  }
 }

@@ -1,16 +1,14 @@
-import getCurrentUser from '@/actions/getCurrentUser'
-import Profile from './Profile'
-import { redirect } from 'next/navigation';
-import React from 'react'
+import getCurrentUser from "@/actions/getCurrentUser";
+import Profile from "./Profile";
+import { redirect } from "next/navigation";
+import React from "react";
 
 const Page = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    redirect('/signin');
+    redirect("/signin");
   }
-  return (
-    <Profile currentUser={currentUser} />
-  )
-}
+  return <Profile currentUser={currentUser} />;
+};
 
-export default Page
+export default Page;

@@ -1,53 +1,77 @@
 "use client";
 import { useRef, useEffect } from "react";
-import { Chart } from "chart.js/auto";
+import { Chart, type ChartConfiguration } from "chart.js/auto";
 
-export default function Barchart({classes,attendanceInEachClass,label,bgColors,currentUser}:any) {
-  const chartRef = useRef<any>(null);
+interface BarchartProps {
+  classes: string[];
+  attendanceInEachClass: number[];
+  label: string;
+  bgColors: string[];
+}
+
+export default function Barchart({
+  classes,
+  attendanceInEachClass,
+  label,
+  bgColors,
+}: BarchartProps) {
+  const chartRef = useRef<HTMLCanvasElement | null>(null);
+  const chartInstanceRef = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartRef.current.chart) {
-        chartRef.current.chart.destroy();
-      }
-      const context = chartRef.current.getContext("2d");
+      const ctx = chartRef.current.getContext("2d");
 
-      const newChart = new Chart(context,{
-        type:"bar",
-        data:{
-          labels:classes,
-          datasets:[
-            {
-              label:label,
-              data:attendanceInEachClass,
-              backgroundColor: bgColors,
-              borderColor:'white',
-              borderWidth: 0,
-            }
-          ]
-        },
-        options:{
-          // responsive:true,
-          scales:{
-            x:{
-              type:'category',
-            },
-            y:{
-              beginAtZero:true
-            }
+      if (ctx) {
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.destroy();
+        }
+
+        const config: ChartConfiguration = {
+          type: "bar",
+          data: {
+            labels: classes,
+            datasets: [
+              {
+                label: label,
+                data: attendanceInEachClass,
+                backgroundColor: bgColors,
+                borderColor: "white",
+                borderWidth: 0,
+              },
+            ],
           },
-          plugins:{
-            legend:{
-              position:"top"
-            }
-          }
-        },
-      })
-      chartRef.current.chart = newChart;
-    }
-  },[]);
+          options: {
+            scales: {
+              x: {
+                type: "category",
+              },
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              legend: {
+                position: "top",
+              },
+            },
+          },
+        };
 
-  return <div className={`h-full w-[80%]`}>
-    <canvas ref={chartRef}/>
-  </div>;
+        chartInstanceRef.current = new Chart(ctx, config);
+      }
+    }
+
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+    };
+  }, [classes, attendanceInEachClass, label, bgColors]);
+
+  return (
+    <div className="h-full w-4/5">
+      <canvas ref={chartRef} />
+    </div>
+  );
 }

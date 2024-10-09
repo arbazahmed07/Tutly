@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { SandpackFiles, useSandpack } from '@codesandbox/sandpack-react';
-import { AiOutlineFileAdd } from 'react-icons/ai';
-import { SandpackFileExplorer } from '@codesandbox/sandpack-react';
+import React, { useState, useEffect } from "react";
+import { type SandpackFiles, useSandpack } from "@codesandbox/sandpack-react";
+import { AiOutlineFileAdd } from "react-icons/ai";
+import { SandpackFileExplorer } from "@codesandbox/sandpack-react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
 const FileExplorer = () => {
@@ -19,26 +19,26 @@ const FileExplorer = () => {
   const handleAddFile = () => {
     if (newFilePath) {
       if (files[newFilePath]) {
-        alert('A file with this path already exists.');
+        alert("A file with this path already exists.");
         return;
       }
-      setFiles(prevFiles => ({
+      setFiles((prevFiles) => ({
         ...prevFiles,
-        [newFilePath]: { code: '' }
+        [newFilePath]: { code: "" },
       }));
-      sandpack.updateFile(newFilePath, '');
-      setNewFilePath('');
+      sandpack.updateFile(newFilePath, "");
+      setNewFilePath("");
       setShowFileInput(false);
     }
   };
 
   return (
     <div className="h-[95vh] overflow-y-scroll bg-white">
-      <div className="p-2 flex justify-center items-center space-x-2">
+      <div className="flex items-center justify-center space-x-2 p-2">
         <h2 className="text-lg font-semibold">File Explorer</h2>
         <button
           onClick={() => setShowFileInput(!showFileInput)}
-          className="p-2 bg-green-600 hover:bg-green-500 rounded text-white"
+          className="rounded bg-green-600 p-2 text-white hover:bg-green-500"
         >
           <AiOutlineFileAdd />
         </button>
@@ -50,18 +50,18 @@ const FileExplorer = () => {
             value={newFilePath}
             onChange={(e) => setNewFilePath(e.target.value)}
             placeholder="Enter new file path"
-            className="p-1 w-28 border border-gray-600 rounded"
+            className="w-28 rounded border border-gray-600 p-1"
           />
-          <div className='flex gap-1'>
+          <div className="flex gap-1">
             <button
               onClick={handleAddFile}
-              className="p-1 bg-green-600 hover:bg-green-500 rounded  text-white"
+              className="rounded bg-green-600 p-1 text-white hover:bg-green-500"
             >
               <FaCheck />
             </button>
             <button
               onClick={() => setShowFileInput(false)}
-              className="p-1 bg-red-600 hover:bg-red-500 rounded  text-white"
+              className="rounded bg-red-600 p-1 text-white hover:bg-red-500"
             >
               <FaTimes />
             </button>
@@ -71,6 +71,6 @@ const FileExplorer = () => {
       <SandpackFileExplorer />
     </div>
   );
-}
+};
 
 export default FileExplorer;

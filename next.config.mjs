@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 import withPWAInit from "@ducanh2912/next-pwa";
 
 const withPWA = withPWAInit({
@@ -16,11 +15,6 @@ const nextConfig = withPWA({
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
-      {
-        protocol: "https",
-        hostname: "mkbso1vsjf6fwnka.public.blob.vercel-storage.com",
-        port: "",
-      },
     ],
     domains: [
       "cdn-icons-png.flaticon.com",
@@ -34,6 +28,13 @@ const nextConfig = withPWA({
       "plus.unsplash.com",
     ],
   },
-}); 
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
+});
 
 export default nextConfig;

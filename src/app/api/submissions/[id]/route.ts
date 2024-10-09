@@ -1,13 +1,19 @@
 import { deleteSubmission } from "@/actions/points";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(request: NextRequest, { params }: { params: {id: string }}) {
-    try {
-        const submissionId = params.id;
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  try {
+    const submissionId = params.id;
 
-        await deleteSubmission(submissionId);
-        return NextResponse.json({ message: "Submission deleted" });
-    } catch (e :any) {
-        return NextResponse.json({ error: e.message }, { status: 400 });
-    }
+    await deleteSubmission(submissionId);
+    return NextResponse.json({ message: "Submission deleted" });
+  } catch {
+    return NextResponse.json(
+      { error: "Error deleting submission" },
+      { status: 400 },
+    );
+  }
 }

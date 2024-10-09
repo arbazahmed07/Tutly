@@ -1,8 +1,8 @@
-"use client"
-import { useEffect, useRef, useState } from 'react';
-import Image from "next/image"
-import axios from 'axios';
-import toast from 'react-hot-toast';
+"use client";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { FaCrown } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { LuReply } from "react-icons/lu";
@@ -14,12 +14,14 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button"
 
-
-export default function Accordion({ doubts, currentUser, currentCourseId }: any) {
-  const [openAccordion, setOpenAccordion] = useState(-1);
-  const [show, setShow] = useState(false);
-  const [message, setMessage] = useState('');
-
+export default function Accordion({
+  doubts,
+  currentUser,
+  currentCourseId,
+}: any) {
+  const [openAccordion, setOpenAccordion] = useState<number>(-1);
+  const [show, setShow] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
   const [dbts, setDbts] = useState(doubts || []);
   const [doubt, setDoubt] = useState<string>("");
@@ -28,12 +30,11 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
 
   useEffect(() => {
     setDbts(doubts);
-  }, [currentCourseId])
+  }, [currentCourseId]);
 
   const QA = dbts;
 
   const handleAddDoubt = async (data: any) => {
-
     const res = await axios.post("/api/doubts/postDoubt", {
       courseId: currentCourseId,
       title: undefined,
@@ -44,10 +45,8 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
     } else {
       toast.success("Doubt added successfully");
       setDoubt("");
-      if (!doubt)
-        setDbts([res.data]);
-      else
-        setDbts([...doubts, res.data]);
+      if (!doubt) setDbts([res.data]);
+      else setDbts([...doubts, res.data]);
     }
   };
 
@@ -64,14 +63,14 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
       toast.success("Reply added successfully");
       setReply("");
       setReplyId("");
-      if (!doubts)
-        setDbts([res.data]);
+      if (!doubts) setDbts([res.data]);
       else
         setDbts(
           doubts?.map((d: any) =>
-            (d) &&
-              d?.id === id ? { ...d, response: [...d.response, res.data] } : d
-          )
+            d && d?.id === id
+              ? { ...d, response: [...d.response, res.data] }
+              : d,
+          ),
         );
     }
   };
@@ -98,7 +97,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
         doubts.map((d: any) => ({
           ...d,
           response: d.response.filter((r: any) => r.id !== replyId),
-        }))
+        })),
       );
     }
   };
@@ -107,13 +106,11 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
     handleReply(replyId);
   };
 
-
   const handleEscKeyDown = (e: any) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       setShow(false);
     }
   };
-
 
   const toggleAccordion = (index: number) => {
     setOpenAccordion(openAccordion === index ? -1 : index);
@@ -126,11 +123,11 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const data = {
-      message: message
+      message: message,
     };
     if (!data.message) {
       toast.error("Please enter a message");
-      return
+      return;
     }
     handleAddDoubt(data);
     setShow(false);
@@ -150,7 +147,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
 
     let hour = dateTime.getHours();
     const minute = dateTime.getMinutes().toString().padStart(2, "0");
-    const ampm = hour >= 12 ? 'pm' : 'am';
+    const ampm = hour >= 12 ? "pm" : "am";
     hour = hour % 12 || 12;
 
     const formattedDate = `${day}/${month}/${year}`;
@@ -158,17 +155,17 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
 
     return `${formattedDate} , ${formattedTime}`;
   }
-  const [popover, setPopover] = useState(false)
+  const [popover, setPopover] = useState(false);
   const togglePopover = () => {
-    setPopover(prev => !prev);
+    setPopover((prev) => !prev);
   };
   const addDoubtRef = useRef(null);
 
   return (
-    <div className="bg-gradient-to-l w-full md:min-w-[800px]">
+    <div className="w-full bg-gradient-to-l md:min-w-[800px]">
       <div className="flex flex-col items-center text-sm font-medium">
-        <div className='w-full flex flex-row-reverse'>
-           <Button onClick={() => { handleShow(); setOpenAccordion(-1); }} className="py-3 px-4 rounded-md bg-blue-500 hover:bg-blue-600 text-white">
+        <div className='flex w-full flex-row-reverse'>
+           <Button onClick={() => { handleShow(); setOpenAccordion(-1); }} className="rounded-md bg-blue-500 px-4 py-3 text-white hover:bg-blue-600">
             {
               currentUser.role === 'STUDENT' ? "Ask a Doubt" : "Raise a Query"
             }
@@ -178,48 +175,83 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
           <DialogTitle>Enter your doubt here</DialogTitle>
           <DialogContent>
             <form className="mt-2" onSubmit={handleSubmit} onKeyDown={handleEscKeyDown}>
-              <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e) => handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block p-2.5 w-full rounded-lg outline-none bg-white border-2 text-secondary-950 "></textarea>
-              <Button onClick={() => setShow(false)} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md mt-3  mr-4">Cancel</Button>
-            <Button type="submit" onClick={handleSubmit} className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md mt-3">Submit</Button>
+              <textarea ref={addDoubtRef} id="message" placeholder='Start here...' onChange={(e) => handleChange(e)} onKeyDown={handleEscKeyDown} rows={4} value={message} className="block w-full rounded-lg border-2 bg-white p-2.5 text-secondary-950 outline-none "></textarea>
+              <Button onClick={() => setShow(false)} className="mr-4 mt-3 rounded-md bg-red-500 px-6 py-2 text-white  hover:bg-red-600">Cancel</Button>
+            <Button type="submit" onClick={handleSubmit} className="mt-3 rounded-md bg-blue-500 px-6 py-2 text-white hover:bg-blue-600">Submit</Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      {
-        doubts?.length !== 0 &&
-        <div id="accordion-color" data-accordion="collapse" className="mt-5 cursor-pointer" >
+      {doubts?.length !== 0 && (
+        <div
+          id="accordion-color"
+          data-accordion="collapse"
+          className="mt-5 cursor-pointer"
+        >
           {QA?.map((qa: any, index: number) => (
-            <div key={index} onClick={() => toggleAccordion(index)} className={`relative m-3 cursor-pointer rounded-md ${openAccordion === index ? "shadow-xl" : " shadow-3xl"} bg-white text-zinc-600 p-2 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]`}>
-              <div className={`flex items-center justify-between w-full p-3 flex-wrap font-medium gap-3`} >
-                <div className='flex justify-start items-center space-x-5 ml-2 relative'>
-                  {qa.user.role === 'STUDENT' &&
-                    <Image unoptimized src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
-                  }
-                  {qa.user.role === 'MENTOR' &&
-                    <div className='relative'>
-                      <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute -left-3 -top-3 transform -rotate-45' />
+            <div
+              key={index}
+              onClick={() => toggleAccordion(index)}
+              className={`relative m-3 cursor-pointer rounded-md ${openAccordion === index ? "shadow-xl" : "shadow-3xl"} bg-white p-2 text-zinc-600 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]`}
+            >
+              <div
+                className={`flex w-full flex-wrap items-center justify-between gap-3 p-3 font-medium`}
+              >
+                <div className="relative ml-2 flex items-center justify-start space-x-5">
+                  {qa.user.role === "STUDENT" && (
+                    <Image
+                      unoptimized
+                      src={qa.user?.image || "/images/placeholder.jpg"}
+                      alt="profile"
+                      width={30}
+                      height={30}
+                      className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-fuchsia-600 ring-offset-1"
+                    />
+                  )}
+                  {qa.user.role === "MENTOR" && (
+                    <div className="relative">
+                      <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
 
-                      <Image unoptimized src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
+                      <Image
+                        unoptimized
+                        src={qa.user?.image || "/images/placeholder.jpg"}
+                        alt="profile"
+                        width={30}
+                        height={30}
+                        className="rounded-full shadow-lg shadow-yellow-400/50"
+                      />
                     </div>
-                  }
-                  {qa.user.role === 'INSTRUCTOR' &&
-                    <div className='relative'>
-                      <FaCrown className='text-red-500 hover:text-red-600 drop-shadow-sm shadow-red-500 absolute -left-3 -top-3 transform -rotate-45' />
-                      <Image unoptimized src={qa.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
+                  )}
+                  {qa.user.role === "INSTRUCTOR" && (
+                    <div className="relative">
+                      <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-red-500 shadow-red-500 drop-shadow-sm hover:text-red-600" />
+                      <Image
+                        unoptimized
+                        src={qa.user?.image || "/images/placeholder.jpg"}
+                        alt="profile"
+                        width={30}
+                        height={30}
+                        className="rounded-full shadow-lg shadow-red-400/50"
+                      />
                     </div>
-                  }
-                  <div className=" flex flex-col justify-start gap-1">
+                  )}
+                  <div className="flex flex-col justify-start gap-1">
                     <div className="flex flex-row justify-start gap-3">
                       <p className="text-xs font-semibold">{qa?.user?.name} </p>
-                      <p className='text-xs font-medium'> [ {qa.user?.username} ]</p>
+                      <p className="text-xs font-medium">
+                        {" "}
+                        [ {qa.user?.username} ]
+                      </p>
                     </div>
                     <div>
-                      <p className='text-xs font-medium'>Posted on {formatDateTime(qa?.createdAt)}</p>
+                      <p className="text-xs font-medium">
+                        Posted on {formatDateTime(qa?.createdAt)}
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-7 justify-end items-center flex-wrap">
+                <div className="flex flex-wrap items-center justify-end gap-7">
                   {/* your reply for that answer */}
                   <div>
                     <Button
@@ -230,40 +262,48 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                         setReplyId(qa.id);
                       }}
                     >
-                      <LuReply className="cursor-pointer w-5 h-5" />
+                      <LuReply className="h-5 w-5 cursor-pointer" />
                     </Button>
                   </div>
                   <div hidden={currentUser.role !== 'INSTRUCTOR' && qa.user.role === 'INSTRUCTOR'}>
                     <Button
                       hidden={currentUser.role === 'STUDENT'}
-                      className="p-1 mr-2"
+                      className="mr-2 p-1"
                       onClick={() => handleDeleteDoubt(qa.id)}
                     >
-                      <MdDelete className='cursor-pointer  w-5 h-5 text-red-500 hover:text-red-600' />
+                      <MdDelete className='h-5  w-5 cursor-pointer text-red-500 hover:text-red-600' />
                     </Button>
                   </div>
                 </div>
               </div>
-              <div className="flex justify-between mx-4 items-center">
+              <div className="mx-4 flex items-center justify-between">
                 <div>
-                  <h1 className="rounded-md text-sm font-semibold text-justify">
+                  <h1 className="rounded-md text-justify text-sm font-semibold">
                     {qa.description}
                   </h1>
                 </div>
-                <div onClick={() => toggleAccordion(index)} className="text-sm font-medium border-2 border-blue-500 py-1.5 px-3 rounded-lg"><span className="rounded-full p-1">{qa.response.length} </span>| {openAccordion === index ? "Hide" : "Show"} replies</div>
+                <div
+                  onClick={() => toggleAccordion(index)}
+                  className="rounded-lg border-2 border-blue-500 px-3 py-1.5 text-sm font-medium"
+                >
+                  <span className="rounded-full p-1">
+                    {qa.response.length}{" "}
+                  </span>
+                  | {openAccordion === index ? "Hide" : "Show"} replies
+                </div>
               </div>
-              {
-                openAccordion === index && qa.response.length === 0 && (
-                  <div className="flex justify-center items-center  space-x-2 bg-secondary-200 p-3 m-2 rounded-lg hover:bg-secondary-300">
-                    <p className="text-medium text-gray-800 flex justify-start items-center font-bold">No responses</p>
-                  </div>
-                )
-              }
+              {openAccordion === index && qa.response.length === 0 && (
+                <div className="m-2 flex items-center justify-center space-x-2 rounded-lg bg-secondary-200 p-3 hover:bg-secondary-300">
+                  <p className="text-medium flex items-center justify-start font-bold text-gray-800">
+                    No responses
+                  </p>
+                </div>
+              )}
               {/* Replies */}
-              <div className="flex px-3 mt-2 items-center">
+              <div className="mt-2 flex items-center px-3">
                 {
                   popover && replyId === qa?.id && (
-                    <div className="bg-white border-2 rounded-lg p-3 w-full">
+                    <div className="w-full rounded-lg border-2 bg-white p-3">
                       <textarea
                         placeholder="Enter your reply"
                         value={reply}
@@ -276,57 +316,87 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                           }
                         }}
                         onChange={(e) => setReply(e.target.value)}
-                        className="w-full p-2 bg-white text-gray-800 border-2 rounded-lg outline-none text-sm"
+                        className="w-full rounded-lg border-2 bg-white p-2 text-sm text-gray-800 outline-none"
                       ></textarea>
-                      <div className="flex justify-end text-sm font-medium mt-3">
+                      <div className="mt-3 flex justify-end text-sm font-medium">
                         <Button
                           title="Close"
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mr-2"
+                          className="mr-2 flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                           onClick={() => setReplyId('')}
                         >
                           ✖ <p className="ml-1.5">Cancel</p>
                         </Button>
                         <Button
                           title="Send"
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-blue-600 bg-blue-500 text-white rounded-lg"
+                          className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                           onClick={() => handleReply(qa.id)}
                         >
                           ✔ <p className="ml-1.5">Reply</p>
                         </Button>
                       </div>
                     </div>
-                  )
-                }
+                )}
               </div>
-              {openAccordion === index && qa.response.length > 0 && (
-                <div className="bg-white p-3 rounded-lg text-black">
-                  <p className="font-semibold text-sm mb-2">Replies :</p>
-                  {qa.response.map((r: any, responseIndex: number) => (
-                    <div key={responseIndex} className="p-4 border-2 rounded-lg hover:bg-zinc-200 mb-2 text-zinc-600">
-                      <div className="flex justify-between items-center">
-                        <div className='flex space-x-5'>
-                          {r.user?.role === 'STUDENT' &&
-                            <Image unoptimized src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-offset-1 ring-fuchsia-600" />
-                          }
-                          {r.user?.role === 'MENTOR' &&
-                            <div className='relative'>
-                              <FaCrown className='text-yellow-400 hover:text-yellow-500 drop-shadow-sm shadow-yellow-500 absolute -left-3 -top-3 transform -rotate-45' />
-                              <Image unoptimized src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-yellow-400/50  " />
+              {openAccordion === index && qa?.response.length > 0 && (
+                <div className="rounded-lg bg-white p-3 text-black">
+                  <p className="mb-2 text-sm font-semibold">Replies :</p>
+                  {qa?.response.map((r: any, responseIndex: number) => (
+                    <div
+                      key={responseIndex}
+                      className="mb-2 rounded-lg border-2 p-4 text-zinc-600 hover:bg-zinc-200"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex space-x-5">
+                          {r.user?.role === "STUDENT" && (
+                            <Image
+                              unoptimized
+                              src={r.user?.image || "/images/placeholder.jpg"}
+                              alt="profile"
+                              width={30}
+                              height={30}
+                              className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-fuchsia-600 ring-offset-1"
+                            />
+                          )}
+                          {r.user?.role === "MENTOR" && (
+                            <div className="relative">
+                              <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
+                              <Image
+                                unoptimized
+                                src={r.user?.image || "/images/placeholder.jpg"}
+                                alt="profile"
+                                width={30}
+                                height={30}
+                                className="rounded-full shadow-lg shadow-yellow-400/50"
+                              />
                             </div>
-                          }
-                          {r.user?.role === 'INSTRUCTOR' &&
-                            <div className='relative'>
-                              <PiCrownSimpleFill className='text-red-400 hover:text-red-500 drop-shadow-sm shadow-red-500 absolute -left-3 -top-3 transform -rotate-45' />
-                              <Image unoptimized src={r.user?.image || "/images/placeholder.jpg"} alt="profile" width={30} height={30} className="rounded-full shadow-lg shadow-red-400/50  " />
+                          )}
+                          {r.user?.role === "INSTRUCTOR" && (
+                            <div className="relative">
+                              <PiCrownSimpleFill className="absolute -left-3 -top-3 -rotate-45 text-red-400 shadow-red-500 drop-shadow-sm hover:text-red-500" />
+                              <Image
+                                unoptimized
+                                src={r.user?.image || "/images/placeholder.jpg"}
+                                alt="profile"
+                                width={30}
+                                height={30}
+                                className="rounded-full shadow-lg shadow-red-400/50"
+                              />
                             </div>
-                          }
-                          <div className=" flex flex-col justify-start gap-1">
+                          )}
+                          <div className="flex flex-col justify-start gap-1">
                             <div className="flex flex-row justify-start gap-3">
-                              <p className="text-xs font-semibold">{r?.user?.name} </p>
-                              <p className='text-xs font-medium'> [ {r?.user?.username} ]</p>
+                              <p className="text-xs font-semibold">
+                                {r?.user?.name}{" "}
+                              </p>
+                              <p className="text-xs font-medium">
+                                {" "}
+                                [ {r?.user?.username} ]
+                              </p>
                             </div>
                             <div>
-                              <p className='text-xs font-medium'>Posted on {formatDateTime(r?.createdAt)}</p>
+                              <p className="text-xs font-medium">
+                                Posted on {formatDateTime(r?.createdAt)}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -334,12 +404,12 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                           {
                             (currentUser.role === 'MENTOR' || currentUser.role === 'INSTRUCTOR') &&
                             <Button onClick={() => handleDeleteReply(r.id)}>
-                              <MdDelete className='cursor-pointer w-5 h-5 text-red-500 hover:text-red-600' />
+                              <MdDelete className='h-5 w-5 cursor-pointer text-red-500 hover:text-red-600' />
                             </Button>
                           }
                         </div>
                       </div>
-                      <div className="text-sm font-semibold mt-2 -mb-2">
+                      <div className="-mb-2 mt-2 text-sm font-semibold">
                         {r.description}
                       </div>
                     </div>
@@ -349,7 +419,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
             </div>
           ))}
         </div>
-      }
+      )}
     </div>
   );
 }

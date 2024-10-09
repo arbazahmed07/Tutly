@@ -1,18 +1,9 @@
+"use client";
 
-'use client'
-
-import React from 'react';
+import React from "react";
 
 const Page = () => {
-
-
-    return (
-        <div>
-            this is un reviewed page
-        </div>
-    );
+  return <div>this is un reviewed page</div>;
 };
 
 export default Page;
-
-

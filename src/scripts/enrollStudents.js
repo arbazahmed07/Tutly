@@ -1,6 +1,6 @@
-const { PrismaClient } = require("@prisma/client");
-const dayjs = require("dayjs");
-const fs = require("fs");
+import { PrismaClient } from "@prisma/client";
+import dayjs from "dayjs";
+import { writeFileSync } from "fs";
 const db = new PrismaClient();
 
 async function main() {
@@ -65,7 +65,7 @@ async function main() {
       obj[submission.enrolledUser.username].submissions.add(submission.id);
       obj[submission.enrolledUser.username].submissionsLength++;
       obj[submission.enrolledUser.username].assignments.add(
-        submission.attachmentId
+        submission.attachmentId,
       );
       obj[submission.enrolledUser.username].assignmentLength =
         obj[submission.enrolledUser.username].assignments.size;
@@ -88,16 +88,18 @@ async function main() {
         },
       },
     },
-  });  
+  });
 
   Object.values(obj).forEach((ob) => {
     try {
-      const userPoints = points.filter(
-        (point) => point.submissions ? point.submissions.enrolledUser.username === ob.username : false
+      const userPoints = points.filter((point) =>
+        point.submissions
+          ? point.submissions.enrolledUser.username === ob.username
+          : false,
       );
       ob.score = userPoints.reduce((acc, curr) => acc + curr.score, 0);
       ob.submissionEvaluatedLength = new Set(
-        userPoints.map((point) => point.submissions.id)
+        userPoints.map((point) => point.submissions.id),
       ).size;
     } catch (e) {
       console.log(ob.username);
@@ -108,7 +110,7 @@ async function main() {
     ob.attendance = (groupedAttendance[ob.username] * 100) / totalClasses;
   });
 
- const SelectedFields = Object.values(obj).map((ob) => {
+  const SelectedFields = Object.values(obj).map((ob) => {
     return {
       username: ob.username,
       name: ob.name,
@@ -124,12 +126,12 @@ async function main() {
   SelectedFields.sort((a, b) => a.name.localeCompare(b.name));
   SelectedFields.sort((a, b) => b.score - a.score);
   SelectedFields.sort((a, b) =>
-    a.mentorUsername.localeCompare(b.mentorUsername)
+    a.mentorUsername.localeCompare(b.mentorUsername),
   );
 
   // filter assignments length >= 28  or submissions length >= 30
   const filteredUsers = Object.values(SelectedFields).filter(
-    (ob) => ob.assignmentLength >= 28 || ob.submissionLength >= 30
+    (ob) => ob.assignmentLength >= 28 || ob.submissionLength >= 30,
   );
 
   console.log(filteredUsers.length);
@@ -146,9 +148,9 @@ async function main() {
     "username,name,submissionLength,assignmentLength,score,submissionEvaluatedLength,attendance,mentorUsername";
 
   const currentDateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
-  fs.writeFileSync(
+  writeFileSync(
     `user-stats-${currentDateTime}.csv`,
-    csvHeader + "\n" + csv.join("\n")
+    csvHeader + "\n" + csv.join("\n"),
   );
 
   const enrolledUsers = await db.enrolledUsers.createMany({

@@ -1,10 +1,15 @@
 import { deleteAnyDoubt } from "@/actions/doubts";
 import getCurrentUser from "@/actions/getCurrentUser";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(request: NextRequest,{params}:{
-  params: { id: string }
-}) {
+export async function DELETE(
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: { id: string };
+  },
+) {
   const { id } = params;
 
   try {
@@ -14,7 +19,10 @@ export async function DELETE(request: NextRequest,{params}:{
     }
     await deleteAnyDoubt(id);
     return NextResponse.json({ id });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error deleting doubt" },
+      { status: 400 },
+    );
   }
 }

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Editor from "@monaco-editor/react";
 import {
@@ -18,15 +18,15 @@ export default function MonacoEditor() {
   };
 
   return (
-    <SandpackStack
-      className="h-[95vh] margin-0"
-    >
+    <SandpackStack className="margin-0 h-[95vh]">
       <FileTabs closableTabs />
-      <div className="flex-1 pt-2 h-screen">
+      <div className="h-screen flex-1 pt-2">
         <Editor
           width="100%"
           height="100%"
-          language={languageMap[sandpack.activeFile.split(".")[1]] || "plaintext"}
+          language={
+            languageMap[sandpack.activeFile.split(".")[1]] || "plaintext"
+          }
           theme="vs-light"
           key={sandpack.activeFile}
           value={code}

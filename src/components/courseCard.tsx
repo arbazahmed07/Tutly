@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IoMdBookmarks } from "react-icons/io";
@@ -25,10 +25,14 @@ export default function CourseCard({ course, currentUser }: any) {
         id: id,
         title: courseTitle,
         isPublished: isPublished,
-        image: img
+        image: img,
       });
 
-      if (res.data.error || res.data.error === "Failed to add new Class" || res.data === null) {
+      if (
+        res.data.error ||
+        res.data.error === "Failed to add new Class" ||
+        res.data === null
+      ) {
         toast.error("Failed to edit course");
       } else {
         toast.success("Course edited successfully");
@@ -45,11 +49,10 @@ export default function CourseCard({ course, currentUser }: any) {
       setCourseTitle(course.title);
       setImg(course.image);
       setIsPublished(course.isPublished);
-      setOpenPopup(false); // Close the dialog
+      setOpenPopup(!openPopup);
       router.refresh();
     }
   };
-
   const expired = () => {
     if (!course.endDate) return false;
     const endDate = new Date(course.endDate);
@@ -58,12 +61,26 @@ export default function CourseCard({ course, currentUser }: any) {
   };
 
   return (
-    <div key={course.id} className="rounded-lg border m-auto mt-3 w-[280px] md:mx-2" style={{ boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px" }}>
-      <div className="h-[150px] relative text-secondary-700 bg-white rounded-t-lg cursor-pointer" onClick={expired() ? () => router.push(`/courses`) : () => router.push(`/courses/${course.id}`)}>
-        <div className="h-full w-full relative">
+    <div
+      key={course.id}
+      className="m-auto mt-3 w-[280px] rounded-lg border shadow-lg md:mx-2"
+    >
+      <div
+        className="relative h-[150px] cursor-pointer rounded-t-lg bg-white text-secondary-700"
+        onClick={
+          expired()
+            ? () => router.push(`/courses`)
+            : () => router.push(`/courses/${course.id}`)
+        }
+      >
+        <div className="relative h-full w-full">
           {course && (
-            <Image unoptimized
-              src={course.image || "https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg"}
+            <Image
+              unoptimized
+              src={
+                course.image ||
+                "https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg"
+              }
               alt="course image"
               layout="fill"
               className="rounded-t-lg"
@@ -71,103 +88,124 @@ export default function CourseCard({ course, currentUser }: any) {
             />
           )}
           <div>
-            {course.isPublished === false && currentUser?.role === 'INSTRUCTOR' && (
-              <div className="absolute top-0 right-0 m-3 text-xs flex border items-center text-secondary-50 bg-red-500 p-1 rounded-md">
-                <h1 className="text-xs font-medium">Draft</h1>
-              </div>
-            )}
+            {course.isPublished === false &&
+              currentUser?.role === "INSTRUCTOR" && (
+                <div className="absolute right-0 top-0 m-3 flex items-center rounded-md border bg-red-500 p-1 text-xs text-secondary-50">
+                  <h1 className="text-xs font-medium">Draft</h1>
+                </div>
+              )}
           </div>
         </div>
-        <div className="absolute bottom-0 right-0 m-3 text-xs flex items-center text-secondary-50 border bg-blue-500 p-1 rounded-md">
+        <div className="absolute bottom-0 right-0 m-3 flex items-center rounded-md border bg-blue-500 p-1 text-xs text-secondary-50">
           <IoMdBookmarks className="mr-1" />
-          <h1 className="text-xs font-medium">{course._count.classes} Classes</h1>
+          <h1 className="text-xs font-medium">
+            {course._count.classes} Classes
+          </h1>
         </div>
       </div>
-      <div className="h-[50px] border-t flex justify-between px-2 items-center">
-        {expired() ?
+      <div className="flex h-[50px] items-center justify-between border-t px-2">
+        {expired() ? (
           <div className="cursor-pointer">
             <h1 className="text-sm">{course?.title} [ Course Expired ]</h1>
-          </div> :
-          <div onClick={() => router.push(`/courses/${course.id}`)} className="cursor-pointer">
+          </div>
+        ) : (
+          <div
+            onClick={() => router.push(`/courses/${course.id}`)}
+            className="cursor-pointer"
+          >
             <h1 className="text-sm">{course?.title}</h1>
           </div>
-        }
-        {currentUser.role === 'INSTRUCTOR' &&
+        )}
+        {currentUser.role === "INSTRUCTOR" && (
           <div className="flex items-center justify-between gap-3">
             <Suspense fallback={<Loader />}>
-              <button title="btn" onClick={() => router.push(`/instructor/course/${course.id}/manage`)}>
-                <FaUsersGear className="w-5 h-5 cursor-pointer hover:opacity-100 opacity-90" />
+              <button
+                title="btn"
+                onClick={() =>
+                  router.push(`/instructor/course/${course.id}/manage`)
+                }
+              >
+                <FaUsersGear className="h-5 w-5 cursor-pointer opacity-90 hover:opacity-100" />
               </button>
             </Suspense>
             <Suspense fallback={<Loader />}>
               <Dialog open={openPopup} onOpenChange={setOpenPopup}>
                 <DialogTrigger asChild>
                   <button title="btn" onClick={() => setOpenPopup(true)}>
-                    <MdOutlineEdit className="w-5 h-5 cursor-pointer hover:opacity-100 opacity-90" />
+                    <MdOutlineEdit className="h-5 w-5 cursor-pointer opacity-90 hover:opacity-100" />
                   </button>
                 </DialogTrigger>
                 <div className="flex items-center justify-center">
-                <DialogContent className="fixed z-50 dark:text-white bg-zinc-400 text-black">
-                  <div>
-                    <div className="mb-4">
-                      <h1 className="text-lg font-semibold text-center my-4">EDIT COURSE</h1>
+                  <DialogContent className="fixed z-50 bg-zinc-400 text-black dark:text-white">
+                    <div>
+                      <div className="mb-4">
+                        <h1 className="my-4 text-center text-lg font-semibold">
+                          EDIT COURSE
+                        </h1>
+                        <input
+                          onChange={(e) => setCourseTitle(e.target.value)}
+                          value={courseTitle}
+                          type="text"
+                          className="m-auto mb-4 block w-full rounded bg-background p-2 outline-none"
+                          placeholder="Title"
+                        />
+                      </div>
+                      <label htmlFor="publish">Publish:</label>
+                      <div className="mb-4 flex items-center space-x-5">
+                        <div className="flex items-center justify-start">
+                          <input
+                            type="radio"
+                            id="yes"
+                            name="publish"
+                            value="true"
+                            checked={isPublished === true}
+                            className="mr-1 h-4 w-4"
+                            onChange={(e) =>
+                              setIsPublished(e.target.value === "true")
+                            }
+                          />
+                          <label htmlFor="yes">Yes</label>
+                        </div>
+                        <div className="flex items-center justify-start">
+                          <input
+                            type="radio"
+                            id="no"
+                            name="publish"
+                            value="false"
+                            checked={isPublished === false}
+                            className="mr-1 h-4 w-4"
+                            onChange={(e) =>
+                              setIsPublished(e.target.value === "false")
+                            }
+                          />
+                          <label htmlFor="no">No</label>
+                        </div>
+                      </div>
                       <input
-                        onChange={(e) => setCourseTitle(e.target.value)}
-                        value={courseTitle}
+                        onChange={(e) => setImg(e.target.value)}
+                        value={img ? img : ""}
                         type="text"
-                        className="rounded p-2 outline-none block m-auto w-full mb-4 bg-background"
-                        placeholder="Title"
+                        className="m-auto my-3 block w-full rounded bg-background p-2 outline-none"
+                        placeholder="Paste image link here"
                       />
+                      <button
+                        disabled={text === "Modifying..."}
+                        onClick={() => {
+                          handleEditCourse(course.id);
+                          setText("Modifying...");
+                        }}
+                        className="my-3 flex w-full items-center justify-center rounded-md bg-primary-500 p-2 text-white hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-secondary-800"
+                      >
+                        {text}
+                      </button>
                     </div>
-                    <label htmlFor="publish">Publish:</label>
-                    <div className="space-x-5 flex items-center mb-4">
-                      <div className="flex justify-start items-center">
-                        <input
-                          type="radio"
-                          id="yes"
-                          name="publish"
-                          value="true"
-                          checked={isPublished === true}
-                          className="w-4 h-4 mr-1"
-                          onChange={(e) => setIsPublished(e.target.value === 'true')}
-                        />
-                        <label htmlFor="yes">Yes</label>
-                      </div>
-                      <div className="flex justify-start items-center">
-                        <input
-                          type="radio"
-                          id="no"
-                          name="publish"
-                          value="false"
-                          checked={isPublished === false}
-                          className="w-4 h-4 mr-1"
-                          onChange={(e) => setIsPublished(e.target.value === 'false')}
-                        />
-                        <label htmlFor="no">No</label>
-                      </div>
-                    </div>
-                    <input
-                      onChange={(e) => setImg(e.target.value)}
-                      value={img ? img : ''}
-                      type="text"
-                      className="rounded p-2 my-3 outline-none block m-auto w-full bg-background"
-                      placeholder="Paste image link here"
-                    />
-                    <button
-                      disabled={text === "Modifying..."}
-                      onClick={() => { handleEditCourse(course.id); setText("Modifying...") }}
-                      className="rounded-md flex justify-center items-center disabled:bg-secondary-800 disabled:cursor-not-allowed bg-primary-500 hover:bg-primary-600 p-2 my-3 w-full text-white"
-                    >
-                      {text}
-                    </button>
-                  </div>
-                </DialogContent>
+                  </DialogContent>
                 </div>
               </Dialog>
             </Suspense>
           </div>
-        }
+        )}
       </div>
     </div>
-  )
+  );
 }

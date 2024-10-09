@@ -1,66 +1,72 @@
 "use client";
 import { useRef, useEffect } from "react";
-import { Chart } from "chart.js/auto";
+import { Chart, type ChartConfiguration } from "chart.js/auto";
 
-export default function Doughnutchart({attendance}:{attendance:any}) {
-  const chartRef = useRef<any>(null);
+interface DoughnutchartProps {
+  attendance: number[];
+}
+
+export default function Doughnutchart({ attendance }: DoughnutchartProps) {
+  const chartRef = useRef<HTMLCanvasElement | null>(null);
+  const chartInstanceRef = useRef<Chart | null>(null);
 
   useEffect(() => {
     if (chartRef.current) {
-      if (chartRef.current.chart) {
-        chartRef.current.chart.destroy();
+      const ctx = chartRef.current.getContext("2d");
+
+      if (ctx) {
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.destroy();
+        }
+
+        const config: ChartConfiguration = {
+          type: "doughnut",
+          data: {
+            datasets: [
+              {
+                label: "classes",
+                data: attendance,
+                backgroundColor: ["rgb(37,99,235)", "red"],
+                borderColor: "white",
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: {
+                position: "top",
+              },
+            },
+          },
+        };
+
+        chartInstanceRef.current = new Chart(ctx, config);
       }
-      const context = chartRef.current.getContext("2d");
-
-      const newChart = new Chart(context,{
-        type:"doughnut",
-        data:{
-          // labels:classes,
-          datasets:[
-            {
-              label:"classes",
-              data:attendance,
-              backgroundColor: [
-                'rgb(37,99,235)',
-                // 'green',
-                'red'
-              ],
-              borderColor:'white',
-              borderWidth: 0,
-            }
-          ]
-        },
-        options:{
-          // responsive:true,
-          // scales:{
-          //   x:{
-          //     type:'category',
-          //   },
-          //   y:{
-          //     beginAtZero:true
-          //   }
-          // },
-          // plugins:{
-          //   legend:{
-          //     position:"top"
-          //   }
-          // }
-        },
-      })
-      chartRef.current.chart = newChart;
     }
-  },[]);
 
-  const attendancePercentage = (attendance[0] * 100 / (attendance[0] + attendance[1])).toFixed(2)
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+    };
+  }, [attendance]);
+
+  const attendancePercentage =
+    attendance[0] && attendance[1]
+      ? ((attendance[0] * 100) / (attendance[0] + attendance[1])).toFixed(2)
+      : "0.00";
 
   return (
-    <div className="relative w-full mb-2">
+    <div className="relative mb-2 w-full">
       <canvas ref={chartRef} />
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
-          <span className="font-bold text-3xl">{attendancePercentage==='100.00'?"100":attendancePercentage}%</span>
+          <span className="text-3xl font-bold">
+            {attendancePercentage === "100.00" ? "100" : attendancePercentage}%
+          </span>
         </div>
       </div>
     </div>
-  )
+  );
 }

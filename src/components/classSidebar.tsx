@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { MdAddToQueue } from "react-icons/md";
 import { FaFolder } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa6";
+import { type Class } from "@prisma/client";
 
 function ClassSidebar({
   params,
@@ -34,14 +35,15 @@ function ClassSidebar({
     }
   };
 
-  const groupedClasses: { [key: string]: any[] } = {};
+  const groupedClasses: Record<string, Class[]> = {};
   const classesWithoutFolders: any[] = [];
-  classes.forEach((classItem: any) => {
+  classes?.forEach((classItem: Class) => {
     if (classItem.folderId) {
       if (!groupedClasses[classItem.folderId]) {
         groupedClasses[classItem.folderId] = [];
       }
-      groupedClasses[classItem.folderId].push(classItem);
+
+      groupedClasses[classItem.folderId]?.push(classItem);
     } else {
       classesWithoutFolders.push(classItem);
     }
@@ -50,40 +52,40 @@ function ClassSidebar({
   return (
     <div className="relative z-10">
       <div
-        className={` min-w-[170px] ${
+        className={`min-w-[170px] ${
           !open && "hidden"
-        } max-sm:absolute sticky sm:top-10 flex flex-col px-2 items-start bg-background py-3 gap-2 h-dvh shadow-xl`}
+        } sticky flex h-dvh flex-col items-start gap-2 bg-background px-2 py-3 shadow-xl max-sm:absolute sm:top-10`}
       >
-        <div className=" flex items-center justify-center">
+        <div className="flex items-center justify-center">
           <Link href={`/courses/${params.id}`} className="cursor-pointer">
-            <h1 className="p-3 text-sm font-medium border-b-2">{title}</h1>
+            <h1 className="border-b-2 p-3 text-sm font-medium">{title}</h1>
           </Link>
         </div>
         {Object.keys(groupedClasses).map((folderId: string) => {
           const folder = classes.find(
-            (c: any) => c.folderId === folderId
+            (c: any) => c.folderId === folderId,
           )?.Folder;
           if (folder) {
             return (
               <div key={folder.id}>
                 <h2
                   onClick={() => toggleFolder(folder.id)}
-                  className="flex items-center justify-start px-6 py-2 cursor-pointer text-sm font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
+                  className="flex cursor-pointer items-center justify-start px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
                 >
                   {openFolders.includes(folder.id) ? (
-                    <FaFolderOpen className=" w-4 h-4" />
+                    <FaFolderOpen className="h-4 w-4" />
                   ) : (
-                    <FaFolder className=" w-4 h-4" />
+                    <FaFolder className="h-4 w-4" />
                   )}
                   &nbsp; {folder.title}
                 </h2>
                 {openFolders.includes(folder.id) && (
                   <div className="ml-4">
-                    {groupedClasses[folderId].map((classItem: any) => (
+                    {groupedClasses[folderId]?.map((classItem: any) => (
                       <Link
                         key={classItem.id}
                         href={`/courses/${params.id}/class/${classItem.id}`}
-                        className={`px-6 py-2 flex items-center gap-2 cursor-pointer rounded-md hover:text-white hover:bg-blue-500 ${
+                        className={`flex cursor-pointer items-center gap-2 rounded-md px-6 py-2 hover:bg-blue-500 hover:text-white ${
                           pathname ===
                             `/courses/${params.id}/class/${classItem.id}` &&
                           "bg-sky-500 text-white"
@@ -103,7 +105,7 @@ function ClassSidebar({
           <Link
             key={classItem.id}
             href={`/courses/${params.id}/class/${classItem.id}`}
-            className={`px-6 py-2 flex items-center gap-2 cursor-pointer text-white rounded-md hover:bg-blue-500 ${
+            className={`flex cursor-pointer items-center gap-2 rounded-md px-6 py-2 text-white hover:bg-blue-500 ${
               pathname === `/courses/${params.id}/class/${classItem.id}` &&
               "bg-sky-500 text-white"
             }`}
@@ -112,12 +114,12 @@ function ClassSidebar({
             {classItem.title}
           </Link>
         ))}
-        <div className="flex-grow"></div>
+        <div className="grow"></div>
         {pathname !== `/courses/${params.id}/class/new` &&
           (currentUser?.role === "INSTRUCTOR" || isCourseAdmin) && (
             <Link
               href={`/courses/${params.id}/class/new`}
-              className={`px-6 py-2 mb-16 flex items-center gap-2 cursor-pointer rounded-xl text-white bg-blue-500`}
+              className={`mb-16 flex cursor-pointer items-center gap-2 rounded-xl bg-blue-500 px-6 py-2 text-white`}
             >
               <MdAddToQueue />
               Add Class
@@ -126,7 +128,7 @@ function ClassSidebar({
 
         <div
           onClick={() => setOpen(!open)}
-          className="absolute right-0 top-[250px] bg-blue-500 py-2 rounded-l-lg cursor-pointer"
+          className="absolute right-0 top-[250px] cursor-pointer rounded-l-lg bg-blue-500 py-2"
         >
           <IoIosArrowBack />
         </div>
@@ -135,7 +137,7 @@ function ClassSidebar({
         {!open && (
           <div
             onClick={() => setOpen(!open)}
-            className="fixed left-0 top-[300px] bg-blue-500 py-2 rounded-r-lg cursor-pointer"
+            className="fixed left-0 top-[300px] cursor-pointer rounded-r-lg bg-blue-500 py-2"
           >
             <IoIosArrowForward />
           </div>

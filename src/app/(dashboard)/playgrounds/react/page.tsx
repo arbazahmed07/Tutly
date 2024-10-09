@@ -4,9 +4,7 @@ import ReactPlayground from "./ReactPlayground";
 const page = async () => {
   const currentUser = await getCurrentUser();
 
-  return (
-    <ReactPlayground currentUser={currentUser} />
-  );
+  return <ReactPlayground currentUser={currentUser} />;
 };
 
 export default page;

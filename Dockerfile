@@ -6,13 +6,9 @@ WORKDIR /app
 
 RUN apk add --no-cache libc6-compat curl
 
-
 # Copy package.json and package-lock.json files
 COPY package*.json ./
 COPY prisma ./prisma/
-
-# Copy the environment variables file (if exists)
-COPY .env .env
 
 # Install dependencies
 RUN npm install --frozen-lockfile
@@ -41,9 +37,6 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
-
-# Copy the environment variables file (if exists)
-COPY .env .env
 
 # Install only production dependencies
 RUN npm install --only=production

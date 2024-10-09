@@ -1,45 +1,39 @@
-"use client"
+"use client";
 
 import day from "@/lib/dayjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import {  useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
-const EvaluateSubmission = ({
-  submission
-}: {
-  submission: any
-}) => {
-
+const EvaluateSubmission = ({ submission }: { submission: any }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedScores, setEditedScores] = useState({
     responsiveness: 0,
     styling: 0,
     other: 0,
   });
-  const [feedback, setFeedback] = useState<string | null>(submission.overallFeedback || null);
+  const [feedback, setFeedback] = useState<string | null>(
+    submission.overallFeedback || null,
+  );
 
   const rValue = submission.points.find(
-    (point: any) => point.category === "RESPOSIVENESS"
+    (point: any) => point.category === "RESPOSIVENESS",
   );
   const sValue = submission.points.find(
-    (point: any) => point.category === "STYLING"
+    (point: any) => point.category === "STYLING",
   );
   const oValue = submission.points.find(
-    (point: any) => point.category === "OTHER"
+    (point: any) => point.category === "OTHER",
   );
 
-  const totalScore = [rValue, sValue, oValue].reduce(
-    (acc, currentValue) => {
-      return acc + (currentValue ? currentValue.score : 0);
-    },
-    0
-  );
+  const totalScore = [rValue, sValue, oValue].reduce((acc, currentValue) => {
+    return acc + (currentValue ? currentValue.score : 0);
+  }, 0);
 
   const handleFeedback = async (submissionId: string) => {
     try {
-      if (!feedback) return
+      if (!feedback) return;
       const res = await axios.post("/api/feedback", {
         submissionId: submissionId,
         feedback: feedback,
@@ -48,21 +42,19 @@ const EvaluateSubmission = ({
     } catch (e: any) {
       toast.error("Failed to save feedback");
     }
-  }
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
-    const rValue =
-      submission &&
-      submission.points.find(
-        (point: any) => point.category === "RESPOSIVENESS"
-      );
-    const sValue =
-      submission &&
-      submission.points.find((point: any) => point.category === "STYLING");
-    const oValue =
-      submission &&
-      submission.points.find((point: any) => point.category === "OTHER");
+    const rValue = submission?.points.find(
+      (point: any) => point.category === "RESPOSIVENESS",
+    );
+    const sValue = submission?.points.find(
+      (point: any) => point.category === "STYLING",
+    );
+    const oValue = submission?.points.find(
+      (point: any) => point.category === "OTHER",
+    );
     setEditedScores({
       responsiveness: rValue ? rValue.score : 0,
       styling: sValue ? sValue.score : 0,
@@ -70,14 +62,13 @@ const EvaluateSubmission = ({
     });
   };
 
-  const router = useRouter()
-
+  const router = useRouter();
 
   const handleSave = async () => {
     try {
       toast.loading("Updating Scores...");
 
-      let marks = [];
+      const marks = [];
       if (editedScores.responsiveness > 0) {
         marks.push({
           category: "RESPOSIVENESS",
@@ -111,89 +102,74 @@ const EvaluateSubmission = ({
       toast.error("Failed to save scores");
     } finally {
       setIsEditing(false);
-      router.refresh()
+      router.refresh();
     }
   };
 
   const handleDelete = async () => {
-    const response = confirm("Are you sure you want to delete this submission?");
+    const response = confirm(
+      "Are you sure you want to delete this submission?",
+    );
     if (!response) return;
     try {
       toast.loading("Deleting Submission...");
       const res = await axios.delete(`/api/submissions/${submission.id}`);
       toast.dismiss();
       toast.success("Submission deleted successfully");
-      router.refresh()
+      router.refresh();
     } catch (e: any) {
       toast.dismiss();
       toast.error("Failed to delete submission");
     }
-  }
+  };
 
   return (
     <div className="overflow-x-scroll">
-      <table className="text-center w-full text-black ">
-        <thead className="bg-secondary-300 text-secondary-700 sticky top-0">
+      <table className="w-full text-center text-black">
+        <thead className="sticky top-0 bg-secondary-300 text-secondary-700">
           <tr>
-            <th className="px-2 py-1 z-10 text-xs font-medium uppercase sticky left-0 text-secondary-700 bg-secondary-300 ">
+            <th className="sticky left-0 z-10 bg-secondary-300 px-2 py-1 text-xs font-medium uppercase text-secondary-700">
               username
             </th>
-            <th className="px-2 py-1 text-xs font-medium uppercase sticky left-0 text-secondary-700 bg-secondary-300 ">
+            <th className="sticky left-0 bg-secondary-300 px-2 py-1 text-xs font-medium uppercase text-secondary-700">
               name
             </th>
-            <th
-              scope="col"
-              className="px-2 py-1 text-xs font-medium uppercase"
-            >
+            <th scope="col" className="px-2 py-1 text-xs font-medium uppercase">
               Submission Date
             </th>
-            <th
-              scope="col"
-              className="px-2 py-1 text-xs font-medium uppercase"
-            >
+            <th scope="col" className="px-2 py-1 text-xs font-medium uppercase">
               Responsiveness (/10)
             </th>
-            <th
-              scope="col"
-              className="px-2 py-1 text-xs font-medium uppercase"
-            >
+            <th scope="col" className="px-2 py-1 text-xs font-medium uppercase">
               Styling (/10)
             </th>
-            <th
-              scope="col"
-              className="px-2 py-1 text-xs font-medium uppercase"
-            >
+            <th scope="col" className="px-2 py-1 text-xs font-medium uppercase">
               Others (/10)
             </th>
-            <th
-              scope="col"
-              className="px-2 py-1 text-xs font-medium uppercase"
-            >
+            <th scope="col" className="px-2 py-1 text-xs font-medium uppercase">
               Total
             </th>
-            <th
-              scope="col"
-              className="px-2 py-1 text-xs font-medium uppercase"
-            >
+            <th scope="col" className="px-2 py-1 text-xs font-medium uppercase">
               Feedback
             </th>
-            <th
-              scope="col"
-              className="px-2 py-1 text-xs font-medium uppercase"
-            >
+            <th scope="col" className="px-2 py-1 text-xs font-medium uppercase">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white text-xs divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-200 bg-white text-xs">
           {
             <tr>
-              <td className=" sticky left-0 bg-white divide-gray-200 ">{submission.enrolledUser.username}</td>
-              <td className="">{submission.enrolledUser.user.name}</td>
-              <td className="px-2 py-1 ">
-                {day(submission.submissionDate).format("DD MMM YYYY hh:mm:ss A")}
+              <td className="sticky left-0 divide-gray-200 bg-white">
+                {submission.enrolledUser.username}
               </td>
-              <td className="px-2 py-1 whitespace-nowrap">
+              <td className="">{submission.enrolledUser.user.name}</td>
+              <td className="px-2 py-1">
+                {day(submission.submissionDate).format(
+                  "DD MMM YYYY hh:mm:ss A",
+                )}
+              </td>
+              <td className="whitespace-nowrap px-2 py-1">
                 {isEditing ? (
                   <input
                     title="null"
@@ -210,13 +186,13 @@ const EvaluateSubmission = ({
                     }}
                     min={0}
                     max={10}
-                    className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                    className="w-20 rounded-lg border-2 border-black bg-transparent px-2 text-background"
                   />
                 ) : (
                   rValue?.score || "NA"
                 )}
               </td>
-              <td className="px-2 py-1 whitespace-nowrap">
+              <td className="whitespace-nowrap px-2 py-1">
                 {isEditing ? (
                   <input
                     title="null"
@@ -233,13 +209,13 @@ const EvaluateSubmission = ({
                     }}
                     min={0}
                     max={10}
-                    className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                    className="w-20 rounded-lg border-2 border-black bg-transparent px-2 text-background"
                   />
                 ) : (
                   sValue?.score || "NA"
                 )}
               </td>
-              <td className="px-2 py-1 whitespace-nowrap">
+              <td className="whitespace-nowrap px-2 py-1">
                 {isEditing ? (
                   <input
                     title="null"
@@ -256,46 +232,45 @@ const EvaluateSubmission = ({
                     }}
                     min={0}
                     max={10}
-                    className="bg-transparent border-black rounded-lg px-2 border-2 text-background w-20"
+                    className="w-20 rounded-lg border-2 border-black bg-transparent px-2 text-background"
                   />
                 ) : (
                   oValue?.score || "NA"
                 )}
               </td>
-              <td className="px-2 py-1 whitespace-nowrap">
+              <td className="whitespace-nowrap px-2 py-1">
                 {rValue?.score || sValue?.score || oValue?.score
                   ? totalScore
                   : "NA"}
               </td>
               <td>
-                {
-                  isEditing ? (
-                    <textarea
-                      title="null"
-                      value={feedback || ""}
-                      onChange={(e) => {
-                        setFeedback(e.target.value);
-                      }}
-                      className="bg-transparent block min-w-16 text-start overflow-y-hidden border-black rounded-lg px-2 border-2 text-background m-2"
-                    >
-                    </textarea>
-                  ) : (
-                    submission.overallFeedback || "NA"
-                  )
-                }
+                {isEditing ? (
+                  <textarea
+                    title="null"
+                    value={feedback || ""}
+                    onChange={(e) => {
+                      setFeedback(e.target.value);
+                    }}
+                    className="m-2 block min-w-16 overflow-y-hidden rounded-lg border-2 border-black bg-transparent px-2 text-start text-background"
+                  ></textarea>
+                ) : (
+                  submission.overallFeedback || "NA"
+                )}
               </td>
               {
-
-                <td className="px-2 py-1 whitespace-nowrap">
+                <td className="whitespace-nowrap px-2 py-1">
                   {isEditing ? (
                     <div className="flex items-center justify-center gap-5">
                       <button
                         onClick={handleSave}
-                        className="text-blue-600 font-semibold hover:text-blue-700"
+                        className="font-semibold text-blue-600 hover:text-blue-700"
                       >
                         Save
                       </button>
-                      <button onClick={() => setIsEditing(false)} className=" text-red-600 hover:text-red-700 font-semibold ">
+                      <button
+                        onClick={() => setIsEditing(false)}
+                        className="font-semibold text-red-600 hover:text-red-700"
+                      >
                         Cancel
                       </button>
                     </div>
@@ -303,13 +278,13 @@ const EvaluateSubmission = ({
                     <div className="flex items-center justify-center gap-5">
                       <button
                         onClick={handleEdit}
-                        className="text-blue-600 font-semibold"
+                        className="font-semibold text-blue-600"
                       >
                         Edit
                       </button>
                       <button
                         onClick={handleDelete}
-                        className="text-red-600 hover:text-red-700 font-semibold"
+                        className="font-semibold text-red-600 hover:text-red-700"
                       >
                         Delete
                       </button>
@@ -322,7 +297,7 @@ const EvaluateSubmission = ({
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default EvaluateSubmission
+export default EvaluateSubmission;

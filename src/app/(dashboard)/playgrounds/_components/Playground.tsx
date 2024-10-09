@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { SandpackProvider, SandpackPreview, SandpackFiles, SandpackPredefinedTemplate } from "@codesandbox/sandpack-react";
+import {
+  SandpackProvider,
+  SandpackPreview,
+  type SandpackFiles,
+  type SandpackPredefinedTemplate,
+} from "@codesandbox/sandpack-react";
 import MonacoEditor from "./MonacoEditor";
 import FileExplorer from "./FileExplorer";
 import {
@@ -14,7 +19,7 @@ import SubmitAssignment from "./SubmitAssignment";
 import { TfiFullscreen } from "react-icons/tfi";
 
 const files = {
-  '/index.html': `<!DOCTYPE html>
+  "/index.html": `<!DOCTYPE html>
 <html>
 
 <head>
@@ -29,8 +34,8 @@ const files = {
 
 </html>
 `,
-  '/styles.css': "",
-  '/index.js': "",
+  "/styles.css": "",
+  "/index.js": "",
 };
 
 const Playground = ({
@@ -39,24 +44,24 @@ const Playground = ({
   initialFiles,
   template = "static",
 }: {
-  currentUser?: any,
-  assignmentId?: string,
-  initialFiles?: SandpackFiles,
-  template?: SandpackPredefinedTemplate
+  currentUser?: any;
+  assignmentId?: string;
+  initialFiles?: SandpackFiles;
+  template?: SandpackPredefinedTemplate;
 }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   return (
-    <div className='h-[95vh] relative'>
+    <div className="relative h-[95vh]">
       <SandpackProvider
         files={initialFiles || files}
         template={template}
         theme="light"
       >
         {isFullScreen && (
-          <div className='fixed inset-0 z-50 bg-white'>
+          <div className="fixed inset-0 z-50 bg-white">
             <button
-              className='absolute top-1 right-1 z-50 bg-gray-800 text-white p-2 rounded'
+              className="absolute right-1 top-1 z-50 rounded bg-gray-800 p-2 text-white"
               onClick={() => setIsFullScreen(false)}
             >
               Exit Fullscreen
@@ -69,7 +74,10 @@ const Playground = ({
           </div>
         )}
 
-        <ResizablePanelGroup direction="horizontal" className="h-[95vh] overflow-y-scroll border rounded-lg">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-[95vh] overflow-y-scroll rounded-lg border"
+        >
           <ResizablePanel defaultSize={14}>
             <FileExplorer />
           </ResizablePanel>
@@ -79,11 +87,14 @@ const Playground = ({
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={43}>
-            <ResizablePanelGroup direction="vertical" className="h-[95vh] overflow-y-scroll">
+            <ResizablePanelGroup
+              direction="vertical"
+              className="h-[95vh] overflow-y-scroll"
+            >
               <ResizablePanel defaultSize={95}>
-                <div className="h-[95vh] overflow-y-scroll relative">
+                <div className="relative h-[95vh] overflow-y-scroll">
                   <div className="border-b bg-white text-black">
-                    <h1 className="text-xl font-bold text-center">Preview</h1>
+                    <h1 className="text-center text-xl font-bold">Preview</h1>
                     <TfiFullscreen
                       className="absolute right-2 top-2 cursor-pointer"
                       onClick={() => setIsFullScreen(true)}
@@ -104,8 +115,11 @@ const Playground = ({
           </ResizablePanel>
         </ResizablePanelGroup>
         {assignmentId && (
-          <div className='absolute -top-6 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50'>
-            <SubmitAssignment currentUser={currentUser} assignmentId={assignmentId} />
+          <div className="absolute -top-6 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
+            <SubmitAssignment
+              currentUser={currentUser}
+              assignmentId={assignmentId}
+            />
           </div>
         )}
       </SandpackProvider>

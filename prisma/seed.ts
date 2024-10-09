@@ -1,6 +1,8 @@
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
+
+type pointCategory = "OTHER" | "RESPOSIVENESS" | "STYLING";
 
 async function main() {
   const submissions = await db.submission.findMany({
@@ -12,11 +14,11 @@ async function main() {
     },
   });
 
-  const points = submissions.map((submission :any) => {
+  const points = submissions.map((submission) => {
     return {
       submissionId: submission.id,
-      score: 10,
-      category: "OTHER",
+      score: 9,
+      category: "OTHER" as pointCategory,
     };
   });
 

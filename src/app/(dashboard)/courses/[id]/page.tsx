@@ -20,13 +20,13 @@ const page = async ({ params }: { params: { id: string } }) => {
   }
   return (
     <div className="m-3">
-      <h1 className="text-lg text-center md:text-xl border-b-2 font-medium p-2">
+      <h1 className="border-b-2 p-2 text-center text-lg font-medium md:text-xl">
         Assignments
       </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 p-2 mt-3">
+      <div className="mt-3 grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 md:grid-cols-3">
         {courseAssignments && courseAssignments[0]?.classes?.length === 0 && (
-          <div className=" text-xl mt-5  dark:text-secondary-300">
+          <div className="mt-5 text-xl dark:text-secondary-300">
             No assignments yet...
           </div>
         )}
@@ -36,31 +36,31 @@ const page = async ({ params }: { params: { id: string } }) => {
             classItem.attachments.map((attachment) => (
               <div
                 key={attachment?.id}
-                className="text-zinc-600 rounded-lg p-4 dark:bg-slate-800 backdrop-blur-2xl"
+                className="rounded-lg p-4 text-zinc-600 backdrop-blur-2xl dark:bg-slate-800"
                 style={{
                   boxShadow:
                     "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
                 }}
               >
-                <div className="flex justify-between items-center mb-2">
+                <div className="mb-2 flex items-center justify-between">
                   <Link
                     href={`/assignments/${attachment.id}`}
-                    className=" text-base text-blue-600 hover:text-blue-500 cursor-pointer font-semibold"
+                    className="cursor-pointer text-base font-semibold text-blue-600 hover:text-blue-500"
                   >
                     {attachment?.title}
                   </Link>
-                  <div className="flex gadiv-2 items-center text-sm font-medium">
+                  <div className="gadiv-2 flex items-center text-sm font-medium">
                     {attachment?.dueDate &&
                       new Date(attachment?.dueDate).toLocaleDateString()}
                     {"  "}
                     {currentUser?.role === "STUDENT" && (
                       <div className="text-white">
                         {attachment?.submissions.length !== 0 ? (
-                          <h1 className="bg-green-500/40 text-xs border-2 text-green-600 dark:text-green-400 border-green-600/80 rounded-full px-2 ml-1 py-1">
+                          <h1 className="ml-1 rounded-full border-2 border-green-600/80 bg-green-500/40 px-2 py-1 text-xs text-green-600 dark:text-green-400">
                             submitted
                           </h1>
                         ) : (
-                          <h1 className="bg-red-500/40 text-xs border-2 text-red-600 dark:text-red-400 border-red-700 rounded-full px-2 ml-1 py-1">
+                          <h1 className="ml-1 rounded-full border-2 border-red-700 bg-red-500/40 px-2 py-1 text-xs text-red-600 dark:text-red-400">
                             not submitted
                           </h1>
                         )}
@@ -68,15 +68,15 @@ const page = async ({ params }: { params: { id: string } }) => {
                     )}
                   </div>
                 </div>
-                <p className="mb-2 text-sm font-semibold text-gray-500/85 dark:text-gray-400 mt-2">
+                <p className="mb-2 mt-2 text-sm font-semibold text-gray-500/85 dark:text-gray-400">
                   {truncateText(
                     attachment?.details
                       ? attachment?.details.slice(0, 200) + "..."
-                      : "No Description"
+                      : "No Description",
                   )}
                 </p>
                 {attachment?.link && (
-                  <div className=" flex items-center text-sm justify-start space-x-2 hover:opacity-90">
+                  <div className="flex items-center justify-start space-x-2 text-sm hover:opacity-90">
                     <a
                       href={attachment?.link}
                       className="text-blue-600 hover:underline"
@@ -85,12 +85,12 @@ const page = async ({ params }: { params: { id: string } }) => {
                     >
                       View Assignment
                     </a>
-                    <FaExternalLinkAlt className="w-3 h-3" />
+                    <FaExternalLinkAlt className="h-3 w-3" />
                   </div>
                 )}
               </div>
-            ))
-          )
+            )),
+          ),
         )}
       </div>
     </div>

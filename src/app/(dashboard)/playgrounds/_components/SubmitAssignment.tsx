@@ -1,18 +1,17 @@
-"use client"
+"use client";
 
-import Submit from '@/app/(dashboard)/playgrounds/_components/Submit';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import toast from 'react-hot-toast';
+import Submit from "@/app/(dashboard)/playgrounds/_components/Submit";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const SubmitAssignment = ({
   currentUser,
-  assignmentId
+  assignmentId,
 }: {
-  currentUser: any,
-  assignmentId: string
+  currentUser: any;
+  assignmentId: string;
 }) => {
-
   const [assignmentDetails, setAssignmentDetails] = useState<any>(null);
   const [mentorDetails, setMentorDetails] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,10 +36,18 @@ const SubmitAssignment = ({
   }, [assignmentId]);
 
   return (
-    (
-      assignmentId && (assignmentDetails ? <Submit user={currentUser} mentorDetails={mentorDetails} assignmentDetails={assignmentDetails} isLoading={isLoading} /> : <h1 className="text-2xl font-bold">Loading...</h1>)
-    )
-  )
-}
+    assignmentId &&
+    (assignmentDetails ? (
+      <Submit
+        user={currentUser}
+        mentorDetails={mentorDetails}
+        assignmentDetails={assignmentDetails}
+        isLoading={isLoading}
+      />
+    ) : (
+      <h1 className="text-2xl font-bold">Loading...</h1>
+    ))
+  );
+};
 
-export default SubmitAssignment
+export default SubmitAssignment;

@@ -8,10 +8,5 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const currentUser = await getCurrentUser();
-  return (
-    <HomeLayout currentUser={currentUser}>
-      {children}
-    </HomeLayout>
-  );
+  return <HomeLayout currentUser={currentUser}>{children}</HomeLayout>;
 }
-

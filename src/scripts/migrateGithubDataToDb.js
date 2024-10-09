@@ -1,5 +1,5 @@
-const { Octokit } = require("@octokit/rest");
-const { PrismaClient } = require("@prisma/client");
+import { Octokit } from "@octokit/rest";
+import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
 
@@ -15,9 +15,9 @@ async function main() {
 
   let progress = 0;
 
-  submissions.map(async (submission) => {
-    if (!submission.submissionLink) return null;
-    if (submission.data) return null;
+  for (const submission of submissions) {
+    if (!submission.submissionLink) continue;
+    if (submission.data) continue;
 
     const prNumber = Number(submission.submissionLink.split("/").pop());
     try {
@@ -27,7 +27,7 @@ async function main() {
           owner,
           repo,
           pull_number: prNumber,
-        }
+        },
       );
 
       const { data: filesData } = await octokit.request(
@@ -36,15 +36,16 @@ async function main() {
           owner,
           repo,
           pull_number: prNumber,
-        }
+        },
       );
-      //todo: temp fix
-      let basePath = filesData[0].filename.split("/").slice(0, -1).join("/");
+      // TODO: temp fix
+      let basePath =
+        filesData[0]?.filename.split("/").slice(0, -1).join("/") ?? "";
 
       // if package.json is present then take it as basepath
       if (filesData.some((file) => file.filename.includes("package.json"))) {
         const packageJsonFile = filesData.find((file) =>
-          file.filename.includes("package.json")
+          file.filename.includes("package.json"),
         );
         if (packageJsonFile) {
           basePath = packageJsonFile.filename.split("/").slice(0, -1).join("/");
@@ -61,17 +62,23 @@ async function main() {
             repo,
             path: file.filename,
             ref: pr.head.sha,
-          }
+          },
         );
 
         const data = response.data;
 
         const relativePath = file.filename.replace(basePath, "");
 
-        files = {
-          ...files,
-          [relativePath]: Buffer.from(data.content, "base64").toString("utf-8"),
-        };
+        if ("content" in data) {
+          files = {
+            ...files,
+            [relativePath]: Buffer.from(data.content, "base64").toString(
+              "utf-8",
+            ),
+          };
+        } else {
+          console.warn(`No content found for file: ${relativePath}`);
+        }
       }
 
       await db.submission.update({
@@ -91,7 +98,7 @@ async function main() {
     } catch (error) {
       console.error("Error fetching PR files:", error);
     }
-  });
+  }
 }
 main()
   .then(async () => {

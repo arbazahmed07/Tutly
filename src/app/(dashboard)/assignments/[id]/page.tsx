@@ -11,7 +11,7 @@ export default async function SubmmitAssignment({
   searchParams,
 }: {
   params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
@@ -20,7 +20,10 @@ export default async function SubmmitAssignment({
   const userId = (searchParams?.userId as string) || currentUser.id;
   const assignment = await getAssignmentDetailsByUserId(params.id, userId);
 
-  const [assignments, notSubmittedMentees,isCourseAdmin]: any = currentUser.role === "INSTRUCTOR" ? await getAllAssignmentDetailsForInstructor(params.id) : await getAllAssignmentDetailsBy(params.id);
+  const [assignments, notSubmittedMentees, isCourseAdmin]: any =
+    currentUser.role === "INSTRUCTOR"
+      ? await getAllAssignmentDetailsForInstructor(params.id)
+      : await getAllAssignmentDetailsBy(params.id);
 
   return (
     <AssignmentPage

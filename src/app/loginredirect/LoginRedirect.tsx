@@ -1,14 +1,14 @@
-"use client"
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation'; 
-import { useSearchParams } from 'next/navigation';
-import React, { useEffect } from 'react'
-import toast from 'react-hot-toast';
+"use client";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const LoginRedirect = () => {
   const params = useSearchParams();
-  const username = params.get('username');
-  const tokenId = params.get('tokenId');
+  const username = params.get("username");
+  const tokenId = params.get("tokenId");
   const router = useRouter();
 
   const loginWithToken = async () => {
@@ -20,7 +20,7 @@ const LoginRedirect = () => {
 
     try {
       toast.loading("Signing in...");
-      const response = await signIn('credentials', {
+      const response = await signIn("credentials", {
         username: username.toUpperCase(),
         tokenId,
         callbackUrl: "/",
@@ -40,16 +40,14 @@ const LoginRedirect = () => {
 
   useEffect(() => {
     loginWithToken();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className='flex h-full justify-center items-center'>
-      <div className='text-2xl font-bold text-center'>
-        Redirecting...
-      </div>
+    <div className="flex h-full items-center justify-center">
+      <div className="text-center text-2xl font-bold">Redirecting...</div>
     </div>
-  )
-}
+  );
+};
 
-export default LoginRedirect
+export default LoginRedirect;
