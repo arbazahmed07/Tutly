@@ -15,8 +15,18 @@ export default function ThemeSwitch() {
 
   return (
     <>
-      <button onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}>
-        <div className={`rounded-full cursor-pointer ${resolvedTheme === "light" ?"hover:bg-neutral-300":"hover:bg-secondary-800"} p-2`}>{resolvedTheme==="light"?<MdOutlineDarkMode className="text-xl"/>:<MdOutlineLightMode className="text-xl"/>}</div>
+      <button
+        onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}
+      >
+        <div
+          className={`cursor-pointer rounded-full ${resolvedTheme === "light" ? "hover:bg-neutral-300" : "hover:bg-secondary-800"} p-2`}
+        >
+          {resolvedTheme === "light" ? (
+            <MdOutlineDarkMode className="text-xl" />
+          ) : (
+            <MdOutlineLightMode className="text-xl" />
+          )}
+        </div>
       </button>
     </>
   );

@@ -15,15 +15,17 @@ export default function AttendanceTable({
     direction: "ascending",
   });
 
-  const sortedData = [...studentsAttendance].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === "ascending" ? -1 : 1;
-    }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === "ascending" ? 1 : -1;
-    }
-    return 0;
-  });
+  const sortedData = Array.isArray(studentsAttendance)
+    ? [...studentsAttendance].sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      })
+    : [];
 
   const handleSort = (key: string) => {
     let direction: "ascending" | "descending" = "ascending";
@@ -34,9 +36,9 @@ export default function AttendanceTable({
   };
 
   return (
-    <div className="container mx-auto px-4 lg:px-20 pt-8">
+    <div className="container mx-auto px-4 pt-8 lg:px-20">
       <h1
-        className="text-xl text-end text-primary-500 font-bold mb-4 cursor-pointer"
+        className="mb-4 cursor-pointer text-end text-xl font-bold text-primary-500"
         onClick={() => setSortConfig({ key: "-1", direction: "ascending" })}
       >
         Overall Attendance
@@ -45,10 +47,10 @@ export default function AttendanceTable({
         <table className="w-full border">
           <thead>
             <tr className="bg-blue-600">
-              <th className="p-2 border cursor-pointer">S.No</th>
-              <th className="p-2 border cursor-pointer">Name</th>
+              <th className="cursor-pointer border p-2">S.No</th>
+              <th className="cursor-pointer border p-2">Name</th>
               <th
-                className="p-2 border cursor-pointer"
+                className="cursor-pointer border p-2"
                 onClick={() => handleSort("username")}
               >
                 Roll Number{" "}
@@ -59,7 +61,7 @@ export default function AttendanceTable({
                   : ""}
               </th>
               <th
-                className="p-2 border cursor-pointer"
+                className="cursor-pointer border p-2"
                 onClick={() => handleSort("percentage")}
               >
                 Percentage{" "}
@@ -74,9 +76,11 @@ export default function AttendanceTable({
           <tbody>
             {sortedData.map((item: any, index: number) => (
               <tr key={item.username} className="border-b">
-                <td className="p-0 border-y-0 border-x text-center">{index + 1}</td>
-                <td className="p-2 border-y-0 flex items-center justify-start space-x-4 gap-5">
-                  <Image unoptimized
+                <td className="border-x border-y-0 p-0 text-center">
+                  {index + 1}
+                </td>
+                <td className="flex items-center justify-start gap-5 space-x-4 border-y-0 p-2">
+                  <Image
                     src={
                       item.image || "https://i.postimg.cc/zXj77wQG/image.png"
                     }
@@ -87,8 +91,12 @@ export default function AttendanceTable({
                   />
                   {item.name}
                 </td>
-                <td className="p-2 border text-center">{item.username}</td>
-                <td className={`p-2 border text-center ${item.percentage < 75 ? "text-red-500" : "text-green-500"}`}>{Math.round(item.percentage)}</td>
+                <td className="border p-2 text-center">{item.username}</td>
+                <td
+                  className={`border p-2 text-center ${item.percentage < 75 ? "text-red-500" : "text-green-500"}`}
+                >
+                  {Math.round(item.percentage)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -96,4 +104,4 @@ export default function AttendanceTable({
       </div>
     </div>
   );
-};
+}

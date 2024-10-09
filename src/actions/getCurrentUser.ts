@@ -9,23 +9,23 @@ export default async function getCurrentUser() {
 
     const currentUser = await db.user.findUnique({
       where: {
-        username: session.user.username
+        username: session.user.username,
       },
-      include:{
-        adminForCourses:{
-          select:{
-            id:true
-          }
+      include: {
+        adminForCourses: {
+          select: {
+            id: true,
+          },
         },
-      }
+      },
     });
-    
+
     if (!currentUser) {
       throw new Error("Not signed in");
     }
 
     return currentUser;
-  } catch (error: any) {
+  } catch {
     return null;
   }
 }

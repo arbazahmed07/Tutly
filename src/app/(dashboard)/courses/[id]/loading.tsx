@@ -1,10 +1,8 @@
-import Loader from '@/components/Loader';
-import React from 'react';
+import Loader from "@/components/Loader";
+import React from "react";
 
 const Loading: React.FC = () => {
-    return (
-        <Loader />
-    );
+  return <Loader />;
 };
 
 export default Loading;

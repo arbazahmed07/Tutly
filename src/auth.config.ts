@@ -4,12 +4,33 @@ import prisma from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import { type NextAuthConfig } from "next-auth";
 import bcryptjs from "bcryptjs";
+import { type Role } from "@prisma/client";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      username: string;
+      role: Role;
+    };
+  }
+
+  interface JWT {
+    user: {
+      username: string;
+    };
+  }
+
+  interface User {
+    username: string;
+    role: Role;
+  }
+}
 
 export default {
   providers: [
     Google({
-      clientId: process.env.NEXTAUTH_GOOGLE_ID as string,
-      clientSecret: process.env.NEXTAUTH_GOOGLE_SECRET as string,
+      clientId: process.env.NEXTAUTH_GOOGLE_ID!,
+      clientSecret: process.env.NEXTAUTH_GOOGLE_SECRET!,
       allowDangerousEmailAccountLinking: true,
     }),
     Credentials({
@@ -62,14 +83,14 @@ export default {
             },
           });
 
-          return user as any;
+          return user;
         } else {
           if (!user.password) {
             throw new Error("User has not set a password");
           }
           const valid = await bcryptjs.compare(
             password as string,
-            user.password
+            user.password,
           );
 
           if (!valid) {
@@ -83,7 +104,7 @@ export default {
             },
           });
 
-          if(user.email?.includes("tutly.in")) {
+          if (user.email?.includes("tutly.in") || user.role === "INSTRUCTOR") {
             fetch("https://learn.tutly.in/api/send", {
               method: "POST",
               headers: {
@@ -92,9 +113,11 @@ export default {
               body: JSON.stringify({
                 email: user.email,
               }),
-            })
+            }).catch((error) => {
+              console.error("Error occurred during fetch:", error);
+            });
           }
-          return user as any;
+          return user;
         }
       },
     }),
@@ -105,7 +128,7 @@ export default {
         if (account?.provider === "google") {
           const existingUser = await prisma.user.findUnique({
             where: {
-              username: user.email?.split("@")[0].toUpperCase(),
+              username: user.email?.split("@")[0]?.toUpperCase(),
             },
             include: {
               account: true,
@@ -154,9 +177,14 @@ export default {
             });
             return true;
           } else {
+            const username = user.email?.split("@")[0]?.toUpperCase();
+            if (!username) {
+              return false;
+            }
+
             const newUser = await prisma.user.create({
               data: {
-                username: user.email?.split("@")[0].toUpperCase() as string,
+                username: username,
                 email: user.email?.toLowerCase(),
                 name: user.name,
                 image: user.image,
@@ -181,18 +209,17 @@ export default {
       }
       return true;
     },
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user }) {
       if (user) {
         token.username = user.username;
-        //@ts-ignore
-        token.role = user.role as Role;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
-        session.user.username = token.username;
-        session.user.role = token.role;
+        session.user.username = token.username as string;
+        session.user.role = token.role as Role;
       }
       return session;
     },

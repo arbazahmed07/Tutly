@@ -16,17 +16,20 @@ const inter = Inter({ subsets: ["latin"] });
 //   },
 // };
 
-
 const APP_NAME = "LMS Tutly";
 const APP_DEFAULT_TITLE = "LMS Tutly";
-const APP_TITLE_TEMPLATE = "%s - LMS Tutly PWA ";
-const APP_DESCRIPTION = "Empowering students with state-of-the-art tools and resources for academic success. Our platform integrates innovative learning methods, collaboration opportunities, and growth-focused features. Transform your educational journey with personalized support, interactive content, and a vibrant community. Discover the future of education, tailored for you.";
+const APP_TITLE_TEMPLATE = "%s - LMS Tutly ";
+const APP_DESCRIPTION =
+  "Empowering students with state-of-the-art tools and resources for academic success. Our platform integrates innovative learning methods, collaboration opportunities, and growth-focused features. Transform your educational journey with personalized support, interactive content, and a vibrant community. Discover the future of education, tailored for you.";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: {
     default: APP_DEFAULT_TITLE,
     template: APP_TITLE_TEMPLATE,
+  },
+  icons: {
+    icon: "/images/logo2.png",
   },
   description: APP_DESCRIPTION,
   manifest: "/manifest.json",
@@ -58,12 +61,9 @@ export const metadata: Metadata = {
   },
 };
 
-
 export const viewport: Viewport = {
   themeColor: "#FFFFFF",
 };
-
-
 
 export default async function RootLayout({
   children,

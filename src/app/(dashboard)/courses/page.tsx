@@ -13,18 +13,27 @@ export default async function Courses() {
       <div className="flex w-full">
         {courses?.length === 0 ? (
           <div>
-            {currentUser?.role === "INSTRUCTOR" ? <AddCourse /> : <NoDataFound message="No courses found!" />}
+            {currentUser?.role === "INSTRUCTOR" ? (
+              <AddCourse />
+            ) : (
+              <NoDataFound message="No courses found!" />
+            )}
           </div>
         ) : (
           <div className="flex flex-wrap">
             {courses?.map((course) => {
-              return <CourseCard currentUser={currentUser} key={course.id} course={course} />;
+              return (
+                <CourseCard
+                  currentUser={currentUser}
+                  key={course.id}
+                  course={course}
+                />
+              );
             })}
             {currentUser?.role === "INSTRUCTOR" && <AddCourse />}
           </div>
         )}
       </div>
     </div>
-
   );
 }

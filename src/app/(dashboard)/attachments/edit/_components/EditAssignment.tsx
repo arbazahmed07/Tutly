@@ -40,14 +40,13 @@ const EditAttachmentPage = ({ attachment }: any) => {
     submissionMode,
   } = attachment;
 
-
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        `/api/classes/getClassesById/${courseId}`
+        `/api/classes/getClassesById/${courseId}`,
       );
       setClasses(response.data);
       setLoading(false);
@@ -59,14 +58,14 @@ const EditAttachmentPage = ({ attachment }: any) => {
 
   const form = useForm({
     defaultValues: {
-      title: title ,
-      link: link ,
-      attachmentType: attachmentType ,
-      submissionMode: submissionMode ,
-      classId: classId ,
-      courseId: courseId ,
-      details: details ,
-      dueDate: dueDate ,
+      title: title,
+      link: link,
+      attachmentType: attachmentType,
+      submissionMode: submissionMode,
+      classId: classId,
+      courseId: courseId,
+      details: details,
+      dueDate: dueDate,
       maxSubmissions: Number(maxSubmissions) || 0,
     },
   });
@@ -76,11 +75,11 @@ const EditAttachmentPage = ({ attachment }: any) => {
   const [deleteClicked, setDeleteClicked] = useState(false);
 
   const onSubmit = async (values: any) => {
-
-    
     const response = await axios.put(`/api/attachments/edit/${attachment.id}`, {
       ...values,
-      dueDate: values?.dueDate ? new Date(values.dueDate).toISOString() : undefined,
+      dueDate: values?.dueDate
+        ? new Date(values.dueDate).toISOString()
+        : undefined,
       maxSubmissions: Number(values?.maxSubmissions),
     });
 
@@ -96,7 +95,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
     try {
       setDeleteClicked(true);
       const response = await axios.delete(
-        `/api/attachments/delete/${attachment.id}`
+        `/api/attachments/delete/${attachment.id}`,
       );
       if (response.status !== 200) {
         toast.error("An error occurred");
@@ -112,14 +111,14 @@ const EditAttachmentPage = ({ attachment }: any) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-10">
+    <div className="mx-auto max-w-4xl p-4 md:p-10">
       <div className="space-y-8">
-        <h1 className="flex items-center text-xl md:text-2xl font-semibold">
-          Edit attachment <FaRegEdit className="w-5 h-5 ml-4" />
+        <h1 className="flex items-center text-xl font-semibold md:text-2xl">
+          Edit attachment <FaRegEdit className="ml-4 h-5 w-5" />
         </h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
               <FormField
                 name="title"
                 control={form.control}
@@ -134,7 +133,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription className="text-sm opacity-85 ml-3 hover:opacity-95 select-none">
+                    <FormDescription className="ml-3 select-none text-sm opacity-85 hover:opacity-95">
                       Title cannot be modified
                     </FormDescription>
                   </FormItem>
@@ -158,25 +157,25 @@ const EditAttachmentPage = ({ attachment }: any) => {
                       </FormControl>
                       <SelectContent className="bg-secondary-700 text-white">
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="ASSIGNMENT"
                         >
                           Assignment
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="ZOOM"
                         >
                           Zoom
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="GITHUB"
                         >
                           Github
                         </SelectItem>
                         <SelectItem
-                          className="hover:bg-secondary-800 text-base"
+                          className="text-base hover:bg-secondary-800"
                           value="OTHERS"
                         >
                           Other
@@ -334,7 +333,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
                 </FormItem>
               )}
             />
-            <div className="flex items-center  justify-between w-full">
+            <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-x-4">
                 <Button
                   disabled={cancelClicked}
@@ -345,7 +344,7 @@ const EditAttachmentPage = ({ attachment }: any) => {
                   className={`${
                     !cancelClicked
                       ? "bg-red-700 hover:bg-red-800"
-                      : "bg-gray-600 cursor-not-allowed"
+                      : "cursor-not-allowed bg-gray-600"
                   }`}
                 >
                   Cancel
@@ -363,10 +362,10 @@ const EditAttachmentPage = ({ attachment }: any) => {
                 className={`${
                   !deleteClicked
                     ? "bg-red-700 hover:bg-red-800"
-                    : "bg-gray-600 cursor-not-allowed"
+                    : "cursor-not-allowed bg-gray-600"
                 }`}
               >
-                <MdDelete className="w-5 h-5" />
+                <MdDelete className="h-5 w-5" />
               </Button>
             </div>
           </form>

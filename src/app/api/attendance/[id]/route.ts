@@ -1,10 +1,10 @@
 import getCurrentUser from "@/actions/getCurrentUser";
 import { db } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const currentUser = await getCurrentUser();
@@ -40,7 +40,10 @@ export async function GET(
       if (element.attended) present++;
     });
     return NextResponse.json({ attendance: attendance, present: present });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error getting attendance" },
+      { status: 400 },
+    );
   }
 }

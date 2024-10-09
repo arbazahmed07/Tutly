@@ -1,11 +1,17 @@
 import getCurrentUser from "@/actions/getCurrentUser";
 import { db } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+
+interface SubmissionData {
+  assignmentId: string;
+  externalLink: string;
+  maxSubmissions: number;
+  courseId: string;
+}
 
 export async function POST(request: NextRequest) {
   const { assignmentId, externalLink, maxSubmissions, courseId } =
-    await request.json();
-
+    (await request.json()) as SubmissionData;
 
   try {
     const currentUser = await getCurrentUser();
@@ -39,12 +45,11 @@ export async function POST(request: NextRequest) {
     if (!enrolledUser) {
       return NextResponse.json(
         { error: "User not enrolled in the course" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-
-    const res = await db.submission.create({
+    await db.submission.create({
       data: {
         enrolledUserId: enrolledUser.id,
         attachmentId: assignmentId,
@@ -52,9 +57,11 @@ export async function POST(request: NextRequest) {
       },
     });
 
-
     return NextResponse.json({ success: "Assignment submitted successfully" });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch {
+    return NextResponse.json(
+      { error: "Error submitting assignment" },
+      { status: 400 },
+    );
   }
 }

@@ -53,7 +53,7 @@ export default function AttendanceHeader({
   };
 
   const [clientMaxDuration, setClientMaxDuration] = useState<number>(
-    maxInstructionDuration
+    maxInstructionDuration,
   );
 
   useEffect(() => {
@@ -74,7 +74,6 @@ export default function AttendanceHeader({
   }, [fileData, setMaxInstructionDuration]);
 
   const handleClientUpload = async () => {
-
     setMaxInstructionDuration(clientMaxDuration);
 
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -92,23 +91,23 @@ export default function AttendanceHeader({
     <>
       {pastpresentStudents.length > 0 && (
         <>
-          <div className="flex justify-center gap-6 mx-32 my-2 mb-6">
-            <p className="text-sm text-primary-500 rounded-full p-0.5 px-3 border-l-2 border-r-2 border-primary-500">
+          <div className="mx-32 my-2 mb-6 flex justify-center gap-6">
+            <p className="rounded-full border-l-2 border-r-2 border-primary-500 p-0.5 px-3 text-sm text-primary-500">
               Present : {count[0]}
             </p>
-            <p className="text-sm text-primary-500 rounded-full p-0.5 px-3 border-l-2 border-r-2 border-primary-500">
+            <p className="rounded-full border-l-2 border-r-2 border-primary-500 p-0.5 px-3 text-sm text-primary-500">
               Absent : {count[1]}
             </p>
           </div>
           <div className="mx-32 mb-2 flex">
-            <p className="text-xs ms-1 p-0.5 rounded text-gray-400 px-2 border border-gray-400">
+            <p className="ms-1 rounded border border-gray-400 p-0.5 px-2 text-xs text-gray-400">
               {"<<"}60 : {count[2]}
             </p>
           </div>
         </>
       )}
-      <div className="flex justify-between w-[80%] m-auto">
-        <div className="flex gap-2 items-center">
+      <div className="m-auto flex w-4/5 justify-between">
+        <div className="flex items-center gap-2">
           <div className="relative">
             {!currentCourse ? (
               <div
@@ -117,7 +116,7 @@ export default function AttendanceHeader({
                     ? () => toast.error("no courses exist")
                     : () => setOpenCourses(!openCourses)
                 }
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex items-center justify-between"
+                className="flex min-w-28 cursor-pointer items-center justify-between rounded bg-primary-700 px-2 py-1"
               >
                 <h1>select course</h1>
                 {openCourses ? (
@@ -133,7 +132,7 @@ export default function AttendanceHeader({
             ) : (
               <div
                 onClick={() => setOpenCourses(!openCourses)}
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex gap-2 items-center justify-between"
+                className="flex min-w-28 cursor-pointer items-center justify-between gap-2 rounded bg-primary-700 px-2 py-1"
               >
                 <h1>{currentCourse.title}</h1>
                 {openCourses ? (
@@ -147,7 +146,7 @@ export default function AttendanceHeader({
                 )}
               </div>
             )}
-            <div className="flex flex-col absolute bg-primary-800 w-full rounded max-h-[100px] overflow-y-scroll scrollbar-thin">
+            <div className="scrollbar-thin absolute flex max-h-[100px] w-full flex-col overflow-y-scroll rounded bg-primary-800">
               {openCourses &&
                 courses?.map((course: any) => {
                   return (
@@ -156,7 +155,7 @@ export default function AttendanceHeader({
                         setOpenCourses(!openCourses);
                         setCurrentCourse(course);
                       }}
-                      className="p-1 cursor-pointer hover:bg-primary-600"
+                      className="cursor-pointer p-1 hover:bg-primary-600"
                       key={course.id}
                     >
                       {course.title}
@@ -173,7 +172,7 @@ export default function AttendanceHeader({
                     ? () => toast.error("select course!")
                     : () => setOpenClasses(!openClasses)
                 }
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex gap-2 items-center justify-between"
+                className="flex min-w-28 cursor-pointer items-center justify-between gap-2 rounded bg-primary-700 px-2 py-1"
               >
                 <h1>select class</h1>
                 {openClasses ? (
@@ -189,7 +188,7 @@ export default function AttendanceHeader({
             ) : (
               <div
                 onClick={() => setOpenClasses(!openClasses)}
-                className="px-2 py-1 rounded bg-primary-700 min-w-28 cursor-pointer flex gap-2 items-center justify-between"
+                className="flex min-w-28 cursor-pointer items-center justify-between gap-2 rounded bg-primary-700 px-2 py-1"
               >
                 <h1>
                   {currentClass.title} (
@@ -206,7 +205,7 @@ export default function AttendanceHeader({
                 )}
               </div>
             )}
-            <div className="flex flex-col absolute bg-primary-800 w-full rounded max-h-[100px] overflow-auto scrollbar-thin">
+            <div className="scrollbar-thin absolute flex max-h-[100px] w-full flex-col overflow-auto rounded bg-primary-800">
               {openClasses &&
                 currentCourse.classes.map((x: any) => {
                   return (
@@ -215,7 +214,7 @@ export default function AttendanceHeader({
                         setCurrentClass(x);
                         setOpenClasses(!openClasses);
                       }}
-                      className="p-1 cursor-pointer hover:bg-primary-600"
+                      className="cursor-pointer p-1 hover:bg-primary-600"
                       key={x.id}
                     >
                       {x.title}
@@ -228,21 +227,24 @@ export default function AttendanceHeader({
 
         {role == "INSTRUCTOR" &&
           (pastpresentStudents.length === 0 ? (
-            <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2">
               <input
+                title="file"
                 type="file"
-                className="bg-primary-600 disabled:bg-gray-700 disabled:cursor-not-allowed rounded cursor-pointer w-60 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out"
+                className="w-60 cursor-pointer rounded border-none bg-primary-600 font-semibold text-white shadow-md outline-none transition duration-300 ease-in-out hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-gray-700"
                 accept=".csv, .xlsx"
                 disabled={!currentClass}
                 onChange={(e) => {
                   const files = e.target.files;
-                  !currentClass
-                    ? toast.error("select class")
-                    : files && files.length > 0 && onSelectFile(files[0]);
+                  if (!currentClass) {
+                    toast.error("select class");
+                  } else if (files && files.length > 0) {
+                    onSelectFile(files[0]);
+                  }
                 }}
               />
               {fileData && selectedFile && (
-                <div className="flex gap-2 items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <div>
                     <input
                       type="number"
@@ -250,12 +252,12 @@ export default function AttendanceHeader({
                       value={clientMaxDuration}
                       onChange={handleClientMaxDuration}
                       placeholder="Max duration"
-                      className="bg-primary-600 rounded cursor-pointer px-2 py-1 text-white font-semibold border-none outline-none shadow-md hover:bg-primary-700 transition duration-300 ease-in-out placeholder:text-gray-300 w-32 placeholder:text-sm"
+                      className="w-32 cursor-pointer rounded border-none bg-primary-600 px-2 py-1 font-semibold text-white shadow-md outline-none transition duration-300 ease-in-out placeholder:text-sm placeholder:text-gray-300 hover:bg-primary-700"
                     />
                   </div>
                   <div
                     onClick={handleClientUpload}
-                    className="bg-primary-600 rounded cursor-pointer px-2 py-1 flex items-center gap-2 hover:scale-x-105 hover:duration-500"
+                    className="flex cursor-pointer items-center gap-2 rounded bg-primary-600 px-2 py-1 hover:scale-x-105 hover:duration-500"
                   >
                     upload{" "}
                     <BiSolidCloudUpload className="text-xl duration-1000" />
@@ -266,23 +268,23 @@ export default function AttendanceHeader({
           ) : (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button className="text-red-500 font-bold p-1 px-3 rounded-lg border-2 border-red-500 flex justify-center gap-1 items-center hover:scale-105 duration-500">
+                <button className="flex items-center justify-center gap-1 rounded-lg border-2 border-red-500 p-1 px-3 font-bold text-red-500 duration-500 hover:scale-105">
                   <h1>Delete</h1>
                   <MdDeleteOutline className="text-lg" />
                 </button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="border-none rounded-2xl">
+              <AlertDialogContent className="rounded-2xl border-none">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Clear Attendance</AlertDialogTitle>
                   <div className="flex gap-2">
-                    <h1 className="rounded-full p-0.5 px-2 text-xs text-primary-700 border border-primary-700">
+                    <h1 className="rounded-full border border-primary-700 p-0.5 px-2 text-xs text-primary-700">
                       {currentCourse?.title}
                     </h1>
-                    <h1 className="rounded-full p-0.5 px-2 text-xs text-primary-700 border border-primary-700">
+                    <h1 className="rounded-full border border-primary-700 p-0.5 px-2 text-xs text-primary-700">
                       {currentClass?.title}
                     </h1>
                   </div>
-                  <p className="text-sm text-gray-500 pb-10 flex items-center gap-1">
+                  <p className="flex items-center gap-1 pb-10 text-sm text-gray-500">
                     Are you sure?
                     <br />
                     Continuing will clear the attendance of all students for
@@ -290,12 +292,12 @@ export default function AttendanceHeader({
                   </p>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="mr-2 bg-gray-200 hover:bg-gray-300 text-black">
+                  <AlertDialogCancel className="mr-2 bg-gray-200 text-black hover:bg-gray-300">
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => handleDelete(currentClass?.id)}
-                    className="bg-red-500 hover:bg-red-600 text-white"
+                    className="bg-red-500 text-white hover:bg-red-600"
                   >
                     Confirm
                   </AlertDialogAction>

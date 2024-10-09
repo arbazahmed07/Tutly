@@ -11,7 +11,7 @@ import { usePathname } from "next/navigation";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { BsPersonRaisedHand } from "react-icons/bs";
 import { MdOutlineQueryStats } from "react-icons/md";
-import { Role } from "@prisma/client";
+import type { Role, User } from "@prisma/client";
 import { TbReportAnalytics } from "react-icons/tb";
 
 export default function HomeLayout({
@@ -19,7 +19,7 @@ export default function HomeLayout({
   currentUser,
 }: {
   children: React.ReactNode;
-  currentUser: any;
+  currentUser?: User | null;
 }) {
   const [menu, setMenu] = useState<boolean>(true);
   const pathname = usePathname();
@@ -27,7 +27,7 @@ export default function HomeLayout({
 
   interface sidebarItem {
     name: string;
-    icon: any;
+    icon: React.ReactNode;
     path: string;
     isActive: boolean;
   }
@@ -80,7 +80,7 @@ export default function HomeLayout({
       icon: <TbReportAnalytics />,
       path: "/instructor/report",
       isActive: pathname === "/instructor/report",
-    }
+    },
   ];
 
   const MentorItems = [
@@ -131,7 +131,7 @@ export default function HomeLayout({
       icon: <TbReportAnalytics />,
       path: "/mentor/report",
       isActive: pathname === "/mentor/report",
-    }
+    },
   ];
 
   const StudentItems = [
@@ -185,7 +185,7 @@ export default function HomeLayout({
     STUDENT: StudentItems,
   };
 
-  const items = roleMap[currentUser?.role as Role] || [];
+  const items = currentUser?.role ? roleMap[currentUser.role] : [];
 
   return (
     <div className="w-full">
@@ -196,8 +196,9 @@ export default function HomeLayout({
         )}
         <Suspense fallback={<Loading />}>
           <div
-            className={`w-full ${!isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
-              }`}
+            className={`w-full ${
+              !isCoursePage && (menu ? "sm:pl-48" : "sm:pl-20")
+            }`}
           >
             {children}
           </div>

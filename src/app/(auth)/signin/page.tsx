@@ -1,15 +1,13 @@
-import { redirect } from "next/navigation"
+import { redirect } from "next/navigation";
 import SignIn from "./_components/SignIn";
-import getCurrentUser from '@/actions/getCurrentUser'
+import getCurrentUser from "@/actions/getCurrentUser";
 
 const page = async () => {
   const currentUser = await getCurrentUser();
   if (currentUser) {
-    redirect('/')
+    redirect("/");
   }
-  return (
-    <SignIn />
-  )
-}
+  return <SignIn />;
+};
 
-export default page
+export default page;

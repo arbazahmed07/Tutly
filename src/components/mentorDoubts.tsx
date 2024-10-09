@@ -50,8 +50,8 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
       setReplyId("");
       setDoubts(
         doubts.map((d: any) =>
-          d.id === id ? { ...d, response: [...d.response, res.data] } : d
-        )
+          d.id === id ? { ...d, response: [...d.response, res.data] } : d,
+        ),
       );
     }
   };
@@ -78,7 +78,7 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
         doubts.map((d: any) => ({
           ...d,
           response: d.response.filter((r: any) => r.id !== replyId),
-        }))
+        })),
       );
     }
   };
@@ -101,30 +101,32 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
           return (
             <button
               onClick={() => setCurrentCourse(course.id)}
-              className={`rounded p-2 w-20 sm:w-auto ${currentCourse === course.id && "border"
-                }`}
+              className={`w-20 rounded p-2 sm:w-auto ${
+                currentCourse === course.id && "border"
+              }`}
               key={course.id}
             >
-              <h1 className="truncate max-w-xs text-sm font-medium">
+              <h1 className="max-w-xs truncate text-sm font-medium">
                 {course.title}
               </h1>
             </button>
           );
         })}
       </div>
-      <div className="flex flex-col gap-2 my-4">
+      <div className="my-4 flex flex-col gap-2">
         {doubts.map((doubt: any) => {
           if (doubt.class.courseId === currentCourse) {
             return (
               <>
                 <div
                   key={doubt.id}
-                  className="border rounded p-2 px-4 flex flex-col gap-2"
+                  className="flex flex-col gap-2 rounded border p-2 px-4"
                 >
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <div className="flex gap-2">
                       <div>
-                        <Image unoptimized
+                        <Image
+                          unoptimized
                           src={doubt.user.image}
                           width={30}
                           height={30}
@@ -138,7 +140,7 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
                       </div>
                     </div>
                     <div className="flex gap-14">
-                      <div className="text-xs flex gap-4 items-center px-2 rounded-full border">
+                      <div className="flex items-center gap-4 rounded-full border px-2 text-xs">
                         <h1>
                           {doubt.updatedAt.toLocaleString().split(", ")[0]}
                         </h1>
@@ -149,17 +151,17 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
                       </div>
                       <div className="cursor-pointer">
                         {replyId === doubt.id ? (
-                          <div className="flex items-center mt-1">
+                          <div className="mt-1 flex items-center">
                             <input
                               type="text"
                               placeholder="Enter your reply"
                               value={reply}
                               onKeyDown={handleReplyEnterBtn}
                               onChange={(e) => setReply(e.target.value)}
-                              className="w-full sm:w-auto px-4 py-2 border outline-none border-secondary-300 rounded mr-2 mb-2 sm:mb-0"
+                              className="mb-2 mr-2 w-full rounded border border-secondary-300 px-4 py-2 outline-none sm:mb-0 sm:w-auto"
                             />
                             <button
-                              className="px-3 py-1 dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500  flex items-center justify-start text-white rounded text-sm"
+                              className="flex items-center justify-start rounded bg-secondary-400 px-3 py-1 text-sm text-white hover:bg-secondary-500 dark:bg-secondary-800 dark:hover:bg-secondary-700"
                               onClick={() => handleReply(doubt.id)}
                             >
                               <ImReply />
@@ -168,7 +170,7 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
                           </div>
                         ) : (
                           <button
-                            className="px-3 py-1 mt-1 text-sm flex items-center  dark:bg-secondary-800 dark:hover:bg-secondary-700 bg-secondary-400 hover:bg-secondary-500 text-white rounded"
+                            className="mt-1 flex items-center rounded bg-secondary-400 px-3 py-1 text-sm text-white hover:bg-secondary-500 dark:bg-secondary-800 dark:hover:bg-secondary-700"
                             onClick={() => setReplyId(doubt.id)}
                           >
                             <ImReply />
@@ -180,11 +182,17 @@ function MentorDoubts({ courses, doubts: userDoubts }: any) {
                   </div>
                   <div>{doubt.description}</div>
                 </div>
-                <div className="ml-16 my-1">
+                <div className="my-1 ml-16">
                   {doubt.response.map((res: any, index: number) => {
                     return (
-                      <div key={index} className="rounded border px-4 my-1 p-2 flex flex-col gap-2">
-                        <h1 className="flex items-center text-sm"><ImReply />&nbsp; Reply</h1>
+                      <div
+                        key={index}
+                        className="my-1 flex flex-col gap-2 rounded border p-2 px-4"
+                      >
+                        <h1 className="flex items-center text-sm">
+                          <ImReply />
+                          &nbsp; Reply
+                        </h1>
                         <div
                           key={res.id}
                           className="flex items-end justify-between"

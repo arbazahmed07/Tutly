@@ -1,26 +1,30 @@
-"use client"
+"use client";
 
-import { useRouter } from 'next/navigation';
-import React from 'react'
+import { useRouter } from "next/navigation";
+import React from "react";
 
 const SortBy = ({
   assignmentId,
-  searchParams
+  searchParams,
 }: {
-  assignmentId: string,
-  searchParams?: { [key: string]: string | string[] | undefined };
+  assignmentId: string;
+  searchParams?: Record<string, string | string[] | undefined>;
 }) => {
-  const router = useRouter()
+  const router = useRouter();
   return (
     <>
-      <div className='p-1 sm:p-2 border-b flex'>
-        <p className='text-sm font-semibold text-nowrap max-sm:hidden'>Sort by</p>
+      <div className="flex border-b p-1 sm:p-2">
+        <p className="text-nowrap text-sm font-semibold max-sm:hidden">
+          Sort by
+        </p>
         <select
-          className='sm:ml-2'
+          className="sm:ml-2"
           onChange={(e) => {
-            const sortBy = e.target.value as string
-            const newSearchParams = { ...searchParams, sortBy }
-            router.push(`/assignments/${assignmentId}/evaluate?${new URLSearchParams(newSearchParams).toString()}`)
+            const sortBy = e.target.value;
+            const newSearchParams = { ...searchParams, sortBy };
+            router.push(
+              `/assignments/${assignmentId}/evaluate?${new URLSearchParams(newSearchParams).toString()}`,
+            );
           }}
           value={searchParams?.sortBy || "username"}
         >
@@ -32,8 +36,7 @@ const SortBy = ({
         </select>
       </div>
     </>
+  );
+};
 
-  )
-}
-
-export default SortBy
+export default SortBy;

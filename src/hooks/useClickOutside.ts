@@ -1,7 +1,7 @@
-import { useEffect, useState, RefObject, useRef } from "react";
+import { useEffect, useState, type RefObject, useRef } from "react";
 
 function useClickOutside<T extends HTMLElement>(
-  initialIsOpen: boolean
+  initialIsOpen: boolean,
 ): [boolean, React.Dispatch<React.SetStateAction<boolean>>, RefObject<T>] {
   const [isOpen, setIsOpen] = useState<boolean>(initialIsOpen);
   const componentRef = useRef<T>(null);

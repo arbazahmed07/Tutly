@@ -24,25 +24,25 @@ export default function StudentWiseAssignments({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap justify-between items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           {courses?.map((course: any) => (
             <button
               onClick={() => setCurrentCourse(course.id)}
               className={`rounded p-2 sm:w-auto ${
-                currentCourse === course.id && "border rounded"
+                currentCourse === course.id && "rounded border"
               }`}
               key={course.id}
             >
-              <h1 className="truncate max-w-xs text-sm font-medium">
+              <h1 className="max-w-xs truncate text-sm font-medium">
                 {course.title}
               </h1>
             </button>
           ))}
         </div>
-        <div className="space-x-4 text-sm font-medium m-auto sm:m-0">
+        <div className="m-auto space-x-4 text-sm font-medium sm:m-0">
           <button
-            className={`focus:outline-none cursor-pointer ${
+            className={`cursor-pointer focus:outline-none ${
               filterOption === "all" && "border-b-2"
             } `}
             onClick={() => setFilterOption("all")}
@@ -50,7 +50,7 @@ export default function StudentWiseAssignments({
             <label>All</label>
           </button>
           <button
-            className={`focus:outline-none cursor-pointer ${
+            className={`cursor-pointer focus:outline-none ${
               filterOption === "reviewed" && "border-b-2"
             } `}
             onClick={() => setFilterOption("reviewed")}
@@ -58,15 +58,15 @@ export default function StudentWiseAssignments({
             <label>Reviewed</label>
           </button>
           <button
-            className={`focus:outline-none cursor-pointer ${
-              filterOption === "unreviewed" && "border-b-2 "
+            className={`cursor-pointer focus:outline-none ${
+              filterOption === "unreviewed" && "border-b-2"
             } `}
             onClick={() => setFilterOption("unreviewed")}
           >
             <label>Unreviewed</label>
           </button>
           <button
-            className={`focus:outline-none cursor-pointer ${
+            className={`cursor-pointer focus:outline-none ${
               filterOption === "not-submitted" && "border-b-2"
             } `}
             onClick={() => setFilterOption("not-submitted")}
@@ -98,23 +98,23 @@ export default function StudentWiseAssignments({
               return true;
             })
             .map((assignment: any) => (
-              <div key={assignment.id} className="border rounded-lg p-1 md:p-3">
-                <div className="flex items-center p-2 md:p-0 md:px-4 justify-around md:justify-between flex-wrap">
-                  <div className="flex md:flex-row items-center justify-between w-full flex-wrap">
+              <div key={assignment.id} className="rounded-lg border p-1 md:p-3">
+                <div className="flex flex-wrap items-center justify-around p-2 md:justify-between md:p-0 md:px-4">
+                  <div className="flex w-full flex-wrap items-center justify-between md:flex-row">
                     <div className="text-sm">
-                      <h2 className="flex-1 font-medium m-2">
+                      <h2 className="m-2 flex-1 font-medium">
                         {assignment.title}
                       </h2>
                     </div>
-                    <div className="flex gap-3 md:gap-6 items-center text-xs font-medium text-white flex-wrap">
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-white md:gap-6">
                       {assignment.submissions.length === 0 ? (
-                        <div className="flex gap-6 itens-center">
-                          <div className="rounded-full p-2.5 bg-secondary-600">
+                        <div className="itens-center flex gap-6">
+                          <div className="rounded-full bg-secondary-600 p-2.5">
                             Not submitted
                           </div>
                         </div>
                       ) : (
-                        <div className="flex gap-2 flex-wrap">
+                        <div className="flex flex-wrap gap-2">
                           {assignment.submissions.map(
                             (eachSubmission: any, index: number) => {
                               if (eachSubmission.points.length === 0) {
@@ -127,13 +127,13 @@ export default function StudentWiseAssignments({
                                     <div
                                       onClick={() =>
                                         router.push(
-                                          eachSubmission.submissionLink
+                                          eachSubmission.submissionLink,
                                         )
                                       }
-                                      className="flex gap-6 items-center"
+                                      className="flex items-center gap-6"
                                       key={index}
                                     >
-                                      <div className="rounded-full p-2.5 bg-yellow-600">
+                                      <div className="rounded-full bg-yellow-600 p-2.5">
                                         Under review
                                       </div>
                                     </div>
@@ -141,13 +141,13 @@ export default function StudentWiseAssignments({
                                 } else {
                                   return (
                                     <div
-                                      className="flex gap-6 items-center"
+                                      className="flex items-center gap-6"
                                       key={index}
                                     >
                                       {/* <div className="rounded-full p-2.5 bg-yellow-600">
                                         Under review
                                       </div> */}
-                                      <div className="rounded-full p-2.5 bg-green-600 flex items-center cursor-pointer">
+                                      <div className="flex cursor-pointer items-center rounded-full bg-green-600 p-2.5">
                                         <h1>Submitted</h1>
                                       </div>
                                     </div>
@@ -165,15 +165,15 @@ export default function StudentWiseAssignments({
                                 ) {
                                   return (
                                     <div
-                                      className="flex gap-6 items-center"
+                                      className="flex items-center gap-6"
                                       onClick={() =>
                                         router.push(
-                                          eachSubmission.submissionLink
+                                          eachSubmission.submissionLink,
                                         )
                                       }
                                       key={index}
                                     >
-                                      <div className="rounded-full p-2.5 bg-green-600 flex items-center cursor-pointer">
+                                      <div className="flex cursor-pointer items-center rounded-full bg-green-600 p-2.5">
                                         <h1>Score: {total}</h1>
                                         <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
                                       </div>
@@ -182,21 +182,21 @@ export default function StudentWiseAssignments({
                                 } else {
                                   return (
                                     <div
-                                      className="flex gap-6 items-center"
+                                      className="flex items-center gap-6"
                                       key={index}
                                     >
                                       {/* <div className="rounded-full p-2.5 bg-green-600 flex items-center">
                                         <h1>Score: {total}</h1>
                                         <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
                                       </div> */}
-                                      <div className="rounded-full p-2.5 bg-green-600 flex items-center cursor-pointer">
+                                      <div className="flex cursor-pointer items-center rounded-full bg-green-600 p-2.5">
                                         <h1>Submitted</h1>
                                       </div>
                                     </div>
                                   );
                                 }
                               }
-                            }
+                            },
                           )}
                         </div>
                       )}
@@ -205,13 +205,13 @@ export default function StudentWiseAssignments({
                         onClick={() => {
                           if (userId) {
                             router.push(
-                              `/assignments/${assignment.id}?username=${userId}`
+                              `/assignments/${assignment.id}?username=${userId}`,
                             );
                           } else {
                             router.push(`/assignments/${assignment.id}`);
                           }
                         }}
-                        className="p-2.5 bg-blue-500 rounded"
+                        className="rounded bg-blue-500 p-2.5"
                       >
                         View Details
                       </button>
@@ -219,7 +219,7 @@ export default function StudentWiseAssignments({
                   </div>
                 </div>
               </div>
-            ))
+            )),
         );
       })}
     </div>

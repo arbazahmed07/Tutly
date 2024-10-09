@@ -1,17 +1,32 @@
-// import { Octokit } from "@octokit/core";
-// import { v4 as uuidv4 } from "uuid";
-// import {
-//   createPullRequest,
-//   DELETE_FILE,
-// } from "octokit-plugin-create-pull-request";
 import getCurrentUser from "./getCurrentUser";
 import { db } from "@/lib/db";
-// const MyOctokit = Octokit.plugin(createPullRequest);
+import type {
+  submission,
+  EnrolledUsers,
+  User,
+  Point,
+  Attachment,
+} from "@prisma/client";
+import type { InputJsonValue } from "@prisma/client/runtime/library";
+
+export interface AssignmentDetails {
+  id: string;
+  maxSubmissions: number;
+  class: {
+    courseId: string;
+  };
+}
+
+export interface MentorDetails {
+  mentor: {
+    username: string;
+  };
+}
 
 export const createSubmission = async (
-  assignmentDetails: any,
-  files: any,
-  mentorDetails: any
+  assignmentDetails: AssignmentDetails,
+  files: InputJsonValue,
+  mentorDetails: MentorDetails,
 ) => {
   const user = await getCurrentUser();
   if (!user) {
@@ -30,68 +45,6 @@ export const createSubmission = async (
   if (submissions.length >= assignmentDetails.maxSubmissions) {
     return { message: "Maximum submission limit reached" };
   }
-
-  // const octokit = new MyOctokit({
-  //   auth: process.env.GITHUB_PAT,
-  // });
-  // const submissionId = uuidv4();
-
-  // const pr = await octokit.createPullRequest({
-  //   owner: "GoodKodersUnV",
-  //   repo: "LMS-DATA",
-  //   title: `${assignmentDetails.title} submission by ${user.username}`,
-  //   body: `
-  //     # Assignment submission by ${user.username}
-
-  //     ## User Details:
-  //     - Name: ${user.name}
-  //     - Email: ${user.email}
-  //     - Username: ${user.username}
-
-  //     ## Assignment Id: ${assignmentDetails.id}
-  //     ## Submission Id: ${submissionId}
-  //     ## Submitted by: ${user.username}
-
-  //     ## Submission Details:
-  //     - Assignment Title: ${assignmentDetails.title}
-  //     - Course: ${assignmentDetails.class.course.title}
-  //     - Class: ${assignmentDetails.class.title}
-  //     - Due Date: ${assignmentDetails.dueDate}
-  //     - Submission Date: ${new Date().toISOString()}
-  //     - Submission Files:
-  //       ${Object.keys(files).map((file) => {
-  //         return `\n - ${file}`;
-  //       })}
-  //     `,
-  //   head: `${user.username?.trim()}-submissionId-${submissionId}`,
-  //   base: `main`,
-  //   update: true,
-  //   forceFork: false,
-  //   labels: [
-  //     user.username,
-  //     "assignment-submission",
-  //     assignmentDetails.class.course.title,
-  //     assignmentDetails.title,
-  //     `mentor-${mentorDetails.mentor.username}`,
-  //   ],
-  //   changes: [
-  //     {
-  //       files,
-  //       commit: `submitted assignment ${assignmentDetails.id} by ${user.username}`,
-  //       author: {
-  //         name: "goodkodersUnV",
-  //         email: "goodkodersUnV@gmail.com",
-  //         date: new Date().toISOString(),
-  //       },
-  //     },
-  //   ],
-  // });
-
-  // if (!pr) {
-  //   return { message: "Error submitting assignment" };
-  // }
-
-  // const prUrl = pr.data.html_url;
 
   const enrolledUser = await db.enrolledUsers.findUnique({
     where: {
@@ -125,7 +78,7 @@ export const createSubmission = async (
 
 export const addOverallFeedback = async (
   submissionId: string,
-  feedback: string
+  feedback: string,
 ) => {
   const user = await getCurrentUser();
   if (!user) {
@@ -139,7 +92,7 @@ export const addOverallFeedback = async (
   });
 
   if (!submission) {
-    return { message: "Submission not found" };
+    return { message: "submission not found" };
   }
 
   const updatedSubmission = await db.submission.update({
@@ -154,9 +107,19 @@ export const addOverallFeedback = async (
   return updatedSubmission;
 };
 
+interface SubmissionWithDetails extends submission {
+  enrolledUser: EnrolledUsers & {
+    user: User;
+  };
+  points: Point[];
+  assignment: Attachment;
+  submissionCount?: number;
+  submissionIndex?: number;
+}
+
 export const getAssignmentSubmissions = async (assignmentId: string) => {
   const user = await getCurrentUser();
-  if (!user || user.role == "STUDENT") {
+  if (!user || user.role === "STUDENT") {
     return null;
   }
 
@@ -186,17 +149,19 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
     },
   });
 
-  let filteredSubmissions: any = [];
+  let filteredSubmissions: SubmissionWithDetails[] = [];
 
-  if(user.role == "INSTRUCTOR"){
+  if (user.role === "INSTRUCTOR") {
     filteredSubmissions = submissions;
   }
 
-  if(user.role == "MENTOR"){
-    filteredSubmissions = submissions.filter((submission) => submission.enrolledUser.mentorUsername == user.username);
+  if (user.role === "MENTOR") {
+    filteredSubmissions = submissions.filter(
+      (submission) => submission.enrolledUser.mentorUsername === user.username,
+    );
   }
 
-  if (assignment?.maxSubmissions! > 1) {
+  if (assignment?.maxSubmissions && assignment.maxSubmissions > 1) {
     const submissionCount = await db.submission.groupBy({
       by: ["enrolledUserId"],
       where: {
@@ -207,24 +172,22 @@ export const getAssignmentSubmissions = async (assignmentId: string) => {
       },
     });
 
-    filteredSubmissions.forEach((submission: any) => {
+    filteredSubmissions.forEach((submission) => {
       const submissionCountData = submissionCount.find(
-        (data) => data.enrolledUserId == submission?.enrolledUserId
+        (data) => data.enrolledUserId === submission.enrolledUserId,
       );
       if (submissionCountData) {
         submission.submissionCount = submissionCountData._count.id;
       }
     });
 
-    filteredSubmissions.forEach((submission: any) => {
-      if(submission){
-        submission.submissionIndex = 1;
-      }
-      if (submission?.submissionCount! > 1) {
+    filteredSubmissions.forEach((submission) => {
+      submission.submissionIndex = 1;
+      if (submission.submissionCount && submission.submissionCount > 1) {
         const submissionIndex =
           submissions
-            .filter((sub) => sub.enrolledUserId == submission.enrolledUserId)
-            .findIndex((sub) => sub.id == submission.id) || 0;
+            .filter((sub) => sub.enrolledUserId === submission.enrolledUserId)
+            .findIndex((sub) => sub.id === submission.id) || 0;
         submission.submissionIndex = submissionIndex + 1;
       }
     });

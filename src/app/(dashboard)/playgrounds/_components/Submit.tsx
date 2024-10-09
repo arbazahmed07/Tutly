@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import { useSandpack } from "@codesandbox/sandpack-react";
 import { Button } from "@/components/ui/button";
 
@@ -38,13 +38,7 @@ const Submit = ({
   const router = useRouter();
 
   const handleSubmit = async () => {
-    if (
-      !user ||
-      !user.username ||
-      !user.email ||
-      !assignmentDetails ||
-      !assignmentDetails.title
-    ) {
+    if (!user?.username || !user.email || !assignmentDetails?.title) {
       toast.error("Error submitting assignment");
       return;
     }
@@ -77,10 +71,10 @@ const Submit = ({
     }
   };
   return (
-    <AlertDialog >
-      <AlertDialogTrigger asChild >
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
         <Button
-          className="rounded border  hover:bg-white hover:text-black text-white "
+          className="rounded border text-white hover:bg-white hover:text-black"
           disabled={isSubmitting || status === "Submitted"}
         >
           {status}
@@ -106,28 +100,30 @@ const Submit = ({
       </div>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Confirm Submission
-          </AlertDialogTitle>
+          <AlertDialogTitle>Confirm Submission</AlertDialogTitle>
           <p className="mb-2">
             Are you sure you want to submit the
-            <a href={`${assignmentDetails.link}`} target="_blank" className="text-blue-500">
+            <a
+              href={`${assignmentDetails.link}`}
+              target="_blank"
+              className="text-blue-500"
+            >
               &nbsp;{assignmentDetails.title}
-            </a> ?
+            </a>{" "}
+            ?
           </p>
-          <p className="text-sm text-gray-500 mb-6 flex items-center gap-1">
-            <IoWarningOutline className="text-md" /> Once submitted, you cannot edit your code.
+          <p className="mb-6 flex items-center gap-1 text-sm text-gray-500">
+            <IoWarningOutline className="text-md" /> Once submitted, you cannot
+            edit your code.
           </p>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
-            className="mr-2 bg-gray-200 hover:bg-gray-300 text-black"
-          >
+          <AlertDialogCancel className="mr-2 bg-gray-200 text-black hover:bg-gray-300">
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             disabled={isLoading || isSubmitting || status === "Submitted"}
-            className="bg-red-500 hover:bg-red-600 text-white"
+            className="bg-red-500 text-white hover:bg-red-600"
             onClick={handleSubmit}
           >
             Confirm

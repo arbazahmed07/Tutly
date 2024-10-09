@@ -1,13 +1,14 @@
 import { db } from "@/lib/db";
 import * as z from "zod";
 import getCurrentUser from "./getCurrentUser";
+import { type Class } from "@prisma/client";
 
 // Define the schema for class data
 const classSchema = z.object({
   classTitle: z.string().trim().min(1, {
     message: "Title is required",
   }),
-  videoLink: z.string().trim().min(1),
+  videoLink: z.string().optional(),
   videoType: z.enum(["DRIVE", "YOUTUBE", "ZOOM"]),
   courseId: z.string().trim().min(1),
   createdAt: z.string().optional(),
@@ -15,7 +16,7 @@ const classSchema = z.object({
   folderName: z.string().optional(),
 });
 
-export const createClass = async (data: any) => {
+export const createClass = async (data: Partial<Class>) => {
   const {
     classTitle,
     videoLink,
@@ -98,17 +99,29 @@ export const createClass = async (data: any) => {
     }
 
     return myClass;
-  } catch (error) {
-    throw new Error("Failed to create class. Please try again later.");
+  } catch {
+    throw new Error("Error creating class");
   }
 };
 
-export const updateClass = async (data: any) => {
+export interface EditClassType {
+  classId: string;
+  courseId: string;
+  classTitle: string;
+  videoLink: string;
+  videoType: string;
+  folderId: string;
+  folderName: string;
+  createdAt: string;
+}
+
+export const updateClass = async (data: EditClassType) => {
   const currentUser = await getCurrentUser();
   const isCourseAdmin = currentUser?.adminForCourses?.some(
-    (course) => course.id === data.courseId
+    (course) => course.id === data.courseId,
   );
-  const haveAccess = currentUser && (isCourseAdmin || currentUser.role === "INSTRUCTOR");
+  const haveAccess =
+    currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
   if (!haveAccess) {
     throw new Error("You are not authorized to update this class.");
   }
@@ -119,7 +132,7 @@ export const updateClass = async (data: any) => {
   let newFolderId = undefined;
 
   if (folderId && folderName) {
-    const res = await db.folder.update({
+    await db.folder.update({
       where: {
         id: folderId,
       },
@@ -144,7 +157,7 @@ export const updateClass = async (data: any) => {
   try {
     const myClass = await db.class.update({
       where: {
-        id: data.classId as string,
+        id: data.classId,
       },
       data: {
         title: classTitle,
@@ -157,7 +170,7 @@ export const updateClass = async (data: any) => {
         },
         Folder: {
           connect: {
-            id: newFolderId as string,
+            id: newFolderId,
           },
         },
       },
@@ -172,7 +185,7 @@ export const updateClass = async (data: any) => {
 
 export const deleteClass = async (classId: string) => {
   try {
-    const res = await db.class.delete({
+    await db.class.delete({
       where: {
         id: classId,
       },
@@ -187,7 +200,7 @@ export const deleteClass = async (classId: string) => {
 
 export const totalNumberOfClasses = async () => {
   const currentUser = await getCurrentUser();
-  if(!currentUser) {
+  if (!currentUser) {
     throw new Error("You are not authorized to view this page.");
   }
 
@@ -197,7 +210,7 @@ export const totalNumberOfClasses = async () => {
   } catch (error) {
     console.error("Error getting total number of classes:", error);
     throw new Error(
-      "Failed to get total number of classes. Please try again later."
+      "Failed to get total number of classes. Please try again later.",
     );
   }
 };

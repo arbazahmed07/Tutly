@@ -1,18 +1,16 @@
-import React from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { FcGoogle } from 'react-icons/fc';
-import { toast } from 'react-hot-toast';
+import React from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
+import { toast } from "react-hot-toast";
 
 const SigninWithGoogle = () => {
   const router = useRouter();
   const loginWithGoogle = async () => {
-    const response = await signIn('google', { callbackUrl: '/' });
-    // console.log(response);
+    const response = await signIn("google", { callbackUrl: "/" });
     if (response?.ok) {
-      // console.log(response);
-      toast.success('Signin successful');
-      router.push('/');
+      toast.success("Signin successful");
+      router.push("/");
     }
     if (response?.error) {
       toast.error(response.error);
@@ -20,14 +18,22 @@ const SigninWithGoogle = () => {
   };
 
   return (
-    <div className=''>
-      <h2 className="text-center mt-2 text-secondary-700 text-sm font-bold">Or</h2>
-      <button onClick={(e) => { e.preventDefault(); loginWithGoogle() }} className='bg-gray-950 hover:bg-gray-800 text-white text-sm font-semibold my-2  rounded-lg w-full  '>
-        <div className='flex rounded-md justify-center items-center gap-5 p-2.5 relative bg-secondary-600 text-primary-50'>
+    <div className="">
+      <h2 className="mt-2 text-center text-sm font-bold text-secondary-700">
+        Or
+      </h2>
+      <button
+        onClick={async (e) => {
+          e.preventDefault();
+          await loginWithGoogle();
+        }}
+        className="my-2 w-full rounded-lg bg-gray-950 text-sm font-semibold text-white hover:bg-gray-800"
+      >
+        <div className="relative flex items-center justify-center gap-5 rounded-md bg-secondary-600 p-2.5 text-primary-50">
           <div>
             <FcGoogle />
           </div>
-          Continue with Google
+          <span>Continue with Google</span>
         </div>
       </button>
     </div>
