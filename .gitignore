@@ -38,7 +38,7 @@ next-env.d.ts
 students.json
 enrolledUsers.json
 
-#pwq
+#pwa
 **/public/sw.js
 **/public/workbox-*.js
 **/public/worker-*.js
