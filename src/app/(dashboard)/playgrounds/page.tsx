@@ -7,17 +7,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 const Page = () => {
-  const [externalLink, setExternalLink] = useState("");
 
-  const handleSubmit = async () => {
-    try {
-      console.log(externalLink);
-      toast.success("Link submitted successfully");
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Failed to submit the link");
-    }
-  };
 
   return (
     <div className="m-auto p-6">

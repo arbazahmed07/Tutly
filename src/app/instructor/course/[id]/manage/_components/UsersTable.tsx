@@ -49,7 +49,6 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
         courseId: params.id,
         username,
       });
-      console.log(res.data);
       toast.dismiss();
       toast.success(`${username} enrolled successfully`);
       setLoading(false);
@@ -69,7 +68,6 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
         courseId: params.id,
         username,
       });
-      console.log(res.data);
       toast.dismiss();
       toast.success(`${username} unenrolled successfully`);
       setLoading(false);
@@ -89,7 +87,6 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
         username,
         role,
       });
-      console.log(res.data);
       toast.dismiss();
       toast.success(`User role updated to ${role}`);
       setLoading(false);
@@ -113,7 +110,6 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
         username,
         mentorUsername: mentorUsername === "" ? null : mentorUsername,
       });
-      console.log(res.data);
       toast.dismiss();
       toast.success(`Mentor updated successfully`);
       setLoading(false);
@@ -135,7 +131,6 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
   };
 
   const getSortedUsers = () => {
-    // console.log(sortColumn, sortOrder);
 
     const sortedUsers = [...displayedUsers];
     sortedUsers.sort((a, b) => {

@@ -63,7 +63,6 @@ export default function AssignmentPage({
   const haveAdminAccess =
     currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
 
-  console.log("isCourseAdmin", isCourseAdmin);
 
   const handleWhatsAppClick = (phone: string) => {
     setPhoneNumber(phone);

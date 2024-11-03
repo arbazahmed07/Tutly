@@ -17,7 +17,7 @@ interface LeaderboardSubmission extends Partial<submission> {
 
 interface LeaderboardData {
   sortedSubmissions: LeaderboardSubmission[];
-  currentUser: User;
+  currentUser: Omit<User, "oneTimePassword">;
   enrolledCourses: Course[];
 }
 
@@ -108,6 +108,8 @@ export default async function getLeaderboardData(): Promise<LeaderboardData | nu
     const sortedSubmissions = totalPoints.sort(
       (a, b) => b.totalPoints - a.totalPoints,
     );
+
+    // @ts-ignore
 
     return { sortedSubmissions, currentUser, enrolledCourses };
   } catch (error) {

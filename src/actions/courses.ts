@@ -110,13 +110,35 @@ export const getEnrolledCourses = async () => {
     },
     include: {
       classes: true,
-      createdBy: true,
+      createdBy: {
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
       _count: {
         select: {
           classes: true,
         },
       },
-      courseAdmins: true,
+      courseAdmins: {
+        select:{
+          id : true,
+          username: true,
+          name: true,
+          image: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        }
+      }
     },
   });
 

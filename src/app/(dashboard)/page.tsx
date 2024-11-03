@@ -35,7 +35,6 @@ export default async function Home() {
     const {
       sortedSubmissions,
       assignmentsSubmitted,
-      assignmentsPending,
       currentUser,
     } = data;
 

@@ -3,10 +3,9 @@ import Leaderboard from "@/components/leaderBoard";
 
 export default async function mentorLeaderboard() {
   const data: any = await getMentorLeaderboardData();
-  // <pre>{JSON.stringify(data, null, 2)}</pre>;
   if (data?.sortedSubmissions && data.createdCourses) {
     const { sortedSubmissions, createdCourses } = data;
-
+    
     return (
       <Leaderboard
         submissions={sortedSubmissions}

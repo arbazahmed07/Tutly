@@ -7,7 +7,7 @@ export default async function Page() {
   // return <UnderMaintenance />;
 
   const data: any = await getLeaderboardData();
-  const currentUser = await getCurrentUser();
+  const currentUser: any = await getCurrentUser();
 
   if (data?.sortedSubmissions && data.enrolledCourses) {
     const { sortedSubmissions, enrolledCourses } = data;
