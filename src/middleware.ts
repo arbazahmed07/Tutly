@@ -29,7 +29,8 @@ export const onRequest = defineMiddleware(async ({ request, cookies, redirect, l
         user: {
           include: {
             profile: true,
-            account: true
+            account: true,
+            adminForCourses: true,
           }
         } 
       },
