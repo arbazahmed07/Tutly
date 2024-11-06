@@ -790,9 +790,9 @@ export const getStudentEvaluatedAssigments = async (courseId: string) => {
       attachmentType: "ASSIGNMENT",
       courseId,
     },
-    select: {
-      maxSubmissions: true,
-    },
+    // select: {
+    //   maxSubmissions: true,
+    // },
   });
   let totalAssignments = 0;
   noOfTotalAssignments.forEach((assignment) => {

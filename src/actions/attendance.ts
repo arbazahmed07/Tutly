@@ -185,6 +185,9 @@ export const getAttendanceOfStudent = async (id: string, courseId: string) => {
   const getAllClasses = await db.class.findMany({
     where: {
       courseId,
+      Attendence: {
+        some: {}
+      }
     },
     select: {
       id: true,
@@ -196,11 +199,9 @@ export const getAttendanceOfStudent = async (id: string, courseId: string) => {
   });
   const classes = [] as any;
   getAllClasses.forEach((classData) => {
-    if (
-      !attendanceDates.includes(classData.createdAt.toISOString().split("T")[0])
-    ) {
+    // if (!attendanceDates.includes(classData.createdAt.toISOString().split("T")[0])) {
       classes.push(classData.createdAt.toISOString().split("T")[0]);
-    }
+    // }
   });
   return { classes, attendanceDates };
 };
