@@ -33,7 +33,10 @@ export default async function Statistics({ params }: any) {
     currentUser.username,
     params.course,
   );
-
+  // return <div>
+  //   <pre>{JSON.stringify(attendanceDates, null, 2)}</pre>
+  //   <pre>{JSON.stringify(classes, null, 2)}</pre>
+  // </div>
   return (
     <div>
       <StudentStatClient
