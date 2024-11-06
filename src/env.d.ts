@@ -4,16 +4,17 @@
 declare namespace App {
   interface Locals {
     user:
-      | (import("@prisma/client").User & {
-          profile: import("@prisma/client").Profile;
-        })
-      | null;
+    | (import("@prisma/client").User & {
+      profile: import("@prisma/client").Profile;
+      adminForCourses: import("@prisma/client").Course[];
+    })
+    | null;
     session:
-      | (import("@prisma/client").Session & {
-          user: import("@prisma/client").User & {
-            profile: import("@prisma/client").Profile;
-          };
-        })
-      | null;
+    | (import("@prisma/client").Session & {
+      user: import("@prisma/client").User & {
+        profile: import("@prisma/client").Profile;
+      };
+    })
+    | null;
   }
 }
