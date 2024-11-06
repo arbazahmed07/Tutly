@@ -1,0 +1,13 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+const currentUser = Astro.locals.user;
+---
+
+<RootLayout>
+  <div class="p-4">
+    <div class="flex items-center justify-between">
+      <h1 class="text-3xl font-black">Hello {currentUser?.name}</h1>
+    </div>
+    <pre>{JSON.stringify(currentUser, null, 2)}</pre>
+  </div>
+</RootLayout>

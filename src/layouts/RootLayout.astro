@@ -1,0 +1,37 @@
+---
+import "../app.css";
+import { ViewTransitions } from "astro:transitions";
+import { Sidebar } from "./Sidebar.tsx";
+import { Toaster } from "react-hot-toast";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "Tutly" } = Astro.props;
+
+const pathname = Astro.url.pathname;
+const user = Astro.locals.user;
+
+// @ts-ignore
+globalThis.pathname = pathname;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Toaster client:load />
+    {user && (
+      <Sidebar client:load {pathname} {user}>
+        <slot />
+      </Sidebar>
+    )}
+    <ViewTransitions fallback="animate" />
+  </body>
+</html>
