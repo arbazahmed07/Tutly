@@ -4,9 +4,7 @@ const isDev = import.meta.env.DEV;
 const isProd = import.meta.env.PROD;
 
 const createPrismaClient = () =>
-  new PrismaClient({
-    log: isDev ? ["query", "error", "warn"] : ["error"],
-  });
+  new PrismaClient();
 
 const globalForPrisma = globalThis as unknown as {
   prisma: ReturnType<typeof createPrismaClient> | undefined;

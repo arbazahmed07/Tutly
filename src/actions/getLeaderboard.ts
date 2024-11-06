@@ -21,10 +21,10 @@ export const getLeaderboardData = defineAction({
       if (!currentUser) {
         return { error: "Unauthorized" };
       }
-
+      console.log(currentUser,"*******");
       const mentor = await db.enrolledUsers.findMany({
         where: {
-          username: currentUser.username,
+          username: "22072A05E3",
         },
         select: {
           mentorUsername: true,
@@ -71,7 +71,7 @@ export const getLeaderboardData = defineAction({
           },
         },
       });
-
+      console.log(submissions);
       const submissionsUptoLastSunday = submissions.filter((submission) => {
         const submissionDate = new Date(submission.submissionDate);
         const currentDate = new Date();
