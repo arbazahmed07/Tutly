@@ -250,6 +250,7 @@ export async function getSession(sessionId: string) {
         include: {
           profile: true,
           account: true,
+          adminForCourses: true,
         }
       }
     }

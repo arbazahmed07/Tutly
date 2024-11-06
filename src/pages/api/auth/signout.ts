@@ -1,27 +1,18 @@
-import { AUTH_SESSION_COOKIE, AUTH_STATE_COOKIE } from "@lib/auth";
-import db from "@/lib/db";
+import { AUTH_SESSION_COOKIE, AUTH_STATE_COOKIE, deleteSession } from "@lib/auth";
 import type { APIRoute } from "astro";
 
-export const GET: APIRoute = async ({ locals, cookies, redirect }) => {
-  if (!locals.session) return redirect("/", 302);
+export const GET: APIRoute = async ({ cookies, redirect }) => {
+  const sessionId = cookies.get(AUTH_SESSION_COOKIE)?.value;
+  if (!sessionId) return redirect("/sign-in", 302);
+ 
+  await deleteSession(sessionId);
 
-  const sessionId = locals.session.id;
-
-  // Delete the session from database
-  await db.session.delete({
-    where: {
-      id: sessionId,
-    },
-  });
-
-  // Delete both cookies to ensure complete sign-out
   cookies.delete(AUTH_SESSION_COOKIE, {
     httpOnly: true,
     path: "/",
     secure: import.meta.env.PROD,
   });
 
-  // Delete the old cookie name if it exists
   cookies.delete(AUTH_STATE_COOKIE, {
     httpOnly: true,
     path: "/",
