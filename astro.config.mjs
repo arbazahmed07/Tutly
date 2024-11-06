@@ -19,4 +19,14 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
   ],
+  // images
+  image: {
+    service: {
+      entrypoint: "astro/assets/service-entrypoint.mjs",
+    },
+    domains: [
+      "png.pngtree.com",
+      "plus.unsplash.com",
+    ],
+  },
 });

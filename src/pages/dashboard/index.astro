@@ -1,13 +1,29 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
+import Dashboard from "./_components/dashboard";
 const currentUser = Astro.locals.user;
+if (currentUser == null) return Astro.redirect("/sign-in");
+// let data;
+// if (currentUser.role === "STUDENT") {
+//   data = async () => {
+//     const leaderboardData = await getLeaderboardData();
+//     if (!leaderboardData) return null;
+
+//     const { currentUser, enrolledCourses, sortedSubmissions } = leaderboardData;
+
+//     const assignmentsSubmitted = sortedSubmissions.filter(
+//       (x:any) => x.enrolledUser.user.id === currentUser.id
+//     ).length;
+
+//     return {
+//       sortedSubmissions,
+//       assignmentsSubmitted,
+//       enrolledCourses,
+//     };
+//   };
+// }
 ---
 
 <RootLayout>
-  <div class="p-4">
-    <div class="flex items-center justify-between">
-      <h1 class="text-3xl font-black">Hello {currentUser?.name}</h1>
-    </div>
-    <pre>{JSON.stringify(currentUser, null, 2)}</pre>
-  </div>
+  <Dashboard currentUser={currentUser} />
 </RootLayout>
