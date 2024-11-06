@@ -33,15 +33,12 @@ export const auth = defineMiddleware(
     }
 
     if (url.pathname.startsWith("/_action")) return next();
-    if (url.pathname.startsWith("/auth")) return next();
 
     if (url.pathname.startsWith("/instructor") && user?.role !== "INSTRUCTOR") {
       return new Response("Not Found", { status: 404 });
     }
 
     const res = await next();
-    locals.session = null;
-    locals.user = null;
     return res;
   },
 );
