@@ -2,6 +2,7 @@
   "name": "tutly",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -11,7 +12,8 @@
     "seed": "node ./prisma/seed.ts",
     "postinstall": "prisma generate",
     "format": "prettier --write .",
-    "prepare": " husky install"
+    "prepare": " husky install",
+    "enroll":"node src/scripts/enroll.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.0.0",

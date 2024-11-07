@@ -211,11 +211,10 @@ export default function AssignmentPage({
         <div className="flex items-center justify-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`rounded p-1 px-2 text-white ${
-                new Date(assignment?.dueDate) > new Date()
-                  ? "bg-primary-600"
-                  : "bg-secondary-500"
-              }`}
+              className={`rounded p-1 px-2 text-white ${new Date(assignment?.dueDate) > new Date()
+                ? "bg-primary-600"
+                : "bg-secondary-500"
+                }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -276,20 +275,16 @@ export default function AssignmentPage({
                       <h1>Received from?</h1>
                     )}
                   </button>
-                  <button
-                    onClick={() => {
-                      if (username) {
-                        router.push(
-                          `/assignments/${params.id}/evaluate?username=${username}`,
-                        );
-                      } else {
-                        router.push(`/assignments/${params.id}/evaluate`);
-                      }
-                    }}
+                  <Link
+                    href={
+                      username
+                        ? `/assignments/evaluate?username=${username}&assignmentId=${params.id}`
+                        : `/assignments/evaluate?assignmentId=${params.id}`
+                    }
                     className="inline rounded bg-primary-600 px-3.5 py-2 text-sm font-semibold text-white"
                   >
                     Evaluate
-                  </button>
+                  </Link>
                 </div>
                 <div className="m-auto flex items-center rounded border bg-secondary-200 text-black md:m-0">
                   <input
@@ -546,12 +541,7 @@ export default function AssignmentPage({
                               ) : (
                                 <div className="flex items-center justify-center gap-3">
                                   <Link
-                                    href={
-                                      assignment.submissionMode ===
-                                      "HTML_CSS_JS"
-                                        ? `/playgrounds/html-css-js?submissionId=${submission.id}`
-                                        : submission.submissionLink
-                                    }
+                                    href={`/assignments/evaluate?submissionId=${submission.id}&assignmentId=${params.id}`}
                                     target="_blank"
                                     className="rounded-full p-1 text-lg hover:text-primary-500"
                                   >

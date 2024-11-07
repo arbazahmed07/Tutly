@@ -8,6 +8,7 @@ import type {
   Attachment,
 } from "@prisma/client";
 import type { InputJsonValue } from "@prisma/client/runtime/library";
+import { getEnrolledCourses } from "./courses";
 
 export interface AssignmentDetails {
   id: string;
@@ -211,7 +212,16 @@ export const getAllAssignmentSubmissions = async () => {
     return null;
   }
 
+  const courses = (await getEnrolledCourses()) ?? [];
+
   const submissions = await db.submission.findMany({
+    where: {
+      enrolledUser: {
+        courseId: {
+          in: courses.map((course) => course.id),
+        },
+      },
+    },
     include: {
       enrolledUser: {
         include: {
