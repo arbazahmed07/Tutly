@@ -24,6 +24,20 @@ globalThis.pathname = pathname;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <script is:inline>
+      const getTheme = () => {
+        if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+          return localStorage.getItem("theme");
+        }
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return "dark";
+        }
+        return "light";
+      }
+
+      const theme = getTheme();
+      document.documentElement.classList[theme === "dark" ? "add" : "remove"]("dark");
+    </script>
   </head>
   <body>
     <Toaster client:load />

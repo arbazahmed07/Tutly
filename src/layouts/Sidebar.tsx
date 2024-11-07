@@ -4,6 +4,7 @@ import { DynamicBreadcrumbs } from "@/components/DynamicBreadcrumbs";
 import { SidebarComponent } from "@/components/Sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { ModeToggle } from '@/components/ModeToggle';
 
 export interface SidebarProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export function Sidebar({ children, pathname, user }: SidebarProps) {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <DynamicBreadcrumbs pathname={pathname} />
+            <ModeToggle />
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
