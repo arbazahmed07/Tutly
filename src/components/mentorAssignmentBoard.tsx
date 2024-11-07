@@ -61,22 +61,22 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
             </button>
           ))}
         </div>
-        <div className="flex justify-end px-2 gap-2 items-center">
+        <div className="flex items-center justify-end gap-2 px-2">
           <Link
             href={"/assignments/evaluate"}
-            className="bg-primary-600 inline px-3.5 py-2 text-sm rounded font-semibold text-white"
+            className="inline rounded bg-primary-600 px-3.5 py-2 text-sm font-semibold text-white"
           >
             Evaluate
           </Link>
-          <div className="flex items-center m-auto md:m-0 bg-secondary-200 border text-black rounded">
+          <div className="m-auto flex items-center rounded border bg-secondary-200 text-black md:m-0">
             <input
               title="input"
-              className="p-2 outline-none text-sm font-medium rounded-l border-r border-black bg-secondary-200"
+              className="rounded-l border-r border-black bg-secondary-200 p-2 text-sm font-medium outline-none"
               placeholder="Search here"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <FaSearch className="h-5 w-5 m-2" />
+            <FaSearch className="m-2 h-5 w-5" />
           </div>
         </div>
       </div>

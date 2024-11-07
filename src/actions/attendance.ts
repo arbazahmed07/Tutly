@@ -186,8 +186,8 @@ export const getAttendanceOfStudent = async (id: string, courseId: string) => {
     where: {
       courseId,
       Attendence: {
-        some: {}
-      }
+        some: {},
+      },
     },
     select: {
       id: true,
@@ -200,7 +200,7 @@ export const getAttendanceOfStudent = async (id: string, courseId: string) => {
   const classes = [] as any;
   getAllClasses.forEach((classData) => {
     // if (!attendanceDates.includes(classData.createdAt.toISOString().split("T")[0])) {
-      classes.push(classData.createdAt.toISOString().split("T")[0]);
+    classes.push(classData.createdAt.toISOString().split("T")[0]);
     // }
   });
   return { classes, attendanceDates };

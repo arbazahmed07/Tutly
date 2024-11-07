@@ -131,7 +131,6 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
   };
 
   const getSortedUsers = () => {
-
     const sortedUsers = [...displayedUsers];
     sortedUsers.sort((a, b) => {
       if (sortColumn) {

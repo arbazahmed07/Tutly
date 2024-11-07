@@ -7,8 +7,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 const Page = () => {
-
-
   return (
     <div className="m-auto p-6">
       <div className="flex flex-wrap gap-10">

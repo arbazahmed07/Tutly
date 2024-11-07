@@ -5,7 +5,7 @@ export default async function mentorLeaderboard() {
   const data: any = await getMentorLeaderboardData();
   if (data?.sortedSubmissions && data.enrolledCourses) {
     const { sortedSubmissions, enrolledCourses } = data;
-    
+
     return (
       <Leaderboard
         submissions={sortedSubmissions}
@@ -14,6 +14,6 @@ export default async function mentorLeaderboard() {
       />
     );
   } else {
-    return <div>No course enrolled</div>
+    return <div>No course enrolled</div>;
   }
 }

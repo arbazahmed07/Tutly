@@ -238,7 +238,7 @@ export const getAllAssignmentSubmissions = async () => {
   if (user.role === "MENTOR") {
     // @ts-ignore
     filteredSubmissions = submissions.filter(
-      (submission) => submission.enrolledUser.mentorUsername === user.username
+      (submission) => submission.enrolledUser.mentorUsername === user.username,
     );
   }
 
@@ -250,11 +250,11 @@ export const getAllAssignmentSubmissions = async () => {
       acc[submission.attachmentId]?.push(submission);
       return acc;
     },
-    {} as Record<string, SubmissionWithDetails[]>
+    {} as Record<string, SubmissionWithDetails[]>,
   );
 
   for (const [attachmentId, assignmentSubmissions] of Object.entries(
-    submissionsByAssignment
+    submissionsByAssignment,
   )) {
     const assignment = await db.attachment.findUnique({
       where: {
@@ -275,7 +275,7 @@ export const getAllAssignmentSubmissions = async () => {
 
       assignmentSubmissions.forEach((submission) => {
         const submissionCountData = submissionCount.find(
-          (data) => data.enrolledUserId === submission.enrolledUserId
+          (data) => data.enrolledUserId === submission.enrolledUserId,
         );
         if (submissionCountData) {
           submission.submissionCount = submissionCountData._count.id;

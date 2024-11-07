@@ -25,13 +25,12 @@ export default async function getCurrentUser() {
       },
     });
 
-    
     if (!currentUser) {
       throw new Error("Not signed in");
     }
-    
-    const {oneTimePassword, ...rest} = currentUser;
-    
+
+    const { oneTimePassword, ...rest } = currentUser;
+
     return rest;
   } catch {
     return null;

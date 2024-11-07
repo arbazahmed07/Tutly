@@ -128,8 +128,8 @@ export const getEnrolledCourses = async () => {
         },
       },
       courseAdmins: {
-        select:{
-          id : true,
+        select: {
+          id: true,
           username: true,
           name: true,
           image: true,
@@ -137,8 +137,8 @@ export const getEnrolledCourses = async () => {
           role: true,
           createdAt: true,
           updatedAt: true,
-        }
-      }
+        },
+      },
     },
   });
 
@@ -308,7 +308,7 @@ export const getEnrolledStudents = async (courseId: string) => {
 export const getAllStudents = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
-  if(currentUser.role === "MENTOR") {
+  if (currentUser.role === "MENTOR") {
     const students = await db.user.findMany({
       where: {
         role: "STUDENT",
@@ -316,14 +316,14 @@ export const getAllStudents = async () => {
           some: {
             mentorUsername: currentUser.username,
           },
-        }
+        },
       },
       include: {
         course: true,
         enrolledUsers: true,
       },
-    })
-    return students
+    });
+    return students;
   }
 
   const students = await db.user.findMany({

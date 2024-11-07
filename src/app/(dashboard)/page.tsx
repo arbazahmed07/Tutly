@@ -32,11 +32,7 @@ export default async function Home() {
     // student
     const data = await getDashboardData();
     if (!data) return;
-    const {
-      sortedSubmissions,
-      assignmentsSubmitted,
-      currentUser,
-    } = data;
+    const { sortedSubmissions, assignmentsSubmitted, currentUser } = data;
 
     const position = 0;
     let total = 0;

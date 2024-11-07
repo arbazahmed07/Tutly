@@ -11,8 +11,8 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CalendarHeatmapProps {
-  classes: string[];    // dates when classes were held
-  data: string[];      // dates when student was present
+  classes: string[]; // dates when classes were held
+  data: string[]; // dates when student was present
 }
 
 const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
@@ -30,12 +30,14 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
       return {
         date,
         isPresent: data.includes(dateStr),
-        isInClass: classes.includes(dateStr)
+        isInClass: classes.includes(dateStr),
       };
     });
 
     const paddingDays = getDay(startOfYearDate);
-    const paddedDays = Array.from({ length: paddingDays }, () => null).concat(allDays);
+    const paddedDays = Array.from({ length: paddingDays }, () => null).concat(
+      allDays,
+    );
 
     return paddedDays;
   };
@@ -46,8 +48,18 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
   const handleNextYear = () => setCurrentYear(currentYear + 1);
 
   const months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
 
   const getCellColor = (isPresent: boolean, isInClass: boolean) => {
@@ -57,10 +69,8 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      <div className="text-xl font-semibold text-gray-700">
-        {currentYear}
-      </div>
-      
+      <div className="text-xl font-semibold text-gray-700">{currentYear}</div>
+
       <div className="relative w-full max-w-5xl">
         <div className="mb-2 ms-16 grid grid-cols-12 gap-1">
           {months.map((month) => (
@@ -96,8 +106,10 @@ const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({ classes, data }) => {
                   <div className="absolute -left-20 -top-8 z-50 rounded bg-gray-900 px-2 py-1 text-xs text-white">
                     <div>{format(date, "MMM dd, yyyy")}</div>
                     <div>
-                      {isInClass 
-                        ? (isPresent ? "Present" : "Absent") 
+                      {isInClass
+                        ? isPresent
+                          ? "Present"
+                          : "Absent"
                         : "No Class"}
                     </div>
                   </div>

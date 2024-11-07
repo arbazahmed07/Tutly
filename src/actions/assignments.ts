@@ -205,11 +205,10 @@ export const getAllAssignments = async () => {
     include: {
       course: true,
     },
-    orderBy:{
-      createdAt: "desc"
+    orderBy: {
+      createdAt: "desc",
     },
-  },
-);
+  });
 
   return attachments ?? [];
 };
