@@ -3,7 +3,11 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const SortBy = ({ searchParams }: { searchParams?: Record<string, string | string[] | undefined>; }) => {
+const SortBy = ({
+  searchParams,
+}: {
+  searchParams?: Record<string, string | string[] | undefined>;
+}) => {
   const router = useRouter();
   return (
     <>

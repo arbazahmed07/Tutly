@@ -205,11 +205,10 @@ export const getAllAssignments = async () => {
     include: {
       course: true,
     },
-    orderBy:{
-      createdAt: "desc"
+    orderBy: {
+      createdAt: "desc",
     },
-  },
-);
+  });
 
   return attachments ?? [];
 };
@@ -790,9 +789,9 @@ export const getStudentEvaluatedAssigments = async (courseId: string) => {
       attachmentType: "ASSIGNMENT",
       courseId,
     },
-    select: {
-      maxSubmissions: true,
-    },
+    // select: {
+    //   maxSubmissions: true,
+    // },
   });
   let totalAssignments = 0;
   noOfTotalAssignments.forEach((assignment) => {

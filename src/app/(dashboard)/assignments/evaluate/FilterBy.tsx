@@ -24,7 +24,7 @@ const FilterBy = ({
             const assignmentId = e.target.value;
             const newSearchParams = { ...searchParams, assignmentId };
             router.push(
-              `/assignments/evaluate?${new URLSearchParams(newSearchParams).toString()}`
+              `/assignments/evaluate?${new URLSearchParams(newSearchParams).toString()}`,
             );
           }}
           value={searchParams?.assignmentId ?? ""}

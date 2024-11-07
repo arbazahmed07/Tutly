@@ -110,13 +110,35 @@ export const getEnrolledCourses = async () => {
     },
     include: {
       classes: true,
-      createdBy: true,
+      createdBy: {
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
       _count: {
         select: {
           classes: true,
         },
       },
-      courseAdmins: true,
+      courseAdmins: {
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
     },
   });
 
@@ -286,6 +308,23 @@ export const getEnrolledStudents = async (courseId: string) => {
 export const getAllStudents = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) return null;
+  if (currentUser.role === "MENTOR") {
+    const students = await db.user.findMany({
+      where: {
+        role: "STUDENT",
+        enrolledUsers: {
+          some: {
+            mentorUsername: currentUser.username,
+          },
+        },
+      },
+      include: {
+        course: true,
+        enrolledUsers: true,
+      },
+    });
+    return students;
+  }
 
   const students = await db.user.findMany({
     where: {

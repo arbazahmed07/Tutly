@@ -17,6 +17,11 @@ export default async function getCurrentUser() {
             id: true,
           },
         },
+        enrolledUsers: {
+          select: {
+            courseId: true,
+          },
+        },
       },
     });
 
@@ -24,7 +29,9 @@ export default async function getCurrentUser() {
       throw new Error("Not signed in");
     }
 
-    return currentUser;
+    const { oneTimePassword, ...rest } = currentUser;
+
+    return rest;
   } catch {
     return null;
   }

@@ -6,7 +6,7 @@ import Leaderboard from "@/components/leaderBoard";
 export default async function instructorLeaderboard() {
   const data: any = await getInstructorLeaderboardData();
   const currentUser: any = await getCurrentUser();
-  const mentors = await getMentors();
+  const mentors = await getMentors(currentUser.enrolledUsers[0].courseId);
   if (data?.sortedSubmissions && data.enrolledCourses) {
     const { sortedSubmissions, enrolledCourses } = data;
 

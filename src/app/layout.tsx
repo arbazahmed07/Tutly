@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import FaviconSwitcher from "@/providers/FaviconSwitcher";
 const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata: Metadata = {
@@ -18,7 +19,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 const APP_NAME = "LMS Tutly";
 const APP_DEFAULT_TITLE = "LMS Tutly";
-const APP_TITLE_TEMPLATE = "%s - LMS Tutly ";
+const APP_TITLE_TEMPLATE = "%s - Tutly ";
 const APP_DESCRIPTION =
   "Empowering students with state-of-the-art tools and resources for academic success. Our platform integrates innovative learning methods, collaboration opportunities, and growth-focused features. Transform your educational journey with personalized support, interactive content, and a vibrant community. Discover the future of education, tailored for you.";
 
@@ -76,6 +77,7 @@ export default async function RootLayout({
       refetchInterval={5 * 60} // 5 minutes
       session={session}
     >
+      <FaviconSwitcher />
       <html lang="en" className="bg-background text-foreground">
         <body className={inter.className}>
           <Provider>{children}</Provider>

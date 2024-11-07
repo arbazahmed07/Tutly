@@ -70,6 +70,7 @@ export default function Leaderboard({
       rank: number;
     }>
   >([]);
+
   const [mentorUsername, setMentorUsername] = useState<string>(
     mentors ? mentors[0]?.username || "" : "",
   );

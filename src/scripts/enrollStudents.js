@@ -163,8 +163,6 @@ async function main() {
     }),
     skipDuplicates: true,
   });
-
-  console.log(enrolledUsers);
 }
 main()
   .then(async () => {

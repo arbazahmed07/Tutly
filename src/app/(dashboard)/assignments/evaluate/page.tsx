@@ -1,4 +1,7 @@
-import { getAllAssignmentSubmissions, getAssignmentSubmissions } from "@/actions/submission";
+import {
+  getAllAssignmentSubmissions,
+  getAssignmentSubmissions,
+} from "@/actions/submission";
 import Playground from "@/app/(dashboard)/playgrounds/_components/Playground";
 import Link from "next/link";
 import React from "react";
@@ -25,11 +28,15 @@ const page = async ({
 
   const assignments = await getAllAssignments();
 
-  const assignmentId = (searchParams?.assignmentId as string)
+  const assignmentId = searchParams?.assignmentId as string;
 
-  const assignment = assignmentId ? await getAssignmentDetails(assignmentId) : null;
+  const assignment = assignmentId
+    ? await getAssignmentDetails(assignmentId)
+    : null;
 
-  let submissions = assignmentId ? await getAssignmentSubmissions(assignmentId) : await getAllAssignmentSubmissions()
+  let submissions = assignmentId
+    ? await getAssignmentSubmissions(assignmentId)
+    : await getAllAssignmentSubmissions();
 
   if (username) {
     submissions =
@@ -72,15 +79,16 @@ const PlaygroundPage = async ({ submission }: { submission: any }) => {
   return (
     <div>
       <EvaluateSubmission submission={submission} />
-      {submission.assignment.submissionMode === "EXTERNAL_LINK" ?
+      {submission.assignment.submissionMode === "EXTERNAL_LINK" ? (
         <iframe
           src={submission.submissionLink ?? ""}
           allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
           sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
           className="h-[93vh] w-full"
         />
-        : <Playground initialFiles={submission.data} />
-      }
+      ) : (
+        <Playground initialFiles={submission.data} />
+      )}
     </div>
   );
 };
@@ -91,14 +99,14 @@ const SubmissionList = ({
   submissions,
   searchParams,
   username,
-  assignments
+  assignments,
 }: {
   assignmentId: string;
   assignment: any;
   submissions: submission[];
   searchParams: any;
   username: string;
-  assignments: Attachment[]
+  assignments: Attachment[];
 }) => {
   const sortBy = searchParams?.sortBy || "username";
 
@@ -141,7 +149,6 @@ const SubmissionList = ({
               ? `/assignments/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}`
               : `/assignments/evaluate?submissionId=${singleSubmission.id}`;
 
-
             const sortBy = searchParams?.sortBy;
 
             if (sortBy) {
@@ -153,7 +160,7 @@ const SubmissionList = ({
             }
 
             if (assignmentId) {
-              hrefLink = `${hrefLink}&assignmentId=${assignmentId}`
+              hrefLink = `${hrefLink}&assignmentId=${assignmentId}`;
             }
 
             return (
@@ -169,11 +176,11 @@ const SubmissionList = ({
                   <p className="text-xs text-slate-600">
                     {singleSubmission.enrolledUser.user.name}
                   </p>
-                  {!assignment &&
+                  {!assignment && (
                     <p className="text-xs text-slate-600">
                       {singleSubmission?.assignment?.title}
                     </p>
-                  }
+                  )}
                 </div>
               </Link>
             );

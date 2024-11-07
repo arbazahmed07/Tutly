@@ -25,7 +25,7 @@ export default function Doughnutchart({ attendance }: DoughnutchartProps) {
             datasets: [
               {
                 label: "classes",
-                data: attendance,
+                data: [attendance[0], attendance[1] - attendance[0]],
                 backgroundColor: ["rgb(37,99,235)", "red"],
                 borderColor: "white",
                 borderWidth: 0,
@@ -54,7 +54,7 @@ export default function Doughnutchart({ attendance }: DoughnutchartProps) {
 
   const attendancePercentage =
     attendance[0] && attendance[1]
-      ? ((attendance[0] * 100) / (attendance[0] + attendance[1])).toFixed(2)
+      ? ((attendance[0] * 100) / attendance[1]).toFixed(2)
       : "0.00";
 
   return (
