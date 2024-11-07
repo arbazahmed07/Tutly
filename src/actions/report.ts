@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import getCurrentUser from "./getCurrentUser";
 
-interface ReportData {
+export interface ReportData {
   username: string;
   name: string | null;
   submissionLength: number;
@@ -70,6 +70,9 @@ export const generateReport = async (
   const attendance = await db.attendance.findMany({
     where: {
       attended: true,
+      class: {
+        courseId: courseId
+      }
     },
     select: {
       user: {
@@ -89,7 +92,11 @@ export const generateReport = async (
     {},
   );
 
-  const totalClasses = await db.class.count();
+  const totalClasses = await db.class.count({
+    where: {
+      courseId: courseId
+    }
+  });
 
   const obj: Record<
     string,
@@ -133,6 +140,13 @@ export const generateReport = async (
   });
 
   const points = await db.point.findMany({
+    where: {
+      submissions: {
+        enrolledUser: {
+          courseId: courseId
+        }
+      }
+    },
     select: {
       score: true,
       submissions: {

@@ -1,13 +1,13 @@
 "use client";
-import React, { useState, type ChangeEvent, useEffect } from "react";
+import React, { useState, type ChangeEvent } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Image from "next/image";
-import axios from "axios";
-import Loader from "@/components/Loader";
 import day from "@/lib/dayjs";
+import { Course } from "@prisma/client";
+import Link from "next/link";
 
-interface DataItem {
+export interface DataItem {
   username: string;
   name: string;
   submissionLength: number;
@@ -19,62 +19,23 @@ interface DataItem {
 }
 
 const Report = ({
-  hideMentorFilter = false,
+  isMentor = false,
+  intiTialdata = [],
+  allCourses = [],
+  courseId,
 }: {
-  hideMentorFilter?: boolean;
+  isMentor?: boolean;
+  intiTialdata?: DataItem[];
+  allCourses?: Course[];
+  courseId: string;
 }) => {
-  const [data, setData] = useState<DataItem[]>([]);
+  const [data, setData] = useState<DataItem[]>(intiTialdata);
   const [sortColumn, setSortColumn] = useState<string>("username");
   const [sortOrder, setSortOrder] = useState<string>("asc");
   const [selectedMentor, setSelectedMentor] = useState<string>("");
   const [selectedFormat, setSelectedFormat] = useState<string>("pdf");
-  const [currentCourse, setCurrentCourse] = useState<any>(null);
-  const [allCourses, setAllCourses] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchData = async (course: any) => {
-    if (!course) return;
-    try {
-      const res = await axios.post("/api/report", { courseId: course.id });
-      const fetchedData = res.data;
-      const sortedData = [...fetchedData].sort((a, b) =>
-        a.username.localeCompare(b.username),
-      );
-      setData(sortedData);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCourses = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get("/api/course/get");
-      setAllCourses(res.data.courses);
-      if (res.data.courses.length > 0) {
-        setCurrentCourse(res.data.courses[0]);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const handleClick = (course: any) => {
-    setCurrentCourse(course);
-  };
-
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  useEffect(() => {
-    if (currentCourse) {
-      setLoading(true);
-      fetchData(currentCourse);
-    }
-  }, [currentCourse]);
+  const currentCourse = allCourses.find((course) => course.id === courseId);
 
   const uniqueMentors = Array.from(
     new Set(data.map((item) => item.mentorUsername)),
@@ -167,7 +128,7 @@ const Report = ({
         "Score",
         "Attendance",
       ],
-      ...(!hideMentorFilter ? [["Mentor"]] : []),
+      ...(!isMentor ? [["Mentor"]] : []),
     ].flat();
 
     const tableData = filteredData.map((item, index) => [
@@ -179,7 +140,7 @@ const Report = ({
       item.submissionEvaluatedLength,
       item.score,
       formatAttendance(item.attendance),
-      ...(!hideMentorFilter ? [item.mentorUsername] : []),
+      ...(!isMentor ? [item.mentorUsername] : []),
     ]);
 
     doc.autoTable({
@@ -189,15 +150,15 @@ const Report = ({
       margin: { top: 20 },
       styles: { fontSize: 8 },
       columnStyles: {
-        0: hideMentorFilter ? { cellWidth: 15 } : { cellWidth: 10 }, // S.No
-        1: hideMentorFilter ? { cellWidth: 30 } : { cellWidth: 25 }, // Username
+        0: isMentor ? { cellWidth: 15 } : { cellWidth: 10 }, // S.No
+        1: isMentor ? { cellWidth: 30 } : { cellWidth: 25 }, // Username
         2: { cellWidth: 80 }, // Name (Widest Column)
         3: { cellWidth: 30 }, // Assignments
         4: { cellWidth: 30 }, // Submissions
         5: { cellWidth: 30 }, // Evaluated
         6: { cellWidth: 20 }, // Score
-        7: hideMentorFilter ? { cellWidth: 30 } : { cellWidth: 20 }, // Attendance
-        8: hideMentorFilter ? {} : { cellWidth: 25 }, // Mentor (if included)
+        7: isMentor ? { cellWidth: 30 } : { cellWidth: 20 }, // Attendance
+        8: isMentor ? {} : { cellWidth: 25 }, // Mentor (if included)
       },
       headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255] },
       theme: "striped",
@@ -223,10 +184,6 @@ const Report = ({
     }
   };
 
-  if (loading) {
-    return <Loader />;
-  }
-
   const formatAttendance = (attendance: string): string => {
     const attendanceNumber = parseFloat(attendance);
     if (isNaN(attendanceNumber)) {
@@ -241,19 +198,22 @@ const Report = ({
         {allCourses?.map(
           (course: any) =>
             course.isPublished === true && (
-              <button
-                onClick={() => handleClick(course)}
-                className={`w-20 rounded p-2 sm:w-auto ${
-                  currentCourse?.id === course?.id
-                    ? "rounded border border-blue-500"
-                    : ""
-                }`}
+              <Link
+                href={
+                  isMentor
+                    ? `/mentor/report/${course.id}`
+                    : `/instructor/report/${course.id}`
+                }
+                className={`w-20 rounded p-2 sm:w-auto ${currentCourse?.id === course?.id
+                  ? "rounded border border-blue-500"
+                  : ""
+                  }`}
                 key={course?.id}
               >
                 <h1 className="max-w-xs truncate text-sm font-medium">
                   {course.title}
                 </h1>
-              </button>
+              </Link>
             ),
         )}
       </div>
@@ -276,7 +236,7 @@ const Report = ({
       ) : (
         <div className="relative overflow-x-auto p-6 shadow-md sm:rounded-lg">
           <div className="mb-4 flex justify-between">
-            {hideMentorFilter ? (
+            {isMentor ? (
               <div className="flex items-center">
                 <span className="mr-2">Mentor:</span>
                 <div className="rounded-lg border bg-white p-2 text-sm text-gray-900">
@@ -346,7 +306,7 @@ const Report = ({
                       (sortOrder === "asc" ? " ↑" : " ↓")}
                   </th>
                 ))}
-                {hideMentorFilter ? null : (
+                {isMentor ? null : (
                   <th
                     onClick={() => handleSort("Mentor")}
                     className="cursor-pointer truncate border-b border-gray-300 px-5 py-3 dark:border-gray-500"
@@ -362,9 +322,8 @@ const Report = ({
               {filteredData.map((row, index) => (
                 <tr
                   key={index}
-                  className={`bg-gray-50 ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-100"
-                  } dark:bg-gray-800`}
+                  className={`bg-gray-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                    } dark:bg-gray-800`}
                 >
                   <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {index + 1}
@@ -390,7 +349,7 @@ const Report = ({
                   <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {formatAttendance(row.attendance)}
                   </td>
-                  {hideMentorFilter ? null : (
+                  {isMentor ? null : (
                     <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                       {row.mentorUsername}
                     </td>
