@@ -179,10 +179,26 @@ export default function HomeLayout({
     },
   ];
 
+  const AdminItems = [
+    {
+      name: "Users",
+      icon: <RxDashboard />,
+      path: "/admin/users",
+      isActive: pathname === "/admin/users",
+    },
+    {
+      name: "Courses",
+      icon: <FaChalkboardTeacher />,
+      path: "/admin/courses",
+      isActive: pathname === "/admin/courses",
+    },
+  ];
+
   const roleMap: Record<Role, sidebarItem[]> = {
     MENTOR: MentorItems,
     INSTRUCTOR: InstructorItems,
     STUDENT: StudentItems,
+    ADMIN: AdminItems,
   };
 
   const items = currentUser?.role ? roleMap[currentUser.role] : [];
