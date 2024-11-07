@@ -2,6 +2,7 @@ import { MdOutlineNoteAlt } from "react-icons/md";
 import { PiStudentBold } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
 import { SiTicktick } from "react-icons/si";
+import { useEffect, useState } from "react";
 
 const getGreeting = () => {
   const currentIST = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
@@ -11,42 +12,86 @@ const getGreeting = () => {
   if (hour < 18) return "Good afternoon";
   return "Good evening";
 };
-export default function Dashboard({ currentUser }:any) {
+
+interface DashboardProps {
+  currentUser: any;
+  data: {
+    sortedSubmissions: any[];
+    assignmentsSubmitted: number;
+    currentUser: any;
+    hasCourse: boolean;
+  } | null;
+}
+
+export default function Dashboard({ currentUser, data }: DashboardProps) {
+  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [courseStats, setCourseStats] = useState({
+    total: 0,
+    rank: "NA",
+    assignmentsSubmitted: 0
+  });
+
   const greeting = getGreeting();
-  if (currentUser?.role === "STUDENT") {
-    // student
-    // const { sortedSubmissions, assignmentsSubmitted, currentUser } = data;
-    let total = 0;
-    // sortedSubmissions.forEach((submission: any) => {
-    //   if (submission?.enrolledUser?.user?.id === currentUser?.id) {
-    //     total += submission?.totalPoints;
-    //   }
-    // });
 
-    let leaderboardMap = new Map();
+  useEffect(() => {
+    if (data?.sortedSubmissions && selectedCourse) {
+      calculateCourseStats(data.sortedSubmissions, selectedCourse);
+    }
+  }, [selectedCourse, data]);
 
-    // sortedSubmissions.forEach((submission: any) => {
-    //   const userId = submission?.enrolledUser?.user?.id;
-    //   const totalPoints = submission.totalPoints;
-
-    //   if (leaderboardMap.has(userId)) {
-    //     leaderboardMap.get(userId).totalPoints += totalPoints;
-    //   } else {
-    //     leaderboardMap.set(userId, {
-    //       totalPoints: totalPoints,
-    //     });
-    //   }
-    // });
-
-    const sortedLeaderboardArray = Array.from(leaderboardMap.entries()).sort(
-      (a, b) => b[1].totalPoints - a[1].totalPoints
+  const calculateCourseStats = (submissions: any[], courseId: string) => {
+    // Filter submissions for selected course
+    const courseSubmissions = submissions.filter(
+      (sub: any) => sub.assignment?.class?.course?.id === courseId
     );
 
-    sortedLeaderboardArray.forEach((entry, index) => {
-      entry[1].rank = index + 1;
+    // Calculate total points for current user in this course
+    const total = courseSubmissions.reduce((acc: number, submission: any) => {
+      if (submission?.enrolledUser?.user?.id === currentUser?.id) {
+        return acc + (submission?.totalPoints || 0);
+      }
+      return acc;
+    }, 0);
+
+    // Calculate rank for current user in this course
+    const leaderboardMap = new Map();
+    courseSubmissions.forEach((submission: any) => {
+      const userId = submission?.enrolledUser?.user?.id;
+      const points = submission.totalPoints || 0;
+
+      if (leaderboardMap.has(userId)) {
+        leaderboardMap.get(userId).totalPoints += points;
+      } else {
+        leaderboardMap.set(userId, { totalPoints: points });
+      }
     });
 
-    leaderboardMap = new Map(sortedLeaderboardArray);
+    const sortedLeaderboard = Array.from(leaderboardMap.entries())
+      .sort((a, b) => b[1].totalPoints - a[1].totalPoints);
+
+    const userRank = sortedLeaderboard.findIndex(
+      ([userId]) => userId === currentUser.id
+    ) + 1;
+
+    // Count assignments submitted for this course
+    const assignmentsSubmitted = courseSubmissions.filter(
+      (x: any) => x.enrolledUser.user.id === currentUser.id
+    ).length;
+
+    setCourseStats({
+      total,
+      rank: userRank.toString() || "NA",
+      assignmentsSubmitted
+    });
+  };
+
+  if (currentUser?.role === "STUDENT") {
+    const courses = data?.sortedSubmissions
+      ?.map((sub: any) => sub.assignment?.class?.course)
+      .filter((course: any) => course != null)
+      .filter((course: any, index: number, self: any[]) => 
+        index === self.findIndex((c) => c.id === course.id)
+      );
 
     return (
       <div className="m-2 h-60 rounded-lg bg-gradient-to-l from-blue-400 to-blue-600">
@@ -54,46 +99,49 @@ export default function Dashboard({ currentUser }:any) {
           <h1 className="text-2xl font-bold text-white">
             {greeting} {currentUser?.name} 👋
           </h1>
-          <p className="mt-3 text-base font-medium text-white">Here is your report</p>
+          <p className="mt-3 text-base font-medium text-white">Here is your report for </p>
+          <select onChange={(e) => setSelectedCourse(e.target.value)} value={selectedCourse}>
+            {courses?.map((course: any) => (
+              <option key={course.id} value={course.id}>
+                {course.title}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="mb-10 flex flex-wrap justify-center gap-4 p-2 text-center">
           <div className="w-80 rounded-md bg-white p-2 text-gray-900 shadow-xl">
             <img
-              src="https://png.pngtree.com/png-clipart/20210312/original/pngtree-game-score-wood-sign-style-png-image_6072790.png"
-              alt=""
-              height={100}
-              width={110}
-              className="m-auto"
-            />
-            <p className="pt-2 font-bold text-blue-600">{total === 0 ? "NA" : total}</p>
-            <h1 className="p-1 text-sm font-bold">Your current Score in the Leaderboard.</h1>
-          </div>
-          <div className="w-80 rounded-md bg-white p-2 text-gray-900 shadow-xl">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/3150/3150115.png"
+              src="/score.png"
               alt=""
               height={100}
               width={110}
               className="m-auto"
             />
             <p className="pt-2 font-bold text-blue-600">
-              {total === 0
-                ? "NA"
-                : leaderboardMap.get(currentUser.id).rank
-                  ? leaderboardMap.get(currentUser.id).rank
-                  : "NA"}
+              {courseStats.total === 0 ? "NA" : courseStats.total}
             </p>
-            <h1 className="p-1 text-sm font-bold">Your current rank in the Leaderboard.</h1>
+            <h1 className="p-1 text-sm font-bold">Your current Score in the Leaderboard.</h1>
           </div>
           <div className="w-80 rounded-md bg-white p-2 text-gray-900 shadow-xl">
             <img
-              src="https://i.postimg.cc/439rxz8g/images-removebg-preview.png"
+              src="/leaderboard.png"
               alt=""
               height={100}
               width={110}
               className="m-auto"
             />
-            {/* <p className="pt-2 font-bold text-blue-600">{assignmentsSubmitted}</p> */}
+            <p className="pt-2 font-bold text-blue-600">{courseStats.rank}</p>
+            <h1 className="p-1 text-sm font-bold">Your current rank in the Leaderboard.</h1>
+          </div>
+          <div className="w-80 rounded-md bg-white p-2 text-gray-900 shadow-xl">
+            <img
+              src="/assignment.png"
+              alt=""
+              height={100}
+              width={110}
+              className="m-auto"
+            />
+            <p className="pt-2 font-bold text-blue-600">{courseStats.assignmentsSubmitted}</p>
             <h1 className="p-1 text-sm font-bold">No. of assignments submitted.</h1>
           </div>
         </div>

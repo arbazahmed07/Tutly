@@ -11,7 +11,21 @@ enum Role {
   INSTRUCTOR
   MENTOR
   STUDENT
+  ADMIN
 }
+
+model Organization {
+  id      String @id @default(uuid())
+
+  orgCode String @unique
+  name    String
+
+  users User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
 model User {
   id       String  @id @default(uuid())
@@ -22,6 +36,9 @@ model User {
   password String?
   mobile   String?
   role     Role    @default(STUDENT)
+
+  orgCode      String
+  organization Organization @relation(fields: [orgCode], references: [orgCode])
 
   lastLogin     DateTime[]
   emailVerified DateTime?
