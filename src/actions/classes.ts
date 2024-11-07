@@ -198,14 +198,18 @@ export const deleteClass = async (classId: string) => {
   return { success: true };
 };
 
-export const totalNumberOfClasses = async () => {
+export const totalNumberOfClasses = async (courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You are not authorized to view this page.");
   }
 
   try {
-    const res = await db.class.count();
+    const res = await db.class.count({
+      where: {
+        courseId,
+      },
+    });
     return res;
   } catch (error) {
     console.error("Error getting total number of classes:", error);

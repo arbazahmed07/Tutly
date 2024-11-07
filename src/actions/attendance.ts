@@ -222,7 +222,7 @@ export const deleteClassAttendance = async (classId: string) => {
   return attendance;
 };
 
-export const getTotalNumberOfClassesAttended = async () => {
+export const getTotalNumberOfClassesAttended = async (courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser || currentUser.role === "STUDENT") {
     throw new Error(
@@ -237,6 +237,7 @@ export const getTotalNumberOfClassesAttended = async () => {
           enrolledUsers: {
             some: {
               mentorUsername: currentUser.username,
+              courseId,
             },
           },
         },
@@ -252,6 +253,9 @@ export const getTotalNumberOfClassesAttended = async () => {
       where: {
         user: {
           role: "STUDENT",
+        },
+        class: {
+          courseId,
         },
       },
       select: {
@@ -312,13 +316,13 @@ export const getAttendanceForLeaderbaord = async () => {
   return groupedAttendance;
 };
 
-export const getAttendanceOfAllStudents = async () => {
+export const getAttendanceOfAllStudents = async (courseId: string) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("You must be logged in to attend a class");
   }
-  const totalAttendance = await getTotalNumberOfClassesAttended();
-  const totalCount = await totalNumberOfClasses();
+  const totalAttendance = await getTotalNumberOfClassesAttended(courseId);
+  const totalCount = await totalNumberOfClasses(courseId);
 
   const jsonData = Object.entries(totalAttendance).map(
     ([username, value]: [string, any]) => ({

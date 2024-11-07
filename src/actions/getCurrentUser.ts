@@ -17,6 +17,11 @@ export default async function getCurrentUser() {
             id: true,
           },
         },
+        enrolledUsers: {
+          select: {
+            courseId: true,
+          },
+        },
       },
     });
 

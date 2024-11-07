@@ -6,7 +6,9 @@ import AttendanceClient from "@/components/Attendancefilters";
 async function Filters() {
   const courses = await getEnrolledCourses();
   const currentUser = await getCurrentUser();
-  const attendance = await getAttendanceOfAllStudents();
+  const attendance = await getAttendanceOfAllStudents(
+    currentUser?.enrolledUsers[0]?.courseId ?? "",
+  );
   if (!currentUser) return null;
   return (
     <div>
