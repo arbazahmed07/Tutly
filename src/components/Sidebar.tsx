@@ -1,24 +1,11 @@
 import { Role, User } from "@prisma/client";
-import { actions } from "astro:actions";
-import * as Icons from "lucide-react";
+import { AudioWaveform, BarChart, ChevronRight, ClipboardList, FileBarChart, GraduationCap, Home, Terminal, Trophy, UserCheck, Users } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -26,143 +13,140 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import { useRouter } from "@/hooks/use-router.ts";
-
-const iconMap: any = Icons;
 
 export function SidebarComponent({ user }: { user: User & { role: Role } }) {
   const organization = {
     name: "Tutly",
-    logo: "AudioWaveform",
-    plan: user?.role,
+    logo: AudioWaveform,
+    role: user?.role,
   };
 
-  const OrganizationIcon = iconMap[organization.logo];
+  const OrganizationIcon = organization.logo;
   const router = useRouter();
   const pathname = router.pathname;
   const InstructorItems = [
     {
       title: "Dashboard",
-      url: "/",
-      icon: "Home",
+      url: "/dashboard",
+      icon: Home,
     },
     {
       title: "Courses",
       url: "/courses",
-      icon: "GraduationCap",
+      icon: GraduationCap,
     },
     {
       title: "Assignments",
       url: "/instructor/assignments",
-      icon: "ClipboardList",
+      icon: ClipboardList,
     },
     {
       title: "Leaderboard",
       url: "/instructor/leaderboard",
-      icon: "Trophy",
+      icon: Trophy,
     },
     {
       title: "Community",
       url: "/community",
-      icon: "Users",
+      icon: Users,
     },
     {
       title: "Attendance",
       url: "/instructor/attendance",
-      icon: "UserCheck",
+      icon: UserCheck,
     },
     {
       title: "Statistics",
       url: "/instructor/statistics",
-      icon: "BarChart",
+      icon: BarChart,
     },
     {
       title: "Report",
       url: "/instructor/report",
-      icon: "FileBarChart",
+      icon: FileBarChart,
     }
   ];
 
   const MentorItems = [
     {
       title: "Dashboard",
-      url: "/",
-      icon: "Home",
+      url: "/dashboard",
+      icon: Home,
     },
     {
       title: "Courses",
       url: "/courses",
-      icon: "GraduationCap",
+      icon: GraduationCap,
     },
     {
       title: "Assignments",
       url: "/mentor/assignments",
-      icon: "ClipboardList",
+      icon: ClipboardList,
     },
     {
       title: "Leaderboard",
       url: "/mentor/leaderboard",
-      icon: "Trophy",
+      icon: Trophy,
     },
     {
       title: "Community",
       url: "/community",
-      icon: "Users",
+      icon: Users,
     },
     {
       title: "Attendance",
       url: "/mentor/attendance",
-      icon: "UserCheck",
+      icon: UserCheck,
     },
     {
       title: "Statistics",
       url: "/mentor/statistics",
-      icon: "BarChart",
+      icon: BarChart,
     },
     {
       title: "Report",
       url: "/mentor/report",
-      icon: "FileBarChart",
+      icon: FileBarChart,
     }
   ];
 
   const StudentItems = [
     {
       title: "Dashboard",
-      url: "/",
-      icon: "Home",
+      url: "/dashboard",
+      icon: Home,
     },
     {
       title: "Courses",
       url: "/courses",
-      icon: "GraduationCap",
+      icon: GraduationCap,
     },
     {
       title: "Assignments",
       url: "/assignments",
-      icon: "ClipboardList",
+      icon: ClipboardList,
     },
     {
       title: "Leaderboard",
       url: "/leaderboard",
-      icon: "Trophy",
+      icon: Trophy,
     },
     {
       title: "Community",
       url: "/community",
-      icon: "Users",
+      icon: Users,
     },
     {
       title: "Playgrounds",
       url: "/playgrounds",
-      icon: "Terminal",
+      icon: Terminal,
     },
     {
       title: "Statistics",
       url: "/statistics",
-      icon: "BarChart",
+      icon: BarChart,
     }
   ];
 
@@ -181,7 +165,7 @@ export function SidebarComponent({ user }: { user: User & { role: Role } }) {
   }
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="w-56">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -193,11 +177,11 @@ export function SidebarComponent({ user }: { user: User & { role: Role } }) {
               }}
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                {OrganizationIcon && <OrganizationIcon />}
+                {OrganizationIcon && <OrganizationIcon className="size-6" />}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{organization.name}</span>
-                <span className="truncate text-xs">{organization.plan}</span>
+                <span className="truncate text-xs">{organization.role}</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -205,10 +189,9 @@ export function SidebarComponent({ user }: { user: User & { role: Role } }) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Explore</SidebarGroupLabel>
           <SidebarMenu>
             {sideBarItems?.map((item: any) => {
-              const ItemIcon = iconMap[item.icon];
+              const ItemIcon = item.icon;
               return (
                 <Collapsible
                   key={item.title}
@@ -221,22 +204,20 @@ export function SidebarComponent({ user }: { user: User & { role: Role } }) {
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton
                           tooltip={item.title}
-                          className={`${pathname === item.url ? "bg-sidebar-accent bg-opacity-20" : ""
-                            }`}
+                          className={`${pathname === item.url ? "bg-blue-600 text-white" : "hover:bg-blue-500 hover:text-white"} m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                         >
-                          {ItemIcon && <ItemIcon />}
+                          {ItemIcon && <ItemIcon className="size-6" />}
                           <span>{item.title}</span>
-                          <Icons.ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                          <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                     ) : (
                       <a href={item.url}>
                         <SidebarMenuButton
                           tooltip={item.title}
-                          className={`${pathname === item.url ? "bg-sidebar-accent bg-opacity-20" : ""
-                            }`}
+                          className={`${pathname === item.url ? "bg-blue-600 text-white" : "hover:bg-blue-500 hover:text-white"} m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                         >
-                          {ItemIcon && <ItemIcon />}
+                          {ItemIcon && <ItemIcon className="size-6" />}
                           <span>{item.title}</span>
                         </SidebarMenuButton>
                       </a>
@@ -249,10 +230,7 @@ export function SidebarComponent({ user }: { user: User & { role: Role } }) {
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton
                                   asChild
-                                  className={`${pathname === subItem.url
-                                    ? "bg-sidebar-accent bg-opacity-20"
-                                    : ""
-                                    }`}
+                                  className={`${pathname === subItem.url ? "bg-blue-600 text-white" : "hover:bg-blue-500 hover:text-white"} m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                                 >
                                   <a href={subItem.url}>
                                     <span>{subItem.title}</span>
@@ -271,81 +249,6 @@ export function SidebarComponent({ user }: { user: User & { role: Role } }) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.image ?? ""} alt={user.name ?? user.username} />
-                    <AvatarFallback className="rounded-lg">
-                      {user.name
-                        ? user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                        : user.username}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
-                  </div>
-                  <Icons.ChevronsUpDown className="ml-auto size-4" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
-                align="end"
-                sideOffset={4}
-              >
-                <DropdownMenuLabel className="p-0 font-normal">
-                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={user.image ?? ""} alt={user.name} />
-                      <AvatarFallback className="rounded-lg">
-                        {user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">{user.name}</span>
-                      <span className="truncate text-xs">{user.email}</span>
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <a href="/profile">
-                    <DropdownMenuItem>
-                      <Icons.BadgeCheck />
-                      Account
-                    </DropdownMenuItem>
-                  </a>
-                  <DropdownMenuItem>
-                    <Icons.Bell />
-                    Notifications
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <a href="/api/auth/signout">
-                  <DropdownMenuItem>
-                    <Icons.LogOut />
-                    Log out
-                  </DropdownMenuItem>
-                </a>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

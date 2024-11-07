@@ -1,6 +1,5 @@
 import * as React from "react"
-import { Moon, Sun } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
 
 export function ModeToggle() {
   const [isDark, setIsDark] = React.useState(() => {
@@ -20,12 +19,14 @@ export function ModeToggle() {
   const toggleTheme = () => {
     setIsDark(!isDark)
   }
-
   return (
-    <Button variant="outline" size="icon" onClick={toggleTheme}>
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+    <button onClick={toggleTheme} className="hover:bg-muted rounded-full p-0 h-10 w-10 flex items-center justify-center">
+      {isDark ? (
+        <MdOutlineLightMode className="h-5 w-5" />
+      ) : (
+        <MdOutlineDarkMode className="h-5 w-5" />
+      )}
       <span className="sr-only">Toggle theme</span>
-    </Button>
-  )
+    </button>
+  );
 }
