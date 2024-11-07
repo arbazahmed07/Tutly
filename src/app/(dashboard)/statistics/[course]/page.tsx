@@ -1,13 +1,10 @@
 import {
   getMentorPieChartData,
   getStudentEvaluatedAssigments,
-  getSubmissionsForMentorLineChart,
 } from "@/actions/assignments";
 import {
-  getAttendanceForMentorBarChart,
   getAttendanceOfStudent,
 } from "@/actions/attendance";
-import { getEnrolledStudents, getMentorStudents } from "@/actions/courses";
 import getCurrentUser from "@/actions/getCurrentUser";
 import StudentStatClient from "@/components/studentStatClient";
 import { json } from "stream/consumers";

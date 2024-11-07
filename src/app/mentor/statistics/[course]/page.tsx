@@ -17,11 +17,6 @@ interface StatisticsParams {
   };
 }
 
-interface PieChartData {
-  0: number;
-  1: number;
-}
-
 interface AttendanceData {
   classes: string[];
   attendanceInEachClass: number[];
