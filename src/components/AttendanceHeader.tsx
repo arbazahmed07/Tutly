@@ -17,6 +17,121 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
+import BulkImport from "./table/BulkImport";
+import { Column } from "./table/DisplayTable";
+const columns: Column[] = [
+  {
+    key: "Name",
+    name: "Name",
+    label: "Name",
+    type: "text",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: true,
+      message: "Name must be a string"
+    }
+  },
+  {
+    key: "UserEmail",
+    name: "Email",
+    label: "Email", 
+    type: "email",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: false,
+      regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: "Must be a valid email address"
+    }
+  },
+  {
+    key: "JoinTime",
+    name: "Join Time",
+    label: "Join Time",
+    type: "datetime-local",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: true,
+      message: "Join time is required"
+    }
+  },
+  {
+    key: "LeaveTime",
+    name: "Leave Time",
+    label: "Leave Time", 
+    type: "datetime-local",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: true,
+      message: "Leave time is required"
+    }
+  },
+  {
+    key: "Duration",
+    name: "Duration",
+    label: "Duration (Minutes)",
+    type: "number",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: true,
+      regex: /^\d+$/,
+      message: "Duration must be a positive number"
+    }
+  },
+  {
+    key: "Guest",
+    name: "Guest",
+    label: "Guest",
+    type: "text",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: false
+    }
+  },
+  {
+    key: "RecordingDisclaimerResponse",
+    name: "Recording Consent",
+    label: "Recording Consent",
+    type: "text",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: false
+    }
+  },
+  {
+    key: "InWaitingRoom",
+    name: "Waiting Room",
+    label: "In Waiting Room",
+    type: "text",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: false
+    }
+  },
+  {
+    key: "username",
+    name: "Username",
+    label: "Username",
+    type: "text",
+    sortable: true,
+    filterable: true,
+    validation: {
+      required: false,
+    },
+    render(value, row) {
+      return String(row.Name)
+        .substring(0, 10)
+        .toUpperCase();
+    },
+  },
+];
 
 export default function AttendanceHeader({
   role,
@@ -37,6 +152,7 @@ export default function AttendanceHeader({
   count,
   maxInstructionDuration,
   setMaxInstructionDuration,
+  handleBulkUpload,
 }: any) {
   const router = useRouter();
 
@@ -242,6 +358,11 @@ export default function AttendanceHeader({
                     onSelectFile(files[0]);
                   }
                 }}
+              />
+              <BulkImport
+                data={[]}
+                columns={columns}
+                onImport={handleBulkUpload}
               />
               {fileData && selectedFile && (
                 <div className="flex items-center justify-between gap-2">

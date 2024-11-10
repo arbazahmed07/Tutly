@@ -10,7 +10,7 @@ import { FiEdit } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
 import { RiWhatsappLine } from "react-icons/ri";
 
-import { FaExternalLinkSquareAlt } from "react-icons/fa";
+
 import {
   Dialog,
   DialogContent,
@@ -22,8 +22,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DialogClose } from "@radix-ui/react-dialog";
+
 import day from "@/lib/dayjs";
+import MarkdownPreview from "@/components/markdown/MarkdownPreview";
 
 export default function AssignmentPage({
   params,
@@ -238,7 +239,7 @@ export default function AssignmentPage({
         </div>
       </div>
       <div className="my-5">
-        {assignment?.details || "No details given to show"}
+        <MarkdownPreview content={assignment?.details || "No details given to show"} />
       </div>
 
       <div className="my-4 flex flex-col gap-4 text-black">

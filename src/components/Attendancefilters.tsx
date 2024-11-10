@@ -80,6 +80,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
           InWaitingRoom: row["In Waiting Room"],
         }));
         setFileData(modifiedData);
+        console.log(modifiedData);
       };
       reader.onerror = () => {
         throw new Error("Error in reading file");
@@ -90,6 +91,12 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       toast.error(e.message);
     }
   };
+
+  const handleBulkUpload = (data: any) => {
+    setFileData(data);
+
+    console.log(data);
+  }
 
   const aggregatedStudents = fileData.reduce((acc: any, student: Student) => {
     const { username } = student;
@@ -275,6 +282,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
         onSelectFile={onSelectFile}
         fileData={fileData}
         selectedFile={selectedFile}
+        handleBulkUpload={handleBulkUpload}
         handleUpload={handleUpload}
         count={[
           present,

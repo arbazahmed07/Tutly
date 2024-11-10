@@ -5,6 +5,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { getCodeString } from "rehype-rewrite"
+import katex from "katex"
+import "katex/dist/katex.css"
+import MDEditor from "@uiw/react-md-editor"
+
 
 import {
   Form,
@@ -359,12 +364,38 @@ const NewAttachmentPage = () => {
                 <FormItem>
                   <FormLabel className="text-base">Details</FormLabel>
                   <FormControl>
-                    <Textarea
-                      className="text-base"
-                      disabled={isSubmitting}
-                      placeholder="Write some details here..."
-                      {...field}
-                    />
+                    <div data-color-mode="light" className="border rounded-md overflow-hidden">
+                      <MDEditor
+                        value={field.value}
+                        onChange={(newValue) => field.onChange(newValue || "")}
+                        height={400}
+                        preview="edit"
+                        previewOptions={{
+                          components: {
+                            code: ({ children = [], className, ...props }) => {
+                              if (typeof children === "string" && /^\$\$(.*)\$\$/.test(children)) {
+                                const html = katex.renderToString(children.replace(/^\$\$(.*)\$\$/, "$1"), {
+                                  throwOnError: false,
+                                })
+                                return <code dangerouslySetInnerHTML={{ __html: html }} style={{ background: "transparent" }} />
+                              }
+                              const code = props.node && props.node.children ? getCodeString(props.node.children) : children
+                              if (
+                                typeof code === "string" &&
+                                typeof className === "string" &&
+                                /^language-katex/.test(className.toLocaleLowerCase())
+                              ) {
+                                const html = katex.renderToString(code, {
+                                  throwOnError: false,
+                                })
+                                return <code style={{ fontSize: "150%" }} dangerouslySetInnerHTML={{ __html: html }} />
+                              }
+                              return <code className={String(className)}>{children}</code>
+                            },
+                          },
+                        }}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage className="font-bold text-red-700" />
                 </FormItem>
