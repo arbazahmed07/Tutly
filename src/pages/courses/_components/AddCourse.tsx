@@ -1,6 +1,4 @@
-"use client";
-import axios from "axios";
-import React, { useState, useRef } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa";
 import {
@@ -10,167 +8,108 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "@/hooks/use-router";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { actions } from "astro:actions";
 
 function AddCourse() {
-  const [openPopup, setOpenPopup] = useState<boolean>(false);
-  const [courseTitle, setCourseTitle] = useState<string>("");
-  const [img, setImg] = useState<string>("");
-  const [isPublished, setIsPublished] = useState<boolean>(false);
-  const [text, setText] = useState<string>("Create");
-  const router = useRouter();
-  const inputFileRef = useRef<HTMLInputElement>(null);
+  const [openPopup, setOpenPopup] = useState(false);
+  const [courseTitle, setCourseTitle] = useState("");
+  const [isPublished, setIsPublished] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post("/api/course/create", {
+      setIsSubmitting(true);
+      const {data, error} = await actions.courses_createCourse({
         title: courseTitle,
-        isPublished: isPublished,
-        image: img,
+        isPublished,
       });
-      setOpenPopup(!openPopup);
 
-      if (
-        res.data.error ||
-        res.data.error === "Failed to add new Class" ||
-        res.data === null
-      ) {
-        toast.error("Failed to add new Class");
-      } else {
-        toast.success("New class added successfully");
-        setText("Create");
-        setCourseTitle("");
-        setImg("");
-        setIsPublished(false);
-        setOpenPopup(!openPopup);
+      if (!data || error) {
+        throw new Error();
       }
-    } catch (e) {
-      toast.error("Failed to add new Class");
-      setText("Create");
+
+      toast.success("New course added successfully");
       setCourseTitle("");
-      setImg("");
       setIsPublished(false);
-      setOpenPopup(!openPopup);
+      setOpenPopup(false);
+
+      window.location.reload();
+
+    } catch {
+      toast.error("Failed to add new course");
+      setCourseTitle("");
+      setIsPublished(false);
+      setOpenPopup(false);
+    } finally {
+      setIsSubmitting(false);
     }
-  };
-
-  const handleImageUpload = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!inputFileRef.current?.files) {
-      throw new Error("No file selected");
-    }
-
-    const file = inputFileRef.current.files[0];
   };
 
   return (
-    <>
-      <Dialog open={openPopup} onOpenChange={setOpenPopup}>
-        <DialogTrigger asChild>
-          <div className="m-auto my-3 flex h-[200px] w-[280px] cursor-pointer flex-col items-center justify-center rounded-lg border bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 text-white shadow-lg md:mx-2">
-            <div className="cursor-pointer text-center">
-              <FaPlus className="text-5xl" />
-              <h1 className="mt-3 text-xl">Add</h1>
-            </div>
+    <Dialog open={openPopup} onOpenChange={setOpenPopup}>
+      <DialogTrigger asChild>
+        <Card className="m-auto my-3 flex h-[200px] w-[280px] cursor-pointer flex-col items-center justify-center bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 text-white md:mx-2">
+          <div className="cursor-pointer text-center">
+            <FaPlus className="text-5xl" />
+            <h1 className="mt-3 text-xl">Add</h1>
           </div>
-        </DialogTrigger>
-        <DialogContent className="box-border rounded-lg bg-zinc-400 p-4 text-black shadow-lg dark:text-white">
-          <DialogHeader>
-            <DialogTitle>
-              <div className="text-center text-lg font-semibold">
-                ADD NEW COURSE
-              </div>
-            </DialogTitle>
-          </DialogHeader>
-          <div>
-            <input
+        </Card>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-center text-xl">
+            Add New Course
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
               onChange={(e) => setCourseTitle(e.target.value)}
               type="text"
-              className="w-full rounded border border-gray-300 p-2 outline-none"
-              placeholder="Title"
+              placeholder="Enter course title"
             />
           </div>
-          <label htmlFor="publish">Publish:</label>
-          <div className="flex items-center space-x-5">
-            <div className="flex items-center justify-start">
-              <input
-                type="radio"
-                id="yes"
-                name="publish"
-                value="true"
-                checked={isPublished === true}
-                className="mr-1 h-4 w-4"
-                onChange={(e) => setIsPublished(e.target.value === "true")}
-              />
-              <label htmlFor="yes">Yes</label>
-            </div>
-            <div className="flex items-center justify-start">
-              <input
-                type="radio"
-                id="no"
-                name="publish"
-                value="false"
-                checked={isPublished === false}
-                className="mr-1 h-4 w-4"
-                onChange={(e) => setIsPublished(e.target.value === "false")}
-              />
-              <label htmlFor="no">No</label>
-            </div>
-          </div>
-          {/* {blob ? (
-            <input
-              disabled
-              type="text"
-              value={blob.url}
-              className="m-auto my-3 block w-full rounded p-2 outline-none"
-              placeholder="Paste image link here"
-            />
-          ) : (
-            <form
-              onSubmit={handleImageUpload}
-              className="my-3 flex items-center justify-center gap-4"
+          <div className="space-y-2">
+            <Label>Publish Status</Label>
+            <RadioGroup
+              value={String(isPublished)}
+              onValueChange={(value) => setIsPublished(value === "true")}
             >
-              <div>
-                <input
-                  title="file"
-                  className="rounded-sm p-1 dark:text-white"
-                  name="file"
-                  ref={inputFileRef}
-                  type="file"
-                  required
-                  accept=".jpeg,.png,.jpg"
-                />
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="true" id="yes" />
+                <Label htmlFor="yes">Yes</Label>
               </div>
-              <button
-                type="submit"
-                className="rounded-md bg-blue-500 px-1.5 py-1 text-base text-white"
-              >
-                Upload
-              </button>
-            </form>
-          )} */}
-          <button
-            disabled={text === "Creating..." || courseTitle === ""}
-            onClick={() => {
-              handleSubmit();
-              setText("Creating...");
-            }}
-            className="my-3 flex w-full items-center justify-center rounded-md p-2 font-semibold text-white disabled:cursor-not-allowed disabled:bg-blue-500"
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="false" id="no" />
+                <Label htmlFor="no">No</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          <Button
+            disabled={isSubmitting || !courseTitle}
+            onClick={handleSubmit}
+            className="w-full"
           >
-            {text}
+            {isSubmitting ? "Creating..." : "Create"}
             &nbsp;
-            {text === "Creating..." ? (
+            {isSubmitting ? (
               <div className="animate-spin">
                 <FaPlus />
               </div>
             ) : (
               <FaPlus />
             )}
-          </button>
-        </DialogContent>
-      </Dialog>
-    </>
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

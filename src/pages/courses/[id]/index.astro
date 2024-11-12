@@ -1,7 +1,8 @@
 ---
+import { SidebarItem } from "@/components/Sidebar";
 import RootLayout from "@/layouts/RootLayout.astro";
 import db from "@/lib/db";
-import { Link } from "lucide-react";
+import { FileBarChart2Icon } from "lucide-react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 const currentUser = Astro.locals.user;
@@ -37,6 +38,21 @@ const courseAssignments = await db.course.findMany({
   },
 });
 
+const classes = await db.class.findMany({
+  where: {
+    courseId: String(Astro.params.id),
+  },
+});
+
+const sideBarItems: SidebarItem[] = [];
+
+classes.forEach((classItem) => {
+  sideBarItems.push({
+    title: classItem.title,
+    url: `/courses/${Astro.params.id}/${classItem.id}`,
+  });
+});
+
 const maxWords = 50;
 function truncateText(text: string) {
   const words = text.split(/\s+/);
@@ -48,23 +64,20 @@ function truncateText(text: string) {
 }
 ---
 
-<RootLayout title="Courses">
+<RootLayout title="Courses" sideBarItems={sideBarItems}>
   <div class="m-3">
     <h1 class="border-b-2 p-2 text-center text-lg font-medium md:text-xl">Assignments</h1>
 
     <div class="mt-3 grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 md:grid-cols-3">
-      {
-        courseAssignments && courseAssignments[0]?.classes?.length === 0 && (
-          <div class="mt-5 text-xl dark:text-secondary-300">No assignments yet...</div>
-        )
-      }
+      {courseAssignments && courseAssignments[0]?.classes?.length === 0 && (
+        <div class="mt-5 text-xl dark:text-secondary-300">No assignments yet...</div>
+      )}
 
       {
         courseAssignments?.map((assignment) =>
           assignment.classes.map((classItem) =>
             classItem.attachments.map((attachment) => (
               <div
-                key={attachment?.id}
                 class="rounded-lg p-4 text-zinc-600 backdrop-blur-2xl dark:bg-slate-800"
                 style={{
                   boxShadow:
@@ -72,12 +85,12 @@ function truncateText(text: string) {
                 }}
               >
                 <div class="mb-2 flex items-center justify-between">
-                  <Link
+                  <a
                     href={`/assignments/${attachment.id}`}
                     class="cursor-pointer text-base font-semibold text-blue-600 hover:text-blue-500"
                   >
                     {attachment?.title}
-                  </Link>
+                  </a>
                   <div class="gadiv-2 flex items-center text-sm font-medium">
                     {attachment?.dueDate && new Date(attachment?.dueDate).toLocaleDateString()}
                     {"  "}
@@ -113,7 +126,7 @@ function truncateText(text: string) {
                     >
                       View Assignment
                     </a>
-                    <FaExternalLinkAlt class="h-3 w-3" />
+                    <FaExternalLinkAlt className="h-3 w-3" />
                   </div>
                 )}
               </div>

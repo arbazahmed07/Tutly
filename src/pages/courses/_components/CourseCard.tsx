@@ -1,12 +1,23 @@
 "use client";
 import { IoMdBookmarks } from "react-icons/io";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Suspense, useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { FaUsersGear } from "react-icons/fa6";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useRouter } from "@/hooks/use-router";
+import { actions } from "astro:actions";
 
 export default function CourseCard({ course, currentUser }: any) {
   const router = useRouter();
@@ -14,40 +25,39 @@ export default function CourseCard({ course, currentUser }: any) {
   const [courseTitle, setCourseTitle] = useState<string>(course.title);
   const [img, setImg] = useState<string>(course.image);
   const [isPublished, setIsPublished] = useState<boolean>(course.isPublished);
-  const [text, setText] = useState<string>("Modify");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleEditCourse = async (id: string) => {
     try {
-      const res = await axios.put(`/api/course/edit`, {
-        id: id,
+      setIsSubmitting(true);
+      const { data, error } = await actions.courses_updateCourse({
+        id,
         title: courseTitle,
-        isPublished: isPublished,
+        isPublished,
         image: img,
       });
 
-      if (
-        res.data.error ||
-        res.data.error === "Failed to add new Class" ||
-        res.data === null
-      ) {
-        toast.error("Failed to edit course");
-      } else {
-        toast.success("Course edited successfully");
-        setOpenPopup(false); // Close the dialog
-        setText("Edit");
-        setCourseTitle(res.data.title);
-        setImg(res.data.image);
-        setIsPublished(res.data.isPublished);
+      if (!data || error) {
+        throw new Error();
       }
-    } catch (e) {
+
+      toast.success("Course edited successfully");
+      setOpenPopup(false);
+      setCourseTitle(data?.title);
+      setImg(data?.image);
+      setIsPublished(data?.isPublished);
+
+    } catch {
       toast.error("Failed to edit course");
-      setText("Edit");
       setCourseTitle(course.title);
       setImg(course.image);
       setIsPublished(course.isPublished);
-      setOpenPopup(!openPopup);
+      setOpenPopup(false);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
   const expired = () => {
     if (!course.endDate) return false;
     const endDate = new Date(course.endDate);
@@ -56,148 +66,120 @@ export default function CourseCard({ course, currentUser }: any) {
   };
 
   return (
-    <div
-      key={course.id}
-      className="m-auto mt-3 w-[280px] rounded-lg border shadow-lg md:mx-2"
-    >
+    <Card className="m-auto mt-3 w-[280px] overflow-hidden md:mx-2 ">
       <div
-        className="relative h-[150px] cursor-pointer rounded-t-lg bg-white text-secondary-700"
+        className="relative h-[150px] cursor-pointer bg-white text-secondary-700"
         onClick={
           expired()
-            ? () => router.push(`/courses`)
+            ? () => router.push("/courses")
             : () => router.push(`/courses/${course.id}`)
         }
       >
         <div className="relative h-full w-full">
-          {course && (
-            <img
-              src={
-                course.image ||
-                "https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg"
-              }
-              alt="course image"
-              className="rounded-t-lg"
-            />
+          <img
+            src={
+              course.image ||
+              "https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg"
+            }
+            alt={course.title}
+            className="h-full w-full object-cover"
+          />
+          {!course.isPublished && currentUser?.role === "INSTRUCTOR" && (
+            <div className="absolute right-0 top-0 m-3 rounded-md border bg-red-500 px-2 py-1 text-xs text-white">
+              Draft
+            </div>
           )}
-          <div>
-            {course.isPublished === false &&
-              currentUser?.role === "INSTRUCTOR" && (
-                <div className="absolute right-0 top-0 m-3 flex items-center rounded-md border bg-red-500 p-1 text-xs text-secondary-50">
-                  <h1 className="text-xs font-medium">Draft</h1>
-                </div>
-              )}
+          <div className="absolute bottom-0 right-0 m-3 flex items-center rounded-md border bg-blue-500 px-2 py-1 text-xs text-white">
+            <IoMdBookmarks className="mr-1" />
+            <span>{course._count.classes} Classes</span>
           </div>
-        </div>
-        <div className="absolute bottom-0 right-0 m-3 flex items-center rounded-md border bg-blue-500 p-1 text-xs text-secondary-50">
-          <IoMdBookmarks className="mr-1" />
-          <h1 className="text-xs font-medium">
-            {course._count.classes} Classes
-          </h1>
         </div>
       </div>
-      <div className="flex h-[50px] items-center justify-between border-t px-2">
-        {expired() ? (
-          <div className="cursor-pointer">
-            <h1 className="text-sm">{course?.title} [ Course Expired ]</h1>
-          </div>
-        ) : (
-          <div
-            onClick={() => router.push(`/courses/${course.id}`)}
-            className="cursor-pointer"
-          >
-            <h1 className="text-sm">{course?.title}</h1>
-          </div>
-        )}
+
+      <div className="flex items-center justify-between border-t p-3">
+        <div className="cursor-pointer">
+          <h2 className="font-medium">
+            {expired() ? `${course.title} [Expired]` : course.title}
+          </h2>
+        </div>
+
         {currentUser.role === "INSTRUCTOR" && (
-          <div className="flex items-center justify-between gap-3">
-            <Suspense>
-              <button
-                title="btn"
-                onClick={() =>
-                  router.push(`/instructor/course/${course.id}/manage`)
-                }
-              >
-                <FaUsersGear className="h-5 w-5 cursor-pointer opacity-90 hover:opacity-100" />
-              </button>
-            </Suspense>
-            <Suspense>
-              <Dialog open={openPopup} onOpenChange={setOpenPopup}>
-                <DialogTrigger asChild>
-                  <button title="btn" onClick={() => setOpenPopup(true)}>
-                    <MdOutlineEdit className="h-5 w-5 cursor-pointer opacity-90 hover:opacity-100" />
-                  </button>
-                </DialogTrigger>
-                <div className="flex items-center justify-center">
-                  <DialogContent className="fixed z-50 bg-zinc-400 text-black dark:text-white">
-                    <div>
-                      <div className="mb-4">
-                        <h1 className="my-4 text-center text-lg font-semibold">
-                          EDIT COURSE
-                        </h1>
-                        <input
-                          onChange={(e) => setCourseTitle(e.target.value)}
-                          value={courseTitle}
-                          type="text"
-                          className="m-auto mb-4 block w-full rounded bg-background p-2 outline-none"
-                          placeholder="Title"
-                        />
+          <div className="flex gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                router.push(`/instructor/course/${course.id}/manage`)
+              }
+            >
+              <FaUsersGear className="h-5 w-5" />
+            </Button>
+
+
+            <Dialog open={openPopup} onOpenChange={setOpenPopup}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MdOutlineEdit className="h-5 w-5" />
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Course</DialogTitle>
+                </DialogHeader>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      value={courseTitle}
+                      onChange={(e) => setCourseTitle(e.target.value)}
+                      placeholder="Enter course title"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Publish Status</Label>
+                    <RadioGroup
+                      value={String(isPublished)}
+                      onValueChange={(value) => setIsPublished(value === "true")}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="true" id="yes" />
+                        <Label htmlFor="yes">Yes</Label>
                       </div>
-                      <label htmlFor="publish">Publish:</label>
-                      <div className="mb-4 flex items-center space-x-5">
-                        <div className="flex items-center justify-start">
-                          <input
-                            type="radio"
-                            id="yes"
-                            name="publish"
-                            value="true"
-                            checked={isPublished === true}
-                            className="mr-1 h-4 w-4"
-                            onChange={(e) =>
-                              setIsPublished(e.target.value === "true")
-                            }
-                          />
-                          <label htmlFor="yes">Yes</label>
-                        </div>
-                        <div className="flex items-center justify-start">
-                          <input
-                            type="radio"
-                            id="no"
-                            name="publish"
-                            value="false"
-                            checked={isPublished === false}
-                            className="mr-1 h-4 w-4"
-                            onChange={(e) =>
-                              setIsPublished(e.target.value === "false")
-                            }
-                          />
-                          <label htmlFor="no">No</label>
-                        </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="false" id="no" />
+                        <Label htmlFor="no">No</Label>
                       </div>
-                      <input
-                        onChange={(e) => setImg(e.target.value)}
-                        value={img ? img : ""}
-                        type="text"
-                        className="m-auto my-3 block w-full rounded bg-background p-2 outline-none"
-                        placeholder="Paste image link here"
-                      />
-                      <button
-                        disabled={text === "Modifying..."}
-                        onClick={() => {
-                          handleEditCourse(course.id);
-                          setText("Modifying...");
-                        }}
-                        className="my-3 flex w-full items-center justify-center rounded-md bg-primary-500 p-2 text-white hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-secondary-800"
-                      >
-                        {text}
-                      </button>
-                    </div>
-                  </DialogContent>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="image">Image URL</Label>
+                    <Input
+                      id="image"
+                      value={img || ""}
+                      onChange={(e) => setImg(e.target.value)}
+                      placeholder="Paste image link here"
+                    />
+                  </div>
+
+                  <Button
+                    className="w-full"
+                    disabled={isSubmitting}
+                    onClick={() => handleEditCourse(course.id)}
+                  >
+                    {isSubmitting ? "Saving Changes..." : "Save Changes"}
+                  </Button>
                 </div>
-              </Dialog>
-            </Suspense>
+              </DialogContent>
+            </Dialog>
+
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

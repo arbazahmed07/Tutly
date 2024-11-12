@@ -16,7 +16,18 @@ import {
 } from "@/components/ui/sidebar";
 import { useRouter } from "@/hooks/use-router.ts";
 
-export function SidebarComponent({ user }: { user: User & { role: Role } }) {
+export interface SidebarItem {
+  title: string;
+  url: string;
+  icon: React.ReactNode;
+}
+
+interface SidebarComponentProps {
+  user: User & { role: Role };
+  initialSideBarItems?: SidebarItem[];
+}
+
+export function SidebarComponent({ user, initialSideBarItems }: SidebarComponentProps) {
   const organization = {
     name: "Tutly",
     logo: AudioWaveform,
@@ -150,18 +161,20 @@ export function SidebarComponent({ user }: { user: User & { role: Role } }) {
     }
   ];
 
-  let sideBarItems: any[] = [];
+  let sideBarItems: any[] = initialSideBarItems || [];
 
-  switch (user.role) {
-    case "INSTRUCTOR":
-      sideBarItems = InstructorItems;
-      break;
-    case "MENTOR":
-      sideBarItems = MentorItems;
-      break;
-    case "STUDENT":
-      sideBarItems = StudentItems;
-      break;
+  if (initialSideBarItems?.length === 0) {
+    switch (user.role) {
+      case "INSTRUCTOR":
+        sideBarItems = InstructorItems;
+        break;
+      case "MENTOR":
+        sideBarItems = MentorItems;
+        break;
+      case "STUDENT":
+        sideBarItems = StudentItems;
+        break;
+    }
   }
 
   return (

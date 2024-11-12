@@ -1,6 +1,5 @@
 import { defineAction, ActionError } from "astro:actions";
 import db from "@/lib/db";
-import { getCurrentUser } from "@/lib/getCurrentUser";
 import {
   getEnrolledCourses,
   getEnrolledCoursesById,
@@ -10,12 +9,9 @@ import {
 import { z } from "zod";
 
 export const getAllAssignedAssignments = defineAction({
-  handler: async (_, context) => {
+  handler: async (_, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser?.username) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       return await db.course.findMany({
         where: {
@@ -64,12 +60,9 @@ export const getAllAssignedAssignments = defineAction({
 });
 
 export const getAllAssignedAssignmentsByUserId = defineAction({
-  handler: async (_, context) => {
+  handler: async (_, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser?.username) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       const { data: courses } = await getEnrolledCoursesByUsername({ username: currentUser.username });
 
@@ -126,11 +119,9 @@ export const getAllAssignedAssignmentsByUserId = defineAction({
 });
 
 export const getAllAssignmentsForMentor = defineAction({
-  handler: async (_, context) => {
+  handler: async (_, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) throw new Error("Unauthorized");
-
+      const currentUser = locals.user!
       const courses = await getMentorCourses();
 
       const coursesWithAssignments = await db.course.findMany({
@@ -184,11 +175,9 @@ export const getAllAssignmentsForMentor = defineAction({
 });
 
 export const getAllAssignmentsForInstructor = defineAction({
-  handler: async (_, context) => {
+  handler: async (_, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) throw new Error("Unauthorized");
-
+      const currentUser = locals.user!
       const { data: courses } = await getEnrolledCourses();
 
       const coursesWithAssignments = await db.course.findMany({
@@ -230,12 +219,9 @@ export const getAllAssignmentsForInstructor = defineAction({
 });
 
 export const getAllAssignments = defineAction({
-  handler: async (_, context) => {
+  handler: async (_, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser?.username) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       const { data: courses } = await getEnrolledCourses();
 
@@ -260,10 +246,9 @@ export const getAllAssignments = defineAction({
 });
 
 export const getAllAssignedAssignmentsForMentor = defineAction({
-  handler: async (_, context) => {
+  handler: async (_, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) throw new Error("Unauthorized");
+      const currentUser = locals.user!
 
       const { data: courses } = await getEnrolledCoursesById({ id: currentUser.id });
 
@@ -312,12 +297,9 @@ export const getAllAssignedAssignmentsForMentor = defineAction({
 });
 
 export const getAllMentorAssignments = defineAction({
-  handler: async (_, context) => {
+  handler: async (_, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       const coursesWithAssignments = await db.course.findMany({
         where: {
@@ -383,12 +365,9 @@ export const getAllMentorAssignments = defineAction({
 });
 
 export const getAllCreatedAssignments = defineAction({
-  handler: async (_, context) => {
+  handler: async (_, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       return await db.course.findMany({
         where: {
@@ -425,12 +404,9 @@ export const getAssignmentDetailsByUserId = defineAction({
   input: z.object({
     id: z.string()
   }),
-  handler: async ({ id }, context) => {
+  handler: async ({ id }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser?.username) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       return await db.attachment.findUnique({
         where: {
@@ -471,10 +447,9 @@ export const getAllAssignmentDetailsBy = defineAction({
   input: z.object({
     id: z.string()
   }),
-  handler: async ({ id }, context) => {
+  handler: async ({ id }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) throw new Error("Unauthorized");
+      const currentUser = locals.user!
 
       const assignment = await db.attachment.findUnique({
         where: {
@@ -546,9 +521,9 @@ export const getAllAssignmentDetailsForInstructor = defineAction({
   input: z.object({
     id: z.string()
   }),
-  handler: async ({ id }, context) => {
+  handler: async ({ id }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
+      const currentUser = locals.user!
       if (!currentUser) throw new Error("Unauthorized");
 
       const assignment = await db.attachment.findUnique({
@@ -621,12 +596,9 @@ export const getAllAssignmentsByCourseId = defineAction({
   input: z.object({
     id: z.string()
   }),
-  handler: async ({ id }, context) => {
+  handler: async ({ id }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       return await db.course.findMany({
         where: {
@@ -668,12 +640,9 @@ export const getMentorPieChartData = defineAction({
   input: z.object({
     courseId: z.string()
   }),
-  handler: async ({ courseId }, context) => {
+  handler: async ({ courseId }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user
 
       let assignments, noOfTotalMentees;
       if (currentUser.role === "MENTOR") {
@@ -746,12 +715,9 @@ export const getMentorPieChartById = defineAction({
     id: z.string(),
     courseId: z.string()
   }),
-  handler: async ({ id, courseId }, context) => {
+  handler: async ({ id, courseId }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       const assignments = await db.submission.findMany({
         where: {
@@ -825,12 +791,9 @@ export const getSubmissionsForMentorByIdLineChart = defineAction({
     id: z.string(),
     courseId: z.string()
   }),
-  handler: async ({ id, courseId }, context) => {
+  handler: async ({ id, courseId }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       const submissionCount = await db.attachment.findMany({
         where: {
@@ -865,12 +828,10 @@ export const getSubmissionsForMentorLineChart = defineAction({
   input: z.object({
     courseId: z.string()
   }),
-  handler: async ({ courseId }, context) => {
+  handler: async ({ courseId }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
+
 
       const submissionCount = await db.attachment.findMany({
         where: {
@@ -905,9 +866,9 @@ export const getStudentEvaluatedAssigments = defineAction({
   input: z.object({
     courseId: z.string()
   }),
-  handler: async ({ courseId }, context) => {
+  handler: async ({ courseId }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
+      const currentUser = locals.user!
       if (!currentUser) {
         throw new Error("Unauthorized");
       }
@@ -963,12 +924,9 @@ export const getStudentEvaluatedAssigmentsForMentor = defineAction({
     id: z.string(),
     courseId: z.string()
   }),
-  handler: async ({ id, courseId }, context) => {
+  handler: async ({ id, courseId }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       const assignments = await db.submission.findMany({
         where: {
@@ -1025,12 +983,9 @@ export const getAssignmentDetails = defineAction({
   input: z.object({
     id: z.string()
   }),
-  handler: async ({ id }, context) => {
+  handler: async ({ id }, {locals}) => {
     try {
-      const currentUser = getCurrentUser(context.locals);
-      if (!currentUser?.username) {
-        throw new Error("Unauthorized");
-      }
+      const currentUser = locals.user!
 
       return await db.attachment.findUnique({
         where: {

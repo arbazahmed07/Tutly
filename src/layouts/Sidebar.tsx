@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 
 import { DynamicBreadcrumbs } from "@/components/DynamicBreadcrumbs";
-import { SidebarComponent } from "@/components/Sidebar";
+import { SidebarComponent, SidebarItem } from "@/components/Sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/components/ModeToggle";
@@ -15,14 +15,15 @@ export interface SidebarProps {
   children: React.ReactNode;
   pathname: string;
   user: User;
+  sideBarItems?: SidebarItem[]
 }
 
-export function Sidebar({ children, pathname, user }: SidebarProps) {
+export function Sidebar({ children, pathname, user, sideBarItems }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <SidebarProvider>
-      <SidebarComponent user={user} />
+      <SidebarComponent user={user} initialSideBarItems={sideBarItems ?? []} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center justify-between w-full px-4">

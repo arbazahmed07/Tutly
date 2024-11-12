@@ -381,7 +381,7 @@ export const createCourse = defineAction({
   input: z.object({
     title: z.string(),
     isPublished: z.boolean(),
-    image: z.string()
+    image: z.string().optional()
   }),
   async handler({ title, isPublished, image }, { locals }) {
     const currentUser = locals.user;
@@ -395,7 +395,7 @@ export const createCourse = defineAction({
         title: title,
         createdById: currentUser.id,
         isPublished: isPublished,
-        image: image,
+        image: image || null,
         enrolledUsers: {
           create: {
             username: currentUser.username,
@@ -412,7 +412,7 @@ export const updateCourse = defineAction({
     id: z.string(),
     title: z.string(),
     isPublished: z.boolean(),
-    image: z.string()
+    image: z.string().optional()
   }),
   async handler({ id, title, isPublished, image }, { locals }) {
     const currentUser = locals.user;
@@ -429,10 +429,10 @@ export const updateCourse = defineAction({
       data: {
         title: title,
         isPublished: isPublished,
-        image: image,
+        image: image || null,
       },
     });
-    return { success: true, data: course };
+    return course;
   }
 });
 

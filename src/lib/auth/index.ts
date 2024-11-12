@@ -251,6 +251,7 @@ export async function getSession(sessionId: string) {
           profile: true,
           account: true,
           adminForCourses: true,
+          organization: true,
         }
       }
     }

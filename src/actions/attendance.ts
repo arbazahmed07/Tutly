@@ -1,6 +1,5 @@
 import { defineAction } from "astro:actions";
 import db from "@/lib/db";
-import { getCurrentUser } from "@/lib/getCurrentUser";
 import { z } from "zod";
 import { totalNumberOfClasses } from "./classes";
 
@@ -13,12 +12,7 @@ export const postAttendance = defineAction({
     })),
     maxInstructionDuration: z.number()
   }),
-  async handler({ classId, data, maxInstructionDuration }, { locals }) {
-    const currentUser = getCurrentUser(locals);
-    if (!currentUser) {
-      return { error: "You must be logged in to attend a class" };
-    }
-
+  async handler({ classId, data, maxInstructionDuration }) {
     const parsedData = JSON.parse(JSON.stringify(data));
 
     const postAttendance = await db.attendance.createMany({
@@ -52,12 +46,7 @@ export const getAttendanceForMentorByIdBarChart = defineAction({
     id: z.string(),
     courseId: z.string()
   }),
-  async handler({ id, courseId }, { locals }) {
-    const currentUser = getCurrentUser(locals);
-    if (!currentUser) {
-      return { error: "You must be logged in to attend a class" };
-    }
-
+  async handler({ id, courseId }) {
     const attendance = await db.attendance.findMany({
       where: {
         user: {
@@ -103,10 +92,7 @@ export const getAttendanceForMentorBarChart = defineAction({
     courseId: z.string()
   }),
   async handler({ courseId }, { locals }) {
-    const currentUser = getCurrentUser(locals);
-    if (!currentUser) {
-      return { error: "You must be logged in to attend a class" };
-    }
+    const currentUser = locals.user!
 
     let attendance;
     if (currentUser.role === "MENTOR") {
@@ -170,10 +156,7 @@ export const getAttedanceByClassId = defineAction({
     id: z.string()
   }),
   async handler({ id }, { locals }) {
-    const currentUser = getCurrentUser(locals);
-    if (!currentUser) {
-      return { error: "You must be logged in to attend a class" };
-    }
+    const currentUser = locals.user!
 
     const attendance = await db.attendance.findMany({
       where: {
@@ -249,7 +232,8 @@ export const deleteClassAttendance = defineAction({
     classId: z.string()
   }),
   async handler({ classId }, { locals }) {
-    const currentUser = getCurrentUser(locals);
+    const currentUser = locals.user!
+
     if (!currentUser) {
       return { error: "You must be logged in to attend a class" };
     }
@@ -269,7 +253,8 @@ export const deleteClassAttendance = defineAction({
 
 export const getTotalNumberOfClassesAttended = defineAction({
   async handler(_, { locals }) {
-    const currentUser = getCurrentUser(locals);
+    const currentUser = locals.user!
+
     if (!currentUser || currentUser.role === "STUDENT") {
       return { error: "You must be logged in as an instructor or mentor to view attendance" };
     }
@@ -335,7 +320,8 @@ export const getTotalNumberOfClassesAttended = defineAction({
 
 export const getAttendanceForLeaderbaord = defineAction({
   async handler(_, { locals }) {
-    const currentUser = getCurrentUser(locals);
+    const currentUser = locals.user!
+
     if (!currentUser) {
       return { error: "You must be logged in to attend a class" };
     }
@@ -365,7 +351,8 @@ export const getAttendanceForLeaderbaord = defineAction({
 
 export const getAttendanceOfAllStudents = defineAction({
   async handler(_, { locals }) {
-    const currentUser = getCurrentUser(locals);
+    const currentUser = locals.user!
+
     if (!currentUser) {
       return { error: "You must be logged in to attend a class" };
     }

@@ -19,10 +19,7 @@ export const createAttachment = defineAction({
     })
   }),
   async handler({ data }, { locals }) {
-    const currentUser = getCurrentUser(locals);
-    if (!currentUser) {
-      return { error: "Unauthorized" };
-    }
+    const currentUser = locals.user!
 
     const isCourseAdmin = currentUser?.adminForCourses?.some(
       (course) => course.id === data.courseId,
@@ -72,10 +69,7 @@ export const getAttachmentByID = defineAction({
     id: z.string()
   }),
   async handler({ id }, { locals }) {
-    const currentUser = getCurrentUser(locals);
-    if (!currentUser) {
-      return { error: "You must be logged in to view an attachment" };
-    }
+    const currentUser = locals.user!
 
     const attachment = await db.attachment.findUnique({
       where: {
@@ -95,10 +89,8 @@ export const deleteAttachment = defineAction({
     id: z.string()
   }),
   async handler({ id }, { locals }) {
-    const currentUser = getCurrentUser(locals);
-    if (!currentUser) {
-      return { error: "You must be logged in to delete an attachment" };
-    }
+    const currentUser = locals.user!
+
     if (currentUser.role !== "INSTRUCTOR") {
       return { error: "You must be an instructor to delete an attachment" };
     }
@@ -122,10 +114,7 @@ export const editAttachment = defineAction({
     data: z.custom<Attachment>()
   }),
   async handler({ id, data }, { locals }) {
-    const currentUser = getCurrentUser(locals);
-    if (!currentUser) {
-      return { error: "You must be logged in to edit an attachment" };
-    }
+    const currentUser = locals.user!
 
     const attachment = await db.attachment.update({
       where: {

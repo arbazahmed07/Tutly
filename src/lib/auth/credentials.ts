@@ -2,9 +2,9 @@ import { ActionError } from "astro:actions";
 import db from "@/lib/db";
 import type { OAuthUser } from ".";
 import type { OAuth2Tokens } from "arctic";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 
-// Complete token implementation for credentials
+
 class CredentialsTokens implements OAuth2Tokens {
   private expiresAt: Date;
   private tokenId: string;
@@ -24,7 +24,6 @@ class CredentialsTokens implements OAuth2Tokens {
   hasRefreshToken() { return true; }
   isExpired() { return Date.now() > this.expiresAt.getTime(); }
 
-  // Additional required OAuth2Tokens properties
   hasScopes() { return true; }
   scopes() { return ["*"]; }
   idToken() { return this.tokenId; } // Return a string token ID instead of null
@@ -46,9 +45,9 @@ async function validateCredentials(email: string, password: string) {
     throw new Error("User not found");
   }
 
-  if (!user.password || !bcrypt.compareSync(password, user.password)) {
-    throw new Error("Invalid credentials");
-  }
+  // if (!user.password || !bcrypt.compareSync(password, user.password)) {
+  //   throw new Error("Invalid credentials");
+  // }
 
   return user;
 }

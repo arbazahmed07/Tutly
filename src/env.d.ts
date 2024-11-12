@@ -11,10 +11,10 @@ declare namespace App {
     | null;
     session:
     | (import("@prisma/client").Session & {
-      user: import("@prisma/client").User & {
-        profile: import("@prisma/client").Profile;
-      };
+      user: import("@prisma/client").User
     })
     | null;
+    organization: import("@prisma/client").Organization | null;
+    role: import("@prisma/client").Role | null;
   }
 }

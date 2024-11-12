@@ -102,11 +102,6 @@ export function SignIn() {
                 Sign in with Google
               </Button>
             </a>
-            <a href="/api/auth/signin/github">
-              <Button variant="outline" className="w-full">
-                Sign in with GitHub
-              </Button>
-            </a>
           </div>
         </CardContent>
       </Card>

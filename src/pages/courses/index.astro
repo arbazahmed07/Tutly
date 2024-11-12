@@ -67,7 +67,7 @@ const coursesFinal = (currentUser.role === "INSTRUCTOR")?courses:publishedCourse
         coursesFinal?.length === 0 ? (
           <div>
             {currentUser?.role === "INSTRUCTOR" ? (
-              <AddCourse />
+              <AddCourse client:load/>
             ) : (
               <NoDataFound message="No courses found!" />
             )}
