@@ -1,9 +1,8 @@
 ---
-import { SidebarItem } from "@/components/Sidebar";
 import RootLayout from "@/layouts/RootLayout.astro";
 import db from "@/lib/db";
-import { FileBarChart2Icon } from "lucide-react";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import ClassSidebar from "./classes/_components/classSidebar";
 
 const currentUser = Astro.locals.user;
 if (!currentUser) return null;
@@ -38,20 +37,19 @@ const courseAssignments = await db.course.findMany({
   },
 });
 
+const sideBarItems = [];
 const classes = await db.class.findMany({
   where: {
     courseId: String(Astro.params.id),
   },
 });
 
-const sideBarItems: SidebarItem[] = [];
-
-classes.forEach((classItem) => {
+for (const classItem of classes) {
   sideBarItems.push({
     title: classItem.title,
-    url: `/courses/${Astro.params.id}/${classItem.id}`,
+    url: `/courses/${Astro.params.id}?class=${classItem.id}`,
   });
-});
+}
 
 const maxWords = 50;
 function truncateText(text: string) {
@@ -62,9 +60,19 @@ function truncateText(text: string) {
   const truncatedText = words.slice(0, maxWords).join(" ");
   return truncatedText + "...";
 }
+
+const classesWithFolders = await db.class.findMany({
+  where: {
+    courseId: String(Astro.params.id),
+  },
+  include: {
+    Folder: true,
+  },
+});
 ---
 
-<RootLayout title="Courses" sideBarItems={sideBarItems}>
+<RootLayout title="Courses" isSidebarOpen={false}>
+  <ClassSidebar client:only courseId={String(Astro.params.id)} classes={classesWithFolders || []} title="Assignments" currentUser={currentUser} isCourseAdmin={currentUser.role === "INSTRUCTOR"}  />
   <div class="m-3">
     <h1 class="border-b-2 p-2 text-center text-lg font-medium md:text-xl">Assignments</h1>
 
@@ -73,8 +81,7 @@ function truncateText(text: string) {
         <div class="mt-5 text-xl dark:text-secondary-300">No assignments yet...</div>
       )}
 
-      {
-        courseAssignments?.map((assignment) =>
+      {courseAssignments?.map((assignment) =>
           assignment.classes.map((classItem) =>
             classItem.attachments.map((attachment) => (
               <div

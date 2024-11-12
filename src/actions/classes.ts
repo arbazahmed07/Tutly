@@ -15,26 +15,27 @@ export const createClass = defineAction({
     folderName: z.string().optional(),
   }),
   handler: async ({ classTitle, videoLink, videoType, courseId, folderId, folderName, createdAt }, { locals }) => {
-    let myClass;
-
     try {
-      // If folderId is provided, connect to the existing folder
+      const classData = {
+        title: classTitle,
+        createdAt: createdAt ? new Date(createdAt) : new Date(),
+        video: {
+          create: {
+            videoLink: videoLink ?? null,
+            videoType: videoType,
+          },
+        },
+        course: {
+          connect: {
+            id: courseId,
+          },
+        },
+      };
+
       if (folderId) {
-        myClass = await db.class.create({
+        return await db.class.create({
           data: {
-            title: classTitle,
-            createdAt: new Date(createdAt ?? ""),
-            video: {
-              create: {
-                videoLink: videoLink ?? null,
-                videoType: videoType,
-              },
-            },
-            course: {
-              connect: {
-                id: courseId,
-              },
-            },
+            ...classData,
             Folder: {
               connect: {
                 id: folderId,
@@ -42,53 +43,26 @@ export const createClass = defineAction({
             },
           },
         });
-      }
-      // If folderName is provided, create a new folder
-      else if (folderName) {
-        myClass = await db.class.create({
+      } else if (folderName) {
+        return await db.class.create({
           data: {
-            title: classTitle,
-            createdAt: new Date(createdAt ?? ""),
-            video: {
-              create: {
-                videoLink: videoLink ?? null,
-                videoType: videoType,
-              },
-            },
-            course: {
-              connect: {
-                id: courseId,
-              },
-            },
+            ...classData,
             Folder: {
               create: {
                 title: folderName,
-              },
-            },
-          },
-        });
-      } else {
-        myClass = await db.class.create({
-          data: {
-            title: classTitle,
-            createdAt: new Date(createdAt ?? ""),
-            video: {
-              create: {
-                videoLink: videoLink ?? null,
-                videoType: videoType,
-              },
-            },
-            course: {
-              connect: {
-                id: courseId,
+                createdAt: createdAt ? new Date(createdAt) : new Date(),
               },
             },
           },
         });
       }
 
-      return myClass;
-    } catch {
+      return await db.class.create({
+        data: classData,
+      });
+
+    } catch (error) {
+      console.error("Error creating class:", error);
       throw new Error("Error creating class");
     }
   }

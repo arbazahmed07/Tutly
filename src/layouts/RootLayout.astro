@@ -7,11 +7,12 @@ import { SidebarItem } from "@/components/Sidebar";
 
 interface Props {
   title?: string;
-  sideBarItems?: SidebarItem[]
+  sideBarItems?: SidebarItem[];
+  isSidebarOpen?: boolean;
 }
 
 const { title = "Tutly" } = Astro.props;
-const { sideBarItems } = Astro.props;
+const { sideBarItems, isSidebarOpen } = Astro.props;
 
 const pathname = Astro.url.pathname;
 const user = Astro.locals.user;
@@ -45,7 +46,7 @@ globalThis.pathname = pathname;
   <body>
     <Toaster client:load />
     {user && (
-      <Sidebar client:load pathname={pathname} user={user} sideBarItems={sideBarItems ?? []}>
+      <Sidebar client:load pathname={pathname} user={user} sideBarItems={sideBarItems ?? []} isSidebarOpen={isSidebarOpen}>
         <slot />
       </Sidebar>
     )}

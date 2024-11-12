@@ -106,7 +106,7 @@ export const foldersByCourseId = defineAction({
         },
       },
     });
-    return { success: true, data: folders };
+    return folders ?? [];
   }
 });
 
@@ -688,6 +688,29 @@ export const updateMentor = defineAction({
       return { success: true, data: updatedUser };
     } catch {
       return { error: "Failed to update mentor" };
+    }
+  }
+});
+
+export const deleteCourse = defineAction({
+  input: z.object({
+    id: z.string()
+  }),
+  async handler({ id }, { locals }) {
+    const currentUser = locals.user;
+    if (currentUser?.role !== "INSTRUCTOR") return { error: "Unauthorized" };
+
+    try {
+      await db.course.delete({
+        where: {
+          id: id,
+          createdById: currentUser.id
+        }
+      });
+
+      return { success: true };
+    } catch {
+      return { error: "Failed to delete course" };
     }
   }
 });

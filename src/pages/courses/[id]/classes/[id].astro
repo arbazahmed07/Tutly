@@ -1,0 +1,19 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import ClassSidebar from "./_components/classSidebar";
+import db from "@/lib/db";
+
+const currentUser = Astro.locals.user;
+const classesWithFolders = await db.class.findMany({
+  where: {
+    courseId: String(Astro.params.id),
+  },
+  include: {
+    Folder: true,
+  },
+});
+---
+
+<RootLayout title="Classes" isSidebarOpen={false}>
+  <ClassSidebar client:only courseId={String(Astro.params.id)} classes={classesWithFolders || []} title="Assignments" currentUser={currentUser} isCourseAdmin={currentUser.role === "INSTRUCTOR"}  />
+</RootLayout>

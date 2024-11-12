@@ -15,14 +15,15 @@ export interface SidebarProps {
   children: React.ReactNode;
   pathname: string;
   user: User;
-  sideBarItems?: SidebarItem[]
+  sideBarItems?: SidebarItem[];
+  isSidebarOpen?: boolean;
 }
 
-export function Sidebar({ children, pathname, user, sideBarItems }: SidebarProps) {
+export function Sidebar({ children, pathname, user, sideBarItems, isSidebarOpen }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <SidebarProvider>
+    <SidebarProvider {...(isSidebarOpen !== undefined && { open: isSidebarOpen })}>
       <SidebarComponent user={user} initialSideBarItems={sideBarItems ?? []} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -44,7 +45,7 @@ export function Sidebar({ children, pathname, user, sideBarItems }: SidebarProps
                 <DropdownMenuTrigger asChild>
                   <div className="flex items-center bg-muted hover:bg-muted/80 rounded-xl px-2 py-1 cursor-pointer w-16">
                     <Avatar className="h-7 w-7 rounded-full cursor-pointer">
-                      <AvatarImage src={user.image ?? ""} alt={user.name ?? user.username} />
+                      <AvatarImage src={user.image ?? "/placeholder.jpg"} alt={user.name ?? user.username} />
                       <AvatarFallback className="rounded-full">
                         {user.name
                           ? user.name
@@ -63,7 +64,7 @@ export function Sidebar({ children, pathname, user, sideBarItems }: SidebarProps
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-7 w-7 rounded-full">
-                        <AvatarImage src={user.image ?? ""} alt={user.name} />
+                        <AvatarImage src={user.image ?? "/placeholder.jpg"} alt={user.name} />
                         <AvatarFallback className="rounded-full">
                           {user.name
                             ?.split(" ")

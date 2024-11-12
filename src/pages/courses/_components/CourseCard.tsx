@@ -1,62 +1,15 @@
-"use client";
 import { IoMdBookmarks } from "react-icons/io";
-import toast from "react-hot-toast";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { MdOutlineEdit } from "react-icons/md";
 import { FaUsersGear } from "react-icons/fa6";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "@/hooks/use-router";
-import { actions } from "astro:actions";
+import CourseFormModal from "./CourseFormModal";
 
 export default function CourseCard({ course, currentUser }: any) {
   const router = useRouter();
-  const [openPopup, setOpenPopup] = useState<boolean>(false);
-  const [courseTitle, setCourseTitle] = useState<string>(course.title);
-  const [img, setImg] = useState<string>(course.image);
-  const [isPublished, setIsPublished] = useState<boolean>(course.isPublished);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleEditCourse = async (id: string) => {
-    try {
-      setIsSubmitting(true);
-      const { data, error } = await actions.courses_updateCourse({
-        id,
-        title: courseTitle,
-        isPublished,
-        image: img,
-      });
-
-      if (!data || error) {
-        throw new Error();
-      }
-
-      toast.success("Course edited successfully");
-      setOpenPopup(false);
-      setCourseTitle(data?.title);
-      setImg(data?.image);
-      setIsPublished(data?.isPublished);
-
-    } catch {
-      toast.error("Failed to edit course");
-      setCourseTitle(course.title);
-      setImg(course.image);
-      setIsPublished(course.isPublished);
-      setOpenPopup(false);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const [openModal, setOpenModal] = useState(false);
 
   const expired = () => {
     if (!course.endDate) return false;
@@ -77,10 +30,7 @@ export default function CourseCard({ course, currentUser }: any) {
       >
         <div className="relative h-full w-full">
           <img
-            src={
-              course.image ||
-              "https://i.postimg.cc/CMGSNVsg/new-course-colorful-label-sign-template-new-course-symbol-web-banner-vector.jpg"
-            }
+            src={course.image || "/new-course-placeholder.jpg"}
             alt={course.title}
             className="h-full w-full object-cover"
           />
@@ -115,68 +65,25 @@ export default function CourseCard({ course, currentUser }: any) {
               <FaUsersGear className="h-5 w-5" />
             </Button>
 
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setOpenModal(true)}
+            >
+              <MdOutlineEdit className="h-5 w-5" />
+            </Button>
 
-            <Dialog open={openPopup} onOpenChange={setOpenPopup}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MdOutlineEdit className="h-5 w-5" />
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Edit Course</DialogTitle>
-                </DialogHeader>
-
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      id="title"
-                      value={courseTitle}
-                      onChange={(e) => setCourseTitle(e.target.value)}
-                      placeholder="Enter course title"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Publish Status</Label>
-                    <RadioGroup
-                      value={String(isPublished)}
-                      onValueChange={(value) => setIsPublished(value === "true")}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="true" id="yes" />
-                        <Label htmlFor="yes">Yes</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="false" id="no" />
-                        <Label htmlFor="no">No</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="image">Image URL</Label>
-                    <Input
-                      id="image"
-                      value={img || ""}
-                      onChange={(e) => setImg(e.target.value)}
-                      placeholder="Paste image link here"
-                    />
-                  </div>
-
-                  <Button
-                    className="w-full"
-                    disabled={isSubmitting}
-                    onClick={() => handleEditCourse(course.id)}
-                  >
-                    {isSubmitting ? "Saving Changes..." : "Save Changes"}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-
+            <CourseFormModal
+              open={openModal}
+              onOpenChange={setOpenModal}
+              mode="edit"
+              defaultValues={{
+                id: course.id,
+                title: course.title,
+                isPublished: course.isPublished,
+                image: course.image,
+              }}
+            />
           </div>
         )}
       </div>

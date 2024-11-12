@@ -54,6 +54,7 @@ if (role === Role.STUDENT) {
       }
     });
 
+
     dashboardData = {
       courses: enrolledCourses.map((enrolledCourse) => {
         const courseAssignments = enrolledCourse.course?.attachments || [];
@@ -176,8 +177,10 @@ if (role === Role.STUDENT) {
     console.error("Error fetching instructor dashboard data:", error);
   }
 }
+
+const name = currentUser.name;
 ---
 
 <RootLayout title="Dashboard">
-  <Dashboard data={dashboardData} client:load/>
+  <Dashboard data={dashboardData} name={name} client:load/>
 </RootLayout>
