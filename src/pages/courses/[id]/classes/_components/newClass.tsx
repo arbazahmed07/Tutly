@@ -54,9 +54,9 @@ const NewClassDialog = ({ courseId }: { courseId: string }) => {
         classTitle,
         videoLink,
         videoType: videoType as "DRIVE" | "ZOOM" | "YOUTUBE",
+        courseId: courseId!,
         createdAt,
         folderId: selectedFolder != "new" ? selectedFolder : undefined,
-        courseId: courseId!,
         folderName: selectedFolder == "new" ? folderName.trim() : undefined,
       });
 

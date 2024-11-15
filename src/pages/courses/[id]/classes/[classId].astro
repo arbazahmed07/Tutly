@@ -1,0 +1,48 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import ClassSidebar from "./_components/classSidebar";
+import Class from "./_components/video";
+import db from "@/lib/db";
+
+const currentUser = Astro.locals.user;
+
+if (!currentUser) return null;
+const classesWithFolders = await db.class.findMany({
+  where: {
+    courseId: Astro.params.id!,
+  },
+  include: {
+    Folder: true,
+  },
+});
+
+const classId = Astro.params.classId!;
+const courseId = Astro.params.id!;
+
+const classDetails = await db.class.findUnique({
+  where: {
+    id: classId,
+  },
+  include: {
+    video: true,
+    attachments: true,
+    Folder: true,
+  },
+});
+---
+
+<RootLayout title="Classes" isSidebarOpen={false}>
+  <div class="flex items-start w-full">
+    <ClassSidebar
+      client:only
+      courseId={String(Astro.params.id)}
+      classes={classesWithFolders || []}
+      title="Assignments"
+      currentUser={currentUser}
+      isCourseAdmin={currentUser.role === "INSTRUCTOR"}
+    />
+    <div class="w-full m-3">
+      <Class classId={classId} id={courseId} currentUser={currentUser} details={classDetails} />
+    </div>
+  </div>
+</RootLayout>

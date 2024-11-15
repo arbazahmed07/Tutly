@@ -475,17 +475,27 @@ export const getClassDetails = defineAction({
     id: z.string()
   }),
   async handler({ id }) {
-    const classDetails = await db.class.findUnique({
-      where: {
-        id: id,
-      },
-      include: {
-        video: true,
-        attachments: true,
-        Folder: true,
-      },
-    });
-    return { success: true, data: classDetails };
+    try {
+      const classDetails = await db.class.findUnique({
+        where: {
+          id: id,
+        },
+        include: {
+          video: true,
+          attachments: true,
+          Folder: true,
+        },
+      });
+      
+      if (!classDetails) {
+        return { success: false, error: "Class not found" };
+      }
+
+      return { success: true, data: classDetails };
+    } catch (error) {
+      console.error("Error fetching class details:", error);
+      return { success: false, error: "Failed to fetch class details" };
+    }
   }
 });
 

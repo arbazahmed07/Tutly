@@ -1,9 +1,10 @@
-import { MdOndemandVideo } from "react-icons/md";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { type Class, Folder, User } from "@prisma/client";
 import { useState } from "react";
 import { FaFolder } from "react-icons/fa6";
 import { FaFolderOpen } from "react-icons/fa6";
-import { User, type Class, Folder } from "@prisma/client";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { MdOndemandVideo } from "react-icons/md";
+
 import NewClassDialog from "./newClass";
 
 function ClassSidebar({
@@ -48,7 +49,7 @@ function ClassSidebar({
   return (
     <div className="relative z-10">
       <div
-        className={`min-w-[170px] ${
+        className={`w-[190px] ${
           !open && "hidden"
         } sticky flex h-dvh flex-col items-start gap-2 bg-background px-2 py-3 shadow-xl max-sm:absolute sm:top-10`}
       >
@@ -59,7 +60,7 @@ function ClassSidebar({
         </div>
         {Object.keys(groupedClasses).map((folderId: string) => {
           const folder = classes.find(
-            (c: Class & { Folder: Folder | null }) => c.folderId === folderId,
+            (c: Class & { Folder: Folder | null }) => c.folderId === folderId
           )?.Folder;
           if (folder) {
             return (
@@ -82,8 +83,7 @@ function ClassSidebar({
                         key={classItem.id}
                         href={`/courses/${courseId}/classes/${classItem.id}`}
                         className={`flex cursor-pointer items-center gap-2 rounded-md px-6 py-2 hover:bg-blue-500 hover:text-white ${
-                          pathname ===
-                            `/courses/${courseId}/classes/${classItem.id}` &&
+                          pathname === `/courses/${courseId}/classes/${classItem.id}` &&
                           "bg-sky-500 text-white"
                         }`}
                       >
@@ -103,8 +103,7 @@ function ClassSidebar({
             key={classItem.id}
             href={`/courses/${courseId}/classes/${classItem.id}`}
             className={`flex cursor-pointer items-center gap-2 rounded-md px-6 py-2 text-white hover:bg-blue-500 ${
-              pathname === `/courses/${courseId}/classes/${classItem.id}` &&
-              "bg-sky-500 text-white"
+              pathname === `/courses/${courseId}/classes/${classItem.id}` && "bg-sky-500 text-white"
             }`}
           >
             <MdOndemandVideo />
@@ -128,7 +127,7 @@ function ClassSidebar({
         {!open && (
           <div
             onClick={() => setOpen(!open)}
-            className="fixed left-0 top-[300px] cursor-pointer rounded-r-lg bg-blue-500 py-2"
+            className="fixed left-12 top-[300px] cursor-pointer rounded-r-lg bg-blue-500 py-2"
           >
             <IoIosArrowForward />
           </div>
