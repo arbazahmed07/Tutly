@@ -78,7 +78,7 @@ const totalPoints: any = submissionsUptoLastSunday.map((submission: any) => {
   };
 });
 
-const sortedSubmissions = totalPoints.sort((a, b) => b.totalPoints - a.totalPoints);
+const sortedSubmissions = totalPoints.sort((a: any, b: any) => b.totalPoints - a.totalPoints);
 
 const courses = await db.course.findMany({
     where: {

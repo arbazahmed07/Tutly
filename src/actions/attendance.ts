@@ -13,7 +13,9 @@ export const postAttendance = defineAction({
     maxInstructionDuration: z.number()
   }),
   async handler({ classId, data, maxInstructionDuration }) {
+    console.log("data", data);
     const parsedData = JSON.parse(JSON.stringify(data));
+    console.log("parsedData", parsedData);
 
     const postAttendance = await db.attendance.createMany({
       data: [
