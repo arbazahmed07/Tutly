@@ -1,8 +1,4 @@
-
-import type { submission, Attachment } from "@prisma/client";
-import FilterBy from "./FilterBy";
 import SortBy from "./SortBy";
-
 
 export const SubmissionList = ({
     assignmentId,
@@ -10,14 +6,12 @@ export const SubmissionList = ({
     submissions,
     searchParams,
     username,
-    assignments,
   }: {
-    assignmentId: string;
+    assignmentId: any;
     assignment: any;
-    submissions: submission[];
+    submissions: any;
     searchParams: any;
-    username: string;
-    assignments: Attachment[];
+    username: any;
   }) => {
     const sortBy = searchParams?.sortBy || "username";
   
@@ -36,19 +30,12 @@ export const SubmissionList = ({
     });
   
     return (
-      <div className="h-[93vh] overflow-y-scroll">
-        <FilterBy assignments={assignments} searchParams={searchParams} />
-        <SortBy searchParams={searchParams} />
+      <div className="max-h-[90vh] overflow-y-scroll">
+        <SortBy assignmentId={assignmentId} searchParams={searchParams} />
         <div className="border-b p-2">
-          <p className="text-sm font-semibold">
-            Submissions{assignment && ` (max:${assignment?.maxSubmissions} )`}
-          </p>
+          <p className="text-sm font-semibold">Submissions (max:{assignment.maxSubmissions} )</p>
           <p className="text-xs text-slate-600">
-            {
-              submissions.filter(
-                (submission: any) => submission?.points.length == 0,
-              ).length
-            }{" "}
+            {submissions.filter((submission: any) => submission?.points.length == 0).length}{" "}
             un-evaluated / {submissions.length} total
           </p>
         </div>
@@ -57,21 +44,17 @@ export const SubmissionList = ({
             submissions.map((singleSubmission: any, index) => {
               if (!singleSubmission) return null;
               let hrefLink = username
-                ? `/assignments/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}`
-                : `/assignments/evaluate?submissionId=${singleSubmission.id}`;
+                ? `/assignments/${assignmentId}/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}`
+                : `/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}`;
   
               const sortBy = searchParams?.sortBy;
   
               if (sortBy) {
                 if (username) {
-                  hrefLink = `/assignments/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}&sortBy=${sortBy}`;
+                  hrefLink = `/assignments/${assignmentId}/evaluate?username=${singleSubmission.enrolledUser.username}&submissionId=${singleSubmission.id}&sortBy=${sortBy}`;
                 } else {
-                  hrefLink = `/assignments/evaluate?submissionId=${singleSubmission.id}&sortBy=${sortBy}`;
+                  hrefLink = `/assignments/${assignmentId}/evaluate?submissionId=${singleSubmission.id}&sortBy=${sortBy}`;
                 }
-              }
-  
-              if (assignmentId) {
-                hrefLink = `${hrefLink}&assignmentId=${assignmentId}`;
               }
   
               return (
@@ -87,11 +70,6 @@ export const SubmissionList = ({
                     <p className="text-xs text-slate-600">
                       {singleSubmission.enrolledUser.user.name}
                     </p>
-                    {!assignment && (
-                      <p className="text-xs text-slate-600">
-                        {singleSubmission?.assignment?.title}
-                      </p>
-                    )}
                   </div>
                 </a>
               );
@@ -100,5 +78,4 @@ export const SubmissionList = ({
       </div>
     );
   };
-
   

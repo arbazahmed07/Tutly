@@ -1,10 +1,12 @@
-"use client";
-
 import { useRouter } from "@/hooks/use-router";
 
+
+
 const SortBy = ({
+  assignmentId,
   searchParams,
 }: {
+  assignmentId: string;
   searchParams?: Record<string, string | string[] | undefined>;
 }) => {
   const router = useRouter();
@@ -20,7 +22,7 @@ const SortBy = ({
             const sortBy = e.target.value;
             const newSearchParams = { ...searchParams, sortBy };
             router.push(
-              `/assignments/evaluate?${new URLSearchParams(newSearchParams).toString()}`,
+              `/assignments/${assignmentId}/evaluate?${new URLSearchParams(newSearchParams).toString()}`,
             );
           }}
           value={searchParams?.sortBy || "username"}

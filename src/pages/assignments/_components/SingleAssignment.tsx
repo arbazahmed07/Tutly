@@ -29,6 +29,7 @@ export default function AssignmentPage({
   assignments,
   notSubmittedMentees,
   isCourseAdmin = false,
+  username,
 }: {
   params: { id: string };
   currentUser: any;
@@ -36,6 +37,7 @@ export default function AssignmentPage({
   assignments: any;
   notSubmittedMentees: any;
   isCourseAdmin: boolean;
+  username: string;
 }) {
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedScores, setEditedScores] = useState({
@@ -74,7 +76,6 @@ export default function AssignmentPage({
   const router = useRouter();
 
 //   const searchParams = useSearchParams();
-  const username = "22071AC009";
 //   const username = searchParams?.get("username");
   let filteredAssignments = [];
   // if (!username) {

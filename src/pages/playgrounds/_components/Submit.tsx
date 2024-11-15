@@ -2,7 +2,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Confetti from "react-confetti";
-import { useRouter } from "next/navigation";
 import { IoWarningOutline } from "react-icons/io5";
 import {
   AlertDialog,
@@ -17,6 +16,7 @@ import {
 import { useSandpack } from "@codesandbox/sandpack-react";
 import { Button } from "@/components/ui/button";
 import { actions } from "astro:actions";
+import { useRouter } from "@/hooks/use-router";
 
 const Submit = ({
   user,
@@ -63,7 +63,7 @@ const Submit = ({
       setTimeout(() => setConfetti(false), 5000);
       toast.success("Assignment submitted successfully");
       setStatus("Submitted");
-      router.back();
+      router.push('/assignments');
     } catch (e) {
       toast.dismiss();
       toast.error("Error submitting assignment");

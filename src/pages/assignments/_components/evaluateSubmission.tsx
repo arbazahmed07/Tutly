@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "@/hooks/use-router";
 import day from "@/lib/dayjs";
 import axios from "axios";
 import { useState } from "react";
@@ -33,7 +34,7 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
   const handleFeedback = async (submissionId: string) => {
     try {
       if (!feedback) return;
-      await axios.post("/api/feedback", {
+      const res = await axios.post("/api/feedback", {
         submissionId: submissionId,
         feedback: feedback,
       });
@@ -61,6 +62,7 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
     });
   };
 
+  const router = useRouter();
 
   const handleSave = async () => {
     try {
@@ -86,7 +88,7 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
         });
       }
 
-      await axios.post("/api/points", {
+      const res = await axios.post("/api/points", {
         submissionId: submission.id,
         marks: marks,
       });
@@ -94,11 +96,13 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
       setIsEditing(false);
       toast.dismiss();
       toast.success("Scores saved successfully");
+      window.location.reload();
     } catch (e: any) {
       toast.dismiss();
       toast.error("Failed to save scores");
     } finally {
       setIsEditing(false);
+      window.location.reload();
     }
   };
 
@@ -109,9 +113,10 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
     if (!response) return;
     try {
       toast.loading("Deleting Submission...");
-      await axios.delete(`/api/submissions/${submission.id}`);
+      const res = await axios.delete(`/api/submissions/${submission.id}`);
       toast.dismiss();
       toast.success("Submission deleted successfully");
+      window.location.reload();
     } catch (e: any) {
       toast.dismiss();
       toast.error("Failed to delete submission");
