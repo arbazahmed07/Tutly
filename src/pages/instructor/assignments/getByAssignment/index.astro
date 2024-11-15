@@ -112,6 +112,8 @@ const coursesWithAssignments = await db.course.findMany({
               <SingleAssignmentBoard
                 courses={courses}
                 assignments={coursesWithAssignments}
+
+                client: load
               />
             </>
           ) : (

@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import MDEditor from "@uiw/react-md-editor";
-import axios from "axios";
+// import axios from "axios";
 import katex from "katex";
 import "katex/dist/katex.css";
 import { useForm } from "react-hook-form";
