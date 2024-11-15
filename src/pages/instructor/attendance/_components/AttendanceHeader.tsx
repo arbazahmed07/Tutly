@@ -362,20 +362,20 @@ export default function AttendanceHeader({
                 }}
               /> */}
               {
-                currentClass ? (
+                // currentClass ? (
 
                   <BulkImport
                   data={[]}
                   columns={columns}
                   onImport={handleBulkUpload}
                   />
-                ) : (
-                  <div
-                    className="text-sm rounded border-none bg-primary-600 font-semibold text-red-500 "
-                  >
-                    *Select a class to upload attendance
-                  </div>
-                )
+                // ) : (
+                //   <div
+                //     className="text-sm rounded border-none bg-primary-600 font-semibold text-red-500 "
+                //   >
+                //     *Select a class to upload attendance
+                //   </div>
+                // )
                 }
               {fileData && selectedFile && (
                 <div className="flex items-center justify-between gap-2">

@@ -110,6 +110,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       InWaitingRoom: row["InWaitingRoom"],
     }));
     setFileData(modifiedData);
+    console.log("File Upload ", fileData)
   }
 
   const aggregatedStudents = fileData.reduce((acc: any, student: Student) => {
@@ -185,7 +186,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
   }));
 
   const presentStudents = combinedStudents.filter(
-    (student: any) => student.Present,
+    (student: any) => student.Present === true
   );
   const absentStudents = combinedStudents.filter(
     (student: any) => !student.Present,
@@ -205,6 +206,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
   // upload attendance to db
   const handleUpload = async () => {
     toast.loading("uploading attendance...");
+    console.log("present Students",combinedStudents)
     try {
       await actions.attendances_postAttendance( {
         classId: currentClass?.id,

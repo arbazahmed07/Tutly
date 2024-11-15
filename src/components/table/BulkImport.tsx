@@ -352,12 +352,12 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
 
         <div className="flex-1 overflow-y-auto p-6 pt-4" onPaste={handlePaste}>
           <div className="min-h-[300px]">
-            <table className="w-full border-collapse">
+            <table className="w-full border-collapse border-gray-100">
               <thead className="sticky top-0 bg-white shadow-sm z-10">
                 <tr>
                   {columns.map((col) => (
                     <th key={col.key} className="border p-2 bg-gray-50">
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 dark:text-gray-950">
                         {col.name}
                         {col.validation?.required && (
                           <span className="text-red-500">*</span>
@@ -377,7 +377,9 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
                       </div>
                     </th>
                   ))}
-                  <th className="border p-2 bg-gray-50 w-16"></th>
+                  <th className="border p-2 bg-gray-50 dark:text-gray-950 w-16">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -386,7 +388,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
                     {columns.map((col) => (
                       <td
                         key={`${rowIndex}-${col.key}`}
-                        className={`border p-2 relative ${
+                        className={`border dark:border-gray-100 p-2 relative  ${
                           errors[`${rowIndex}-${col.key}`] ? "bg-red-50" : ""
                         }`}
                       >
@@ -400,7 +402,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
                         </div>
                       </td>
                     ))}
-                    <td className="border p-2 w-16">
+                    <td className="border p-2 w-16 dark:border-gray-100 ">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -429,7 +431,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
                           })
                         }}
                       >
-                        <Trash2 size={16} className="text-red-500" />
+                        <Trash2 size={16} className="text-red-500 " />
                       </Button>
                     </td>
                   </tr>
@@ -439,7 +441,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
           </div>
         </div>
 
-        <div className="flex justify-between items-center p-6 border-t bg-gray-50">
+        <div className="flex justify-between items-center p-6 border-t bg-gray-50 dark:bg-gray-500 rounded-md">
           <Button
             variant="outline"
             size="sm"
