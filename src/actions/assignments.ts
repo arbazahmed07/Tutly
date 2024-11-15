@@ -222,6 +222,7 @@ export const getAllAssignments = defineAction({
   handler: async (_, {locals}) => {
     try {
       const currentUser = locals.user!
+      if(!currentUser) return null;
 
       const { data: courses } = await getEnrolledCourses();
 
@@ -645,6 +646,8 @@ export const getMentorPieChartData = defineAction({
       const currentUser = locals.user
 
       let assignments, noOfTotalMentees;
+      if(!currentUser) return null;
+      
       if (currentUser.role === "MENTOR") {
         assignments = await db.submission.findMany({
           where: {

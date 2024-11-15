@@ -1,0 +1,39 @@
+---
+import RootLayout from '../../../layouts/RootLayout.astro'
+
+import EvaluateSubmission from "./_components/EvaluateSubmission";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "../../../components/ui/resizable";
+import type { submission, Attachment } from "@prisma/client";
+
+const {id} = Astro.params
+const username = Astro.url.searchParams
+
+
+
+---
+<RootLayout title="Evaluate" > 
+    <div>
+        <h1>Evaluate</h1>
+        <!-- <ResizablePanelGroup direction="horizontal" className="max-h-[95vh] w-full">
+            <ResizablePanel defaultSize={15}>
+              <SubmissionList
+                assignmentId={assignmentId}
+                assignment={assignment}
+                submissions={submissions}
+                searchParams={searchParams}
+                username={username}
+                assignments={assignments}
+              />
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={85}>
+              <PlaygroundPage submission={submission} />
+            </ResizablePanel>
+          </ResizablePanelGroup> -->
+      
+    </div>
+</RootLayout>

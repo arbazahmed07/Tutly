@@ -4,7 +4,7 @@ import RootLayout from "@/layouts/RootLayout.astro";
 import db from "@/lib/db";
 import { Role } from "@prisma/client";
 import { DashboardData } from "@/types/dashboard";
-import Dashboard from "./_components/Dashboard";
+import Dashboard from "./_components/dashboard";
 
 const currentUser = Astro.locals.user;
 if (currentUser == null) return Astro.redirect("/sign-in");
