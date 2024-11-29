@@ -33,7 +33,7 @@ export const SubmissionList = ({
       <div className="max-h-[90vh] overflow-y-scroll">
         <SortBy assignmentId={assignmentId} searchParams={searchParams} />
         <div className="border-b p-2">
-          <p className="text-sm font-semibold">Submissions (max:{assignment.maxSubmissions} )</p>
+          <p className="text-sm font-semibold">Submissions (max:{assignment?.maxSubmissions} )</p>
           <p className="text-xs text-slate-600">
             {submissions.filter((submission: any) => submission?.points.length == 0).length}{" "}
             un-evaluated / {submissions.length} total

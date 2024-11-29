@@ -1,0 +1,27 @@
+---
+import LeaderBoard from "@/components/leaderBoard.tsx";
+import RootLayout from "@/layouts/RootLayout.astro";
+import { actions } from "astro:actions";
+
+const currentUser = Astro.locals.user
+const call = Astro.callAction
+
+const {data} = await call(actions.leaderboard_getInstructorLeaderboardData,{})
+const {data:mentors} = await call(actions.mentors_getMentors,{
+    
+})
+
+const {} = Astro.props
+
+---
+
+<RootLayout title="Leaderboard">
+    {
+        data?.sortedSubmissions && data.enrolledUsers ?
+        <LeaderBoard submissions={data.sortedSubmissions} courses={data.courses} currentUser={currentUser} />
+        :
+        <div class="mt-8 text-center text-3xl font-semibold">
+            Unauthorized
+        </div>
+    }
+</RootLayout>

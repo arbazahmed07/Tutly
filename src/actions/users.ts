@@ -24,6 +24,7 @@ export const getAllEnrolledUsers = defineAction({
         email: true,
       },
     });
+    
     return enrolledUsers;
   }
 });

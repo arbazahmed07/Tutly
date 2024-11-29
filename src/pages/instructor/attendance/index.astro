@@ -7,10 +7,10 @@ import type {Course, Class} from "@prisma/client"
 
 const currentUser = Astro.locals.user;
 
-const {data:attendance} = await actions.attendances_getAttendanceOfAllStudents()
+const call = Astro.callAction
+const {data:attendance} = await call(actions.attendances_getAttendanceOfAllStudents,{})
 
-
-   let courses = await db.course.findMany({
+  let courses = await db.course.findMany({
     where: {
       enrolledUsers: {
         some: {

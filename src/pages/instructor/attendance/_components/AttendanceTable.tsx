@@ -35,6 +35,11 @@ export default function AttendanceTable({
 
   return (
     <div className="container mx-auto px-4 pt-8 lg:px-20">
+      <pre>
+        {
+          JSON.stringify( studentsAttendance, null, 2)
+        }
+      </pre>
       <h1
         className="mb-4 cursor-pointer text-end text-xl font-bold text-primary-500"
         onClick={() => setSortConfig({ key: "-1", direction: "ascending" })}

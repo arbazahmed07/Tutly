@@ -12,12 +12,24 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 // import { useRouter } from "@/hooks/use-router";
 import BulkImport from "../../../../components/table/BulkImport";
 import { Column } from "../../../../components/table/DisplayTable";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { actions } from "astro:actions";
+
+
+
+
+
 const columns: Column[] = [
   {
     key: "Name",
@@ -157,7 +169,7 @@ export default function AttendanceHeader({
 
   const handleDelete = async (x: any) => {
     try {
-      await axios.post("/api/attendance/delete", {
+      await actions.attendances_deleteClassAttendance({
         classId: x,
       });
       toast.success("Attendance deleted successfully");
@@ -362,20 +374,27 @@ export default function AttendanceHeader({
                 }}
               /> */}
               {
-                // currentClass ? (
-
+                currentClass ? (
                   <BulkImport
                   data={[]}
                   columns={columns}
                   onImport={handleBulkUpload}
                   />
-                // ) : (
-                //   <div
-                //     className="text-sm rounded border-none bg-primary-600 font-semibold text-red-500 "
-                //   >
-                //     *Select a class to upload attendance
-                //   </div>
-                // )
+                ) : (
+
+                  <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                    <Button className="w-[100px] cursor-not-allowed ml-auto bg-sky-600/50 hover:bg-sky-600/50 " >Bulk Import</Button>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      className="bg-gray-700"
+                    >
+                      <p className="text-red-400 font-semibold text-xs">*Select class to upload attendance</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                )
                 }
               {fileData && selectedFile && (
                 <div className="flex items-center justify-between gap-2">

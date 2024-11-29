@@ -18,7 +18,7 @@ interface Student {
   InWaitingRoom: string;
 }
 
-const AttendanceClient = ({ courses, role, attendance }: any) => {
+const  AttendanceClient = ({ courses, role, attendance }: any) => {
   const [fileData, setFileData] = useState<any>([]);
   const [selectedFile, setSelectedFile] = useState<any>();
   const [currentCourse, setCurrentCourse] = useState<any>(null);
@@ -33,10 +33,21 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       return;
     }
     const fetch = async () => {
-      const res = await axios.post("/api/course/students", {
-        courseId: currentCourse.id,
-      });
-      setUsers(res.data);
+      if(role === 'MENTOR'){
+        const {data:res} = await actions.courses_getMentorStudents({
+          courseId:currentCourse.id
+        })
+
+        setUsers(res)
+      }
+
+      if( role === "INSTRUCTOR"){
+        const {data:res} = await actions.users_getAllEnrolledUsers({
+          courseId:currentCourse.id
+        })
+        setUsers(res);
+      }
+      
     };
     fetch();
   }, [currentCourse]);
@@ -83,7 +94,6 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
           InWaitingRoom: row["In Waiting Room"],
         }));
         setFileData(modifiedData);
-        // console.log(modifiedData);
       };
       reader.onerror = () => {
         throw new Error("Error in reading file");
@@ -206,7 +216,9 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
   // upload attendance to db
   const handleUpload = async () => {
     toast.loading("uploading attendance...");
-    console.log("present Students",combinedStudents)
+    console.log("present Students",presentStudents)
+    console.log("combined Students",combinedStudents)
+
     try {
       await actions.attendances_postAttendance( {
         classId: currentClass?.id,
@@ -220,7 +232,16 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       toast.error("Attendance already uploaded!");
     }
   };
-  const [pastpresentStudents, setPastPresentStudents] = useState([]);
+  const [pastpresentStudents, setPastPresentStudents] = useState<Array<{
+    username: string;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    data: any[];
+    classId: string;
+    attendedDuration: number | null;
+    attended: boolean;
+  }>>([]);
   const [present, setPresent] = useState(0);
 
   const [studentsAttendance, setStudentsAttendance] = useState([]);
@@ -246,7 +267,14 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
   useEffect(() => {
     const viewAttendance = async () => {
       if (currentClass) {
-        const res = await axios.get(`/api/attendance/${currentClass.id}`);
+        const {data:res} = await actions.attendances_getAllAttendance({
+          classId:currentClass.id,
+        })
+        
+        console.log("response",res);
+
+        if(!res) return;
+
         setPastPresentStudents(res.data.attendance);
         setPresent(res.data.present);
         const Totaldata: any = [];
@@ -275,9 +303,10 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
   return (
     <div className="p-4 text-center">
       <div>
-        <h1 className="mx-auto mb-2 mt-4 w-60 bg-gradient-to-r from-green-400 via-orange-200 to-red-400 bg-clip-text text-4xl font-black text-transparent">
-          Attendance
-        </h1>
+      <h1 className="mx-auto mb-2 mt-4 w-60 bg-gradient-to-r  from-green-500 via-orange-400  to-red-400 dark:from-green-500 dark:via-orange-300 dark:to-red-500 bg-clip-text text-4xl font-black text-transparent">
+        Attendance
+      </h1>
+
       </div>
       <h1 className="text-md text-center font-semibold text-secondary-400">
         {" "}

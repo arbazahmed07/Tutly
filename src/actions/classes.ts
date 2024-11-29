@@ -177,10 +177,11 @@ export const deleteClass = defineAction({
 
 export const totalNumberOfClasses = defineAction({
   handler: async (_, { locals }) => {
-    const currentUser = locals.user;
-    if (!currentUser) {
-      throw new Error("You are not authorized to view this page.");
-    }
+    // const currentUser = locals.user;
+
+    // if (!currentUser) {
+    //   throw new Error("You are not authorized to view this page.");
+    // }
 
     try {
       const res = await db.class.count();

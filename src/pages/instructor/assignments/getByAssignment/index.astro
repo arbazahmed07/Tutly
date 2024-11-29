@@ -113,7 +113,7 @@ const coursesWithAssignments = await db.course.findMany({
                 courses={courses}
                 assignments={coursesWithAssignments}
 
-                client: load
+                client: only
               />
             </>
           ) : (
