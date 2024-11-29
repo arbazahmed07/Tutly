@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -55,10 +55,13 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
         return
     }
     
-      toast.dismiss();
-      toast.success(`${username} enrolled successfully`);
+    
+    toast.dismiss();
+    toast.success(`${username} enrolled successfully`);
+    router.push(router.pathname);
       setLoading(false);
     } catch (err: any) {
+      router.push(router.pathname);
       setLoading(false);
       toast.dismiss();
       toast.error(err.response.data.error);
@@ -69,24 +72,20 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     toast.loading("Unenrolling user...");
     try {
       setLoading(true);
-    //   const res = await axios.post("/api/course/unenrollUser", {
-    //     courseId: params.id,
-    //     username,
-    //   });
 
-    const data = await actions.courses_unenrollStudentFromCourse({courseId:params.id,username})
+    const {data,error} = await actions.courses_unenrollStudentFromCourse({courseId:params.id,username})
     
-    console.log(data)
     
-    // if(error) {
-    //     toast.dismiss();
-    //     toast.error(error.message)
-    //     setLoading(false)
-    //     return
-    // }
+    if(error) {
+        toast.dismiss();
+        toast.error(error.message)
+        setLoading(false)
+        return
+    }
       toast.dismiss();
       toast.success(`${username} unenrolled successfully`);
       setLoading(false);
+      router.push(router.pathname);
     } catch (err: any) {
       setLoading(false);
       toast.dismiss();
@@ -98,10 +97,6 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     toast.loading("Updating user role...");
     try {
       setLoading(true);
-    //   const res = await axios.post("/api/course/updateToMentor", {
-    //     username,
-    //     role,
-    //   });
 
     const {data,error} = await actions.courses_updateRole({username,role:role as "STUDENT" | "MENTOR"})
     
@@ -114,6 +109,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
       toast.dismiss();
       toast.success(`User role updated to ${role}`);
       setLoading(false);
+      router.push(router.pathname);
     } catch (err: any) {
       setLoading(false);
       toast.dismiss();
@@ -128,14 +124,13 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     toast.loading("Updating mentor...");
     try {
       setLoading(true);
-      const res = await axios.post("/api/course/updateMentor", {
-        courseId: params.id,
-        username,
-        mentorUsername: mentorUsername === "" ? null : mentorUsername,
-      });
+
+      await actions.courses_updateMentor({courseId:params.id,username,mentorUsername})
+      
       toast.dismiss();
       toast.success(`Mentor updated successfully`);
       setLoading(false);
+      router.push(router.pathname);
     } catch (err: any) {
       setLoading(false);
       toast.dismiss();

@@ -6,19 +6,23 @@ import { actions } from "astro:actions";
 const currentUser = Astro.locals.user
 const call = Astro.callAction
 
+if(!currentUser) return null
 const {data} = await call(actions.leaderboard_getInstructorLeaderboardData,{})
+if(!data?.success) return null
+
+const {sortedSubmissions,enrolledCourses} = data.data 
+
 const {data:mentors} = await call(actions.mentors_getMentors,{
-    
+    courseId: currentUser?.enrolledUsers[0].courseId
 })
 
-const {} = Astro.props
 
 ---
 
 <RootLayout title="Leaderboard">
     {
-        data?.sortedSubmissions && data.enrolledUsers ?
-        <LeaderBoard submissions={data.sortedSubmissions} courses={data.courses} currentUser={currentUser} />
+        (sortedSubmissions && enrolledCourses )?
+        <LeaderBoard submissions={sortedSubmissions} courses={enrolledCourses} currentUser={currentUser} mentors={mentors} client:load />
         :
         <div class="mt-8 text-center text-3xl font-semibold">
             Unauthorized

@@ -2,6 +2,7 @@
 import ReactLayout from "@/layouts/RootLayout.astro";
 import CommunityForum from "./_components/community";
 import db from "@/lib/db";
+
 const currentuser = Astro.locals.user;
 if(!currentuser) return null;
 const allDoubts = await db.course.findMany({

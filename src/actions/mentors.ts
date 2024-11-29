@@ -2,11 +2,12 @@ import { defineAction } from "astro:actions";
 import { z } from "zod";
 import db from "@/lib/db";
 import { getCurrentUser } from "@/lib/getCurrentUser";
-import { idSchema } from "@/lib/schemas";
 
 export const getMentors = defineAction({
-  input: z.object({}),
-  async handler(_, { locals }) {
+  input: z.object({
+    courseId: z.string(),
+  }),
+  async handler({courseId}, { locals }) {
     const currentUser = getCurrentUser(locals);
     if (!currentUser) {
       return { error: "Unauthorized" };
@@ -15,6 +16,11 @@ export const getMentors = defineAction({
     const mentors = await db.user.findMany({
       where: {
         role: "MENTOR",
+        enrolledUsers:{
+          some:{
+            courseId: courseId
+          }
+        }
       },
     });
 
@@ -26,7 +32,9 @@ export const getMentors = defineAction({
 });
 
 export const getMentorNameById = defineAction({
-  input: idSchema,
+  input: z.object({
+    id: z.string(),
+  }),
   async handler({ id }, { locals }) {
     const currentUser = getCurrentUser(locals);
     if (!currentUser) {

@@ -252,6 +252,7 @@ export async function getSession(sessionId: string) {
           account: true,
           adminForCourses: true,
           organization: true,
+          enrolledUsers: true,
         }
       }
     }

@@ -1,6 +1,7 @@
 import db from "@/lib/db";
 import { defineAction } from "astro:actions";
 import type { User, Course, submission } from "@prisma/client";
+import { getEnrolledCourses } from "./courses";
 
 interface LeaderboardSubmission extends Partial<submission> {
   totalPoints: number;
@@ -135,6 +136,13 @@ export const getInstructorLeaderboardData = defineAction({
         return { error: "Unauthorized" };
       }
 
+      const {data:enrolledCourses} = await getEnrolledCourses()
+      if(!enrolledCourses){
+        return {error:"Failed to get enrolled courses"}
+      }
+      
+      
+
       const submissions = await db.submission.findMany({
         select: {
           id: true,
@@ -186,9 +194,8 @@ export const getInstructorLeaderboardData = defineAction({
         (a, b) => b.totalPoints - a.totalPoints,
       );
 
-      return { success: true, data: { sortedSubmissions, currentUser } };
-    } catch (error) {
-      console.error("Error in getInstructorLeaderboardData:", error);
+      return { success: true, data: { sortedSubmissions, currentUser, enrolledCourses } };
+    } catch  {
       return { error: "Failed to get instructor leaderboard data" };
     }
   }

@@ -579,7 +579,7 @@ export const unenrollStudentFromCourse = defineAction({
     courseId: z.string(),
     username: z.string()
   }),
-  async handler({ courseId, username }, { locals }) {
+  async handler({ courseId, username },{ locals }) {
     try {
       const currentUser = locals.user;
       if (!currentUser || currentUser.role !== "INSTRUCTOR") {
@@ -601,7 +601,7 @@ export const unenrollStudentFromCourse = defineAction({
       if (!course) {
         return { error: "Course not found" };
       }
-
+      
       const existingEnrollment = await db.enrolledUsers.findFirst({
         where: {
           courseId: courseId,
@@ -613,6 +613,7 @@ export const unenrollStudentFromCourse = defineAction({
         return { error: "User is not enrolled in the course" };
       }
 
+      
       await db.enrolledUsers.delete({
         where: {
           id: existingEnrollment.id,
@@ -644,7 +645,7 @@ export const updateRole = defineAction({
 
       if (!user) {
         return { error: "User not found" };
-      }
+      }      
 
       const updatedUser = await db.user.update({
         where: {
