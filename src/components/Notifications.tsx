@@ -414,7 +414,7 @@ export default function Notifications({ user }: { user: User }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="relative h-9 w-9 hover:bg-accent/50">
+        <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-accent/50">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white flex items-center justify-center">
@@ -423,7 +423,7 @@ export default function Notifications({ user }: { user: User }) {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[440px] p-0">
+      <PopoverContent align="end" className="w-[440px] p-0 rounded-lg">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
           <div className="border-b px-4 py-1 flex items-center justify-between">
             <TabsList className="bg-transparent p-0">
@@ -544,7 +544,7 @@ export default function Notifications({ user }: { user: User }) {
                         <div
                           key={notification.id}
                           className={cn(
-                            "group flex items-center gap-4 px-4 py-3 hover:bg-accent/50",
+                            "group flex items-center gap-4 px-4 py-3 hover:bg-accent/20",
                             getNotificationLink(notification) && "cursor-pointer"
                           )}
                           onClick={() => handleNotificationClick(notification)}
