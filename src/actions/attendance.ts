@@ -157,9 +157,7 @@ export const getAttedanceByClassId = defineAction({
   input: z.object({
     id: z.string()
   }),
-  async handler({ id }, { locals }) {
-    const currentUser = locals.user!
-
+  async handler({ id }) {
     const attendance = await db.attendance.findMany({
       where: {
         classId: id,

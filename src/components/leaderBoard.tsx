@@ -1,7 +1,7 @@
-"use client";
 import { FaCrown } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 import NoDataFound from "./NoDataFound";
+import { User } from "@prisma/client";
 
 interface Submission {
   enrolledUser: {
@@ -30,12 +30,6 @@ interface Course {
   id: string;
   title: string;
   isPublished: boolean;
-}
-
-interface User {
-  id: string;
-  username: string;
-  role: "INSTRUCTOR" | "STUDENT";
 }
 
 interface Mentor {

@@ -3,6 +3,7 @@ import node from "@astrojs/node";
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
+import AstroPWA from '@vite-pwa/astro'
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,15 +19,38 @@ export default defineConfig({
     tailwind({
       applyBaseStyles: false,
     }),
-  ],
-  // images
-  image: {
-    service: {
-      entrypoint: "astro/assets/service-entrypoint.mjs",
-    },
-    domains: [
-      "png.pngtree.com",
-      "plus.unsplash.com",
-    ],
-  },
+    AstroPWA({
+      registerType: 'autoUpdate',
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "service-worker.ts",
+      injectRegister: "script-defer",
+      devOptions: {
+        enabled: true,
+        type: "module",
+      },
+      injectManifest: {
+        maximumFileSizeToCacheInBytes: 7000000,
+      },
+      manifest: {
+        name: "Tutly",
+        short_name: "Tutly",
+        theme_color: "#ffffff",
+        background_color: "#ffffff",
+        display: "standalone",
+        icons: [
+          {
+            src: "/logo-192x192.png",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: "/logo-512x512.png", 
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
+      }
+    }),
+  ]
 });

@@ -33,6 +33,7 @@ const NewClassDialog = ({ courseId }: { courseId: string }) => {
         const { data } = await actions.courses_foldersByCourseId({
           id: courseId!,
         });
+        // @ts-ignore
         setFolders(data ?? []);
       } catch (error) {
         console.error("Error fetching folders:", error);
@@ -45,7 +46,8 @@ const NewClassDialog = ({ courseId }: { courseId: string }) => {
 
   const handleCreateClass = async () => {
     if (!classTitle.trim()) {
-      return toast.error("Please fill all necessary fields");
+      toast.error("Please fill all necessary fields");
+      return;
     }
 
     setTextValue("Creating Class");

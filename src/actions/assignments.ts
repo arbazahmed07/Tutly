@@ -175,9 +175,8 @@ export const getAllAssignmentsForMentor = defineAction({
 });
 
 export const getAllAssignmentsForInstructor = defineAction({
-  handler: async (_, {locals}) => {
+  handler: async () => {
     try {
-      const currentUser = locals.user!
       const { data: courses } = await getEnrolledCourses();
 
       const coursesWithAssignments = await db.course.findMany({
@@ -718,10 +717,8 @@ export const getMentorPieChartById = defineAction({
     id: z.string(),
     courseId: z.string()
   }),
-  handler: async ({ id, courseId }, {locals}) => {
+  handler: async ({ id, courseId }) => {
     try {
-      const currentUser = locals.user!
-
       const assignments = await db.submission.findMany({
         where: {
           enrolledUser: {
@@ -741,6 +738,7 @@ export const getMentorPieChartById = defineAction({
         },
       });
 
+      // @ts-ignore
       const noOfTotalMentees = await db.enrolledUsers.count({
         where: {
           mentorUsername: id,
@@ -794,10 +792,8 @@ export const getSubmissionsForMentorByIdLineChart = defineAction({
     id: z.string(),
     courseId: z.string()
   }),
-  handler: async ({ id, courseId }, {locals}) => {
+  handler: async ({ id, courseId }) => {
     try {
-      const currentUser = locals.user!
-
       const submissionCount = await db.attachment.findMany({
         where: {
           attachmentType: "ASSIGNMENT",
@@ -927,10 +923,8 @@ export const getStudentEvaluatedAssigmentsForMentor = defineAction({
     id: z.string(),
     courseId: z.string()
   }),
-  handler: async ({ id, courseId }, {locals}) => {
+  handler: async ({ id, courseId }) => {
     try {
-      const currentUser = locals.user!
-
       const assignments = await db.submission.findMany({
         where: {
           enrolledUser: {
@@ -986,10 +980,8 @@ export const getAssignmentDetails = defineAction({
   input: z.object({
     id: z.string()
   }),
-  handler: async ({ id }, {locals}) => {
+  handler: async ({ id }) => {
     try {
-      const currentUser = locals.user!
-
       return await db.attachment.findUnique({
         where: {
           id,

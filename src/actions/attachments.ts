@@ -48,9 +48,7 @@ export const getAttachmentByID = defineAction({
   input: z.object({
     id: z.string()
   }),
-  async handler({ id }, { locals }) {
-    const currentUser = locals.user!
-
+  async handler({ id }) {
     const attachment = await db.attachment.findUnique({
       where: {
         id,
@@ -93,9 +91,7 @@ export const editAttachment = defineAction({
     id: z.string(),
     data: z.custom<Attachment>()
   }),
-  async handler({ id, data }, { locals }) {
-    const currentUser = locals.user!
-
+  async handler({ id, data }) { 
     const attachment = await db.attachment.update({
       where: {
         id,

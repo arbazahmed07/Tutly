@@ -10,8 +10,8 @@ class CredentialsTokens implements OAuth2Tokens {
   private tokenId: string;
 
   constructor(private userId: string) {
-    this.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day
-    this.tokenId = `cred_${userId}_${Date.now()}`; // Create a unique token ID
+    this.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24);
+    this.tokenId = `cred_${userId}_${Date.now()}`;
   }
 
   accessToken() { return this.userId; }
@@ -20,18 +20,17 @@ class CredentialsTokens implements OAuth2Tokens {
   refreshTokenExpiresAt() { return this.expiresAt; }
 
   tokenType() { return "Bearer"; }
-  accessTokenExpiresInSeconds() { return 86400; } // 1 day in seconds
+  accessTokenExpiresInSeconds() { return 86400; }
   hasRefreshToken() { return true; }
   isExpired() { return Date.now() > this.expiresAt.getTime(); }
 
   hasScopes() { return true; }
   scopes() { return ["*"]; }
-  idToken() { return this.tokenId; } // Return a string token ID instead of null
+  idToken() { return this.tokenId; }
 
   data = {};
 }
 
-// Simple function to validate credentials and return user
 async function validateCredentials(email: string, password: string) {
   const isEmail = email.includes("@");
 
@@ -45,9 +44,15 @@ async function validateCredentials(email: string, password: string) {
     throw new Error("User not found");
   }
 
+  // todo:change it to bcrypt
+
   // if (!user.password || !bcrypt.compareSync(password, user.password)) {
   //   throw new Error("Invalid credentials");
   // }
+
+  if(user.password !== password){
+    throw new Error("Invalid credentials");
+  }
 
   return user;
 }

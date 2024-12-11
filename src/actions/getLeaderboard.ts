@@ -129,20 +129,13 @@ export const getLeaderboardDataForStudent = defineAction({
 });
 
 export const getInstructorLeaderboardData = defineAction({
-  async handler(_, { locals }) {
+  async handler() {
     try {
-      const currentUser = locals.user;
-      if (!currentUser) {
-        return { error: "Unauthorized" };
-      }
-
       const {data:enrolledCourses} = await getEnrolledCourses()
       if(!enrolledCourses){
         return {error:"Failed to get enrolled courses"}
       }
       
-      
-
       const submissions = await db.submission.findMany({
         select: {
           id: true,
@@ -194,7 +187,7 @@ export const getInstructorLeaderboardData = defineAction({
         (a, b) => b.totalPoints - a.totalPoints,
       );
 
-      return { success: true, data: { sortedSubmissions, currentUser, enrolledCourses } };
+      return { sortedSubmissions, enrolledCourses };
     } catch  {
       return { error: "Failed to get instructor leaderboard data" };
     }

@@ -14,7 +14,7 @@ export const createClass = defineAction({
     folderId: z.string().optional(),
     folderName: z.string().optional(),
   }),
-  handler: async ({ classTitle, videoLink, videoType, courseId, folderId, folderName, createdAt }, { locals }) => {
+  handler: async ({ classTitle, videoLink, videoType, courseId, folderId, folderName, createdAt }) => {
     try {
       const classData = {
         title: classTitle,
@@ -176,13 +176,7 @@ export const deleteClass = defineAction({
 });
 
 export const totalNumberOfClasses = defineAction({
-  handler: async (_, { locals }) => {
-    // const currentUser = locals.user;
-
-    // if (!currentUser) {
-    //   throw new Error("You are not authorized to view this page.");
-    // }
-
+  handler: async () => {
     try {
       const res = await db.class.count();
       return res;

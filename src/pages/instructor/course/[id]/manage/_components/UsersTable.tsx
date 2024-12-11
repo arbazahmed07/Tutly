@@ -46,7 +46,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
       setLoading(true);
 
 
-    const {data,error} = await actions.courses_enrollStudentToCourse({courseId:params.id,username})
+    const {error} = await actions.courses_enrollStudentToCourse({courseId:params.id,username})
     
     if(error) {
         toast.dismiss();
@@ -73,7 +73,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     try {
       setLoading(true);
 
-    const {data,error} = await actions.courses_unenrollStudentFromCourse({courseId:params.id,username})
+    const {error} = await actions.courses_unenrollStudentFromCourse({courseId:params.id,username})
     
     
     if(error) {
@@ -98,7 +98,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     try {
       setLoading(true);
 
-    const {data,error} = await actions.courses_updateRole({username,role:role as "STUDENT" | "MENTOR"})
+    const {error} = await actions.courses_updateRole({username,role:role as "STUDENT" | "MENTOR"})
     
     if(error) {
         toast.dismiss();

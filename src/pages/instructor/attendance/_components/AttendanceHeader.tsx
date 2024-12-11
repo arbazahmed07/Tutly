@@ -136,7 +136,7 @@ const columns: Column[] = [
     validation: {
       required: false,
     },
-    render(value, row) {
+    render(_, row) {
       return String(row.Name)
         .substring(0, 10)
         .toUpperCase();
@@ -156,7 +156,7 @@ export default function AttendanceHeader({
   openCourses,
   setOpenClasses,
   setOpenCourses,
-  onSelectFile,
+  // onSelectFile,
   fileData,
   selectedFile,
   handleUpload,

@@ -4,13 +4,6 @@ import NoDataFound from '@/components/NoDataFound'
 import db from '@/lib/db'
 import SingleAssignmentBoard from '@/pages/mentor/getByAssignment/_components/assignmentBoard'
 
-type Props = {
-
-}
-
-const {} = Astro.props
-
-
 const currentUser = Astro.locals.user;
 if (!currentUser) return null;
 
@@ -109,7 +102,7 @@ const coursesWithAssignments = await db.course.findMany({
           </h1>
           {courses && courses.length > 0 ? (
             <>
-              <SingleAssignmentBoard courses={courses} assignments={coursesWithAssignments}  client:load/>
+              <SingleAssignmentBoard courses={courses} assignments={coursesWithAssignments as any}  client:load/>
             </>
           ) : (
             <NoDataFound message="No students found!" client:load />

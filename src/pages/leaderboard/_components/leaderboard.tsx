@@ -1,43 +1,13 @@
-"use client";
-
+// @ts-nocheck
 import { useEffect, useState } from "react";
 import { FaCrown } from "react-icons/fa6";
 
 import NoDataFound from "@/pages/courses/_components/NoDataFound";
 
-interface Submission {
-  enrolledUser: {
-    user: {
-      id: string;
-      name: string;
-      username: string;
-      image: string | null;
-    };
-    mentor: {
-      username: string;
-    };
-  };
-  assignment: {
-    class: {
-      course: {
-        id: string;
-      };
-    };
-  };
-  totalPoints: number;
-  rank: number;
-}
-
 interface Course {
   id: string;
   title: string;
   isPublished: boolean;
-}
-
-interface User {
-  id: string;
-  username: string;
-  role: "INSTRUCTOR" | "STUDENT";
 }
 
 interface Mentor {

@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 
-const isDev = import.meta.env.DEV;
 const isProd = import.meta.env.PROD;
 
 const createPrismaClient = () =>

@@ -327,14 +327,13 @@ const NewAttachmentPage = ({ classes }: { classes: any }) => {
                     /> */}
                     <div data-color-mode="light" className="border rounded-md overflow-hidden">
                       <MDEditor
-                        value={field.value || ""} // Add default empty string
+                        value={field.value || ""}
                         onChange={(newValue) => field.onChange(newValue || "")}
                         height={400}
                         preview="edit"
                         previewOptions={{
                           components: {
-                            code: ({ inline, children = [], className, ...props }) => {
-                              // Add inline parameter
+                            code: ({ children = [], className, ...props }) => {
                               if (typeof children === "string" && /^\$\$(.*)\$\$/.test(children)) {
                                 const html = katex.renderToString(
                                   children.replace(/^\$\$(.*)\$\$/, "$1"),
@@ -355,7 +354,7 @@ const NewAttachmentPage = ({ classes }: { classes: any }) => {
                               if (
                                 typeof code === "string" &&
                                 typeof className === "string" &&
-                                /^language-katex/.test(className.toLowerCase()) // Fix casing
+                                /^language-katex/.test(className.toLowerCase())
                               ) {
                                 const html = katex.renderToString(code, {
                                   throwOnError: false,

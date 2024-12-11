@@ -101,10 +101,6 @@ export default function Accordion({
     }
   };
 
-  const handleReplyEnterBtn = (e: any) => {
-    handleReply(replyId);
-  };
-
   const handleEscKeyDown = (e: any) => {
     if (e.key === "Escape") {
       setShow(false);
@@ -305,7 +301,7 @@ export default function Accordion({
                         value={reply}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
-                            handleReplyEnterBtn(qa.id);
+                            handleReply(replyId)
                           }
                           if (e.key === 'Escape') {
                             setReplyId('');

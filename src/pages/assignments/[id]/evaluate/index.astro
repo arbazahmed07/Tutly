@@ -3,7 +3,7 @@ import RootLayout from "@/layouts/RootLayout.astro";
 import db from "@/lib/db";
 import { ResizablePanelLayout } from "@/pages/assignments/_components/ResizablePanelLayout";
 
-const assignmentId = Astro.params.id;
+const assignmentId = Astro.params.id!;
 const submissionId = Astro.url.searchParams.get("submissionId");
 const username = Astro.url.searchParams.get("username");
 const user = Astro.locals.user;

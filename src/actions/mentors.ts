@@ -7,7 +7,7 @@ export const getMentors = defineAction({
   input: z.object({
     courseId: z.string(),
   }),
-  async handler({courseId}, { locals }) {
+  async handler({ courseId }, { locals }) {
     const currentUser = getCurrentUser(locals);
     if (!currentUser) {
       return { error: "Unauthorized" };
@@ -16,12 +16,15 @@ export const getMentors = defineAction({
     const mentors = await db.user.findMany({
       where: {
         role: "MENTOR",
-        enrolledUsers:{
-          some:{
+        enrolledUsers: {
+          some: {
             courseId: courseId
           }
         }
       },
+      include: {
+        enrolledUsers: true
+      }
     });
 
     return {

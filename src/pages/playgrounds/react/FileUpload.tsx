@@ -74,7 +74,7 @@ const FolderUpload = ({
 
     for (const key in filesObj) {
       const newKey = key.split("/").slice(1).join("/");
-      filesObjWithoutFolderName[newKey] = filesObj[key];
+      filesObjWithoutFolderName[newKey] = filesObj[key]!;
     }
 
     setFilesObj(filesObjWithoutFolderName);
@@ -109,7 +109,7 @@ const FolderUpload = ({
 
     for (const key in filesObj) {
       const newKey = key.split("/").slice(1).join("/");
-      filesObjWithoutFolderName[newKey] = filesObj[key];
+      filesObjWithoutFolderName[newKey] = filesObj[key]!;
     }
 
     setFilesObj(filesObjWithoutFolderName);
@@ -185,6 +185,7 @@ const FolderUpload = ({
             <input
               id="fileInput"
               type="file"
+              // @ts-ignore
               webkitdirectory="true"
               className="hidden"
               onChange={handleFileSelect}

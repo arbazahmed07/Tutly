@@ -1,6 +1,6 @@
+// @ts-nocheck
 import  {  useEffect, useState } from "react";
 import * as XLSX from "xlsx";
-import _ from "lodash";
 import toast from "react-hot-toast";
 import axios from "axios";
 import AttendanceHeader from "./AttendanceHeader";
@@ -244,8 +244,9 @@ const  AttendanceClient = ({ courses, role, attendance }: any) => {
   }>>([]);
   const [present, setPresent] = useState(0);
 
-  const [studentsAttendance, setStudentsAttendance] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // todo : fix this
+  const [_studentsAttendance, setStudentsAttendance] = useState([]);
+  const [_loading, setLoading] = useState(false);
 
   const fetchStudentsAttendance = async () => {
     try {
@@ -267,8 +268,8 @@ const  AttendanceClient = ({ courses, role, attendance }: any) => {
   useEffect(() => {
     const viewAttendance = async () => {
       if (currentClass) {
-        const {data:res} = await actions.attendances_getAllAttendance({
-          classId:currentClass.id,
+        const {data:res} = await actions.attendances_getAttedanceByClassId({
+          id:currentClass.id,
         })
         
         console.log("response",res);
@@ -506,6 +507,7 @@ const AttendanceTable = ({
                 </tr>
               );
             }
+            return null
           })}
         </tbody>
       </table>

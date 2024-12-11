@@ -6,7 +6,6 @@ import * as classes from "./classes";
 import * as courses from "./courses";
 import * as doubts from "./doubts";
 import * as leaderboard from "./getLeaderboard";
-import * as events from "./events";
 import * as points from "./points";
 import * as submissions from "./submission";
 import * as report from "./report";
@@ -23,7 +22,6 @@ export const server = {
   ...groupActions("classes", classes, "_"),
   ...groupActions("doubts", doubts, "_"),
   ...groupActions("leaderboard", leaderboard, "_"),
-  ...groupActions("events", events, "_"),
   ...groupActions("points", points, "_"),
   ...groupActions("submissions", submissions, "_"),
   ...groupActions("report", report, "_"),
