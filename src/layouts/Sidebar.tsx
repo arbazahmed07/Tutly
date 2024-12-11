@@ -102,7 +102,7 @@ export function Sidebar({ children, pathname, user, sideBarItems, isSidebarOpen 
             </div>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 px-2 pt-0">{children}</div>
+        <div className="flex flex-1 flex-col gap-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

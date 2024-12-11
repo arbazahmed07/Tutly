@@ -51,7 +51,7 @@ globalThis.pathname = pathname;
         pathname={pathname} 
         user={user} 
         sideBarItems={sideBarItems ?? []} 
-        {...(isSidebarOpen !== undefined && { open: isSidebarOpen })}
+        isSidebarOpen={isSidebarOpen!}
       >
         <slot />
       </Sidebar>

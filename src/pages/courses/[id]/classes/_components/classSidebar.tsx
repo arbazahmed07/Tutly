@@ -1,9 +1,11 @@
 import { type Class, Folder, User } from "@prisma/client";
-import { useState } from "react";
-import { FaFolder } from "react-icons/fa6";
-import { FaFolderOpen } from "react-icons/fa6";
+import { useState, useEffect } from "react";
+import { FaFolder, FaFolderOpen } from "react-icons/fa6";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { MdOndemandVideo } from "react-icons/md";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import NewClassDialog from "./newClass";
 
@@ -21,117 +23,116 @@ function ClassSidebar({
   isCourseAdmin: boolean;
 }) {
   const [openFolders, setOpenFolders] = useState<string[]>([]);
-  const [open, setOpen] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = window.location.pathname;
 
-  const toggleFolder = (folderId: string) => {
-    if (openFolders.includes(folderId)) {
-      setOpenFolders(openFolders.filter((id) => id !== folderId));
-    } else {
-      setOpenFolders([...openFolders, folderId]);
+  // Open folder of current class on mount
+  useEffect(() => {
+    const classId = pathname.split("/").pop();
+    const currentClass = classes.find((c) => c.id === classId);
+    if (currentClass?.folderId && !openFolders.includes(currentClass.folderId)) {
+      setOpenFolders([...openFolders, currentClass.folderId]);
     }
-  };
+  }, [pathname, classes]);
 
-  const groupedClasses: Record<string, Class[]> = {};
-  const classesWithoutFolders: Class[] = [];
-  classes?.forEach((classItem: Class) => {
+  // Group classes by folder
+  const { folderClasses, unfolderClasses } = classes.reduce((acc, classItem) => {
     if (classItem.folderId) {
-      if (!groupedClasses[classItem.folderId]) {
-        groupedClasses[classItem.folderId] = [];
-      }
-
-      groupedClasses[classItem.folderId]?.push(classItem);
+      acc.folderClasses[classItem.folderId] = acc.folderClasses[classItem.folderId] || [];
+      acc.folderClasses[classItem.folderId]!.push(classItem);
     } else {
-      classesWithoutFolders.push(classItem);
+      acc.unfolderClasses.push(classItem);
     }
-  });
+    return acc;
+  }, { folderClasses: {} as Record<string, Class[]>, unfolderClasses: [] as Class[] });
+
+  const renderClassButton = (classItem: Class) => (
+    <Button
+      key={classItem.id}
+      variant={pathname === `/courses/${courseId}/classes/${classItem.id}` ? "secondary" : "ghost"}
+      asChild
+      className="w-full justify-start gap-2"
+    >
+      <a href={`/courses/${courseId}/classes/${classItem.id}`}>
+        <MdOndemandVideo className="h-4 w-4" />
+        {classItem.title}
+      </a>
+    </Button>
+  );
 
   return (
     <div className="relative z-10">
       <div
-        className={`w-[190px] ${
-          !open && "hidden"
-        } sticky flex h-dvh flex-col items-start gap-2 bg-background px-2 py-3 shadow-xl max-sm:absolute sm:top-10`}
+        className={cn(
+          "transition-all duration-300 ease-in-out",
+          isCollapsed ? "w-0" : "w-[200px]",
+          "sticky flex h-dvh flex-col bg-background shadow-sm border-r max-sm:absolute sm:top-10"
+        )}
       >
-        <div className="flex items-center justify-center">
-          <a href={`/courses/${courseId}`} className="cursor-pointer">
-            <h1 className="border-b-2 p-3 text-sm font-medium">{title}</h1>
+        <div className={cn("border-b px-3 py-2", isCollapsed && "hidden")}>
+          <a href={`/courses/${courseId}`} className="hover:opacity-80">
+            <h1 className="text-sm font-semibold">{title}</h1>
           </a>
         </div>
-        {Object.keys(groupedClasses).map((folderId: string) => {
-          const folder = classes.find(
-            (c: Class & { Folder: Folder | null }) => c.folderId === folderId
-          )?.Folder;
-          if (folder) {
-            return (
-              <div key={folder.id}>
-                <h2
-                  onClick={() => toggleFolder(folder.id)}
-                  className="flex cursor-pointer items-center justify-start px-6 py-2 text-sm font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
-                >
-                  {openFolders.includes(folder.id) ? (
-                    <FaFolderOpen className="h-4 w-4" />
-                  ) : (
-                    <FaFolder className="h-4 w-4" />
+
+        <ScrollArea className={cn("flex-1 px-1", isCollapsed && "hidden")}>
+          <div className="space-y-1 p-2">
+            {Object.entries(folderClasses).map(([folderId, classItems]) => {
+              const folder = classes.find(c => c.folderId === folderId)?.Folder;
+              if (!folder) return null;
+
+              const isOpen = openFolders.includes(folder.id);
+              
+              return (
+                <div key={folder.id} className="space-y-1">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setOpenFolders(isOpen 
+                      ? openFolders.filter(id => id !== folder.id)
+                      : [...openFolders, folder.id]
+                    )}
+                    className="w-full justify-start gap-2 font-medium"
+                  >
+                    {isOpen ? (
+                      <FaFolderOpen className="h-4 w-4" />
+                    ) : (
+                      <FaFolder className="h-4 w-4" />
+                    )}
+                    {folder.title}
+                  </Button>
+                  {isOpen && (
+                    <div className="ml-4 space-y-1">
+                      {classItems.map(renderClassButton)}
+                    </div>
                   )}
-                  &nbsp; {folder.title}
-                </h2>
-                {openFolders.includes(folder.id) && (
-                  <div className="ml-4">
-                    {groupedClasses[folderId]?.map((classItem: any) => (
-                      <a
-                        key={classItem.id}
-                        href={`/courses/${courseId}/classes/${classItem.id}`}
-                        className={`flex cursor-pointer items-center gap-2 rounded-md px-6 py-2 hover:bg-blue-500 hover:text-white ${
-                          pathname === `/courses/${courseId}/classes/${classItem.id}` &&
-                          "bg-sky-500 text-white"
-                        }`}
-                      >
-                        <MdOndemandVideo />
-                        {classItem.title}
-                      </a>
-                    ))}
-                  </div>
-                )}
+                </div>
+              );
+            })}
+
+            {unfolderClasses.length > 0 && (
+              <div className="space-y-1">
+                {unfolderClasses.map(renderClassButton)}
               </div>
-            );
-          }
-          return null;
-        })}
-        {classesWithoutFolders.map((classItem: any) => (
-          <a
-            key={classItem.id}
-            href={`/courses/${courseId}/classes/${classItem.id}`}
-            className={`flex cursor-pointer items-center gap-2 rounded-md px-6 py-2 text-white hover:bg-blue-500 ${
-              pathname === `/courses/${courseId}/classes/${classItem.id}` && "bg-sky-500 text-white"
-            }`}
-          >
-            <MdOndemandVideo />
-            {classItem.title}
-          </a>
-        ))}
-        <div className="grow"></div>
+            )}
+          </div>
+        </ScrollArea>
         {pathname !== `/courses/${courseId}/classes/new` &&
           (currentUser?.role === "INSTRUCTOR" || isCourseAdmin) && (
-            <NewClassDialog courseId={courseId} />
+            <div className={cn("p-4 sticky bottom-0 bg-background", isCollapsed && "hidden")}>
+              <NewClassDialog courseId={courseId} />
+            </div>
           )}
 
-        <div
-          onClick={() => setOpen(!open)}
-          className="absolute right-0 top-[250px] cursor-pointer rounded-l-lg bg-blue-500 py-2"
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={cn(
+            "absolute h-8 w-8 rounded-full shadow-md transition-all duration-300 -right-4 top-[350px]"
+          )}
         >
-          <IoIosArrowBack />
-        </div>
-      </div>
-      <div className="">
-        {!open && (
-          <div
-            onClick={() => setOpen(!open)}
-            className="fixed left-12 top-[300px] cursor-pointer rounded-r-lg bg-blue-500 py-2"
-          >
-            <IoIosArrowForward />
-          </div>
-        )}
+          {isCollapsed ? <IoIosArrowForward /> : <IoIosArrowBack />}
+        </Button>
       </div>
     </div>
   );

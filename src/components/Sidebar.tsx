@@ -182,7 +182,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mx-auto"
               onClick={() => {
                 router.push("/dashboard");
               }}
@@ -215,7 +215,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton
                           tooltip={item.title}
-                          className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 hover:text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
+                          className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                         >
                           {ItemIcon && <ItemIcon className="size-6" />}
                           <span>{item.title}</span>
@@ -226,7 +226,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
                       <a href={item.url}>
                         <SidebarMenuButton
                           tooltip={item.title}
-                          className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 hover:text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
+                          className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                         >
                           {ItemIcon && <ItemIcon className="size-6" />}
                           <span>{item.title}</span>
@@ -241,7 +241,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton
                                   asChild
-                                  className={`${pathname === subItem.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 hover:text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
+                                  className={`${pathname === subItem.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                                 >
                                   <a href={subItem.url}>
                                     <span>{subItem.title}</span>

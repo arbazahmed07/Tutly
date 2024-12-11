@@ -71,7 +71,7 @@ const NewClassDialog = ({ courseId }: { courseId: string }) => {
         setSelectedFolder("");
         setFolderName("");
         setIsOpen(false);
-        window.location.href = `/courses/${courseId}/class/${data.id}`;
+        window.location.href = `/courses/${courseId}/classes/${data.id}`;
       }
     } catch (error) {
       toast.error("Failed to add new class");

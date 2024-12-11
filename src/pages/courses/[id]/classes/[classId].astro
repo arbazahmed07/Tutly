@@ -42,7 +42,9 @@ const classDetails = await db.class.findUnique({
       isCourseAdmin={currentUser.role === "INSTRUCTOR"}
     />
     <div class="w-full m-3">
-      <Class classId={classId} id={courseId} currentUser={currentUser} details={classDetails} />
+      <Class
+      classes={classesWithFolders || []}
+      classId={classId} id={courseId} currentUser={currentUser} details={classDetails} client:only />
     </div>
   </div>
 </RootLayout>

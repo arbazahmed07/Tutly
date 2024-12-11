@@ -7,6 +7,8 @@ import NoDataFound from "@/pages/courses/_components/NoDataFound";
 
 import DriveEmbed from "./videoEmbeds/driveEmbeds";
 import YoutubeEmbed from "./videoEmbeds/youtubeEmbeds";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import NewAttachmentPage from "./NewAssignments";
 
 interface Attachment {
   id: string;
@@ -42,11 +44,13 @@ interface ClassDetails {
 }
 
 export default function Class({
+  classes,
   classId,
   id,
   currentUser,
   details,
 }: {
+  classes: any;
   classId: string;
   id: string;
   currentUser: any;
@@ -105,7 +109,7 @@ export default function Class({
                 <p className="text-xl font-semibold">{details?.title}</p>
                 {haveAdminAccess && details && (
                   <div className="flex items-center gap-3">
-                    <a href={`/courses/${id}/class/${classId}/edit`}>
+                    <a href={`/courses/${id}/classes/${classId}/edit`}>
                       <RiEdit2Fill className="h-5 w-5" />
                     </a>
                   </div>
@@ -132,15 +136,26 @@ export default function Class({
           <div className="flex w-full flex-row-reverse items-center">
             {haveAdminAccess && details && (
               <div className="my-2 text-xl">
-                <a href={`/attachments/new?courseId=${id}&classId=${classId}`}>
-                  <Button
-                    className="flex items-center justify-between bg-secondary-700 text-white hover:bg-secondary-600"
-                    variant={"secondary"}
-                  >
-                    Add an assignment&nbsp;
-                    <FaPlus />
-                  </Button>
-                </a>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="flex items-center justify-between bg-secondary-700 text-white hover:bg-secondary-600"
+                      variant={"secondary"}
+                    >
+                      Add an assignment&nbsp;
+                      <FaPlus />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="min-w-[70vw] max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Add Assignment</DialogTitle>
+                      <DialogDescription>
+                        Create a new assignment for this class.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <NewAttachmentPage classes={classes} courseId={id} classId={classId}/>
+                  </DialogContent>
+                </Dialog>
               </div>
             )}
           </div>
