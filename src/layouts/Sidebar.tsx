@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLab
 import { Bell, BadgeCheck, LogOut } from "lucide-react";
 import { FaCaretDown } from "react-icons/fa";
 import { useState } from "react";
+import Notifications from "@/components/Notifications";
 
 export interface SidebarProps {
   children: React.ReactNode;
@@ -38,9 +39,7 @@ export function Sidebar({ children, pathname, user, sideBarItems, isSidebarOpen 
                 {user.role}
               </span>
               <ModeToggle />
-              <button className="hover:bg-muted rounded-full p-2">
-                <Bell className="h-5 w-5 p-0.5" />
-              </button>
+              <Notifications user={user} />
               <DropdownMenu onOpenChange={setIsOpen}>
                 <DropdownMenuTrigger asChild>
                   <div className="flex items-center bg-muted hover:bg-muted/80 rounded-xl px-2 py-1 cursor-pointer w-16">

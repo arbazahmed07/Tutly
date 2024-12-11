@@ -13,6 +13,7 @@ import * as report from "./report";
 import * as mentors from "./mentors";
 import * as users from "./users";
 // import * as resend from "./resend";
+import * as notifications from "./notifications";
 
 export const server = {
   ...groupActions("courses", courses, "_"),
@@ -28,4 +29,5 @@ export const server = {
   ...groupActions("report", report, "_"),
   ...groupActions("mentors", mentors, "_"),
   ...groupActions("users", users, "_"),
+  ...groupActions("notifications", notifications, "_"),
 };

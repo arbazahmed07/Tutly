@@ -1,5 +1,5 @@
 import { Role, User } from "@prisma/client";
-import { AudioWaveform, BarChart, ChevronRight, ClipboardList, FileBarChart, GraduationCap, Home, Terminal, Trophy, UserCheck, Users } from "lucide-react";
+import { BarChart, ChevronRight, ClipboardList, FileBarChart, GraduationCap, Home, Terminal, Trophy, UserCheck, Users } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -30,11 +30,9 @@ interface SidebarComponentProps {
 export function SidebarComponent({ user, initialSideBarItems }: SidebarComponentProps) {
   const organization = {
     name: "Tutly",
-    logo: AudioWaveform,
     role: user?.role,
   };
 
-  const OrganizationIcon = organization.logo;
   const router = useRouter();
   const pathname = router.pathname;
   const InstructorItems = [
@@ -190,7 +188,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
               }}
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                {OrganizationIcon && <OrganizationIcon className="size-6" />}
+                <img src="/logo-with-bg.png" alt="Logo" className="size-8 rounded-md" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{organization.name}</span>
@@ -217,7 +215,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton
                           tooltip={item.title}
-                          className={`${pathname === item.url ? "bg-blue-600 text-white" : "hover:bg-blue-500 hover:text-white"} m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
+                          className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 hover:text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                         >
                           {ItemIcon && <ItemIcon className="size-6" />}
                           <span>{item.title}</span>
@@ -228,7 +226,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
                       <a href={item.url}>
                         <SidebarMenuButton
                           tooltip={item.title}
-                          className={`${pathname === item.url ? "bg-blue-600 text-white" : "hover:bg-blue-500 hover:text-white"} m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
+                          className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 hover:text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                         >
                           {ItemIcon && <ItemIcon className="size-6" />}
                           <span>{item.title}</span>
@@ -243,7 +241,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton
                                   asChild
-                                  className={`${pathname === subItem.url ? "bg-blue-600 text-white" : "hover:bg-blue-500 hover:text-white"} m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
+                                  className={`${pathname === subItem.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 hover:text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
                                 >
                                   <a href={subItem.url}>
                                     <span>{subItem.title}</span>

@@ -46,7 +46,13 @@ globalThis.pathname = pathname;
   <body>
     <Toaster client:load />
     {user && (
-      <Sidebar client:load pathname={pathname} user={user} sideBarItems={sideBarItems ?? []} isSidebarOpen={isSidebarOpen}>
+      <Sidebar 
+        client:load 
+        pathname={pathname} 
+        user={user} 
+        sideBarItems={sideBarItems ?? []} 
+        {...(isSidebarOpen !== undefined && { open: isSidebarOpen })}
+      >
         <slot />
       </Sidebar>
     )}

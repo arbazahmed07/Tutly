@@ -25,7 +25,6 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 model User {
   id       String  @id @default(uuid())
   name     String
@@ -44,6 +43,8 @@ model User {
 
   oneTimePassword String @default(uuid())
 
+  pushSubscriptions PushSubscription[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -56,8 +57,30 @@ model User {
   enrolledUsers   EnrolledUsers[] @relation(name: "user")
   assignedMentees EnrolledUsers[] @relation(name: "mentor")
   adminForCourses Course[]        @relation("CourseAdmins")
-  Session         Session[]
-  Events          Events[]
+
+  Session      Session[]
+  Events       Events[]
+  
+  notificationsFor Notification[] @relation("notificationIntendedFor")
+  notificationsCaused Notification[] @relation("notificationCausedBy")
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+
+  // deviceId  String   @unique
+  
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Profile {
@@ -68,6 +91,42 @@ model Profile {
   section      String?
   branch       String?
   academicYear String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum NotificationMedium {
+  PUSH
+  EMAIL
+  WHATSAPP
+  SMS
+}
+
+enum NotificationEvent {
+  CLASS_CREATED
+  ASSIGNMENT_CREATED
+  ASSIGNMENT_REVIEWED
+  LEADERBOARD_UPDATED
+  DOUBT_RESPONDED
+  ATTENDANCE_MISSED
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  intendedFor   User   @relation("notificationIntendedFor", fields: [intendedForId], references: [id])
+  intendedForId String
+
+  mediumSent NotificationMedium @default(PUSH)
+
+  causedBy   User?   @relation("notificationCausedBy", fields: [causedById], references: [id])
+  causedById String?
+
+  eventType     NotificationEvent
+  message       String?   @db.Text
+  causedObjects Json?     @default("{}")
+  readAt        DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

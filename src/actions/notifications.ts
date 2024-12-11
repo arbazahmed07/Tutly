@@ -1,0 +1,98 @@
+import { defineAction } from "astro:actions";
+import { z } from "zod";
+import db from "@/lib/db";
+
+export const getNotifications = defineAction({
+  async handler(_, { locals }) {
+    const userId = locals.user?.id!;
+    const notifications = await db.notification.findMany({
+      where: { intendedForId: userId },
+      orderBy: { createdAt: "desc" },
+    });
+    return notifications;
+  },
+});
+
+export const markNotificationAsRead = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }) {
+    const notification = await db.notification.update({
+      where: { id },
+      data: {
+        readAt: new Date(),
+      },
+    });
+    return notification;
+  },
+});
+
+export const markAllNotificationsAsRead = defineAction({
+  async handler(_, { locals }) {
+    const userId = locals.user?.id!;
+    await db.notification.updateMany({
+      where: { 
+        intendedForId: userId,
+        readAt: null,
+      },
+      data: {
+        readAt: new Date(),
+      },
+    });
+  },
+});
+
+export const getNotificationConfig = defineAction({
+  input: z.object({
+    userId: z.string(),
+  }),
+  async handler({ userId }) {
+    const subscription = await db.pushSubscription.findFirst({
+      where: { userId },
+    });
+    return subscription;
+  },
+});
+
+export const updateNotificationConfig = defineAction({
+  input: z.object({
+    userId: z.string(),
+    config: z.object({
+      endpoint: z.string(),
+      p256dh: z.string(),
+      auth: z.string(),
+    }),
+  }),
+  async handler({ userId, config }) {
+    const { endpoint, p256dh, auth } = config;
+    
+    // Delete existing subscription if endpoint is empty
+    if (!endpoint) {
+      await db.pushSubscription.deleteMany({
+        where: { userId },
+      });
+      return null;
+    }
+
+    // Upsert subscription
+    const subscription = await db.pushSubscription.upsert({
+      where: {
+        endpoint,
+      },
+      update: {
+        p256dh,
+        auth,
+      },
+      create: {
+        userId,
+        endpoint,
+        p256dh,
+        auth,
+      },
+    });
+    
+    return subscription;
+  },
+});
+
