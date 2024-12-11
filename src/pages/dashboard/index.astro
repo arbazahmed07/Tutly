@@ -29,6 +29,7 @@ if (role === Role.STUDENT) {
               },
               select: {
                 id: true,
+                title: true,
                 submissions: {
                   where: {
                     enrolledUser: {
@@ -67,6 +68,7 @@ if (role === Role.STUDENT) {
         return {
           courseId: enrolledCourse.course?.id,
           courseTitle: enrolledCourse.course?.title,
+          assignments: courseAssignments,
           assignmentsSubmitted: submissions.length,
           totalPoints,
           totalAssignments: courseAssignments.length,
