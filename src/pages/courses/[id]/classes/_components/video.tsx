@@ -1,5 +1,6 @@
-import { FaPlus, FaExternalLinkAlt } from "react-icons/fa";
+import { FaPlus, FaExternalLinkAlt, FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import { RiEdit2Fill } from "react-icons/ri";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,21 +11,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import NewAttachmentPage from "./NewAssignments";
 import VideoPlayer from "@/components/VideoPlayer";
 import type { Attachment, Class, Video } from "@prisma/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
+import { actions } from "astro:actions";
+import toast from "react-hot-toast";
 
 export default function Class({
   classes,
   classId,
-  id,
+  courseId,
   currentUser,
   details,
 }: {
   classes: any;
   classId: string;
-  id: string;
+  courseId: string;
   currentUser: any;
   details: Class & {
     video: Video | null;
@@ -39,9 +59,9 @@ export default function Class({
   const { videoLink, videoType } = video || {};
 
   const isCourseAdmin = currentUser?.adminForCourses?.some(
-    (course: { id: string }) => course.id === id
+    (course: { id: string }) => course.id === courseId
   );
-  const haveAdminAccess = currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
+  const haveAdminAccess =  currentUser.role == "INSTRUCTOR" || isCourseAdmin;
 
   const getVideoId = () => {
     if (!videoLink || !videoType) return null;
@@ -92,6 +112,22 @@ export default function Class({
     return "No link";
   };
 
+  const [selectedAttachment, setSelectedAttachment] = useState<Attachment | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      await actions.attachments_deleteAttachment({
+        id: selectedAttachment?.id!,
+      });
+      toast.success("Assignment deleted successfully");
+      window.location.reload();
+    } catch (error) {
+      toast.error("Failed to delete assignment");
+    }
+  };
+
   return (
     <div className="flex flex-wrap gap-6 md:m-5">
       <div className="flex-1">
@@ -102,7 +138,7 @@ export default function Class({
                 <p className="text-xl font-semibold">{title}</p>
                 {haveAdminAccess && (
                   <div className="flex items-center gap-3">
-                    <a href={`/courses/${id}/classes/${classId}/edit`}>
+                    <a href={`/courses/${courseId}/classes/${classId}/edit`}>
                       <RiEdit2Fill className="h-5 w-5" />
                     </a>
                   </div>
@@ -133,7 +169,7 @@ export default function Class({
                     <DialogTitle>Add Assignment</DialogTitle>
                     <DialogDescription>Create a new assignment for this class.</DialogDescription>
                   </DialogHeader>
-                  <NewAttachmentPage classes={classes} courseId={id} classId={classId} />
+                  <NewAttachmentPage classes={classes} courseId={courseId} classId={classId} />
                 </DialogContent>
               </Dialog>
             </div>
@@ -145,6 +181,7 @@ export default function Class({
                 <th className="px-4 py-2">Title</th>
                 <th className="px-4 py-2">Link</th>
                 <th className="px-4 py-2">Due Date</th>
+                {haveAdminAccess && <th className="px-4 py-2">Actions</th>}
               </tr>
             </thead>
             <tbody className="text-white">
@@ -171,6 +208,38 @@ export default function Class({
                         ? new Date(attachment.dueDate).toLocaleDateString()
                         : "-"}
                     </td>
+                    {haveAdminAccess && (
+                      <td className="px-4 py-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            <BsThreeDotsVertical className="h-5 w-5" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => {
+                              setSelectedAttachment(attachment);
+                              setIsEditDialogOpen(true);
+                            }}>
+                              <div className="flex items-center gap-2">
+                                <FaPencilAlt className="h-4 w-4" />
+                                Edit
+                              </div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="text-red-600"
+                              onClick={() => {
+                                setSelectedAttachment(attachment);
+                                setIsDeleteDialogOpen(true);
+                              }}
+                            >
+                              <div className="flex items-center gap-2">
+                                <FaTrashAlt className="h-4 w-4" />
+                                Delete
+                              </div>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
@@ -178,6 +247,47 @@ export default function Class({
           </table>
         </div>
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="min-w-[70vw] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Assignment</DialogTitle>
+            <DialogDescription>Modify the assignment details.</DialogDescription>
+          </DialogHeader>
+          {selectedAttachment && (
+            <NewAttachmentPage 
+              classes={classes} 
+              courseId={courseId} 
+              classId={classId}
+              isEditing={true}
+              attachment={selectedAttachment}
+              onComplete={() => setIsEditDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Alert Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the assignment.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

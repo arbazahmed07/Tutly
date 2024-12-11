@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { attachmentType, submissionMode } from "@prisma/client";
+import { Attachment, attachmentType, submissionMode } from "@prisma/client";
 import MDEditor from "@uiw/react-md-editor";
 import { actions } from "astro:actions";
 import katex from "katex";
@@ -33,9 +33,6 @@ const formSchema = z.object({
     .string()
     .min(1, {
       message: "Title is required",
-    })
-    .refine((value) => !/\s/.test(value), {
-      message: "Title cannot contain spaces",
     }),
   link: z.string().optional(),
   attachmentType: z.string().min(1, {
@@ -50,64 +47,96 @@ const formSchema = z.object({
   courseId: z.string().optional(),
   details: z.string().optional(),
   dueDate: z.string().optional(),
-  maxSubmissions: z
-    .string()
-    .transform((v) => Number(v) || 0)
-    .optional(),
+  maxSubmissions: z.string().optional(),
 });
+
+interface NewAttachmentPageProps {
+  classes: any;
+  courseId: string;
+  classId: string;
+  isEditing?: boolean;
+  attachment?: Attachment;
+  onComplete?: () => void;
+}
 
 const NewAttachmentPage = ({
   classes,
   courseId,
   classId,
-}: {
-  classes: any;
-  courseId: string;
-  classId: string;
-}) => {
+  isEditing = false,
+  attachment,
+  onComplete,
+}: NewAttachmentPageProps) => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      link: "",
-      attachmentType: "ASSIGNMENT",
-      submissionMode: "",
-      class: classId || "",
-      courseId: "",
-      details: "",
-      dueDate: "",
-      maxSubmissions: 1,
+      title: attachment?.title || "",
+      link: attachment?.link || "",
+      attachmentType: attachment?.attachmentType || "ASSIGNMENT",
+      submissionMode: attachment?.submissionMode || "",
+      class: classId || attachment?.classId || "",
+      courseId: courseId || "",
+      details: attachment?.details || "",
+      dueDate: attachment?.dueDate 
+        ? new Date(attachment.dueDate).toISOString().split('T')[0] 
+        : "",
+      maxSubmissions: attachment?.maxSubmissions?.toString() || "1",
     },
   });
 
   const { isSubmitting } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const dueDate =
-      values?.dueDate !== "" && values?.dueDate ? new Date(values?.dueDate) : undefined;
+    const dueDate = values?.dueDate !== "" && values?.dueDate 
+      ? new Date(values?.dueDate) 
+      : undefined;
 
     values.title = values.title.trim();
 
-    const res = await actions.attachments_createAttachment({
-      title: values.title,
-      classId: values.class,
-      link: values.link,
-      attachmentType: values.attachmentType as attachmentType,
-      submissionMode: values.submissionMode as submissionMode,
-      details: values.details,
-      dueDate: dueDate || undefined,
-      maxSubmissions: values?.maxSubmissions,
-      courseId: courseId!,
-    });
+    try {
+      if (isEditing && attachment) {
+        const res = await actions.attachments_updateAttachment({
+          id: attachment.id,
+          title: values.title,
+          classId: values.class,
+          link: values.link,
+          attachmentType: values.attachmentType as attachmentType,
+          submissionMode: values.submissionMode as submissionMode,
+          details: values.details,
+          dueDate: dueDate || undefined,
+          maxSubmissions: values?.maxSubmissions ? parseInt(values.maxSubmissions) : 1,
+          courseId: courseId!,
+        });
 
-    if (!res) {
-      toast.error("An error occurred");
-      return;
+        if (!res) throw new Error();
+        toast.success("Assignment updated");
+      } else {
+        const res = await actions.attachments_createAttachment({
+          title: values.title,
+          classId: values.class,
+          link: values.link,
+          attachmentType: values.attachmentType as attachmentType,
+          submissionMode: values.submissionMode as submissionMode,
+          details: values.details,
+          dueDate: dueDate || undefined,
+          maxSubmissions: values?.maxSubmissions ? parseInt(values.maxSubmissions) : 1,
+          courseId: courseId!,
+        });
+
+        if (!res) throw new Error();
+        toast.success("Assignment created");
+      }
+
+      if (onComplete) {
+        onComplete();
+      } else {
+        router.push(`/courses/${courseId}/classes/${classId}`);
+      }
+    } catch (error) {
+      toast.error(isEditing ? "Failed to update assignment" : "Failed to create assignment");
     }
-    toast.success("attachment created");
-    router.push(`/courses/${courseId}/classes/${classId}`);
   };
   return (
     <Form {...form}>
@@ -357,7 +386,7 @@ const NewAttachmentPage = ({
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting} className="bg-gray-600 hover:bg-gray-700">
-            Continue
+            {isEditing ? "Update" : "Create"}
           </Button>
         </div>
       </form>

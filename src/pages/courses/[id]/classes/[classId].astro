@@ -45,7 +45,7 @@ const classDetails = await db.class.findUnique({
       <Class
         classes={classesWithFolders || []}
         classId={classId}
-        id={courseId}
+        courseId={courseId}
         currentUser={currentUser}
         details={classDetails}
         client:only
