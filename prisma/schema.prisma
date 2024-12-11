@@ -38,7 +38,7 @@ model User {
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  lastLogin     DateTime[]
+  lastSeen  DateTime?
   emailVerified DateTime?
 
   oneTimePassword String @default(uuid())
@@ -98,6 +98,7 @@ model Profile {
 
 enum NotificationMedium {
   PUSH
+  NOTIFICATION
   EMAIL
   WHATSAPP
   SMS
@@ -110,6 +111,7 @@ enum NotificationEvent {
   LEADERBOARD_UPDATED
   DOUBT_RESPONDED
   ATTENDANCE_MISSED
+  CUSTOM_MESSAGE
 }
 
 model Notification {

@@ -10,6 +10,7 @@ import {
   Trophy,
   UserCheck,
   Users,
+  Users2,
 } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -87,6 +88,11 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
       url: "/instructor/report",
       icon: FileBarChart,
     },
+    {
+      title:"Users",
+      url: "/instructor/users",
+      icon: Users2
+    }
   ];
 
   const MentorItems = [
