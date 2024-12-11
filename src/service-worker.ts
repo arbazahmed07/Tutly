@@ -40,7 +40,7 @@ self.addEventListener("push", async function (event) {
         self.registration.showNotification("Tutly", {
           body: data.message,
           tag: data.id,
-        }),
+        })
       );
     }
   }
@@ -57,13 +57,13 @@ self.addEventListener("notificationclick", (e) => {
       const hadWindowToFocus = clientsArr.some((windowClient) =>
         windowClient.url === "/notifications/".concat(e.notification.tag)
           ? (windowClient.focus(), true)
-          : false,
+          : false
       );
       // Otherwise, open a new tab to the applicable URL and focus it.
       if (!hadWindowToFocus)
         self.clients
           .openWindow("/notifications/".concat(e.notification.tag))
           .then((windowClient) => (windowClient ? windowClient.focus() : null));
-    }),
+    })
   );
 });

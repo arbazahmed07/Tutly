@@ -1,7 +1,8 @@
+import { type Attachment, attachmentType, submissionMode } from "@prisma/client";
 import { defineAction } from "astro:actions";
-import db from "@/lib/db";
-import { attachmentType, submissionMode, type Attachment } from "@prisma/client";
 import { z } from "zod";
+
+import db from "@/lib/db";
 
 export const createAttachment = defineAction({
   input: z.object({
@@ -13,9 +14,22 @@ export const createAttachment = defineAction({
     courseId: z.string(),
     classId: z.string(),
     maxSubmissions: z.number().optional(),
-    submissionMode: z.enum(["HTML_CSS_JS","REACT","EXTERNAL_LINK"])
+    submissionMode: z.enum(["HTML_CSS_JS", "REACT", "EXTERNAL_LINK"]),
   }),
-  async handler({ title, details, link, dueDate, attachmentType, courseId, classId, maxSubmissions, submissionMode }, { locals }) {
+  async handler(
+    {
+      title,
+      details,
+      link,
+      dueDate,
+      attachmentType,
+      courseId,
+      classId,
+      maxSubmissions,
+      submissionMode,
+    },
+    { locals }
+  ) {
     try {
       const currentUser = locals.user;
       if (!currentUser || currentUser.role !== "INSTRUCTOR") {
@@ -41,12 +55,12 @@ export const createAttachment = defineAction({
       console.error("Error creating attachment:", error);
       return { error: "Failed to create attachment" };
     }
-  }
+  },
 });
 
 export const getAttachmentByID = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }) {
     const attachment = await db.attachment.findUnique({
@@ -57,17 +71,17 @@ export const getAttachmentByID = defineAction({
 
     return {
       success: true,
-      data: attachment
+      data: attachment,
     };
-  }
+  },
 });
 
 export const deleteAttachment = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }, { locals }) {
-    const currentUser = locals.user!
+    const currentUser = locals.user!;
 
     if (currentUser.role !== "INSTRUCTOR") {
       return { error: "You must be an instructor to delete an attachment" };
@@ -81,17 +95,17 @@ export const deleteAttachment = defineAction({
 
     return {
       success: true,
-      data: attachment
+      data: attachment,
     };
-  }
+  },
 });
 
 export const editAttachment = defineAction({
   input: z.object({
     id: z.string(),
-    data: z.custom<Attachment>()
+    data: z.custom<Attachment>(),
   }),
-  async handler({ id, data }) { 
+  async handler({ id, data }) {
     const attachment = await db.attachment.update({
       where: {
         id,
@@ -111,7 +125,7 @@ export const editAttachment = defineAction({
 
     return {
       success: true,
-      data: attachment
+      data: attachment,
     };
-  }
+  },
 });

@@ -1,9 +1,11 @@
-import { ActionError } from "astro:actions";
-import db from "@/lib/db";
-import type { OAuthUser } from ".";
 import type { OAuth2Tokens } from "arctic";
-// import bcrypt from "bcrypt";
+import { ActionError } from "astro:actions";
 
+import db from "@/lib/db";
+
+import type { OAuthUser } from ".";
+
+// import bcrypt from "bcrypt";
 
 class CredentialsTokens implements OAuth2Tokens {
   private expiresAt: Date;
@@ -14,19 +16,41 @@ class CredentialsTokens implements OAuth2Tokens {
     this.tokenId = `cred_${userId}_${Date.now()}`;
   }
 
-  accessToken() { return this.userId; }
-  refreshToken() { return this.userId; }
-  accessTokenExpiresAt() { return this.expiresAt; }
-  refreshTokenExpiresAt() { return this.expiresAt; }
+  accessToken() {
+    return this.userId;
+  }
+  refreshToken() {
+    return this.userId;
+  }
+  accessTokenExpiresAt() {
+    return this.expiresAt;
+  }
+  refreshTokenExpiresAt() {
+    return this.expiresAt;
+  }
 
-  tokenType() { return "Bearer"; }
-  accessTokenExpiresInSeconds() { return 86400; }
-  hasRefreshToken() { return true; }
-  isExpired() { return Date.now() > this.expiresAt.getTime(); }
+  tokenType() {
+    return "Bearer";
+  }
+  accessTokenExpiresInSeconds() {
+    return 86400;
+  }
+  hasRefreshToken() {
+    return true;
+  }
+  isExpired() {
+    return Date.now() > this.expiresAt.getTime();
+  }
 
-  hasScopes() { return true; }
-  scopes() { return ["*"]; }
-  idToken() { return this.tokenId; }
+  hasScopes() {
+    return true;
+  }
+  scopes() {
+    return ["*"];
+  }
+  idToken() {
+    return this.tokenId;
+  }
 
   data = {};
 }
@@ -35,9 +59,7 @@ async function validateCredentials(email: string, password: string) {
   const isEmail = email.includes("@");
 
   const user = await db.user.findFirst({
-    where: isEmail
-      ? { email: email.toLowerCase() }
-      : { username: email.toUpperCase() }
+    where: isEmail ? { email: email.toLowerCase() } : { username: email.toUpperCase() },
   });
 
   if (!user) {
@@ -50,7 +72,7 @@ async function validateCredentials(email: string, password: string) {
   //   throw new Error("Invalid credentials");
   // }
 
-  if(user.password !== password){
+  if (user.password !== password) {
     throw new Error("Invalid credentials");
   }
 
@@ -76,7 +98,7 @@ export async function signInWithCredentials(
       select: {
         id: true,
         user: true,
-      }
+      },
     });
 
     if (!session) {
@@ -106,7 +128,7 @@ export function createAuthorizationURL(url?: URL) {
 
 export async function validateAuthorizationCode(
   code: string,
-  _codeVerifier?: string,
+  _codeVerifier?: string
 ): Promise<OAuth2Tokens> {
   if (!code) {
     throw new Error("Invalid authorization code");
@@ -136,7 +158,7 @@ export async function revokeAccessToken(_token: string): Promise<void> {
 export async function fetchUser(tokens: OAuth2Tokens): Promise<OAuthUser | null> {
   const userId = tokens.accessToken();
   const user = await db.user.findUnique({
-    where: { id: userId }
+    where: { id: userId },
   });
 
   if (!user) return null;

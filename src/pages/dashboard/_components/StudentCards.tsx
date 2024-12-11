@@ -6,8 +6,8 @@ interface Props {
 }
 
 export function StudentCards({ data, selectedCourse }: Props) {
-  const course = data.courses.find(c => c.courseId === selectedCourse);
-  const completionPercentage = course 
+  const course = data.courses.find((c) => c.courseId === selectedCourse);
+  const completionPercentage = course
     ? Math.round((course.assignmentsSubmitted / course.totalAssignments) * 100)
     : 0;
 
@@ -31,9 +31,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
         <div className="m-auto h-24 w-24 flex items-center justify-center">
           <img src="/assignment.png" alt="assignment" className="w-20 h-20 object-contain" />
         </div>
-        <p className="pt-3 text-2xl font-bold text-blue-600">
-          {course?.assignmentsSubmitted || 0}
-        </p>
+        <p className="pt-3 text-2xl font-bold text-blue-600">{course?.assignmentsSubmitted || 0}</p>
         <h1 className="p-1 text-sm font-bold text-gray-700">Assignments Submitted</h1>
       </div>
     </>

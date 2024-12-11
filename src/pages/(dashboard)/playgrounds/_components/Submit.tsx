@@ -1,8 +1,10 @@
-import { useState } from "react";
-import toast from "react-hot-toast";
+import { useSandpack } from "@codesandbox/sandpack-react";
 import axios from "axios";
+import { useState } from "react";
 import Confetti from "react-confetti";
+import toast from "react-hot-toast";
 import { IoWarningOutline } from "react-icons/io5";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +15,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useSandpack } from "@codesandbox/sandpack-react";
 import { Button } from "@/components/ui/button";
 
 const Submit = ({
@@ -33,7 +34,7 @@ const Submit = ({
   const { sandpack } = useSandpack();
   const { files } = sandpack || {};
 
-//   const router = useRouter();
+  //   const router = useRouter();
 
   const handleSubmit = async () => {
     if (!user?.username || !user.email || !assignmentDetails?.title) {
@@ -84,14 +85,7 @@ const Submit = ({
             height={window.innerHeight || 1000}
             numberOfPieces={400}
             friction={0.99}
-            colors={[
-              "#ff0000",
-              "#00ff00",
-              "#0000ff",
-              "#ffff00",
-              "#ff00ff",
-              "#00ffff",
-            ]}
+            colors={["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"]}
           />
         )}
       </div>
@@ -100,18 +94,13 @@ const Submit = ({
           <AlertDialogTitle>Confirm Submission</AlertDialogTitle>
           <p className="mb-2">
             Are you sure you want to submit the
-            <a
-              href={`${assignmentDetails.link}`}
-              target="_blank"
-              className="text-blue-500"
-            >
+            <a href={`${assignmentDetails.link}`} target="_blank" className="text-blue-500">
               &nbsp;{assignmentDetails.title}
             </a>{" "}
             ?
           </p>
           <p className="mb-6 flex items-center gap-1 text-sm text-gray-500">
-            <IoWarningOutline className="text-md" /> Once submitted, you cannot
-            edit your code.
+            <IoWarningOutline className="text-md" /> Once submitted, you cannot edit your code.
           </p>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -12,4 +12,3 @@ export default function PlaygroundPage({ submission }: { submission: any }) {
     </div>
   );
 }
-

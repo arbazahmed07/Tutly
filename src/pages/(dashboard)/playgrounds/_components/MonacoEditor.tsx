@@ -1,12 +1,7 @@
 "use client";
 
+import { FileTabs, SandpackStack, useActiveCode, useSandpack } from "@codesandbox/sandpack-react";
 import Editor from "@monaco-editor/react";
-import {
-  useActiveCode,
-  SandpackStack,
-  FileTabs,
-  useSandpack,
-} from "@codesandbox/sandpack-react";
 
 export default function MonacoEditor() {
   const { code, updateCode } = useActiveCode();
@@ -24,9 +19,7 @@ export default function MonacoEditor() {
         <Editor
           width="100%"
           height="100%"
-          language={
-            languageMap[sandpack.activeFile.split(".")[1] ?? ""] || "plaintext"
-          }
+          language={languageMap[sandpack.activeFile.split(".")[1] ?? ""] || "plaintext"}
           theme="vs-light"
           key={sandpack.activeFile}
           value={code}

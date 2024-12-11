@@ -3,7 +3,7 @@ import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ params, url, cookies, redirect }) => {
   const providerName = params.provider as keyof typeof providers;
-  
+
   // Handle credentials provider separately
   if (providerName === "credentials") {
     return redirect("/sign-in");
@@ -17,16 +17,20 @@ export const GET: APIRoute = async ({ params, url, cookies, redirect }) => {
   const { state, codeVerifier, redirectUrl } = provider.createAuthorizationURL(url);
   const fromUrl = url.searchParams.get("from");
 
-  cookies.set(AUTH_STATE_COOKIE, {
-    state,
-    codeVerifier,
-    from: fromUrl,
-  }, {
-    secure: import.meta.env.PROD,
-    httpOnly: true,
-    maxAge: 60 * 10, // 10 minutes
-    path: "/api/auth",
-  });
+  cookies.set(
+    AUTH_STATE_COOKIE,
+    {
+      state,
+      codeVerifier,
+      from: fromUrl,
+    },
+    {
+      secure: import.meta.env.PROD,
+      httpOnly: true,
+      maxAge: 60 * 10, // 10 minutes
+      path: "/api/auth",
+    }
+  );
 
   return redirect(redirectUrl.toString());
 };

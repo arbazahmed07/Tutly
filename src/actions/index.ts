@@ -1,4 +1,5 @@
 import { groupActions } from "@/lib/group";
+
 import * as assignments from "./assignments";
 import * as attachments from "./attachments";
 import * as attendances from "./attendance";
@@ -6,13 +7,13 @@ import * as classes from "./classes";
 import * as courses from "./courses";
 import * as doubts from "./doubts";
 import * as leaderboard from "./getLeaderboard";
-import * as points from "./points";
-import * as submissions from "./submission";
-import * as report from "./report";
 import * as mentors from "./mentors";
-import * as users from "./users";
 // import * as resend from "./resend";
 import * as notifications from "./notifications";
+import * as points from "./points";
+import * as report from "./report";
+import * as submissions from "./submission";
+import * as users from "./users";
 
 export const server = {
   ...groupActions("courses", courses, "_"),

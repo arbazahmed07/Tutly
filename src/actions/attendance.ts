@@ -1,16 +1,20 @@
 import { defineAction } from "astro:actions";
-import db from "@/lib/db";
 import { z } from "zod";
+
+import db from "@/lib/db";
+
 import { totalNumberOfClasses } from "./classes";
 
 export const postAttendance = defineAction({
   input: z.object({
     classId: z.string(),
-    data: z.array(z.object({
-      username: z.string(),
-      Duration: z.number()
-    })),
-    maxInstructionDuration: z.number()
+    data: z.array(
+      z.object({
+        username: z.string(),
+        Duration: z.number(),
+      })
+    ),
+    maxInstructionDuration: z.number(),
   }),
   async handler({ classId, data, maxInstructionDuration }) {
     console.log("data", data);
@@ -40,13 +44,13 @@ export const postAttendance = defineAction({
     });
 
     return { success: true, data: postAttendance };
-  }
+  },
 });
 
 export const getAttendanceForMentorByIdBarChart = defineAction({
   input: z.object({
     id: z.string(),
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ id, courseId }) {
     const attendance = await db.attendance.findMany({
@@ -79,22 +83,20 @@ export const getAttendanceForMentorByIdBarChart = defineAction({
     const attendanceInEachClass = [] as any;
     getAllClasses.forEach((classData) => {
       classes.push(classData.createdAt.toISOString().split("T")[0]);
-      const tem = attendance.filter(
-        (attendanceData) => attendanceData.classId === classData.id,
-      );
+      const tem = attendance.filter((attendanceData) => attendanceData.classId === classData.id);
       attendanceInEachClass.push(tem.length);
     });
 
     return { success: true, data: { classes, attendanceInEachClass } };
-  }
+  },
 });
 
 export const getAttendanceForMentorBarChart = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ courseId }, { locals }) {
-    const currentUser = locals.user!
+    const currentUser = locals.user!;
 
     let attendance;
     if (currentUser.role === "MENTOR") {
@@ -143,19 +145,17 @@ export const getAttendanceForMentorBarChart = defineAction({
     const attendanceInEachClass = [] as any;
     getAllClasses.forEach((classData) => {
       classes.push(classData.createdAt.toISOString().split("T")[0]);
-      const tem = attendance.filter(
-        (attendanceData) => attendanceData.classId === classData.id,
-      );
+      const tem = attendance.filter((attendanceData) => attendanceData.classId === classData.id);
       attendanceInEachClass.push(tem.length);
     });
 
     return { success: true, data: { classes, attendanceInEachClass } };
-  }
+  },
 });
 
 export const getAttedanceByClassId = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }) {
     const attendance = await db.attendance.findMany({
@@ -165,13 +165,13 @@ export const getAttedanceByClassId = defineAction({
     });
 
     return { success: true, data: attendance };
-  }
+  },
 });
 
 export const getAttendanceOfStudent = defineAction({
   input: z.object({
     id: z.string(),
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ id, courseId }) {
     const attendance = await db.attendance.findMany({
@@ -196,9 +196,7 @@ export const getAttendanceOfStudent = defineAction({
 
     const attendanceDates = [] as any;
     attendance.forEach((attendanceData) => {
-      attendanceDates.push(
-        attendanceData.class.createdAt.toISOString().split("T")[0],
-      );
+      attendanceDates.push(attendanceData.class.createdAt.toISOString().split("T")[0]);
     });
 
     const getAllClasses = await db.class.findMany({
@@ -216,23 +214,21 @@ export const getAttendanceOfStudent = defineAction({
 
     const classes = [] as any;
     getAllClasses.forEach((classData) => {
-      if (
-        !attendanceDates.includes(classData.createdAt.toISOString().split("T")[0])
-      ) {
+      if (!attendanceDates.includes(classData.createdAt.toISOString().split("T")[0])) {
         classes.push(classData.createdAt.toISOString().split("T")[0]);
       }
     });
 
     return { success: true, data: { classes, attendanceDates } };
-  }
+  },
 });
 
 export const deleteClassAttendance = defineAction({
   input: z.object({
-    classId: z.string()
+    classId: z.string(),
   }),
   async handler({ classId }, { locals }) {
-    const currentUser = locals.user!
+    const currentUser = locals.user!;
 
     if (!currentUser) {
       return { error: "You must be logged in to attend a class" };
@@ -248,12 +244,12 @@ export const deleteClassAttendance = defineAction({
     });
 
     return { success: true, data: attendance };
-  }
+  },
 });
 
 export const getTotalNumberOfClassesAttended = defineAction({
   async handler(_, { locals }) {
-    const currentUser = locals.user!
+    const currentUser = locals.user!;
 
     if (!currentUser || currentUser.role === "STUDENT") {
       return { error: "You must be logged in as an instructor or mentor to view attendance" };
@@ -315,12 +311,12 @@ export const getTotalNumberOfClassesAttended = defineAction({
     });
 
     return { success: true, data: groupByTotalAttendance };
-  }
+  },
 });
 
 export const getAttendanceForLeaderbaord = defineAction({
   async handler(_, { locals }) {
-    const currentUser = locals.user!
+    const currentUser = locals.user!;
 
     if (!currentUser) {
       return { error: "You must be logged in to attend a class" };
@@ -346,12 +342,12 @@ export const getAttendanceForLeaderbaord = defineAction({
     }, {});
 
     return { success: true, data: groupedAttendance };
-  }
+  },
 });
 
 export const getAttendanceOfAllStudents = defineAction({
   async handler(_, { locals }) {
-    const currentUser = locals.user!
+    const currentUser = locals.user!;
 
     if (!currentUser) {
       return { error: "You must be logged in to attend a class" };
@@ -359,17 +355,17 @@ export const getAttendanceOfAllStudents = defineAction({
 
     const totalAttendance = await getTotalNumberOfClassesAttended();
     const totalCount = await totalNumberOfClasses();
-    const jsonData = totalAttendance.data ? Object.entries(totalAttendance.data).map(
-      ([_, value]: [string, any]) => ({
-        username: value.username,
-        name: value.name,
-        mail: value.mail,
-        image: value.image,
-        role: value.role,
-        percentage: (Number(value.count) * 100) / Number(totalCount),
-      }),
-    ) : [];
+    const jsonData = totalAttendance.data
+      ? Object.entries(totalAttendance.data).map(([_, value]: [string, any]) => ({
+          username: value.username,
+          name: value.name,
+          mail: value.mail,
+          image: value.image,
+          role: value.role,
+          percentage: (Number(value.count) * 100) / Number(totalCount),
+        }))
+      : [];
 
     return { success: true, data: jsonData };
-  }
+  },
 });

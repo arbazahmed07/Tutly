@@ -1,5 +1,6 @@
 import { defineAction } from "astro:actions";
 import { z } from "zod";
+
 import db from "@/lib/db";
 
 interface ReportData {
@@ -15,7 +16,7 @@ interface ReportData {
 
 export const generateReport = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ courseId }, { locals }) {
     const currentUser = locals.user;
@@ -65,8 +66,7 @@ export const generateReport = defineAction({
 
     if (currentUser.role === "MENTOR") {
       submissions = submissions.filter(
-        (submission) =>
-          submission.enrolledUser.mentorUsername === currentUser.username,
+        (submission) => submission.enrolledUser.mentorUsername === currentUser.username
       );
     }
 
@@ -83,14 +83,11 @@ export const generateReport = defineAction({
       },
     });
 
-    const groupedAttendance = attendance.reduce(
-      (acc: Record<string, number>, curr) => {
-        const username = curr.user.username;
-        acc[username] = (acc[username] ?? 0) + 1;
-        return acc;
-      },
-      {},
-    );
+    const groupedAttendance = attendance.reduce((acc: Record<string, number>, curr) => {
+      const username = curr.user.username;
+      acc[username] = (acc[username] ?? 0) + 1;
+      return acc;
+    }, {});
 
     const totalClasses = await db.class.count();
 
@@ -154,15 +151,13 @@ export const generateReport = defineAction({
     Object.values(obj).forEach((ob) => {
       try {
         const userPoints = points.filter((point) =>
-          point.submissions
-            ? point.submissions.enrolledUser.username === ob.username
-            : false,
+          point.submissions ? point.submissions.enrolledUser.username === ob.username : false
         );
         ob.score = userPoints.reduce((acc, curr) => acc + (curr.score || 0), 0);
         ob.submissionEvaluatedLength = new Set(
           userPoints
             .map((point) => point.submissions?.id)
-            .filter((id): id is string => id !== undefined),
+            .filter((id): id is string => id !== undefined)
         ).size;
       } catch (e) {
         console.log(ob.username);
@@ -173,8 +168,7 @@ export const generateReport = defineAction({
       if (!groupedAttendance[ob.username]) {
         groupedAttendance[ob.username] = 0;
       }
-      ob.attendance =
-        ((groupedAttendance[ob.username] ?? 0) * 100) / totalClasses;
+      ob.attendance = ((groupedAttendance[ob.username] ?? 0) * 100) / totalClasses;
     });
 
     let SelectedFields: ReportData[] = Object.values(obj).map((ob) => ({
@@ -190,16 +184,14 @@ export const generateReport = defineAction({
 
     SelectedFields.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
     SelectedFields.sort((a, b) => b.score - a.score);
-    SelectedFields.sort((a, b) =>
-      (a.mentorUsername ?? "").localeCompare(b.mentorUsername ?? ""),
-    );
+    SelectedFields.sort((a, b) => (a.mentorUsername ?? "").localeCompare(b.mentorUsername ?? ""));
 
     if (currentUser.role === "MENTOR") {
       SelectedFields = SelectedFields.filter(
-        (selectedField) => selectedField.mentorUsername === currentUser.username,
+        (selectedField) => selectedField.mentorUsername === currentUser.username
       );
     }
 
     return { success: true, data: SelectedFields };
-  }
+  },
 });

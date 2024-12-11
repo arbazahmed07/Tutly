@@ -81,56 +81,56 @@ const totalPoints: any = submissionsUptoLastSunday.map((submission: any) => {
 const sortedSubmissions = totalPoints.sort((a: any, b: any) => b.totalPoints - a.totalPoints);
 
 const courses = await db.course.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          username: currentUser.username,
-        },
+  where: {
+    enrolledUsers: {
+      some: {
+        username: currentUser.username,
       },
     },
-    include: {
-      classes: true,
-      createdBy: {
-        select: {
-          id: true,
-          username: true,
-          name: true,
-          image: true,
-          email: true,
-          role: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+  },
+  include: {
+    classes: true,
+    createdBy: {
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        image: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
       },
-      _count: {
-        select: {
-          classes: true,
-        },
-      },
-      courseAdmins: {
-        select:{
-          id : true,
-          username: true,
-          name: true,
-          image: true,
-          email: true,
-          role: true,
-          createdAt: true,
-          updatedAt: true,
-        }
-      }
     },
+    _count: {
+      select: {
+        classes: true,
+      },
+    },
+    courseAdmins: {
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        image: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    },
+  },
+});
+
+courses.forEach((course) => {
+  course.classes.sort((a, b) => {
+    return Number(a.createdAt) - Number(b.createdAt);
   });
+});
 
-  courses.forEach((course) => {
-    course.classes.sort((a, b) => {
-      return Number(a.createdAt) - Number(b.createdAt);
-    });
-  });
+const publishedCourses = courses.filter((course) => course.isPublished);
 
-  const publishedCourses = courses.filter((course) => course.isPublished);
-
-  const enrolledCourses = (currentUser.role === "INSTRUCTOR") ? courses:publishedCourses;
+const enrolledCourses = currentUser.role === "INSTRUCTOR" ? courses : publishedCourses;
 ---
 
 <RootLayout title="Leaderboard">

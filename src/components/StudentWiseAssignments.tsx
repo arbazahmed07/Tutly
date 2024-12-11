@@ -1,13 +1,11 @@
 "use client";
-import { useRouter } from "@/hooks/use-router"
+
 import { useEffect, useState } from "react";
 import { MdOutlineSportsScore } from "react-icons/md";
 
-export default function StudentWiseAssignments({
-  courses,
-  assignments,
-  userId,
-}: any) {
+import { useRouter } from "@/hooks/use-router";
+
+export default function StudentWiseAssignments({ courses, assignments, userId }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
@@ -34,18 +32,14 @@ export default function StudentWiseAssignments({
                 }`}
                 key={course.id}
               >
-                <h1 className="max-w-xs truncate text-sm font-medium">
-                  {course.title}
-                </h1>
+                <h1 className="max-w-xs truncate text-sm font-medium">{course.title}</h1>
               </button>
             );
           })}
         </div>
         <div className="m-auto space-x-4 text-sm font-medium sm:m-0">
           <button
-            className={`focus:outline-none ${
-              unreviewed === "all" && "border-b-2"
-            }`}
+            className={`focus:outline-none ${unreviewed === "all" && "border-b-2"}`}
             onClick={() => setUnreviewed("all")}
           >
             <input
@@ -59,9 +53,7 @@ export default function StudentWiseAssignments({
             <label htmlFor="all">All</label>
           </button>
           <button
-            className={`focus:outline-none ${
-              unreviewed === "reviewed" && "border-b-2"
-            }`}
+            className={`focus:outline-none ${unreviewed === "reviewed" && "border-b-2"}`}
             onClick={() => setUnreviewed("reviewed")}
           >
             <input
@@ -75,9 +67,7 @@ export default function StudentWiseAssignments({
             <label htmlFor="reviewed">Reviewed</label>
           </button>
           <button
-            className={`focus:outline-none ${
-              unreviewed === "unreviewed" && "border-b-2"
-            }`}
+            className={`focus:outline-none ${unreviewed === "unreviewed" && "border-b-2"}`}
             onClick={() => setUnreviewed("unreviewed")}
           >
             <input
@@ -91,9 +81,7 @@ export default function StudentWiseAssignments({
             <label htmlFor="unreviewed">UnReviewed</label>
           </button>
           <button
-            className={`focus:outline-none ${
-              unreviewed === "not-submitted" && "border-b-2"
-            }`}
+            className={`focus:outline-none ${unreviewed === "not-submitted" && "border-b-2"}`}
             onClick={() => setUnreviewed("not-submitted")}
           >
             <input
@@ -119,82 +107,61 @@ export default function StudentWiseAssignments({
                 return x.submissions.length === 0;
               } else if (unreviewed == "unreviewed") {
                 return (
-                  x.submissions.length > 0 &&
-                  x.submissions.some((x: any) => x.points.length === 0)
+                  x.submissions.length > 0 && x.submissions.some((x: any) => x.points.length === 0)
                 );
               } else if (unreviewed == "reviewed") {
                 return (
-                  x.submissions.length > 0 &&
-                  x.submissions.some((x: any) => x.points.length > 0)
+                  x.submissions.length > 0 && x.submissions.some((x: any) => x.points.length > 0)
                 );
               }
               return true;
             })
             .map((assignment: any) => {
               return (
-                <div
-                  key={assignment.id}
-                  className="rounded-lg border p-1 md:p-3"
-                >
+                <div key={assignment.id} className="rounded-lg border p-1 md:p-3">
                   <div className="flex flex-wrap items-center justify-around p-2 md:justify-between md:p-0 md:px-4">
                     <div className="flex w-full flex-wrap items-center justify-between md:flex-row">
                       <div className="text-sm">
-                        <h2 className="m-2 flex-1 font-medium">
-                          {assignment.title}
-                        </h2>
+                        <h2 className="m-2 flex-1 font-medium">{assignment.title}</h2>
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-white md:gap-6">
                         {assignment.submissions.length === 0 ? (
                           <div className="itens-center flex gap-6">
-                            <div className="rounded-full bg-secondary-600 p-2.5">
-                              not submitted
-                            </div>
+                            <div className="rounded-full bg-secondary-600 p-2.5">not submitted</div>
                           </div>
                         ) : (
                           <div className="flex gap-2">
-                            {assignment.submissions.map(
-                              (eachSubmission: any, index: number) => {
-                                if (eachSubmission.points.length === 0) {
-                                  return (
-                                    <div
-                                      className="flex items-center gap-6"
-                                      key={index}
-                                    >
-                                      <div className="rounded-full bg-yellow-600 p-2.5 hover:bg-yellow-500">
-                                        Under review
-                                      </div>
+                            {assignment.submissions.map((eachSubmission: any, index: number) => {
+                              if (eachSubmission.points.length === 0) {
+                                return (
+                                  <div className="flex items-center gap-6" key={index}>
+                                    <div className="rounded-full bg-yellow-600 p-2.5 hover:bg-yellow-500">
+                                      Under review
                                     </div>
-                                  );
-                                } else {
-                                  let total = 0;
-                                  return (
-                                    <div
-                                      className="flex items-center gap-6"
-                                      key={index}
-                                    >
-                                      <div className="flex items-center rounded-full bg-green-600 p-2.5">
-                                        {eachSubmission.points.forEach(
-                                          (point: any) => {
-                                            total += point.score;
-                                          },
-                                        )}
-                                        <h1>Score : {total}</h1>
-                                        <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
-                                      </div>
+                                  </div>
+                                );
+                              } else {
+                                let total = 0;
+                                return (
+                                  <div className="flex items-center gap-6" key={index}>
+                                    <div className="flex items-center rounded-full bg-green-600 p-2.5">
+                                      {eachSubmission.points.forEach((point: any) => {
+                                        total += point.score;
+                                      })}
+                                      <h1>Score : {total}</h1>
+                                      <MdOutlineSportsScore className="inline sm:h-5 sm:w-5" />
                                     </div>
-                                  );
-                                }
-                              },
-                            )}
+                                  </div>
+                                );
+                              }
+                            })}
                           </div>
                         )}
                         <button
                           title="Details"
                           onClick={() => {
                             if (userId) {
-                              router.push(
-                                `/assignments/${assignment.id}?username=${userId}`,
-                              );
+                              router.push(`/assignments/${assignment.id}?username=${userId}`);
                             } else {
                               router.push(`/assignments/${assignment.id}`);
                             }

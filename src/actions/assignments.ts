@@ -1,17 +1,19 @@
-import { defineAction, ActionError } from "astro:actions";
+import { ActionError, defineAction } from "astro:actions";
+import { z } from "zod";
+
 import db from "@/lib/db";
+
 import {
   getEnrolledCourses,
   getEnrolledCoursesById,
   getEnrolledCoursesByUsername,
   getMentorCourses,
 } from "./courses";
-import { z } from "zod";
 
 export const getAllAssignedAssignments = defineAction({
-  handler: async (_, {locals}) => {
+  handler: async (_, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
 
       return await db.course.findMany({
         where: {
@@ -56,15 +58,17 @@ export const getAllAssignedAssignments = defineAction({
         message: error instanceof Error ? error.message : "Unknown error occurred",
       });
     }
-  }
+  },
 });
 
 export const getAllAssignedAssignmentsByUserId = defineAction({
-  handler: async (_, {locals}) => {
+  handler: async (_, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
 
-      const { data: courses } = await getEnrolledCoursesByUsername({ username: currentUser.username });
+      const { data: courses } = await getEnrolledCoursesByUsername({
+        username: currentUser.username,
+      });
 
       const coursesWithAssignments = await db.course.findMany({
         where: {
@@ -115,13 +119,13 @@ export const getAllAssignedAssignmentsByUserId = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllAssignmentsForMentor = defineAction({
-  handler: async (_, {locals}) => {
+  handler: async (_, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
       const courses = await getMentorCourses();
 
       const coursesWithAssignments = await db.course.findMany({
@@ -171,7 +175,7 @@ export const getAllAssignmentsForMentor = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllAssignmentsForInstructor = defineAction({
@@ -214,14 +218,14 @@ export const getAllAssignmentsForInstructor = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllAssignments = defineAction({
-  handler: async (_, {locals}) => {
+  handler: async (_, { locals }) => {
     try {
-      const currentUser = locals.user!
-      if(!currentUser) return null;
+      const currentUser = locals.user!;
+      if (!currentUser) return null;
 
       const { data: courses } = await getEnrolledCourses();
 
@@ -236,19 +240,19 @@ export const getAllAssignments = defineAction({
           course: true,
         },
         orderBy: {
-          createdAt: "desc"
+          createdAt: "desc",
         },
       });
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllAssignedAssignmentsForMentor = defineAction({
-  handler: async (_, {locals}) => {
+  handler: async (_, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
 
       const { data: courses } = await getEnrolledCoursesById({ id: currentUser.id });
 
@@ -293,13 +297,13 @@ export const getAllAssignedAssignmentsForMentor = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllMentorAssignments = defineAction({
-  handler: async (_, {locals}) => {
+  handler: async (_, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
 
       const coursesWithAssignments = await db.course.findMany({
         where: {
@@ -361,13 +365,13 @@ export const getAllMentorAssignments = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllCreatedAssignments = defineAction({
-  handler: async (_, {locals}) => {
+  handler: async (_, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
 
       return await db.course.findMany({
         where: {
@@ -397,16 +401,16 @@ export const getAllCreatedAssignments = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAssignmentDetailsByUserId = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
-  handler: async ({ id }, {locals}) => {
+  handler: async ({ id }, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
 
       return await db.attachment.findUnique({
         where: {
@@ -440,16 +444,16 @@ export const getAssignmentDetailsByUserId = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllAssignmentDetailsBy = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
-  handler: async ({ id }, {locals}) => {
+  handler: async ({ id }, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
 
       const assignment = await db.attachment.findUnique({
         where: {
@@ -491,7 +495,7 @@ export const getAllAssignmentDetailsBy = defineAction({
 
       const notSubmittedMentees = mentees.filter((mentee) => {
         return !assignment?.submissions.some(
-          (submission) => submission.enrolledUser.username === mentee.username,
+          (submission) => submission.enrolledUser.username === mentee.username
         );
       });
 
@@ -506,24 +510,22 @@ export const getAllAssignmentDetailsBy = defineAction({
       });
 
       const isCourseAdmin =
-        currentUser?.adminForCourses?.some(
-          (course) => course.id === assignment?.courseId,
-        ) ?? false;
+        currentUser?.adminForCourses?.some((course) => course.id === assignment?.courseId) ?? false;
 
       return [sortedAssignments, notSubmittedMentees, isCourseAdmin];
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllAssignmentDetailsForInstructor = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
-  handler: async ({ id }, {locals}) => {
+  handler: async ({ id }, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
       if (!currentUser) throw new Error("Unauthorized");
 
       const assignment = await db.attachment.findUnique({
@@ -566,7 +568,7 @@ export const getAllAssignmentDetailsForInstructor = defineAction({
 
       const notSubmittedMentees = allStudents.filter((student) => {
         return !assignment?.submissions.some(
-          (submission) => submission.enrolledUser.username === student.username,
+          (submission) => submission.enrolledUser.username === student.username
         );
       });
 
@@ -581,24 +583,22 @@ export const getAllAssignmentDetailsForInstructor = defineAction({
       });
 
       const isCourseAdmin =
-        currentUser?.adminForCourses?.some(
-          (course) => course.id === assignment?.courseId,
-        ) ?? false;
+        currentUser?.adminForCourses?.some((course) => course.id === assignment?.courseId) ?? false;
 
       return [sortedAssignments, notSubmittedMentees, isCourseAdmin];
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAllAssignmentsByCourseId = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
-  handler: async ({ id }, {locals}) => {
+  handler: async ({ id }, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
 
       return await db.course.findMany({
         where: {
@@ -633,20 +633,20 @@ export const getAllAssignmentsByCourseId = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getMentorPieChartData = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
-  handler: async ({ courseId }, {locals}) => {
+  handler: async ({ courseId }, { locals }) => {
     try {
-      const currentUser = locals.user
+      const currentUser = locals.user;
 
       let assignments, noOfTotalMentees;
-      if(!currentUser) return null;
-      
+      if (!currentUser) return null;
+
       if (currentUser.role === "MENTOR") {
         assignments = await db.submission.findMany({
           where: {
@@ -701,21 +701,19 @@ export const getMentorPieChartData = defineAction({
       });
 
       const notSubmitted =
-        noOfTotalAssignments * noOfTotalMentees -
-        assignmentsWithPoints -
-        assignmentsWithoutPoints;
+        noOfTotalAssignments * noOfTotalMentees - assignmentsWithPoints - assignmentsWithoutPoints;
 
       return [assignmentsWithPoints, assignmentsWithoutPoints, notSubmitted];
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getMentorPieChartById = defineAction({
   input: z.object({
     id: z.string(),
-    courseId: z.string()
+    courseId: z.string(),
   }),
   handler: async ({ id, courseId }) => {
     try {
@@ -771,26 +769,28 @@ export const getMentorPieChartById = defineAction({
         totalAssignments += a.maxSubmissions ?? 0;
       });
 
-      const notSubmitted =
-        totalAssignments - assignmentsWithPoints - assignmentsWithoutPoints;
+      const notSubmitted = totalAssignments - assignmentsWithPoints - assignmentsWithoutPoints;
 
       return {
         evaluated: assignments.length || 0,
         underReview: assignmentsWithoutPoints,
         unsubmitted: notSubmitted,
-        totalPoints: assignments.reduce((total, assignment) =>
-          total + assignment.points.reduce((sum, point) => sum + point.score, 0), 0),
+        totalPoints: assignments.reduce(
+          (total, assignment) =>
+            total + assignment.points.reduce((sum, point) => sum + point.score, 0),
+          0
+        ),
       };
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getSubmissionsForMentorByIdLineChart = defineAction({
   input: z.object({
     id: z.string(),
-    courseId: z.string()
+    courseId: z.string(),
   }),
   handler: async ({ id, courseId }) => {
     try {
@@ -814,23 +814,22 @@ export const getSubmissionsForMentorByIdLineChart = defineAction({
       });
 
       return {
-        assignments: submissionCount.map(submission => submission.title),
-        countForEachAssignment: submissionCount.map(submission => submission.submissions.length)
+        assignments: submissionCount.map((submission) => submission.title),
+        countForEachAssignment: submissionCount.map((submission) => submission.submissions.length),
       };
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getSubmissionsForMentorLineChart = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
-  handler: async ({ courseId }, {locals}) => {
+  handler: async ({ courseId }, { locals }) => {
     try {
-      const currentUser = locals.user!
-
+      const currentUser = locals.user!;
 
       const submissionCount = await db.attachment.findMany({
         where: {
@@ -838,13 +837,16 @@ export const getSubmissionsForMentorLineChart = defineAction({
           courseId,
         },
         include: {
-          submissions: currentUser.role === "MENTOR" ? {
-            where: {
-              enrolledUser: {
-                mentorUsername: currentUser.username,
-              },
-            },
-          } : true,
+          submissions:
+            currentUser.role === "MENTOR"
+              ? {
+                  where: {
+                    enrolledUser: {
+                      mentorUsername: currentUser.username,
+                    },
+                  },
+                }
+              : true,
         },
         orderBy: {
           createdAt: "asc",
@@ -852,22 +854,22 @@ export const getSubmissionsForMentorLineChart = defineAction({
       });
 
       return {
-        assignments: submissionCount.map(submission => submission.title),
-        countForEachAssignment: submissionCount.map(submission => submission.submissions.length)
+        assignments: submissionCount.map((submission) => submission.title),
+        countForEachAssignment: submissionCount.map((submission) => submission.submissions.length),
       };
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getStudentEvaluatedAssigments = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
-  handler: async ({ courseId }, {locals}) => {
+  handler: async ({ courseId }, { locals }) => {
     try {
-      const currentUser = locals.user!
+      const currentUser = locals.user!;
       if (!currentUser) {
         throw new Error("Unauthorized");
       }
@@ -886,12 +888,13 @@ export const getStudentEvaluatedAssigments = defineAction({
         },
       });
 
-      const evaluatedAssignments = assignments.filter(
-        assignment => assignment.points.length > 0
-      );
+      const evaluatedAssignments = assignments.filter((assignment) => assignment.points.length > 0);
 
-      const totalPoints = evaluatedAssignments.reduce((total, assignment) =>
-        total + assignment.points.reduce((sum, point) => sum + point.score, 0), 0);
+      const totalPoints = evaluatedAssignments.reduce(
+        (total, assignment) =>
+          total + assignment.points.reduce((sum, point) => sum + point.score, 0),
+        0
+      );
 
       const noOfTotalAssignments = await db.attachment.findMany({
         where: {
@@ -903,8 +906,10 @@ export const getStudentEvaluatedAssigments = defineAction({
         },
       });
 
-      const totalAssignments = noOfTotalAssignments.reduce((total, assignment) =>
-        total + (assignment.maxSubmissions ?? 0), 0);
+      const totalAssignments = noOfTotalAssignments.reduce(
+        (total, assignment) => total + (assignment.maxSubmissions ?? 0),
+        0
+      );
 
       return {
         evaluated: evaluatedAssignments.length,
@@ -915,13 +920,13 @@ export const getStudentEvaluatedAssigments = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getStudentEvaluatedAssigmentsForMentor = defineAction({
   input: z.object({
     id: z.string(),
-    courseId: z.string()
+    courseId: z.string(),
   }),
   handler: async ({ id, courseId }) => {
     try {
@@ -944,12 +949,13 @@ export const getStudentEvaluatedAssigmentsForMentor = defineAction({
         },
       });
 
-      const evaluatedAssignments = assignments.filter(
-        assignment => assignment.points.length > 0
-      );
+      const evaluatedAssignments = assignments.filter((assignment) => assignment.points.length > 0);
 
-      const totalPoints = evaluatedAssignments.reduce((total, assignment) =>
-        total + assignment.points.reduce((sum, point) => sum + point.score, 0), 0);
+      const totalPoints = evaluatedAssignments.reduce(
+        (total, assignment) =>
+          total + assignment.points.reduce((sum, point) => sum + point.score, 0),
+        0
+      );
 
       const noOfTotalAssignments = await db.attachment.findMany({
         where: {
@@ -961,8 +967,10 @@ export const getStudentEvaluatedAssigmentsForMentor = defineAction({
         },
       });
 
-      const totalAssignments = noOfTotalAssignments.reduce((total, assignment) =>
-        total + (assignment.maxSubmissions ?? 0), 0);
+      const totalAssignments = noOfTotalAssignments.reduce(
+        (total, assignment) => total + (assignment.maxSubmissions ?? 0),
+        0
+      );
 
       return {
         evaluated: evaluatedAssignments.length,
@@ -973,12 +981,12 @@ export const getStudentEvaluatedAssigmentsForMentor = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });
 
 export const getAssignmentDetails = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   handler: async ({ id }) => {
     try {
@@ -997,5 +1005,5 @@ export const getAssignmentDetails = defineAction({
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : "Unknown error occurred");
     }
-  }
+  },
 });

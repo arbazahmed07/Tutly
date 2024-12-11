@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { Link } from "lucide-react";
 import axios from "axios";
+import day from "dayjs";
+import { Link } from "lucide-react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaSearch } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
@@ -8,18 +9,17 @@ import { FiEdit } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
 import { RiWhatsappLine } from "react-icons/ri";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import day from "dayjs";
 import { useRouter } from "@/hooks/use-router";
 
 export default function AssignmentPage({
@@ -59,9 +59,7 @@ export default function AssignmentPage({
   ];
   const [modal, setModal] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const haveAdminAccess =
-    currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
-
+  const haveAdminAccess = currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
 
   const handleWhatsAppClick = (phone: string) => {
     setPhoneNumber(phone);
@@ -75,27 +73,25 @@ export default function AssignmentPage({
   };
   const router = useRouter();
 
-//   const searchParams = useSearchParams();
-//   const username = searchParams?.get("username");
+  //   const searchParams = useSearchParams();
+  //   const username = searchParams?.get("username");
   let filteredAssignments = [];
   // if (!username) {
   filteredAssignments = assignments?.filter(
     (x: any) =>
-      x.enrolledUser.username
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()),
+      x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      x.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const filteredNonSubmittedMentees = notSubmittedMentees?.filter(
     (x: any) =>
       x.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      x.username.toLowerCase().includes(searchQuery.toLowerCase()),
+      x.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
   // }
 
   if (username) {
     filteredAssignments = filteredAssignments.filter(
-      (x: any) => x.enrolledUser.username === username,
+      (x: any) => x.enrolledUser.username === username
     );
   }
 
@@ -115,18 +111,10 @@ export default function AssignmentPage({
 
   const handleEdit = (index: number, submissionId: string) => {
     setEditingIndex(index);
-    const submission = filteredAssignments.find(
-      (x: any) => x.id === submissionId,
-    );
-    const rValue = submission?.points.find(
-      (point: any) => point.category === "RESPOSIVENESS",
-    );
-    const sValue = submission?.points.find(
-      (point: any) => point.category === "STYLING",
-    );
-    const oValue = submission?.points.find(
-      (point: any) => point.category === "OTHER",
-    );
+    const submission = filteredAssignments.find((x: any) => x.id === submissionId);
+    const rValue = submission?.points.find((point: any) => point.category === "RESPOSIVENESS");
+    const sValue = submission?.points.find((point: any) => point.category === "STYLING");
+    const oValue = submission?.points.find((point: any) => point.category === "OTHER");
     setEditedScores({
       responsiveness: rValue ? rValue.score : 0,
       styling: sValue ? sValue.score : 0,
@@ -176,9 +164,7 @@ export default function AssignmentPage({
   };
 
   const handleDelete = async (id: string) => {
-    const response = confirm(
-      "Are you sure you want to delete this submission?",
-    );
+    const response = confirm("Are you sure you want to delete this submission?");
     if (!response) return;
     try {
       toast.loading("Deleting Submission...");
@@ -207,10 +193,9 @@ export default function AssignmentPage({
         <div className="flex items-center justify-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`rounded p-1 px-2 text-white ${new Date(assignment?.dueDate) > new Date()
-                  ? "bg-primary-600"
-                  : "bg-secondary-500"
-                }`}
+              className={`rounded p-1 px-2 text-white ${
+                new Date(assignment?.dueDate) > new Date() ? "bg-primary-600" : "bg-secondary-500"
+              }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -233,9 +218,7 @@ export default function AssignmentPage({
           )}
         </div>
       </div>
-      <div className="my-5">
-        {assignment?.details || "No details given to show"}
-      </div>
+      <div className="my-5">{assignment?.details || "No details given to show"}</div>
 
       <div className="my-4 flex flex-col gap-4 text-black">
         <div>
@@ -249,10 +232,7 @@ export default function AssignmentPage({
         </div>
 
         {currentUser?.role === "STUDENT" ? (
-          <StudentAssignmentSubmission
-            courseId={assignment.courseId}
-            assignment={assignment}
-          />
+          <StudentAssignmentSubmission courseId={assignment.courseId} assignment={assignment} />
         ) : (
           <>
             <div className="mt-8 flex justify-between">
@@ -265,18 +245,12 @@ export default function AssignmentPage({
                     onClick={() => setNonSubmissions(!nonSubmissions)}
                     className="me-5 italic text-secondary-400 hover:text-white max-sm:text-sm"
                   >
-                    {!nonSubmissions ? (
-                      <h1>Not received from?</h1>
-                    ) : (
-                      <h1>Received from?</h1>
-                    )}
+                    {!nonSubmissions ? <h1>Not received from?</h1> : <h1>Received from?</h1>}
                   </button>
                   <button
                     onClick={() => {
                       if (username) {
-                        router.push(
-                          `/assignments/${params.id}/evaluate?username=${username}`,
-                        );
+                        router.push(`/assignments/${params.id}/evaluate?username=${username}`);
                       } else {
                         router.push(`/assignments/${params.id}/evaluate`);
                       }
@@ -318,33 +292,25 @@ export default function AssignmentPage({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {filteredNonSubmittedMentees?.map(
-                      (user: any, index: any) => {
-                        return (
-                          <tr key={index}>
-                            <td className="whitespace-nowrap px-6 py-4">
-                              {index + 1}
-                            </td>
-                            <td className={`whitespace-nowrap px-6 py-4`}>
-                              <h1>{user.username}</h1>
-                            </td>
-                            <td className={`whitespace-nowrap px-6 py-4`}>
-                              <h1>{user.mentorUsername}</h1>
-                            </td>
-                            <td
-                              className={`flex justify-center whitespace-nowrap px-6 py-4`}
-                            >
-                              <RiWhatsappLine
-                                className="h-6 w-6"
-                                onClick={() =>
-                                  handleWhatsAppClick("9160804126")
-                                }
-                              />
-                            </td>
-                          </tr>
-                        );
-                      },
-                    )}
+                    {filteredNonSubmittedMentees?.map((user: any, index: any) => {
+                      return (
+                        <tr key={index}>
+                          <td className="whitespace-nowrap px-6 py-4">{index + 1}</td>
+                          <td className={`whitespace-nowrap px-6 py-4`}>
+                            <h1>{user.username}</h1>
+                          </td>
+                          <td className={`whitespace-nowrap px-6 py-4`}>
+                            <h1>{user.mentorUsername}</h1>
+                          </td>
+                          <td className={`flex justify-center whitespace-nowrap px-6 py-4`}>
+                            <RiWhatsappLine
+                              className="h-6 w-6"
+                              onClick={() => handleWhatsAppClick("9160804126")}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               ) : (
@@ -385,37 +351,28 @@ export default function AssignmentPage({
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {filteredAssignments?.map((submission: any, index: any) => {
                       const rValue = submission.points.find(
-                        (point: any) => point.category === "RESPOSIVENESS",
+                        (point: any) => point.category === "RESPOSIVENESS"
                       );
                       const sValue = submission.points.find(
-                        (point: any) => point.category === "STYLING",
+                        (point: any) => point.category === "STYLING"
                       );
                       const oValue = submission.points.find(
-                        (point: any) => point.category === "OTHER",
+                        (point: any) => point.category === "OTHER"
                       );
 
-                      const totalScore = [rValue, sValue, oValue].reduce(
-                        (acc, currentValue) => {
-                          return acc + (currentValue ? currentValue.score : 0);
-                        },
-                        0,
-                      );
+                      const totalScore = [rValue, sValue, oValue].reduce((acc, currentValue) => {
+                        return acc + (currentValue ? currentValue.score : 0);
+                      }, 0);
 
                       return (
                         <tr key={index}>
-                          <td className="whitespace-nowrap px-6 py-4">
-                            {index + 1}
-                          </td>
+                          <td className="whitespace-nowrap px-6 py-4">{index + 1}</td>
                           <td className="sticky left-0 divide-gray-200 bg-white">
                             <h1>{submission.enrolledUser.username}</h1>
-                            <h1 className="text-xs">
-                              {submission.enrolledUser.mentorUsername}
-                            </h1>
+                            <h1 className="text-xs">{submission.enrolledUser.mentorUsername}</h1>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 text-sm">
-                            {day(submission.submissionDate).format(
-                              "DD MMM YYYY, hh:mm:ss A",
-                            )}
+                            {day(submission.submissionDate).format("DD MMM YYYY, hh:mm:ss A")}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
                             {editingIndex === index ? (
@@ -425,11 +382,7 @@ export default function AssignmentPage({
                                 value={editedScores.responsiveness}
                                 onChange={(e) => {
                                   const newScore = parseInt(e.target.value);
-                                  if (
-                                    !isNaN(newScore) &&
-                                    newScore >= 0 &&
-                                    newScore <= 10
-                                  ) {
+                                  if (!isNaN(newScore) && newScore >= 0 && newScore <= 10) {
                                     setEditedScores((prevScores) => ({
                                       ...prevScores,
                                       responsiveness: newScore,
@@ -452,11 +405,7 @@ export default function AssignmentPage({
                                 value={editedScores.styling}
                                 onChange={(e) => {
                                   const newScore = parseInt(e.target.value);
-                                  if (
-                                    !isNaN(newScore) &&
-                                    newScore >= 0 &&
-                                    newScore <= 10
-                                  ) {
+                                  if (!isNaN(newScore) && newScore >= 0 && newScore <= 10) {
                                     setEditedScores((prevScores) => ({
                                       ...prevScores,
                                       styling: newScore,
@@ -479,11 +428,7 @@ export default function AssignmentPage({
                                 value={editedScores.other}
                                 onChange={(e) => {
                                   const newScore = parseInt(e.target.value);
-                                  if (
-                                    !isNaN(newScore) &&
-                                    newScore >= 0 &&
-                                    newScore <= 10
-                                  ) {
+                                  if (!isNaN(newScore) && newScore >= 0 && newScore <= 10) {
                                     setEditedScores((prevScores) => ({
                                       ...prevScores,
                                       other: newScore,
@@ -499,9 +444,7 @@ export default function AssignmentPage({
                             )}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            {rValue?.score || sValue?.score || oValue?.score
-                              ? totalScore
-                              : "NA"}
+                            {rValue?.score || sValue?.score || oValue?.score ? totalScore : "NA"}
                           </td>
                           <td>
                             {editingIndex === index ? (
@@ -542,8 +485,7 @@ export default function AssignmentPage({
                                 <div className="flex items-center justify-center gap-3">
                                   <Link
                                     href={
-                                      assignment.submissionMode ===
-                                        "HTML_CSS_JS"
+                                      assignment.submissionMode === "HTML_CSS_JS"
                                         ? `/playgrounds/html-css-js?submissionId=${submission.id}`
                                         : submission.submissionLink
                                     }
@@ -579,9 +521,7 @@ export default function AssignmentPage({
               {modal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                   <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-                    <h2 className="mb-4 text-lg font-semibold">
-                      Select a message to send
-                    </h2>
+                    <h2 className="mb-4 text-lg font-semibold">Select a message to send</h2>
                     <div className="flex flex-col gap-2">
                       {messages.map((msg, index) => (
                         <div
@@ -659,10 +599,7 @@ const StudentAssignmentSubmission = ({
             No more responses are accepted!
           </div>
         ) : assignment.submissionMode === "HTML_CSS_JS" ? (
-          <Link
-            href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`}
-            target="_blank"
-          >
+          <Link href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`} target="_blank">
             <button className="inline rounded bg-blue-600 p-2 text-sm font-semibold text-white">
               {assignment?.submissions.length === 0
                 ? "Submit through Playground"
@@ -685,10 +622,7 @@ const StudentAssignmentSubmission = ({
               <form onSubmit={handleSubmit}>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-5 items-center gap-4 pb-3">
-                    <Label
-                      htmlFor="externalLink"
-                      className="text-center text-lg"
-                    >
+                    <Label htmlFor="externalLink" className="text-center text-lg">
                       Link
                     </Label>
                     <Input
@@ -720,43 +654,28 @@ const StudentAssignmentSubmission = ({
         <table className="w-full text-center">
           <thead className="bg-secondary-300 text-secondary-700">
             <tr>
-              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
-                sl.no
-              </th>
-              <th
-                className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}
-              >
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">sl.no</th>
+              <th className={`px-6 py-3 text-sm font-medium uppercase tracking-wider`}>
                 View Submission
               </th>
               <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
                 Submission Date
               </th>
-              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
-                Feedback
-              </th>
-              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">
-                Total
-              </th>
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">Feedback</th>
+              <th className="px-6 py-3 text-sm font-medium uppercase tracking-wider">Total</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
             {assignment?.submissions.map((submission: any, index: any) => {
               const rValue = submission.points.find(
-                (point: any) => point.category === "RESPOSIVENESS",
+                (point: any) => point.category === "RESPOSIVENESS"
               );
-              const sValue = submission.points.find(
-                (point: any) => point.category === "STYLING",
-              );
-              const oValue = submission.points.find(
-                (point: any) => point.category === "OTHER",
-              );
+              const sValue = submission.points.find((point: any) => point.category === "STYLING");
+              const oValue = submission.points.find((point: any) => point.category === "OTHER");
 
-              const totalScore = [rValue, sValue, oValue].reduce(
-                (acc, currentValue) => {
-                  return acc + (currentValue ? currentValue.score : 0);
-                },
-                0,
-              );
+              const totalScore = [rValue, sValue, oValue].reduce((acc, currentValue) => {
+                return acc + (currentValue ? currentValue.score : 0);
+              }, 0);
 
               return (
                 <tr key={index}>
@@ -775,15 +694,12 @@ const StudentAssignmentSubmission = ({
                     </Link>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
-                    {submission.submissionDate.toISOString().split("T")[0] ||
-                      "NA"}
+                    {submission.submissionDate.toISOString().split("T")[0] || "NA"}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">
                     {submission.overallFeedback || "NA"}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    {totalScore ? "Submitted" : "NA"}
-                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">{totalScore ? "Submitted" : "NA"}</td>
                 </tr>
               );
             })}

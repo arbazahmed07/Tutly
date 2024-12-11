@@ -1,24 +1,24 @@
-import { Sun } from "lucide-react"
-import { Moon } from "lucide-react"
-import * as React from "react"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch";
+import { Sun } from "lucide-react";
+import { Moon } from "lucide-react";
+import * as React from "react";
 
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 export function ModeToggle() {
   const [isDark, setIsDark] = React.useState(() => {
     if (typeof window !== "undefined") {
-      const theme = localStorage.getItem("theme")
-      if (theme) return theme === "dark"
-      return window.matchMedia("(prefers-color-scheme: dark)").matches
+      const theme = localStorage.getItem("theme");
+      if (theme) return theme === "dark";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
-    return true
-  })
+    return true;
+  });
 
   React.useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDark)
-    localStorage.setItem("theme", isDark ? "dark" : "light")
-  }, [isDark])
+    document.documentElement.classList.toggle("dark", isDark);
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }, [isDark]);
 
   return (
     <div>

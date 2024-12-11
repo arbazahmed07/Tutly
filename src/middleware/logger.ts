@@ -13,13 +13,10 @@ export const logger = defineMiddleware(async ({ url, request: req }, next) => {
   const path = url.pathname;
   const status = res.status;
 
-  const color =
-    status >= 500 ? red : status >= 400 ? yellow : status >= 300 ? blue : green;
+  const color = status >= 500 ? red : status >= 400 ? yellow : status >= 300 ? blue : green;
 
   // [method] path - status - ms
-  console.log(
-    `${color(status.toString())} ${method} ${path} - ${status} - ${ms}ms`,
-  );
+  console.log(`${color(status.toString())} ${method} ${path} - ${status} - ${ms}ms`);
 
   if (status == 302) {
     console.log("<-- Redirecting to", res.headers.get("Location"));

@@ -20,16 +20,16 @@ export interface MentorCourseData extends CourseData {
 export type StudentDashboardData = {
   courses: StudentCourseData[];
   currentUser: User;
-}
+};
 
 export type MentorDashboardData = {
   courses: MentorCourseData[];
-}
+};
 
 export type InstructorDashboardData = {
   coursesCount: number;
   totalClasses: number;
   enrolledStudents: number;
-}
+};
 
-export type DashboardData = StudentDashboardData | MentorDashboardData | InstructorDashboardData; 
+export type DashboardData = StudentDashboardData | MentorDashboardData | InstructorDashboardData;

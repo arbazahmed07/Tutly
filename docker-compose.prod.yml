@@ -28,4 +28,4 @@ services:
 
 networks:
   tutly_network:
-    driver: bridge 
+    driver: bridge

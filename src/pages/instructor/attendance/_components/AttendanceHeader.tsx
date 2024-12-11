@@ -1,7 +1,11 @@
+import { actions } from "astro:actions";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiSolidCloudUpload } from "react-icons/bi";
-import { MdDeleteOutline } from "react-icons/md";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
+import { MdDeleteOutline } from "react-icons/md";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,23 +16,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState, useEffect } from "react";
-import dayjs from "dayjs";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 // import { useRouter } from "@/hooks/use-router";
 import BulkImport from "../../../../components/table/BulkImport";
 import { Column } from "../../../../components/table/DisplayTable";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { actions } from "astro:actions";
-
-
-
-
 
 const columns: Column[] = [
   {
@@ -40,21 +33,21 @@ const columns: Column[] = [
     filterable: true,
     validation: {
       required: true,
-      message: "Name must be a string"
-    }
+      message: "Name must be a string",
+    },
   },
   {
     key: "UserEmail",
     name: "Email",
-    label: "Email", 
+    label: "Email",
     type: "email",
     sortable: true,
     filterable: true,
     validation: {
       required: false,
       regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      message: "Must be a valid email address"
-    }
+      message: "Must be a valid email address",
+    },
   },
   {
     key: "JoinTime",
@@ -65,20 +58,20 @@ const columns: Column[] = [
     filterable: true,
     validation: {
       required: true,
-      message: "Join time is required"
-    }
+      message: "Join time is required",
+    },
   },
   {
     key: "LeaveTime",
     name: "Leave Time",
-    label: "Leave Time", 
+    label: "Leave Time",
     type: "datetime-local",
     sortable: true,
     filterable: true,
     validation: {
       required: true,
-      message: "Leave time is required"
-    }
+      message: "Leave time is required",
+    },
   },
   {
     key: "Duration",
@@ -90,8 +83,8 @@ const columns: Column[] = [
     validation: {
       required: true,
       regex: /^\d+$/,
-      message: "Duration must be a positive number"
-    }
+      message: "Duration must be a positive number",
+    },
   },
   {
     key: "Guest",
@@ -101,8 +94,8 @@ const columns: Column[] = [
     sortable: true,
     filterable: true,
     validation: {
-      required: false
-    }
+      required: false,
+    },
   },
   {
     key: "RecordingDisclaimerResponse",
@@ -112,8 +105,8 @@ const columns: Column[] = [
     sortable: true,
     filterable: true,
     validation: {
-      required: false
-    }
+      required: false,
+    },
   },
   {
     key: "InWaitingRoom",
@@ -123,8 +116,8 @@ const columns: Column[] = [
     sortable: true,
     filterable: true,
     validation: {
-      required: false
-    }
+      required: false,
+    },
   },
   {
     key: "username",
@@ -137,9 +130,7 @@ const columns: Column[] = [
       required: false,
     },
     render(_, row) {
-      return String(row.Name)
-        .substring(0, 10)
-        .toUpperCase();
+      return String(row.Name).substring(0, 10).toUpperCase();
     },
   },
 ];
@@ -165,7 +156,7 @@ export default function AttendanceHeader({
   setMaxInstructionDuration,
   handleBulkUpload,
 }: any) {
-//   const router = useRouter();
+  //   const router = useRouter();
 
   const handleDelete = async (x: any) => {
     try {
@@ -178,9 +169,7 @@ export default function AttendanceHeader({
     }
   };
 
-  const [clientMaxDuration, setClientMaxDuration] = useState<number>(
-    maxInstructionDuration,
-  );
+  const [clientMaxDuration, setClientMaxDuration] = useState<number>(maxInstructionDuration);
 
   useEffect(() => {
     let maxDuration = 0;
@@ -212,8 +201,6 @@ export default function AttendanceHeader({
     setClientMaxDuration(newDuration);
     setMaxInstructionDuration(newDuration);
   };
-
-
 
   return (
     <>
@@ -297,10 +284,8 @@ export default function AttendanceHeader({
               <div
                 onClick={
                   !currentCourse
-                    ? 
-                    () => toast.error("select course!")
-                    :
-                    () => setOpenClasses(!openClasses)
+                    ? () => toast.error("select course!")
+                    : () => setOpenClasses(!openClasses)
                 }
                 className="flex min-w-28 cursor-pointer items-center justify-between gap-2 rounded bg-primary-700 px-2 py-1"
               >
@@ -321,8 +306,7 @@ export default function AttendanceHeader({
                 className="flex min-w-28 cursor-pointer items-center justify-between gap-2 rounded bg-primary-700 px-2 py-1"
               >
                 <h1>
-                  {currentClass.title} (
-                  {dayjs(currentClass.createdAt).format("DD-MM-YYYY")})
+                  {currentClass.title} ({dayjs(currentClass.createdAt).format("DD-MM-YYYY")})
                 </h1>
                 {openClasses ? (
                   <h1>
@@ -373,29 +357,24 @@ export default function AttendanceHeader({
                   }
                 }}
               /> */}
-              {
-                currentClass ? (
-                  <BulkImport
-                  data={[]}
-                  columns={columns}
-                  onImport={handleBulkUpload}
-                  />
-                ) : (
-
-                  <TooltipProvider>
+              {currentClass ? (
+                <BulkImport data={[]} columns={columns} onImport={handleBulkUpload} />
+              ) : (
+                <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                    <Button className="w-[100px] cursor-not-allowed ml-auto bg-sky-600/50 hover:bg-sky-600/50 " >Bulk Import</Button>
+                      <Button className="w-[100px] cursor-not-allowed ml-auto bg-sky-600/50 hover:bg-sky-600/50 ">
+                        Bulk Import
+                      </Button>
                     </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-gray-700"
-                    >
-                      <p className="text-red-400 font-semibold text-xs">*Select class to upload attendance</p>
+                    <TooltipContent className="bg-gray-700">
+                      <p className="text-red-400 font-semibold text-xs">
+                        *Select class to upload attendance
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                )
-                }
+              )}
               {fileData && selectedFile && (
                 <div className="flex items-center justify-between gap-2">
                   <div>
@@ -412,8 +391,7 @@ export default function AttendanceHeader({
                     onClick={handleClientUpload}
                     className="flex cursor-pointer items-center gap-2 rounded bg-primary-600 px-2 py-1 hover:scale-x-105 hover:duration-500"
                   >
-                    upload{" "}
-                    <BiSolidCloudUpload className="text-xl duration-1000" />
+                    upload <BiSolidCloudUpload className="text-xl duration-1000" />
                   </div>
                 </div>
               )}
@@ -440,8 +418,7 @@ export default function AttendanceHeader({
                   <p className="flex items-center gap-1 pb-10 text-sm text-gray-500">
                     Are you sure?
                     <br />
-                    Continuing will clear the attendance of all students for
-                    this class.
+                    Continuing will clear the attendance of all students for this class.
                   </p>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

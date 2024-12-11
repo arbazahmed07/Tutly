@@ -3,12 +3,19 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { RiEdit2Fill } from "react-icons/ri";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import NoDataFound from "@/pages/courses/_components/NoDataFound";
 
+import NewAttachmentPage from "./NewAssignments";
 import DriveEmbed from "./videoEmbeds/driveEmbeds";
 import YoutubeEmbed from "./videoEmbeds/youtubeEmbeds";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import NewAttachmentPage from "./NewAssignments";
 
 interface Attachment {
   id: string;
@@ -138,22 +145,17 @@ export default function Class({
               <div className="my-2 text-xl">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button
-                      className="flex items-center justify-between bg-secondary-700 text-white hover:bg-secondary-600"
-                      variant={"secondary"}
-                    >
-                      Add an assignment&nbsp;
+                    <Button className="text-white">
+                      Add an assignment
                       <FaPlus />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="min-w-[70vw] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>Add Assignment</DialogTitle>
-                      <DialogDescription>
-                        Create a new assignment for this class.
-                      </DialogDescription>
+                      <DialogDescription>Create a new assignment for this class.</DialogDescription>
                     </DialogHeader>
-                    <NewAttachmentPage classes={classes} courseId={id} classId={classId}/>
+                    <NewAttachmentPage classes={classes} courseId={id} classId={classId} />
                   </DialogContent>
                 </Dialog>
               </div>

@@ -2,8 +2,8 @@
 import node from "@astrojs/node";
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
+import AstroPWA from "@vite-pwa/astro";
 import { defineConfig } from "astro/config";
-import AstroPWA from '@vite-pwa/astro'
 
 // https://astro.build/config
 export default defineConfig({
@@ -20,7 +20,7 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
     AstroPWA({
-      registerType: 'autoUpdate',
+      registerType: "autoUpdate",
       strategies: "injectManifest",
       srcDir: "src",
       filename: "service-worker.ts",
@@ -42,15 +42,15 @@ export default defineConfig({
           {
             src: "/logo-192x192.png",
             sizes: "192x192",
-            type: "image/png"
+            type: "image/png",
           },
           {
-            src: "/logo-512x512.png", 
+            src: "/logo-512x512.png",
             sizes: "512x512",
-            type: "image/png"
-          }
-        ]
-      }
+            type: "image/png",
+          },
+        ],
+      },
     }),
-  ]
+  ],
 });

@@ -1,9 +1,4 @@
-import {
-  generateCodeVerifier,
-  generateState,
-  Google,
-  OAuth2Tokens,
-} from "arctic";
+import { Google, OAuth2Tokens, generateCodeVerifier, generateState } from "arctic";
 
 import type { OAuthUser } from ".";
 
@@ -18,7 +13,7 @@ function google(url?: URL) {
   return new Google(
     googleClientId,
     googleClientSecret,
-    new URL("/api/auth/callback/google", url).toString(),
+    new URL("/api/auth/callback/google", url).toString()
   );
 }
 
@@ -28,11 +23,7 @@ export function createAuthorizationURL(url?: URL) {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
   const scopes = ["email", "profile"];
-  const redirectUrl = google(url).createAuthorizationURL(
-    state,
-    codeVerifier,
-    scopes,
-  );
+  const redirectUrl = google(url).createAuthorizationURL(state, codeVerifier, scopes);
 
   return {
     state,
@@ -41,11 +32,7 @@ export function createAuthorizationURL(url?: URL) {
   };
 }
 
-export function validateAuthorizationCode(
-  code: string,
-  codeVerifier: string,
-  url?: URL,
-) {
+export function validateAuthorizationCode(code: string, codeVerifier: string, url?: URL) {
   const g = url ? google(url) : google.default;
   return g.validateAuthorizationCode(code, codeVerifier);
 }

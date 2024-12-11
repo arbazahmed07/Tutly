@@ -1,15 +1,16 @@
-import db from "@/lib/db";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
 
+import db from "@/lib/db";
+
 export const getUserDoubtsByCourseId = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ courseId }, { locals }) {
     const currentUser = locals.user;
     if (!currentUser) return { error: "Unauthorized" };
-    
+
     const doubts = await db.doubt.findMany({
       where: {
         courseId: courseId,
@@ -25,7 +26,7 @@ export const getUserDoubtsByCourseId = defineAction({
       },
     });
     return { success: true, data: doubts };
-  }
+  },
 });
 
 export const getEnrolledCoursesDoubts = defineAction({
@@ -55,7 +56,7 @@ export const getEnrolledCoursesDoubts = defineAction({
       },
     });
     return { success: true, data: courses };
-  }
+  },
 });
 
 export const getCreatedCoursesDoubts = defineAction({
@@ -81,7 +82,7 @@ export const getCreatedCoursesDoubts = defineAction({
       },
     });
     return { success: true, data: courses };
-  }
+  },
 });
 
 export const getAllDoubtsForMentor = defineAction({
@@ -93,10 +94,10 @@ export const getAllDoubtsForMentor = defineAction({
       where: {
         enrolledUsers: {
           some: {
-            mentorUsername: currentUser.username
-          }
-        }
-      }
+            mentorUsername: currentUser.username,
+          },
+        },
+      },
     });
 
     if (!mentorCourses) return { error: "No courses found" };
@@ -121,14 +122,14 @@ export const getAllDoubtsForMentor = defineAction({
       },
     });
     return { success: true, data: courses };
-  }
+  },
 });
 
 export const createDoubt = defineAction({
   input: z.object({
     courseId: z.string(),
     title: z.string().optional(),
-    description: z.string().optional()
+    description: z.string().optional(),
   }),
   async handler({ courseId, title, description }, { locals }) {
     const currentUser = locals.user;
@@ -161,13 +162,13 @@ export const createDoubt = defineAction({
     });
 
     return { success: true, data: doubt };
-  }
+  },
 });
 
 export const createResponse = defineAction({
   input: z.object({
     doubtId: z.string(),
-    description: z.string()
+    description: z.string(),
   }),
   async handler({ doubtId, description }, { locals }) {
     const currentUser = locals.user;
@@ -192,12 +193,12 @@ export const createResponse = defineAction({
       },
     });
     return { success: true, data: response };
-  }
+  },
 });
 
 export const deleteDoubt = defineAction({
   input: z.object({
-    doubtId: z.string()
+    doubtId: z.string(),
   }),
   async handler({ doubtId }, { locals }) {
     const currentUser = locals.user;
@@ -219,12 +220,12 @@ export const deleteDoubt = defineAction({
       },
     });
     return { success: true, data: doubt };
-  }
+  },
 });
 
 export const deleteAnyDoubt = defineAction({
   input: z.object({
-    doubtId: z.string()
+    doubtId: z.string(),
   }),
   async handler({ doubtId }, { locals }) {
     const currentUser = locals.user;
@@ -245,12 +246,12 @@ export const deleteAnyDoubt = defineAction({
       },
     });
     return { success: true, data: doubt };
-  }
+  },
 });
 
 export const deleteResponse = defineAction({
   input: z.object({
-    responseId: z.string()
+    responseId: z.string(),
   }),
   async handler({ responseId }, { locals }) {
     const currentUser = locals.user;
@@ -262,5 +263,5 @@ export const deleteResponse = defineAction({
       },
     });
     return { success: true, data: response };
-  }
+  },
 });

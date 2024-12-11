@@ -1,14 +1,8 @@
+import type { Attachment, EnrolledUsers, Point, User, submission } from "@prisma/client";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
-import db from "@/lib/db";
 
-import type {
-  submission,
-  EnrolledUsers,
-  User,
-  Point,
-  Attachment,
-} from "@prisma/client";
+import db from "@/lib/db";
 
 export interface AssignmentDetails {
   id: string;
@@ -30,15 +24,15 @@ export const createSubmission = defineAction({
       id: z.string(),
       maxSubmissions: z.number(),
       class: z.object({
-        courseId: z.string()
-      })
+        courseId: z.string(),
+      }),
     }),
     files: z.any(),
     mentorDetails: z.object({
       mentor: z.object({
-        username: z.string()
-      })
-    })
+        username: z.string(),
+      }),
+    }),
   }),
   async handler({ assignmentDetails, files, mentorDetails }, { locals }) {
     const user = locals.user;
@@ -87,13 +81,13 @@ export const createSubmission = defineAction({
     });
 
     return { success: true, data: submission };
-  }
+  },
 });
 
 export const addOverallFeedback = defineAction({
   input: z.object({
     submissionId: z.string(),
-    feedback: z.string()
+    feedback: z.string(),
   }),
   async handler({ submissionId, feedback }, { locals }) {
     const user = locals.user;
@@ -121,7 +115,7 @@ export const addOverallFeedback = defineAction({
     });
 
     return { success: true, data: updatedSubmission };
-  }
+  },
 });
 
 interface SubmissionWithDetails extends submission {
@@ -136,7 +130,7 @@ interface SubmissionWithDetails extends submission {
 
 export const getAssignmentSubmissions = defineAction({
   input: z.object({
-    assignmentId: z.string()
+    assignmentId: z.string(),
   }),
   async handler({ assignmentId }, { locals }) {
     const user = locals.user;
@@ -178,7 +172,7 @@ export const getAssignmentSubmissions = defineAction({
 
     if (user.role === "MENTOR") {
       filteredSubmissions = submissions.filter(
-        (submission) => submission.enrolledUser.mentorUsername === user.username,
+        (submission) => submission.enrolledUser.mentorUsername === user.username
       );
     }
 
@@ -195,7 +189,7 @@ export const getAssignmentSubmissions = defineAction({
 
       filteredSubmissions.forEach((submission) => {
         const submissionCountData = submissionCount.find(
-          (data) => data.enrolledUserId === submission.enrolledUserId,
+          (data) => data.enrolledUserId === submission.enrolledUserId
         );
         if (submissionCountData) {
           submission.submissionCount = submissionCountData._count.id;
@@ -215,7 +209,7 @@ export const getAssignmentSubmissions = defineAction({
     }
 
     return { success: true, data: filteredSubmissions };
-  }
+  },
 });
 
 export const getAllAssignmentSubmissions = defineAction({
@@ -265,9 +259,7 @@ export const getAllAssignmentSubmissions = defineAction({
       {} as Record<string, SubmissionWithDetails[]>
     );
 
-    for (const [attachmentId, assignmentSubmissions] of Object.entries(
-      submissionsByAssignment
-    )) {
+    for (const [attachmentId, assignmentSubmissions] of Object.entries(submissionsByAssignment)) {
       const assignment = await db.attachment.findUnique({
         where: {
           id: attachmentId,
@@ -308,12 +300,12 @@ export const getAllAssignmentSubmissions = defineAction({
     }
 
     return { success: true, data: filteredSubmissions };
-  }
+  },
 });
 
 export const getSubmissionById = defineAction({
   input: z.object({
-    submissionId: z.string()
+    submissionId: z.string(),
   }),
   async handler({ submissionId }, { locals }) {
     const user = locals.user;
@@ -336,5 +328,5 @@ export const getSubmissionById = defineAction({
     }
 
     return { success: true, data: submission };
-  }
+  },
 });

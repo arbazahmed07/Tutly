@@ -1,7 +1,7 @@
 import { defineMiddleware, sequence } from "astro:middleware";
 
-import { logger } from "./logger";
 import { auth } from "./auth";
+import { logger } from "./logger";
 
 export const redirect = defineMiddleware(async ({ url }, next) => {
   // if the host is a www host, redirect to the non-www version

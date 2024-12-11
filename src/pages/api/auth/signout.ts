@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 export const GET: APIRoute = async ({ cookies, redirect }) => {
   const sessionId = cookies.get(AUTH_SESSION_COOKIE)?.value;
   if (!sessionId) return redirect("/sign-in", 302);
- 
+
   await deleteSession(sessionId);
 
   cookies.delete(AUTH_SESSION_COOKIE, {

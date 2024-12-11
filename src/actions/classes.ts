@@ -1,6 +1,7 @@
-import db from "@/lib/db";
-import {z} from "zod";
 import { defineAction } from "astro:actions";
+import { z } from "zod";
+
+import db from "@/lib/db";
 
 export const createClass = defineAction({
   input: z.object({
@@ -14,7 +15,15 @@ export const createClass = defineAction({
     folderId: z.string().optional(),
     folderName: z.string().optional(),
   }),
-  handler: async ({ classTitle, videoLink, videoType, courseId, folderId, folderName, createdAt }) => {
+  handler: async ({
+    classTitle,
+    videoLink,
+    videoType,
+    courseId,
+    folderId,
+    folderName,
+    createdAt,
+  }) => {
     try {
       const classData = {
         title: classTitle,
@@ -60,12 +69,11 @@ export const createClass = defineAction({
       return await db.class.create({
         data: classData,
       });
-
     } catch (error) {
       console.error("Error creating class:", error);
       throw new Error("Error creating class");
     }
-  }
+  },
 });
 
 // Update the EditClassType interface
@@ -87,17 +95,15 @@ export const updateClass = defineAction({
   handler: async (data, { locals }) => {
     const currentUser = locals.user;
     const isCourseAdmin = currentUser?.adminForCourses?.some(
-      (course: { id: string }) => course.id === data.courseId,
+      (course: { id: string }) => course.id === data.courseId
     );
-    const haveAccess =
-      currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
-    
+    const haveAccess = currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
+
     if (!haveAccess) {
       throw new Error("You are not authorized to update this class.");
     }
 
-    const { classTitle, videoLink, videoType, folderId, folderName, createdAt } =
-      data;
+    const { classTitle, videoLink, videoType, folderId, folderName, createdAt } = data;
 
     let newFolderId: string | undefined = undefined;
 
@@ -153,7 +159,7 @@ export const updateClass = defineAction({
       console.error("Error updating class:", error);
       throw new Error("Failed to update class. Please try again later.");
     }
-  }
+  },
 });
 
 export const deleteClass = defineAction({
@@ -172,7 +178,7 @@ export const deleteClass = defineAction({
       console.error("Error deleting class:", error);
       throw new Error("Failed to delete class. Please try again later.");
     }
-  }
+  },
 });
 
 export const totalNumberOfClasses = defineAction({
@@ -182,9 +188,7 @@ export const totalNumberOfClasses = defineAction({
       return res;
     } catch (error) {
       console.error("Error getting total number of classes:", error);
-      throw new Error(
-        "Failed to get total number of classes. Please try again later.",
-      );
+      throw new Error("Failed to get total number of classes. Please try again later.");
     }
-  }
+  },
 });

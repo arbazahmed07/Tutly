@@ -1,11 +1,12 @@
 import { type Class, Folder, User } from "@prisma/client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaFolder, FaFolderOpen } from "react-icons/fa6";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { MdOndemandVideo } from "react-icons/md";
-import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 import NewClassDialog from "./newClass";
 
@@ -36,15 +37,18 @@ function ClassSidebar({
   }, [pathname, classes]);
 
   // Group classes by folder
-  const { folderClasses, unfolderClasses } = classes.reduce((acc, classItem) => {
-    if (classItem.folderId) {
-      acc.folderClasses[classItem.folderId] = acc.folderClasses[classItem.folderId] || [];
-      acc.folderClasses[classItem.folderId]!.push(classItem);
-    } else {
-      acc.unfolderClasses.push(classItem);
-    }
-    return acc;
-  }, { folderClasses: {} as Record<string, Class[]>, unfolderClasses: [] as Class[] });
+  const { folderClasses, unfolderClasses } = classes.reduce(
+    (acc, classItem) => {
+      if (classItem.folderId) {
+        acc.folderClasses[classItem.folderId] = acc.folderClasses[classItem.folderId] || [];
+        acc.folderClasses[classItem.folderId]!.push(classItem);
+      } else {
+        acc.unfolderClasses.push(classItem);
+      }
+      return acc;
+    },
+    { folderClasses: {} as Record<string, Class[]>, unfolderClasses: [] as Class[] }
+  );
 
   const renderClassButton = (classItem: Class) => (
     <Button
@@ -78,19 +82,22 @@ function ClassSidebar({
         <ScrollArea className={cn("flex-1 px-1", isCollapsed && "hidden")}>
           <div className="space-y-1 p-2">
             {Object.entries(folderClasses).map(([folderId, classItems]) => {
-              const folder = classes.find(c => c.folderId === folderId)?.Folder;
+              const folder = classes.find((c) => c.folderId === folderId)?.Folder;
               if (!folder) return null;
 
               const isOpen = openFolders.includes(folder.id);
-              
+
               return (
                 <div key={folder.id} className="space-y-1">
                   <Button
                     variant="ghost"
-                    onClick={() => setOpenFolders(isOpen 
-                      ? openFolders.filter(id => id !== folder.id)
-                      : [...openFolders, folder.id]
-                    )}
+                    onClick={() =>
+                      setOpenFolders(
+                        isOpen
+                          ? openFolders.filter((id) => id !== folder.id)
+                          : [...openFolders, folder.id]
+                      )
+                    }
                     className="w-full justify-start gap-2 font-medium"
                   >
                     {isOpen ? (
@@ -101,18 +108,14 @@ function ClassSidebar({
                     {folder.title}
                   </Button>
                   {isOpen && (
-                    <div className="ml-4 space-y-1">
-                      {classItems.map(renderClassButton)}
-                    </div>
+                    <div className="ml-4 space-y-1">{classItems.map(renderClassButton)}</div>
                   )}
                 </div>
               );
             })}
 
             {unfolderClasses.length > 0 && (
-              <div className="space-y-1">
-                {unfolderClasses.map(renderClassButton)}
-              </div>
+              <div className="space-y-1">{unfolderClasses.map(renderClassButton)}</div>
             )}
           </div>
         </ScrollArea>

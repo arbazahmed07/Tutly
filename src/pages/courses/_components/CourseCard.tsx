@@ -1,10 +1,12 @@
-import { IoMdBookmarks } from "react-icons/io";
 import { useState } from "react";
-import { MdOutlineEdit } from "react-icons/md";
 import { FaUsersGear } from "react-icons/fa6";
+import { IoMdBookmarks } from "react-icons/io";
+import { MdOutlineEdit } from "react-icons/md";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "@/hooks/use-router";
+
 import CourseFormModal from "./CourseFormModal";
 
 export default function CourseCard({ course, currentUser }: any) {
@@ -23,9 +25,7 @@ export default function CourseCard({ course, currentUser }: any) {
       <div
         className="relative h-[150px] cursor-pointer bg-white text-secondary-700"
         onClick={
-          expired()
-            ? () => router.push("/courses")
-            : () => router.push(`/courses/${course.id}`)
+          expired() ? () => router.push("/courses") : () => router.push(`/courses/${course.id}`)
         }
       >
         <div className="relative h-full w-full">
@@ -48,9 +48,7 @@ export default function CourseCard({ course, currentUser }: any) {
 
       <div className="flex items-center justify-between border-t p-3">
         <div className="cursor-pointer">
-          <h2 className="font-medium">
-            {expired() ? `${course.title} [Expired]` : course.title}
-          </h2>
+          <h2 className="font-medium">{expired() ? `${course.title} [Expired]` : course.title}</h2>
         </div>
 
         {currentUser.role === "INSTRUCTOR" && (
@@ -58,18 +56,12 @@ export default function CourseCard({ course, currentUser }: any) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() =>
-                router.push(`/instructor/course/${course.id}/manage`)
-              }
+              onClick={() => router.push(`/instructor/course/${course.id}/manage`)}
             >
               <FaUsersGear className="h-5 w-5" />
             </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setOpenModal(true)}
-            >
+            <Button variant="ghost" size="icon" onClick={() => setOpenModal(true)}>
               <MdOutlineEdit className="h-5 w-5" />
             </Button>
 

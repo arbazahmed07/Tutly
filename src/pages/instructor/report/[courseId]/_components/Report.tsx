@@ -1,8 +1,9 @@
-import { useState, type ChangeEvent } from "react";
+import { Course } from "@prisma/client";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import { type ChangeEvent, useState } from "react";
+
 import day from "@/lib/dayjs";
-import { Course } from "@prisma/client";
 
 export interface DataItem {
   username: string;
@@ -34,9 +35,7 @@ const Report = ({
 
   const currentCourse = allCourses.find((course) => course.id === courseId);
 
-  const uniqueMentors = Array.from(
-    new Set(data.map((item) => item.mentorUsername)),
-  );
+  const uniqueMentors = Array.from(new Set(data.map((item) => item.mentorUsername)));
 
   const columnMapping: Record<string, keyof DataItem> = {
     Username: "username",
@@ -85,13 +84,10 @@ const Report = ({
           return formatAttendance(item[key]);
         }
         return item[key] !== undefined ? item[key].toString() : "";
-      }),
+      })
     );
 
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((e) => e.join(",")),
-    ].join("\n");
+    const csvContent = [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
@@ -165,7 +161,7 @@ const Report = ({
         doc.text(
           `Page ${doc.internal.getCurrentPageInfo().pageNumber}`,
           data.settings.margin.left,
-          doc.internal.pageSize.height - 10,
+          doc.internal.pageSize.height - 10
         );
       },
     });
@@ -196,22 +192,15 @@ const Report = ({
           (course: any) =>
             course.isPublished === true && (
               <a
-                href={
-                  isMentor
-                    ? `/mentor/report/${course.id}`
-                    : `/instructor/report/${course.id}`
-                }
-                className={`w-20 rounded p-2 sm:w-auto ${currentCourse?.id === course?.id
-                  ? "rounded border border-blue-500"
-                  : ""
-                  }`}
+                href={isMentor ? `/mentor/report/${course.id}` : `/instructor/report/${course.id}`}
+                className={`w-20 rounded p-2 sm:w-auto ${
+                  currentCourse?.id === course?.id ? "rounded border border-blue-500" : ""
+                }`}
                 key={course?.id}
               >
-                <h1 className="max-w-xs truncate text-sm font-medium">
-                  {course.title}
-                </h1>
+                <h1 className="max-w-xs truncate text-sm font-medium">{course.title}</h1>
               </a>
-            ),
+            )
         )}
       </div>
       {data.length === 0 ? (
@@ -298,8 +287,7 @@ const Report = ({
                     className="cursor-pointer truncate border-b border-gray-300 px-5 py-3 dark:border-gray-500"
                   >
                     {column}
-                    {sortColumn === columnMapping[column] &&
-                      (sortOrder === "asc" ? " ↑" : " ↓")}
+                    {sortColumn === columnMapping[column] && (sortOrder === "asc" ? " ↑" : " ↓")}
                   </th>
                 ))}
                 {isMentor ? null : (
@@ -308,8 +296,7 @@ const Report = ({
                     className="cursor-pointer truncate border-b border-gray-300 px-5 py-3 dark:border-gray-500"
                   >
                     Mentor
-                    {sortColumn === columnMapping.Mentor &&
-                      (sortOrder === "asc" ? " ↑" : " ↓")}
+                    {sortColumn === columnMapping.Mentor && (sortOrder === "asc" ? " ↑" : " ↓")}
                   </th>
                 )}
               </tr>
@@ -318,8 +305,9 @@ const Report = ({
               {filteredData.map((row, index) => (
                 <tr
                   key={index}
-                  className={`bg-gray-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-100"
-                    } dark:bg-gray-800`}
+                  className={`bg-gray-50 ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                  } dark:bg-gray-800`}
                 >
                   <td className="truncate border-b border-gray-300 px-5 py-3 dark:border-gray-700">
                     {index + 1}

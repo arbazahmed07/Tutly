@@ -1,10 +1,7 @@
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import { SubmissionList } from "./submissionList";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+
 import PlaygroundPage from "./PlaygroundPage";
+import { SubmissionList } from "./submissionList";
 
 interface ResizablePanelLayoutProps {
   assignmentId: string;
@@ -40,4 +37,4 @@ export function ResizablePanelLayout({
       </ResizablePanel>
     </ResizablePanelGroup>
   );
-} 
+}

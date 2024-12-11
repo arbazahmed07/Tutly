@@ -1,21 +1,15 @@
 import {
   AUTH_SESSION_COOKIE,
   AUTH_STATE_COOKIE,
+  type AuthState,
   createSession,
   findOrCreateUser,
   linkAccounts,
   providers,
-  type AuthState,
 } from "@lib/auth";
 import type { APIRoute } from "astro";
 
-export const GET: APIRoute = async ({
-  params,
-  url,
-  cookies,
-  request,
-  redirect,
-}) => {
+export const GET: APIRoute = async ({ params, url, cookies, request, redirect }) => {
   const providerName = params.provider as keyof typeof providers;
   if (!providerName || !(providerName in providers)) {
     return new Response("Invalid provider", { status: 400 });
@@ -36,11 +30,7 @@ export const GET: APIRoute = async ({
 
   try {
     // 1. Get OAuth tokens
-    const tokens = await provider.validateAuthorizationCode(
-      code, 
-      storedState.codeVerifier,
-      url
-    );
+    const tokens = await provider.validateAuthorizationCode(code, storedState.codeVerifier, url);
 
     // 2. Fetch user info from provider
     const oauthUser = await provider.fetchUser(tokens);
@@ -52,13 +42,13 @@ export const GET: APIRoute = async ({
     let providerAccountId: string;
     if (providerName === "google") {
       const googleUser = await fetch("https://www.googleapis.com/oauth2/v1/userinfo", {
-        headers: { Authorization: `Bearer ${tokens.accessToken()}` }
-      }).then(res => res.json());
+        headers: { Authorization: `Bearer ${tokens.accessToken()}` },
+      }).then((res) => res.json());
       providerAccountId = googleUser.id;
     } else if (providerName === "github") {
       const githubUser = await fetch("https://api.github.com/user", {
-        headers: { Authorization: `Bearer ${tokens.accessToken()}` }
-      }).then(res => res.json());
+        headers: { Authorization: `Bearer ${tokens.accessToken()}` },
+      }).then((res) => res.json());
       providerAccountId = githubUser.id.toString();
     } else {
       providerAccountId = oauthUser.email; // Fallback to email for other providers
@@ -97,11 +87,11 @@ export const GET: APIRoute = async ({
 
     // 7. Redirect to success page
     return redirect(storedState.from || "/dashboard");
-
   } catch (error) {
     console.error("OAuth callback error:", error);
-    return redirect("/sign-in?error=" + encodeURIComponent(
-      error instanceof Error ? error.message : "Authentication failed"
-    ));
+    return redirect(
+      "/sign-in?error=" +
+        encodeURIComponent(error instanceof Error ? error.message : "Authentication failed")
+    );
   }
 };

@@ -1,15 +1,18 @@
+import type { pointCategory } from "@prisma/client";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
+
 import db from "@/lib/db";
-import type { pointCategory } from "@prisma/client";
 
 export const addPoints = defineAction({
   input: z.object({
     submissionId: z.string(),
-    marks: z.array(z.object({
-      category: z.string().transform((val) => val as pointCategory),
-      score: z.number()
-    }))
+    marks: z.array(
+      z.object({
+        category: z.string().transform((val) => val as pointCategory),
+        score: z.number(),
+      })
+    ),
   }),
   async handler({ submissionId, marks }, { locals }) {
     try {
@@ -53,7 +56,7 @@ export const addPoints = defineAction({
               },
             });
           }
-        }),
+        })
       );
 
       return { success: true, data: allCategories };
@@ -61,12 +64,12 @@ export const addPoints = defineAction({
       console.log(error);
       return { error: "Error in adding points" };
     }
-  }
+  },
 });
 
 export const deleteSubmission = defineAction({
   input: z.object({
-    submissionId: z.string()
+    submissionId: z.string(),
   }),
   async handler({ submissionId }, { locals }) {
     const currentUser = locals.user;
@@ -81,5 +84,5 @@ export const deleteSubmission = defineAction({
     });
 
     return { success: true };
-  }
+  },
 });

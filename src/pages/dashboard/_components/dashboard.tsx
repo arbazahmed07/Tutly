@@ -1,9 +1,11 @@
-import { getGreeting } from "@/utils/getGreeting";
-import { DashboardData } from "@/types/dashboard";
 import { useEffect, useState } from "react";
-import { StudentCards } from "./StudentCards";
-import { MentorCards } from "./MentorCards";
+
+import { DashboardData } from "@/types/dashboard";
+import { getGreeting } from "@/utils/getGreeting";
+
 import { InstructorCards } from "./InstructorCards";
+import { MentorCards } from "./MentorCards";
+import { StudentCards } from "./StudentCards";
 
 interface Props {
   data: DashboardData | null;

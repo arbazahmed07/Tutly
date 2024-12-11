@@ -1,5 +1,6 @@
 import { defineAction } from "astro:actions";
 import { z } from "zod";
+
 import db from "@/lib/db";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 
@@ -18,20 +19,20 @@ export const getMentors = defineAction({
         role: "MENTOR",
         enrolledUsers: {
           some: {
-            courseId: courseId
-          }
-        }
+            courseId: courseId,
+          },
+        },
       },
       include: {
-        enrolledUsers: true
-      }
+        enrolledUsers: true,
+      },
     });
 
     return {
       success: true,
-      data: mentors
+      data: mentors,
     };
-  }
+  },
 });
 
 export const getMentorNameById = defineAction({
@@ -52,7 +53,7 @@ export const getMentorNameById = defineAction({
 
     return {
       success: true,
-      data: mentor?.name
+      data: mentor?.name,
     };
-  }
+  },
 });

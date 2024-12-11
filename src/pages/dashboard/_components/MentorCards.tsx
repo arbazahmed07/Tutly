@@ -1,7 +1,8 @@
-import { MentorDashboardData } from "@/types/dashboard";
 import { MdOutlineNoteAlt } from "react-icons/md";
 import { PiStudentBold } from "react-icons/pi";
 import { SiTicktick } from "react-icons/si";
+
+import { MentorDashboardData } from "@/types/dashboard";
 
 interface Props {
   data: MentorDashboardData;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 export function MentorCards({ data, selectedCourse }: Props) {
-  const course = data.courses.find(c => c.courseId === selectedCourse);
+  const course = data.courses.find((c) => c.courseId === selectedCourse);
 
   return (
     <>
@@ -30,4 +31,4 @@ export function MentorCards({ data, selectedCourse }: Props) {
       </div>
     </>
   );
-} 
+}

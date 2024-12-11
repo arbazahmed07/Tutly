@@ -1,19 +1,14 @@
-
+import { actions } from "astro:actions";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import {
-  FaSort,
-  FaSortAlphaDown,
-  FaSortAlphaDownAlt,
-  FaUserPlus,
-} from "react-icons/fa";
+import { FaSort, FaSortAlphaDown, FaSortAlphaDownAlt, FaUserPlus } from "react-icons/fa";
+import { FaUserXmark } from "react-icons/fa6";
+import { MdOutlineBlock } from "react-icons/md";
 import { RiGlobalLine } from "react-icons/ri";
 import { TbUserOff } from "react-icons/tb";
 import { TbUserSearch } from "react-icons/tb";
-import { MdOutlineBlock } from "react-icons/md";
-import { FaUserXmark } from "react-icons/fa6";
+
 import { useRouter } from "@/hooks/use-router";
-import { actions } from "astro:actions";
 
 const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
   const [loading, setLoading] = useState(false);
@@ -25,7 +20,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
   const [sortColumn, setSortColumn] = useState<string>("");
 
   const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(searchBar.trim().toLowerCase()),
+    user.username.toLowerCase().includes(searchBar.trim().toLowerCase())
   );
 
   const displayedUsers = showAllUsers
@@ -35,9 +30,8 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
   const mentors = users.filter(
     (user) =>
       user.role === "MENTOR" &&
-      user.enrolledUsers.find(
-        ({ course }: { course: any }) => course.id === params.id,
-      ) !== undefined,
+      user.enrolledUsers.find(({ course }: { course: any }) => course.id === params.id) !==
+        undefined
   );
 
   const handleEnroll = async (username: string) => {
@@ -45,20 +39,21 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     try {
       setLoading(true);
 
+      const { error } = await actions.courses_enrollStudentToCourse({
+        courseId: params.id,
+        username,
+      });
 
-    const {error} = await actions.courses_enrollStudentToCourse({courseId:params.id,username})
-    
-    if(error) {
+      if (error) {
         toast.dismiss();
-        toast.error(error.message)
-        setLoading(false)
-        return
-    }
-    
-    
-    toast.dismiss();
-    toast.success(`${username} enrolled successfully`);
-    router.push(router.pathname);
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
+
+      toast.dismiss();
+      toast.success(`${username} enrolled successfully`);
+      router.push(router.pathname);
       setLoading(false);
     } catch (err: any) {
       router.push(router.pathname);
@@ -73,15 +68,17 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     try {
       setLoading(true);
 
-    const {error} = await actions.courses_unenrollStudentFromCourse({courseId:params.id,username})
-    
-    
-    if(error) {
+      const { error } = await actions.courses_unenrollStudentFromCourse({
+        courseId: params.id,
+        username,
+      });
+
+      if (error) {
         toast.dismiss();
-        toast.error(error.message)
-        setLoading(false)
-        return
-    }
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
       toast.dismiss();
       toast.success(`${username} unenrolled successfully`);
       setLoading(false);
@@ -98,14 +95,17 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     try {
       setLoading(true);
 
-    const {error} = await actions.courses_updateRole({username,role:role as "STUDENT" | "MENTOR"})
-    
-    if(error) {
+      const { error } = await actions.courses_updateRole({
+        username,
+        role: role as "STUDENT" | "MENTOR",
+      });
+
+      if (error) {
         toast.dismiss();
-        toast.error(error.message)
-        setLoading(false)
-        return
-    }
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
       toast.dismiss();
       toast.success(`User role updated to ${role}`);
       setLoading(false);
@@ -117,16 +117,13 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
     }
   };
 
-  const handleMentorChange = async (
-    username: string,
-    mentorUsername: string,
-  ) => {
+  const handleMentorChange = async (username: string, mentorUsername: string) => {
     toast.loading("Updating mentor...");
     try {
       setLoading(true);
 
-      await actions.courses_updateMentor({courseId:params.id,username,mentorUsername})
-      
+      await actions.courses_updateMentor({ courseId: params.id, username, mentorUsername });
+
       toast.dismiss();
       toast.success(`Mentor updated successfully`);
       setLoading(false);
@@ -211,10 +208,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 <div className="flex items-center justify-center max-sm:px-10">
                   Username &nbsp;
                   {sortColumn !== "username" && (
-                    <FaSort
-                      onClick={() => handleSort("username")}
-                      className="cursor-pointer"
-                    />
+                    <FaSort onClick={() => handleSort("username")} className="cursor-pointer" />
                   )}
                   {sortColumn === "username" && sortOrder === "desc" && (
                     <FaSortAlphaDownAlt
@@ -235,10 +229,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 <div className="flex items-center justify-center">
                   Role &nbsp;
                   {sortColumn !== "role" && (
-                    <FaSort
-                      onClick={() => handleSort("role")}
-                      className="cursor-pointer"
-                    />
+                    <FaSort onClick={() => handleSort("role")} className="cursor-pointer" />
                   )}
                   {sortColumn === "role" && sortOrder === "desc" && (
                     <FaSortAlphaDownAlt
@@ -254,15 +245,9 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                   )}
                 </div>
               </th>
-              <th className="border border-gray-300 px-2 py-2 text-sm">
-                Email
-              </th>
-              <th className="border border-gray-300 px-2 py-2 text-sm">
-                Mentor
-              </th>
-              <th className="border border-gray-300 px-2 py-2 text-sm">
-                Action
-              </th>
+              <th className="border border-gray-300 px-2 py-2 text-sm">Email</th>
+              <th className="border border-gray-300 px-2 py-2 text-sm">Mentor</th>
+              <th className="border border-gray-300 px-2 py-2 text-sm">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -277,9 +262,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
             )}
             {sortedUsers.map((user, index) => (
               <tr key={user.id} className="hover:bg-slate-600">
-                <td className="border border-gray-300 px-2 py-2 text-sm">
-                  {index + 1}
-                </td>
+                <td className="border border-gray-300 px-2 py-2 text-sm">{index + 1}</td>
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   <div className="flex items-center space-x-2">
                     <img
@@ -293,17 +276,13 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                     <span>{user.username}</span>
                   </div>
                 </td>
-                <td className="border border-gray-300 px-2 py-2 text-sm">
-                  {user.name}
-                </td>
+                <td className="border border-gray-300 px-2 py-2 text-sm">{user.name}</td>
                 <td className="border border-gray-300 px-2 py-2 text-center text-sm">
                   {user.role !== "INSTRUCTOR" ? (
                     <select
                       title="role"
                       value={user.role}
-                      onChange={(e) =>
-                        handleRoleChange(user.username, e.target.value)
-                      }
+                      onChange={(e) => handleRoleChange(user.username, e.target.value)}
                       className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none bg-zinc-700"
                     >
                       {roles.map((role) => (
@@ -318,20 +297,16 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                     </span>
                   )}
                 </td>
-                <td className="border border-gray-300 px-2 py-2 text-sm">
-                  {user.email}
-                </td>
+                <td className="border border-gray-300 px-2 py-2 text-sm">{user.email}</td>
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   {user.role === "STUDENT" &&
                   user.enrolledUsers.find(
-                    ({ course }: { course: any }) => course.id === params.id,
+                    ({ course }: { course: any }) => course.id === params.id
                   ) !== undefined ? (
                     <select
                       title="role"
                       value={user.mentor}
-                      onChange={(e) =>
-                        handleMentorChange(user.username, e.target.value)
-                      }
+                      onChange={(e) => handleMentorChange(user.username, e.target.value)}
                       className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none bg-zinc-700"
                     >
                       <option value="">None</option>
@@ -342,8 +317,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                           selected={
                             mentor.username ===
                             user.enrolledUsers.find(
-                              ({ course }: { course: any }) =>
-                                course.id === params.id,
+                              ({ course }: { course: any }) => course.id === params.id
                             )?.mentorUsername
                           }
                         >
@@ -359,7 +333,7 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 </td>
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   {user.enrolledUsers.find(
-                    ({ course }: { course: any }) => course.id === params.id,
+                    ({ course }: { course: any }) => course.id === params.id
                   ) === undefined ? (
                     <button
                       disabled={loading}

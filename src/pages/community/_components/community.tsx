@@ -1,15 +1,14 @@
 import { useState } from "react";
-import Accordion from "./accordion";
+
 import NoDataFound from "@/pages/courses/_components/NoDataFound";
+
+import Accordion from "./accordion";
 
 export default function CommunityForum({ allDoubts, currentUser }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(allDoubts[0]?.id);
-  const filteredallDoubts = allDoubts.filter(
-    (x: any) => x.id === currentCourse,
-  );
+  const filteredallDoubts = allDoubts.filter((x: any) => x.id === currentCourse);
 
-  if (!currentUser)
-    return <div className="text-center">Sign in to view doubts!</div>;
+  if (!currentUser) return <div className="text-center">Sign in to view doubts!</div>;
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -27,11 +26,9 @@ export default function CommunityForum({ allDoubts, currentUser }: any) {
                 }`}
                 key={course?.id}
               >
-                <h1 className="max-w-xs truncate text-sm font-medium">
-                  {course.title}
-                </h1>
+                <h1 className="max-w-xs truncate text-sm font-medium">{course.title}</h1>
               </button>
-            ),
+            )
         )}
       </div>
       <div className="flex flex-col gap-2">

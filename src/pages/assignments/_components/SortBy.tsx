@@ -1,7 +1,5 @@
 import { useRouter } from "@/hooks/use-router";
 
-
-
 const SortBy = ({
   assignmentId,
   searchParams,
@@ -13,16 +11,14 @@ const SortBy = ({
   return (
     <>
       <div className="flex border-b p-1 sm:p-2">
-        <p className="text-nowrap text-sm font-semibold max-sm:hidden">
-          Sort by
-        </p>
+        <p className="text-nowrap text-sm font-semibold max-sm:hidden">Sort by</p>
         <select
           className="sm:ml-2"
           onChange={(e) => {
             const sortBy = e.target.value;
             const newSearchParams = { ...searchParams, sortBy };
             router.push(
-              `/assignments/${assignmentId}/evaluate?${new URLSearchParams(newSearchParams).toString()}`,
+              `/assignments/${assignmentId}/evaluate?${new URLSearchParams(newSearchParams).toString()}`
             );
           }}
           value={searchParams?.sortBy || "username"}

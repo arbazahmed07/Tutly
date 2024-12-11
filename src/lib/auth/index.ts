@@ -1,8 +1,9 @@
 import type { OAuth2Tokens } from "arctic";
+
+import db from "../db.ts";
+import * as credentials from "./credentials.ts";
 import * as github from "./github.ts";
 import * as google from "./google.ts";
-import * as credentials from "./credentials.ts";
-import db from "../db.ts";
 
 export type OAuthUser = {
   name: string;
@@ -10,10 +11,7 @@ export type OAuthUser = {
   avatar_url: string;
 };
 
-export function tryOr<T, E>(
-  fn: () => T,
-  fallback: E | ((error: unknown) => E),
-): T | E {
+export function tryOr<T, E>(fn: () => T, fallback: E | ((error: unknown) => E)): T | E {
   try {
     return fn();
   } catch (error) {
@@ -27,13 +25,9 @@ export function tryOr<T, E>(
 interface Provider {
   createAuthorizationURL(
     url?: URL,
-    codeverifier?: string,
+    codeverifier?: string
   ): { state: string; codeVerifier?: string; redirectUrl: URL };
-  validateAuthorizationCode(
-    code: string,
-    codeverifier?: string,
-    url?: URL,
-  ): Promise<OAuth2Tokens>;
+  validateAuthorizationCode(code: string, codeverifier?: string, url?: URL): Promise<OAuth2Tokens>;
   refreshAccessToken(refreshToken: string): Promise<OAuth2Tokens>;
   revokeAccessToken(token: string): void | Promise<void>;
   fetchUser(tokens: OAuth2Tokens): Promise<OAuthUser | null>;
@@ -100,7 +94,11 @@ export function extractDeviceLabel(userAgent: string) {
   return label || "Unknown Device";
 }
 
-export async function findOrCreateUser(provider: ProviderKey, userInfo: OAuthUser, providerAccountId: string) {
+export async function findOrCreateUser(
+  provider: ProviderKey,
+  userInfo: OAuthUser,
+  providerAccountId: string
+) {
   try {
     // First try to find existing account with this provider
     const existingAccount = await db.account.findFirst({
@@ -119,11 +117,13 @@ export async function findOrCreateUser(provider: ProviderKey, userInfo: OAuthUse
     }
 
     // No account exists, try to find user by email
-    const existingUser = userInfo.email ? await db.user.findFirst({
-      where: {
-        email: userInfo.email,
-      },
-    }) : null;
+    const existingUser = userInfo.email
+      ? await db.user.findFirst({
+          where: {
+            email: userInfo.email,
+          },
+        })
+      : null;
 
     if (existingUser) {
       // User exists but not linked to this provider - return user for linking
@@ -136,7 +136,7 @@ export async function findOrCreateUser(provider: ProviderKey, userInfo: OAuthUse
         email: userInfo.email,
         name: userInfo.name,
         image: userInfo.avatar_url,
-        username: userInfo.email?.split("@")[0]?.toUpperCase() || ""
+        username: userInfo.email?.split("@")[0]?.toUpperCase() || "",
       },
     });
   } catch (error) {
@@ -145,7 +145,12 @@ export async function findOrCreateUser(provider: ProviderKey, userInfo: OAuthUse
   }
 }
 
-export async function linkAccounts(userId: string, provider: ProviderKey, tokens: OAuth2Tokens, providerAccountId: string) {
+export async function linkAccounts(
+  userId: string,
+  provider: ProviderKey,
+  tokens: OAuth2Tokens,
+  providerAccountId: string
+) {
   try {
     // Check if this provider account is already linked to any user
     const existingAccount = await db.account.findFirst({
@@ -162,11 +167,11 @@ export async function linkAccounts(userId: string, provider: ProviderKey, tokens
           where: { id: existingAccount.id },
           data: {
             access_token: tokens.accessToken(),
-            expires_at: tokens.accessTokenExpiresAt() ? 
-              Math.floor(tokens.accessTokenExpiresAt().getTime() / 1000) : 
-              null,
+            expires_at: tokens.accessTokenExpiresAt()
+              ? Math.floor(tokens.accessTokenExpiresAt().getTime() / 1000)
+              : null,
             refresh_token: tryOr(tokens.refreshToken, null),
-          }
+          },
         });
       } else {
         // Provider account already linked to different user
@@ -182,12 +187,12 @@ export async function linkAccounts(userId: string, provider: ProviderKey, tokens
         type: "oauth",
         providerAccountId,
         access_token: tokens.accessToken(),
-        expires_at: tokens.accessTokenExpiresAt() ? 
-          Math.floor(tokens.accessTokenExpiresAt().getTime() / 1000) : 
-          null,
+        expires_at: tokens.accessTokenExpiresAt()
+          ? Math.floor(tokens.accessTokenExpiresAt().getTime() / 1000)
+          : null,
         refresh_token: tryOr(tokens.refreshToken, null),
         token_type: "Bearer",
-      }
+      },
     });
   } catch (error) {
     console.error("Error linking accounts:", error);
@@ -200,7 +205,7 @@ export async function createSession(
   tokens: OAuth2Tokens,
   providerAccountId: string,
   userInfo: OAuthUser,
-  userAgent?: string,
+  userAgent?: string
 ) {
   try {
     // Find or create user
@@ -220,8 +225,8 @@ export async function createSession(
         expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
       },
       select: {
-        id: true
-      }
+        id: true,
+      },
     });
 
     if (!session) return null;
@@ -235,8 +240,8 @@ export async function createSession(
 export async function deleteSession(sessionId: string) {
   await db.session.delete({
     where: {
-      id: sessionId
-    }
+      id: sessionId,
+    },
   });
 }
 
@@ -253,16 +258,16 @@ export async function getSession(sessionId: string) {
           adminForCourses: true,
           organization: true,
           enrolledUsers: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
 
   if (!session || !session.user) return null;
 
   // Get the OAuth account if it exists
-  const oauthAccount = session.user.account.find(a => a.provider in providers);
-  
+  const oauthAccount = session.user.account.find((a) => a.provider in providers);
+
   if (oauthAccount && oauthAccount.expires_at) {
     const provider = providers[oauthAccount.provider as ProviderKey];
     const expiresAt = new Date(oauthAccount.expires_at * 1000);
@@ -277,17 +282,17 @@ export async function getSession(sessionId: string) {
       try {
         // Refresh the token
         const tokens = await provider.refreshAccessToken(oauthAccount.refresh_token);
-        
+
         // Update the account with new tokens
         await db.account.update({
           where: { id: oauthAccount.id },
           data: {
             access_token: tokens.accessToken(),
-            expires_at: tokens.accessTokenExpiresAt() ? 
-              Math.floor(tokens.accessTokenExpiresAt().getTime() / 1000) : 
-              null,
+            expires_at: tokens.accessTokenExpiresAt()
+              ? Math.floor(tokens.accessTokenExpiresAt().getTime() / 1000)
+              : null,
             refresh_token: tryOr(tokens.refreshToken, null),
-          }
+          },
         });
       } catch (error) {
         console.error("Failed to refresh token:", error);
@@ -301,13 +306,13 @@ export async function getSession(sessionId: string) {
   const expiresAt = new Date(
     Math.min(
       session.expiresAt.getTime() + 1000 * 60 * 60 * 24, // extend by 1 day
-      Date.now() + 1000 * 60 * 60 * 24, // max 1 day from now
-    ),
+      Date.now() + 1000 * 60 * 60 * 24 // max 1 day from now
+    )
   );
 
   await db.session.update({
     where: { id: sessionId },
-    data: { expiresAt }
+    data: { expiresAt },
   });
 
   return {

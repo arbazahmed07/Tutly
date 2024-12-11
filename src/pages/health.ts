@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+
 import db from "@/lib/db";
 
 interface HealthMessage {
@@ -20,7 +21,7 @@ export const GET: APIRoute = async () => {
 
   try {
     await db.$queryRaw`SELECT 1`;
-    
+
     message = {
       status: "healthy",
       timestamp: new Date().toISOString(),
@@ -28,8 +29,8 @@ export const GET: APIRoute = async () => {
       services: {
         database: "up",
         auth: "up",
-        api: "up"
-      }
+        api: "up",
+      },
     };
     status = 200;
   } catch (error) {
@@ -37,7 +38,7 @@ export const GET: APIRoute = async () => {
       status: "error",
       timestamp: new Date().toISOString(),
       message: "Health check failed",
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
     };
     status = 500;
   }
@@ -45,7 +46,7 @@ export const GET: APIRoute = async () => {
   return new Response(JSON.stringify(message), {
     status,
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   });
 };

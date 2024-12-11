@@ -1,11 +1,7 @@
+import { actions } from "astro:actions";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,11 +12,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Button } from "@/components/ui/button";
-import { actions } from "astro:actions";
 
 interface CourseFormModalProps {
   open: boolean;
@@ -100,9 +96,7 @@ export default function CourseFormModal({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {mode === "add" ? "Add New Course" : "Edit Course"}
-            </DialogTitle>
+            <DialogTitle>{mode === "add" ? "Add New Course" : "Edit Course"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -150,12 +144,9 @@ export default function CourseFormModal({
               >
                 {isSubmitting ? "Saving..." : mode === "add" ? "Create" : "Save"}
               </Button>
-              
+
               {mode === "edit" && (
-                <Button
-                  variant="destructive"
-                  onClick={() => setShowDeleteAlert(true)}
-                >
+                <Button variant="destructive" onClick={() => setShowDeleteAlert(true)}>
                   Delete
                 </Button>
               )}
@@ -169,8 +160,8 @@ export default function CourseFormModal({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the course
-              and all its associated data.
+              This action cannot be undone. This will permanently delete the course and all its
+              associated data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -181,4 +172,4 @@ export default function CourseFormModal({
       </AlertDialog>
     </>
   );
-} 
+}

@@ -1,16 +1,11 @@
-import { useRouter } from "@/hooks/use-router";
 import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 
-const DeleteClass = ({
-  classId,
-  courseId,
-}: {
-  classId: string;
-  courseId: string;
-}) => {
+import { useRouter } from "@/hooks/use-router";
+
+const DeleteClass = ({ classId, courseId }: { classId: string; courseId: string }) => {
   const router = useRouter();
   const [clicked, setClicked] = useState(false);
 

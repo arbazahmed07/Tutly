@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { actions } from "astro:actions";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa";
 
-import toast from "react-hot-toast";
-import { actions } from "astro:actions";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +11,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const NewClassDialog = ({ courseId }: { courseId: string }) => {
   const [videoLink, setVideoLink] = useState("");
@@ -22,9 +28,7 @@ const NewClassDialog = ({ courseId }: { courseId: string }) => {
   const [folderName, setFolderName] = useState("");
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState("");
-  const [createdAt, setCreatedAt] = useState(
-    new Date().toISOString().split("T")[0],
-  );
+  const [createdAt, setCreatedAt] = useState(new Date().toISOString().split("T")[0]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -102,7 +106,6 @@ const NewClassDialog = ({ courseId }: { courseId: string }) => {
             </SelectContent>
           </Select>
 
-
           <Input
             type="text"
             placeholder="Enter class title"
@@ -117,12 +120,7 @@ const NewClassDialog = ({ courseId }: { courseId: string }) => {
             onChange={(e) => setVideoLink(e.target.value)}
           />
 
-
-          <Input
-            type="date"
-            value={createdAt}
-            onChange={(e) => setCreatedAt(e.target.value)}
-          />
+          <Input type="date" value={createdAt} onChange={(e) => setCreatedAt(e.target.value)} />
 
           <Select value={selectedFolder} onValueChange={setSelectedFolder}>
             <SelectTrigger>

@@ -1,5 +1,6 @@
 import { defineAction } from "astro:actions";
 import { z } from "zod";
+
 import db from "@/lib/db";
 
 export const getNotifications = defineAction({
@@ -32,7 +33,7 @@ export const markAllNotificationsAsRead = defineAction({
   async handler(_, { locals }) {
     const userId = locals.user?.id!;
     await db.notification.updateMany({
-      where: { 
+      where: {
         intendedForId: userId,
         readAt: null,
       },
@@ -66,7 +67,7 @@ export const updateNotificationConfig = defineAction({
   }),
   async handler({ userId, config }) {
     const { endpoint, p256dh, auth } = config;
-    
+
     // Delete existing subscription if endpoint is empty
     if (!endpoint) {
       await db.pushSubscription.deleteMany({
@@ -91,8 +92,7 @@ export const updateNotificationConfig = defineAction({
         auth,
       },
     });
-    
+
     return subscription;
   },
 });
-

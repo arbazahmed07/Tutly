@@ -1,6 +1,8 @@
-import React, { useState, useCallback, useEffect } from "react"
-import { Plus, Trash2, Info } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Info, Plus, Trash2 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,75 +10,90 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import toast from "react-hot-toast"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type ColumnDef = {
-  key: string
-  name: string
-  type?: "text" | "number" | "date" | "datetime-local" | "time" | "email" | 
-        "tel" | "url" | "password" | "select" | "textarea" | "checkbox" | 
-        "radio" | "color" | "file" | "range" | "month" | "week"
-  options?: { label: string; value: any }[]
-  min?: number | string
-  max?: number | string
-  step?: number | string
-  rows?: number
-  accept?: string
-  multiple?: boolean
-  placeholder?: string
+  key: string;
+  name: string;
+  type?:
+    | "text"
+    | "number"
+    | "date"
+    | "datetime-local"
+    | "time"
+    | "email"
+    | "tel"
+    | "url"
+    | "password"
+    | "select"
+    | "textarea"
+    | "checkbox"
+    | "radio"
+    | "color"
+    | "file"
+    | "range"
+    | "month"
+    | "week";
+  options?: { label: string; value: any }[];
+  min?: number | string;
+  max?: number | string;
+  step?: number | string;
+  rows?: number;
+  accept?: string;
+  multiple?: boolean;
+  placeholder?: string;
   validation?: {
-    required?: boolean
-    regex?: RegExp
-    message?: string
-    minLength?: number
-    maxLength?: number
-    custom?: (value: any) => string | undefined
-  }
-}
+    required?: boolean;
+    regex?: RegExp;
+    message?: string;
+    minLength?: number;
+    maxLength?: number;
+    custom?: (value: any) => string | undefined;
+  };
+};
 
 type BulkImportProps = {
-  columns: ColumnDef[]
-  data: any[]
-  onImport: (data: any[]) => void
-}
+  columns: ColumnDef[];
+  data: any[];
+  onImport: (data: any[]) => void;
+};
 
-type Row = Record<string, any>
+type Row = Record<string, any>;
 
 export default function BulkImport({ columns, data, onImport }: BulkImportProps) {
-  const [gridData, setGridData] = useState<Row[]>([])
-  const [errors, setErrors] = useState<Record<string, string[]>>({})
-  const [isOpen, setIsOpen] = useState(false)
-
+  const [gridData, setGridData] = useState<Row[]>([]);
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    setGridData(data.length > 0 ? data : [{}])
-  }, [data])
+    setGridData(data.length > 0 ? data : [{}]);
+  }, [data]);
 
   useEffect(() => {
     if (isOpen) {
-      setGridData(data.length > 0 ? data : [{}])
-      setErrors({})
+      setGridData(data.length > 0 ? data : [{}]);
+      setErrors({});
     }
-  }, [isOpen, data])
+  }, [isOpen, data]);
 
   const validateRow = (row: Row, rowIndex: number) => {
-    const newErrors: Record<string, string[]> = {}
+    const newErrors: Record<string, string[]> = {};
 
     columns.forEach((col) => {
-      const value = row[col.key]
-      const validation = col.validation
+      const value = row[col.key];
+      const validation = col.validation;
 
       if (validation) {
         if (validation.required && (!value || value.toString().trim() === "")) {
-          newErrors[`${rowIndex}-${col.key}`] = [`${col.name} is required`]
+          newErrors[`${rowIndex}-${col.key}`] = [`${col.name} is required`];
         } else if (value && validation.regex) {
           if (col.type === "datetime-local") {
             let dateValue = value;
@@ -84,101 +101,110 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
               const date = new Date(value);
               dateValue = date.toISOString().slice(0, 16);
             }
-            
+
             if (!validation.regex.test(dateValue)) {
-              newErrors[`${rowIndex}-${col.key}`] = [validation.message || "Invalid datetime format"]
+              newErrors[`${rowIndex}-${col.key}`] = [
+                validation.message || "Invalid datetime format",
+              ];
             }
           } else if (!validation.regex.test(value.toString())) {
-            newErrors[`${rowIndex}-${col.key}`] = [validation.message || "Invalid format"]
+            newErrors[`${rowIndex}-${col.key}`] = [validation.message || "Invalid format"];
           }
         }
       }
-    })
+    });
 
-    return newErrors
-  }
+    return newErrors;
+  };
 
   const validateAllRows = (rows: Row[]) => {
-    const allErrors: Record<string, string[]> = {}
+    const allErrors: Record<string, string[]> = {};
     rows.forEach((row, index) => {
-      const rowErrors = validateRow(row, index)
-      Object.assign(allErrors, rowErrors)
-    })
-    return allErrors
-  }
+      const rowErrors = validateRow(row, index);
+      Object.assign(allErrors, rowErrors);
+    });
+    return allErrors;
+  };
 
-  const handlePaste = useCallback((event: React.ClipboardEvent<HTMLDivElement>) => {
-    event.preventDefault()
+  const handlePaste = useCallback(
+    (event: React.ClipboardEvent<HTMLDivElement>) => {
+      event.preventDefault();
 
-    const targetCell = (event.target as HTMLElement).closest("td")
-    if (!targetCell) return
+      const targetCell = (event.target as HTMLElement).closest("td");
+      if (!targetCell) return;
 
-    const columnIndex = Array.from(targetCell.parentElement?.children || []).indexOf(targetCell)
-    const rowIndex = Array.from(targetCell.parentElement?.parentElement?.children || []).indexOf(targetCell.parentElement!)
+      const columnIndex = Array.from(targetCell.parentElement?.children || []).indexOf(targetCell);
+      const rowIndex = Array.from(targetCell.parentElement?.parentElement?.children || []).indexOf(
+        targetCell.parentElement!
+      );
 
-    const pastedData = event.clipboardData
-      .getData("text")
-      .split("\n")
-      .filter(line => line.trim())
-      .map((row) => row.split("\t"))
+      const pastedData = event.clipboardData
+        .getData("text")
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((row) => row.split("\t"));
 
-    setGridData((prevData) => {
-      const newData = [...prevData]
-      
-      pastedData.forEach((row, index) => {
-        const currentRowIndex = rowIndex + index
-        if (!newData[currentRowIndex]) {
-          newData[currentRowIndex] = {}
-        }
+      setGridData((prevData) => {
+        const newData = [...prevData];
 
-        row.forEach((value, colOffset) => {
-          const targetColIndex = columnIndex + colOffset
-          if (targetColIndex < columns.length) {
-            const column = columns[targetColIndex]
-            if (column) {
-              let processedValue = value.trim()
-              
-              if (column.type === "datetime-local" && processedValue) {
-                try {
-                  const date = new Date(processedValue);
-                  if (!isNaN(date.getTime())) {
-                    processedValue = date.toISOString().slice(0, 16);
+        pastedData.forEach((row, index) => {
+          const currentRowIndex = rowIndex + index;
+          if (!newData[currentRowIndex]) {
+            newData[currentRowIndex] = {};
+          }
+
+          row.forEach((value, colOffset) => {
+            const targetColIndex = columnIndex + colOffset;
+            if (targetColIndex < columns.length) {
+              const column = columns[targetColIndex];
+              if (column) {
+                let processedValue = value.trim();
+
+                if (column.type === "datetime-local" && processedValue) {
+                  try {
+                    const date = new Date(processedValue);
+                    if (!isNaN(date.getTime())) {
+                      processedValue = date.toISOString().slice(0, 16);
+                    }
+                  } catch (error) {
+                    console.error("Date parsing error:", error);
                   }
-                } catch (error) {
-                  console.error("Date parsing error:", error);
+                }
+
+                if (column.type === "select" && column.options) {
+                  const option = column.options.find(
+                    (opt) =>
+                      opt.value.toString().toLowerCase() === processedValue.toLowerCase() ||
+                      opt.label.toLowerCase() === processedValue.toLowerCase()
+                  );
+                  processedValue = option ? option.value : processedValue;
+                }
+                if (newData[currentRowIndex]) {
+                  newData[currentRowIndex][column.key] = processedValue;
                 }
               }
-              
-              if (column.type === "select" && column.options) {
-                const option = column.options.find(
-                  opt => opt.value.toString().toLowerCase() === processedValue.toLowerCase() ||
-                        opt.label.toLowerCase() === processedValue.toLowerCase()
-                )
-                processedValue = option ? option.value : processedValue
-              }
-              if (newData[currentRowIndex]) {
-                newData[currentRowIndex][column.key] = processedValue
-              }
             }
-          }
-        })
-      })
+          });
+        });
 
-      return newData
-    })
+        return newData;
+      });
 
-    setGridData((currentData) => {
-      const newErrors = validateAllRows(currentData)
-      setErrors(newErrors)
-      return currentData
-    })
-  }, [columns])
+      setGridData((currentData) => {
+        const newErrors = validateAllRows(currentData);
+        setErrors(newErrors);
+        return currentData;
+      });
+    },
+    [columns]
+  );
 
   const renderInput = (column: ColumnDef, value: any, rowIndex: number) => {
     const commonProps = {
       value: value ?? "",
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => 
-        handleCellChange(rowIndex, column.key, e.target.value),
+      onChange: (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+      ) => handleCellChange(rowIndex, column.key, e.target.value),
       className: `w-full outline-none bg-transparent ${
         errors[`${rowIndex}-${column.key}`] ? "border-red-500" : ""
       }`,
@@ -186,7 +212,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
       min: column.min,
       max: column.max,
       step: column.step,
-    }
+    };
 
     switch (column.type) {
       case "select":
@@ -206,15 +232,10 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
               ))}
             </SelectContent>
           </Select>
-        )
-      
+        );
+
       case "textarea":
-        return (
-          <textarea
-            {...commonProps}
-            rows={column.rows || 3}
-          />
-        )
+        return <textarea {...commonProps} rows={column.rows || 3} />;
 
       case "checkbox":
         return (
@@ -224,7 +245,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
             onChange={(e) => handleCellChange(rowIndex, column.key, e.target.value)}
             className="w-4 h-4 m-2"
           />
-        )
+        );
 
       case "radio":
         return (
@@ -242,7 +263,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
               </label>
             ))}
           </div>
-        )
+        );
 
       default:
         return (
@@ -252,89 +273,89 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
             accept={column.type === "file" ? column.accept : undefined}
             multiple={column.type === "file" ? column.multiple : undefined}
           />
-        )
+        );
     }
-  }
+  };
 
   const handleAddRow = () => {
-    setGridData((prev) => [...prev, {}])
-  }
+    setGridData((prev) => [...prev, {}]);
+  };
 
   const handleCellChange = (rowIndex: number, columnKey: string, value: string) => {
     setGridData((prevData) => {
-      const newData = [...prevData]
+      const newData = [...prevData];
       if (!newData[rowIndex]) {
-        newData[rowIndex] = {}
+        newData[rowIndex] = {};
       }
       newData[rowIndex] = {
         ...newData[rowIndex],
-        [columnKey]: value
-      }
+        [columnKey]: value,
+      };
 
-      const newErrors = validateAllRows(newData)
-      setErrors(newErrors)
+      const newErrors = validateAllRows(newData);
+      setErrors(newErrors);
 
-      return newData
-    })
-  }
+      return newData;
+    });
+  };
 
   const handleImport = () => {
-    const validationErrors = validateAllRows(gridData)
-    setErrors(validationErrors)
+    const validationErrors = validateAllRows(gridData);
+    setErrors(validationErrors);
 
     try {
       if (Object.keys(validationErrors).length === 0) {
         const validData = gridData.filter((row) =>
-          Object.values(row).some(value => value !== undefined && value !== "")
-        )
-        console.log("Imported data:", validData)
-        onImport(validData)
-        setIsOpen(false)
-        setGridData([{}])
+          Object.values(row).some((value) => value !== undefined && value !== "")
+        );
+        console.log("Imported data:", validData);
+        onImport(validData);
+        setIsOpen(false);
+        setGridData([{}]);
       }
     } catch (error) {
-      toast.error("Error importing data")
+      toast.error("Error importing data");
     }
-  }
+  };
 
   const getValidationRules = (col: ColumnDef): string => {
-    const rules: string[] = []
+    const rules: string[] = [];
 
     if (col.validation?.required) {
-      rules.push("Required")
+      rules.push("Required");
     }
 
     if (col.type === "select" || col.type === "radio") {
-      const options = col.options?.map(opt => opt.label).join(", ")
-      rules.push(`Must be one of: ${options}`)
+      const options = col.options?.map((opt) => opt.label).join(", ");
+      rules.push(`Must be one of: ${options}`);
     }
 
     if (col.validation?.minLength) {
-      rules.push(`Minimum length: ${col.validation.minLength}`)
+      rules.push(`Minimum length: ${col.validation.minLength}`);
     }
 
     if (col.validation?.maxLength) {
-      rules.push(`Maximum length: ${col.validation.maxLength}`)
+      rules.push(`Maximum length: ${col.validation.maxLength}`);
     }
 
     if (col.min !== undefined) {
-      rules.push(`Minimum value: ${col.min}`)
+      rules.push(`Minimum value: ${col.min}`);
     }
 
     if (col.max !== undefined) {
-      rules.push(`Maximum value: ${col.max}`)
+      rules.push(`Maximum value: ${col.max}`);
     }
 
     if (col.validation?.regex) {
-      rules.push(col.validation.message || "Must match required format")
+      rules.push(col.validation.message || "Must match required format");
     }
 
     if (col.type === "file" && col.accept) {
-      rules.push(`Accepted file types: ${col.accept}`)
+      rules.push(`Accepted file types: ${col.accept}`);
     }
 
-    return rules.join("\n") || "No validation rules"
-  }
+    return rules.join("\n") || "No validation rules";
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -359,13 +380,14 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
                     <th key={col.key} className="border p-2 bg-gray-50">
                       <div className="flex items-center gap-1 dark:text-gray-950">
                         {col.name}
-                        {col.validation?.required && (
-                          <span className="text-red-500">*</span>
-                        )}
+                        {col.validation?.required && <span className="text-red-500">*</span>}
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Info size={14} className="text-gray-400 hover:text-gray-600 cursor-help" />
+                              <Info
+                                size={14}
+                                className="text-gray-400 hover:text-gray-600 cursor-help"
+                              />
                             </TooltipTrigger>
                             <TooltipContent>
                               <pre className="text-sm whitespace-pre-wrap">
@@ -377,9 +399,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
                       </div>
                     </th>
                   ))}
-                  <th className="border p-2 bg-gray-50 dark:text-gray-950 w-16">
-                    Action
-                  </th>
+                  <th className="border p-2 bg-gray-50 dark:text-gray-950 w-16">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -409,26 +429,26 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
                         className="h-8 w-8 p-0 hover:bg-red-100"
                         onClick={() => {
                           setGridData((prevData) => {
-                            const newData = [...prevData]
-                            newData.splice(rowIndex, 1)
-                            if (newData.length === 0) newData.push({})
-                            return newData
-                          })
+                            const newData = [...prevData];
+                            newData.splice(rowIndex, 1);
+                            if (newData.length === 0) newData.push({});
+                            return newData;
+                          });
                           setErrors((prevErrors) => {
-                            const newErrors: Record<string, string[]> = {}
+                            const newErrors: Record<string, string[]> = {};
                             Object.entries(prevErrors).forEach(([key, value]) => {
-                              const [errRowIndex, colKey] = key.split("-")
-                              if(errRowIndex) {
-                                const errRow = parseInt(errRowIndex)
+                              const [errRowIndex, colKey] = key.split("-");
+                              if (errRowIndex) {
+                                const errRow = parseInt(errRowIndex);
                                 if (errRow < rowIndex) {
-                                  newErrors[key] = value
+                                  newErrors[key] = value;
                                 } else if (errRow > rowIndex) {
-                                  newErrors[`${errRow - 1}-${colKey}`] = value
+                                  newErrors[`${errRow - 1}-${colKey}`] = value;
                                 }
                               }
-                            })
-                            return newErrors
-                          })
+                            });
+                            return newErrors;
+                          });
                         }}
                       >
                         <Trash2 size={16} className="text-red-500 " />
@@ -462,5 +482,5 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

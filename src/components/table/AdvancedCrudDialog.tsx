@@ -1,20 +1,22 @@
-import { useEffect, useState } from "react"
-import { Button } from "../ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-import { Input } from "../ui/input"
-import { Label } from "../ui/label"
-import { useToast } from "@/hooks/use-toast"
-import { type Column } from "@/components/table/DisplayTable"
+import { useEffect, useState } from "react";
+
+import { type Column } from "@/components/table/DisplayTable";
+import { useToast } from "@/hooks/use-toast";
+
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 interface AdvancedCrudDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (data: Record<string, any>) => Promise<void>
-  onDelete: () => Promise<void>
-  title: string
-  columns: Column[]
-  initialData: Record<string, any> | undefined
-  mode: "create" | "edit" | "delete"
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: Record<string, any>) => Promise<void>;
+  onDelete: () => Promise<void>;
+  title: string;
+  columns: Column[];
+  initialData: Record<string, any> | undefined;
+  mode: "create" | "edit" | "delete";
 }
 
 export function AdvancedCrudDialog({
@@ -27,111 +29,113 @@ export function AdvancedCrudDialog({
   initialData,
   mode,
 }: AdvancedCrudDialogProps) {
-  const [formData, setFormData] = useState<Record<string, any>>(initialData || {})
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const { toast } = useToast()
+  const [formData, setFormData] = useState<Record<string, any>>(initialData || {});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { toast } = useToast();
 
   useEffect(() => {
-    setFormData(initialData || {})
-    setErrors({})
-  }, [initialData, isOpen])
+    setFormData(initialData || {});
+    setErrors({});
+  }, [initialData, isOpen]);
 
   const validateField = (column: Column, value: any): string | undefined => {
-    const validation = column.validation
+    const validation = column.validation;
 
     if (validation) {
       if (validation.required && (!value || value.toString().trim() === "")) {
-        return `${column.name} is required`
+        return `${column.name} is required`;
       }
 
       if (value && validation.regex) {
         if (column.type === "datetime-local") {
-          let dateValue = value
+          let dateValue = value;
           if (typeof value === "string" && value.includes("/")) {
-            const date = new Date(value)
-            dateValue = date.toISOString().slice(0, 16)
+            const date = new Date(value);
+            dateValue = date.toISOString().slice(0, 16);
           }
 
           if (!validation.regex.test(dateValue)) {
-            return validation.message || "Invalid datetime format"
+            return validation.message || "Invalid datetime format";
           }
         } else if (!validation.regex.test(value.toString())) {
-          return validation.message || "Invalid format"
+          return validation.message || "Invalid format";
         }
       }
 
       if (validation.custom) {
-        return validation.custom(value)
+        return validation.custom(value);
       }
     }
 
-    return undefined
-  }
+    return undefined;
+  };
 
   const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {}
-    let isValid = true
+    const newErrors: Record<string, string> = {};
+    let isValid = true;
 
     columns.forEach((column) => {
-      const error = validateField(column, formData[column.key])
+      const error = validateField(column, formData[column.key]);
       if (error) {
-        newErrors[column.key] = error
-        isValid = false
+        newErrors[column.key] = error;
+        isValid = false;
       }
-    })
+    });
 
-    setErrors(newErrors)
-    return isValid
-  }
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (mode === "delete") {
       try {
-        await onDelete()
-        onClose()
+        await onDelete();
+        onClose();
       } catch (error) {
         toast({
           title: "Error",
           description: "Failed to delete record",
           variant: "destructive",
-        })
+        });
       }
-      return
+      return;
     }
 
     if (!validateForm()) {
-      return
+      return;
     }
 
     try {
-      await onSubmit(formData)
-      onClose()
+      await onSubmit(formData);
+      onClose();
     } catch (error) {
       toast({
         title: "Error",
         description: `Failed to ${mode} record`,
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   const renderField = (column: Column) => {
     const commonProps = {
       id: column.key,
       name: column.key,
       value: formData[column.key] || "",
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [column.key]: e.target.value })
-        const error = validateField(column, e.target.value)
-        setErrors(prev => ({ ...prev, [column.key]: error || "" }))
+      onChange: (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+      ) => {
+        setFormData({ ...formData, [column.key]: e.target.value });
+        const error = validateField(column, e.target.value);
+        setErrors((prev) => ({ ...prev, [column.key]: error || "" }));
       },
       className: `w-full rounded-md border ${errors[column.key] ? "border-red-500" : "border-input"} bg-background px-3 py-2`,
       min: column.min,
       max: column.max,
       step: column.step,
-    }
+    };
 
     switch (column.type) {
       case "select":
@@ -144,20 +148,22 @@ export function AdvancedCrudDialog({
               </option>
             ))}
           </select>
-        )
+        );
 
       case "textarea":
-        return <textarea {...commonProps} rows={column.rows} />
+        return <textarea {...commonProps} rows={column.rows} />;
 
       default:
-        return <Input
-          type={column.type}
-          {...commonProps}
-          accept={column.type === "file" ? column.accept : undefined}
-          multiple={column.type === "file" ? column.multiple : undefined}
-        />
+        return (
+          <Input
+            type={column.type}
+            {...commonProps}
+            accept={column.type === "file" ? column.accept : undefined}
+            multiple={column.type === "file" ? column.multiple : undefined}
+          />
+        );
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -166,20 +172,21 @@ export function AdvancedCrudDialog({
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {(mode === "edit" || mode === "create") && columns
-            .filter(column => !column.hidden)
-            .map((column) => (
-              <div key={column.key} className="space-y-2">
-                <Label htmlFor={column.key}>
-                  {column.label || column.name}
-                  {column.validation?.required && <span className="text-red-500 ml-1">*</span>}
-                </Label>
-                {renderField(column)}
-                {errors[column.key] && (
-                  <p className="text-sm text-red-500">{errors[column.key]}</p>
-                )}
-              </div>
-            ))}
+          {(mode === "edit" || mode === "create") &&
+            columns
+              .filter((column) => !column.hidden)
+              .map((column) => (
+                <div key={column.key} className="space-y-2">
+                  <Label htmlFor={column.key}>
+                    {column.label || column.name}
+                    {column.validation?.required && <span className="text-red-500 ml-1">*</span>}
+                  </Label>
+                  {renderField(column)}
+                  {errors[column.key] && (
+                    <p className="text-sm text-red-500">{errors[column.key]}</p>
+                  )}
+                </div>
+              ))}
           {mode === "delete" && (
             <p>Are you sure you want to delete this record? This action cannot be undone.</p>
           )}
@@ -187,15 +194,12 @@ export function AdvancedCrudDialog({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              variant={mode === "delete" ? "destructive" : "default"}
-            >
+            <Button type="submit" variant={mode === "delete" ? "destructive" : "default"}>
               {mode === "create" ? "Create" : mode === "edit" ? "Save" : "Confirm Delete"}
             </Button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
-  )
-} 
+  );
+}

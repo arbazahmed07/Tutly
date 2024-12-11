@@ -1,10 +1,6 @@
 import { useState } from "react";
 
-export default function AttendanceTable({
-  studentsAttendance,
-}: {
-  studentsAttendance: any;
-}) {
+export default function AttendanceTable({ studentsAttendance }: { studentsAttendance: any }) {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: "ascending" | "descending";
@@ -35,11 +31,7 @@ export default function AttendanceTable({
 
   return (
     <div className="container mx-auto px-4 pt-8 lg:px-20">
-      <pre>
-        {
-          JSON.stringify( studentsAttendance, null, 2)
-        }
-      </pre>
+      <pre>{JSON.stringify(studentsAttendance, null, 2)}</pre>
       <h1
         className="mb-4 cursor-pointer text-end text-xl font-bold text-primary-500"
         onClick={() => setSortConfig({ key: "-1", direction: "ascending" })}
@@ -52,10 +44,7 @@ export default function AttendanceTable({
             <tr className="bg-blue-600">
               <th className="cursor-pointer border p-2">S.No</th>
               <th className="cursor-pointer border p-2">Name</th>
-              <th
-                className="cursor-pointer border p-2"
-                onClick={() => handleSort("username")}
-              >
+              <th className="cursor-pointer border p-2" onClick={() => handleSort("username")}>
                 Roll Number{" "}
                 {sortConfig.key === "username"
                   ? sortConfig.direction === "ascending"
@@ -63,10 +52,7 @@ export default function AttendanceTable({
                     : "↓"
                   : ""}
               </th>
-              <th
-                className="cursor-pointer border p-2"
-                onClick={() => handleSort("percentage")}
-              >
+              <th className="cursor-pointer border p-2" onClick={() => handleSort("percentage")}>
                 Percentage{" "}
                 {sortConfig.key === "percentage"
                   ? sortConfig.direction === "ascending"
@@ -79,14 +65,10 @@ export default function AttendanceTable({
           <tbody>
             {sortedData.map((item: any, index: number) => (
               <tr key={item.username} className="border-b">
-                <td className="border-x border-y-0 p-0 text-center">
-                  {index + 1}
-                </td>
+                <td className="border-x border-y-0 p-0 text-center">{index + 1}</td>
                 <td className="flex items-center justify-start gap-5 space-x-4 border-y-0 p-2">
                   <img
-                    src={
-                      item.image || "https://i.postimg.cc/zXj77wQG/image.png"
-                    }
+                    src={item.image || "https://i.postimg.cc/zXj77wQG/image.png"}
                     width={40}
                     height={40}
                     alt="profile image"

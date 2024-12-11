@@ -1,16 +1,24 @@
 import { User } from "@prisma/client";
+import { BadgeCheck, Bell, LogOut } from "lucide-react";
+import { useState } from "react";
+import { FaCaretDown } from "react-icons/fa";
 
 import { DynamicBreadcrumbs } from "@/components/DynamicBreadcrumbs";
+import { ModeToggle } from "@/components/ModeToggle";
+import Notifications from "@/components/Notifications";
 import { SidebarComponent, SidebarItem } from "@/components/Sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { ModeToggle } from "@/components/ModeToggle";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Bell, BadgeCheck, LogOut } from "lucide-react";
-import { FaCaretDown } from "react-icons/fa";
-import { useState } from "react";
-import Notifications from "@/components/Notifications";
 
 export interface SidebarProps {
   children: React.ReactNode;
@@ -35,31 +43,40 @@ export function Sidebar({ children, pathname, user, sideBarItems, isSidebarOpen 
               <DynamicBreadcrumbs pathname={pathname} />
             </div>
             <div className="flex items-center gap-3 text-foreground">
-              <span className="text-md font-medium">
-                {user.role}
-              </span>
+              <span className="text-md font-medium">{user.role}</span>
               <ModeToggle />
               <Notifications user={user} />
               <DropdownMenu onOpenChange={setIsOpen}>
                 <DropdownMenuTrigger asChild>
                   <div className="flex items-center bg-muted hover:bg-muted/80 rounded-xl px-2 py-1 cursor-pointer w-16">
                     <Avatar className="h-7 w-7 rounded-full cursor-pointer">
-                      <AvatarImage src={user.image ?? "/placeholder.jpg"} alt={user.name ?? user.username} />
+                      <AvatarImage
+                        src={user.image ?? "/placeholder.jpg"}
+                        alt={user.name ?? user.username}
+                      />
                       <AvatarFallback className="rounded-full">
                         {user.name
                           ? user.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
                           : user.username}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="transition-transform duration-200 ml-1" style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+                    <div
+                      className="transition-transform duration-200 ml-1"
+                      style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                    >
                       <FaCaretDown className="h-4 w-4" />
                     </div>
                   </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 rounded-lg" side="bottom" align="end" sideOffset={4}>
+                <DropdownMenuContent
+                  className="w-56 rounded-lg"
+                  side="bottom"
+                  align="end"
+                  sideOffset={4}
+                >
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                       <Avatar className="h-7 w-7 rounded-full">

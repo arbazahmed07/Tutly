@@ -1,17 +1,14 @@
 import type { APIRoute } from "astro";
-import { signInWithCredentials } from "@/lib/auth/credentials";
+
 import { AUTH_SESSION_COOKIE } from "@/lib/auth";
+import { signInWithCredentials } from "@/lib/auth/credentials";
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const { email, password } = await request.json();
     const userAgent = request.headers.get("user-agent");
 
-    const { sessionId, user } = await signInWithCredentials(
-      email,
-      password,
-      userAgent
-    );
+    const { sessionId, user } = await signInWithCredentials(email, password, userAgent);
 
     cookies.set(AUTH_SESSION_COOKIE, sessionId, {
       httpOnly: true,
@@ -41,4 +38,4 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }
     );
   }
-}; 
+};

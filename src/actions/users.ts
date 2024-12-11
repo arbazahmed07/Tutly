@@ -1,10 +1,11 @@
-import db from "@/lib/db";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
 
+import db from "@/lib/db";
+
 export const getAllEnrolledUsers = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ courseId }) {
     const enrolledUsers = await db.user.findMany({
@@ -24,14 +25,14 @@ export const getAllEnrolledUsers = defineAction({
         email: true,
       },
     });
-    
+
     return enrolledUsers;
-  }
+  },
 });
 
 export const getAllUsers = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ courseId }, { locals }) {
     const currentUser = locals.user;
@@ -62,5 +63,5 @@ export const getAllUsers = defineAction({
       },
     });
     return globalUsers;
-  }
+  },
 });

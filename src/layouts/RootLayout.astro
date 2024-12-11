@@ -37,7 +37,7 @@ globalThis.pathname = pathname;
           return "dark";
         }
         return "light";
-      }
+      };
 
       const theme = getTheme();
       document.documentElement.classList[theme === "dark" ? "add" : "remove"]("dark");
@@ -45,17 +45,19 @@ globalThis.pathname = pathname;
   </head>
   <body>
     <Toaster client:load />
-    {user && (
-      <Sidebar 
-        client:load 
-        pathname={pathname} 
-        user={user} 
-        sideBarItems={sideBarItems ?? []} 
-        isSidebarOpen={isSidebarOpen!}
-      >
-        <slot />
-      </Sidebar>
-    )}
+    {
+      user && (
+        <Sidebar
+          client:load
+          pathname={pathname}
+          user={user}
+          sideBarItems={sideBarItems ?? []}
+          isSidebarOpen={isSidebarOpen!}
+        >
+          <slot />
+        </Sidebar>
+      )
+    }
     <ViewTransitions fallback="animate" />
   </body>
 </html>

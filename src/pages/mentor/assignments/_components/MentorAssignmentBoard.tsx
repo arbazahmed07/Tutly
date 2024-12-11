@@ -1,28 +1,26 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
+
 import NoDataFound from "@/components/NoDataFound";
 import { useRouter } from "@/hooks/use-router";
-
 
 function MentorAssignmentBoard({ courses, students, role }: any) {
   const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id);
   const [isMounted, setIsMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sortCriteria, setSortCriteria] = useState<"username" | "name">(
-    "username",
-  );
+  const [sortCriteria, setSortCriteria] = useState<"username" | "name">("username");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const router = useRouter();
-
 
   const sortedStudents = students
     .filter(
       (student: any) =>
         student.enrolledUsers?.some((x: any) => x.courseId === currentCourse) &&
         (student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          student.username.toLowerCase().includes(searchQuery.toLowerCase())),
+          student.username.toLowerCase().includes(searchQuery.toLowerCase()))
     )
     .sort((a: any, b: any) => {
       let comparison = 0;
@@ -50,14 +48,10 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
             <button
               hidden={course.isPublished === false}
               onClick={() => setCurrentCourse(course.id)}
-              className={`rounded p-2 ${
-                currentCourse === course.id && "rounded border"
-              }`}
+              className={`rounded p-2 ${currentCourse === course.id && "rounded border"}`}
               key={course.id}
             >
-              <h1 className="max-w-xs truncate text-sm font-medium">
-                {course.title}
-              </h1>
+              <h1 className="max-w-xs truncate text-sm font-medium">{course.title}</h1>
             </button>
           ))}
         </div>
@@ -83,15 +77,11 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
       {sortedStudents.length > 0 ? (
         sortedStudents
           .filter((student: any) =>
-            student.enrolledUsers?.find(
-              (x: any) => x.courseId === currentCourse,
-            ),
+            student.enrolledUsers?.find((x: any) => x.courseId === currentCourse)
           )
           .map((student: any, index: number) => (
             <div
-              hidden={
-                student.role === "INSTRUCTOR" || student.role === "MENTOR"
-              }
+              hidden={student.role === "INSTRUCTOR" || student.role === "MENTOR"}
               key={index}
               className={`${index < sortedStudents.length - 1 && "border-b pb-3"}`}
             >
@@ -142,7 +132,7 @@ function MentorAssignmentBoard({ courses, students, role }: any) {
                           role === "INSTRUCTOR"
                             ? `/instructor/assignments/${student.username}`
                             : `/mentor/assignments/${student.username}`
-                        }`,
+                        }`
                       )
                     }
                     className="cursor-pointer rounded-lg bg-blue-600 p-2 text-sm font-medium text-white"

@@ -1,5 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { attachmentType, submissionMode } from "@prisma/client";
 import MDEditor from "@uiw/react-md-editor";
+import { actions } from "astro:actions";
 import katex from "katex";
 import "katex/dist/katex.css";
 import { useForm } from "react-hook-form";
@@ -25,8 +27,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "@/hooks/use-router";
-import { actions } from "astro:actions";
-import { attachmentType, submissionMode } from "@prisma/client";
 
 const formSchema = z.object({
   title: z
@@ -56,7 +56,15 @@ const formSchema = z.object({
     .optional(),
 });
 
-const NewAttachmentPage = ({ classes, courseId, classId }: { classes: any, courseId: string, classId: string }) => {
+const NewAttachmentPage = ({
+  classes,
+  courseId,
+  classId,
+}: {
+  classes: any;
+  courseId: string;
+  classId: string;
+}) => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -197,20 +205,14 @@ const NewAttachmentPage = ({ classes, courseId, classId }: { classes: any, cours
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="bg-secondary-700 bg-background text-base text-white">
-                    <SelectItem
-                      className="text-base hover:bg-secondary-800"
-                      value="HTML_CSS_JS"
-                    >
+                    <SelectItem className="text-base hover:bg-secondary-800" value="HTML_CSS_JS">
                       HTML CSS JS
                     </SelectItem>
                     {/* todo: add react */}
                     {/* <SelectItem className="text-base hover:bg-secondary-800" value="REACT">
                       REACT
                     </SelectItem> */}
-                    <SelectItem
-                      className="text-base hover:bg-secondary-800"
-                      value="EXTERNAL_LINK"
-                    >
+                    <SelectItem className="text-base hover:bg-secondary-800" value="EXTERNAL_LINK">
                       EXTERNAL LINK
                     </SelectItem>
                   </SelectContent>
@@ -354,11 +356,7 @@ const NewAttachmentPage = ({ classes, courseId, classId }: { classes: any, cours
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-gray-600 hover:bg-gray-700"
-          >
+          <Button type="submit" disabled={isSubmitting} className="bg-gray-600 hover:bg-gray-700">
             Continue
           </Button>
         </div>

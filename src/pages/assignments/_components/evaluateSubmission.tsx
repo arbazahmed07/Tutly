@@ -1,7 +1,8 @@
-import day from "@/lib/dayjs";
 import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
+
+import day from "@/lib/dayjs";
 
 const EvaluateSubmission = ({ submission }: { submission: any }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -10,19 +11,11 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
     styling: 0,
     other: 0,
   });
-  const [feedback, setFeedback] = useState<string | null>(
-    submission.overallFeedback || null,
-  );
+  const [feedback, setFeedback] = useState<string | null>(submission.overallFeedback || null);
 
-  const rValue = submission.points.find(
-    (point: any) => point.category === "RESPOSIVENESS",
-  );
-  const sValue = submission.points.find(
-    (point: any) => point.category === "STYLING",
-  );
-  const oValue = submission.points.find(
-    (point: any) => point.category === "OTHER",
-  );
+  const rValue = submission.points.find((point: any) => point.category === "RESPOSIVENESS");
+  const sValue = submission.points.find((point: any) => point.category === "STYLING");
+  const oValue = submission.points.find((point: any) => point.category === "OTHER");
 
   const totalScore = [rValue, sValue, oValue].reduce((acc, currentValue) => {
     return acc + (currentValue ? currentValue.score : 0);
@@ -43,15 +36,9 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
 
   const handleEdit = () => {
     setIsEditing(true);
-    const rValue = submission?.points.find(
-      (point: any) => point.category === "RESPOSIVENESS",
-    );
-    const sValue = submission?.points.find(
-      (point: any) => point.category === "STYLING",
-    );
-    const oValue = submission?.points.find(
-      (point: any) => point.category === "OTHER",
-    );
+    const rValue = submission?.points.find((point: any) => point.category === "RESPOSIVENESS");
+    const sValue = submission?.points.find((point: any) => point.category === "STYLING");
+    const oValue = submission?.points.find((point: any) => point.category === "OTHER");
     setEditedScores({
       responsiveness: rValue ? rValue.score : 0,
       styling: sValue ? sValue.score : 0,
@@ -102,9 +89,7 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
   };
 
   const handleDelete = async () => {
-    const response = confirm(
-      "Are you sure you want to delete this submission?",
-    );
+    const response = confirm("Are you sure you want to delete this submission?");
     if (!response) return;
     try {
       toast.loading("Deleting Submission...");
@@ -160,9 +145,7 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
               </td>
               <td className="">{submission.enrolledUser.user.name}</td>
               <td className="px-2 py-1">
-                {day(submission.submissionDate).format(
-                  "DD MMM YYYY hh:mm:ss A",
-                )}
+                {day(submission.submissionDate).format("DD MMM YYYY hh:mm:ss A")}
               </td>
               <td className="whitespace-nowrap px-2 py-1">
                 {isEditing ? (
@@ -234,9 +217,7 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
                 )}
               </td>
               <td className="whitespace-nowrap px-2 py-1">
-                {rValue?.score || sValue?.score || oValue?.score
-                  ? totalScore
-                  : "NA"}
+                {rValue?.score || sValue?.score || oValue?.score ? totalScore : "NA"}
               </td>
               <td>
                 {isEditing ? (
@@ -271,10 +252,7 @@ const EvaluateSubmission = ({ submission }: { submission: any }) => {
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-5">
-                      <button
-                        onClick={handleEdit}
-                        className="font-semibold text-blue-600"
-                      >
+                      <button onClick={handleEdit} className="font-semibold text-blue-600">
                         Edit
                       </button>
                       <button

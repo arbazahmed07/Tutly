@@ -91,8 +91,7 @@ if (currentUser.role == "INSTRUCTOR") {
       return 0;
     }
   });
-  isCourseAdmin = 
-    (currentUser.id === assignment1?.course?.createdById);
+  isCourseAdmin = currentUser.id === assignment1?.course?.createdById;
 } else if (currentUser.role == "MENTOR") {
   const assignment = await db.attachment.findUnique({
     where: {
@@ -132,7 +131,7 @@ if (currentUser.role == "INSTRUCTOR") {
   });
   notSubmittedMentees = mentees.filter((mentee) => {
     return !assignment?.submissions.some(
-      (submission) => submission.enrolledUser.username === mentee.username,
+      (submission) => submission.enrolledUser.username === mentee.username
     );
   });
 
@@ -147,9 +146,7 @@ if (currentUser.role == "INSTRUCTOR") {
   });
 
   isCourseAdmin =
-    currentUser?.adminForCourses?.some(
-      (course) => course.id === assignment1?.courseId,
-    ) ?? false;
+    currentUser?.adminForCourses?.some((course) => course.id === assignment1?.courseId) ?? false;
 }
 ---
 
@@ -162,7 +159,6 @@ if (currentUser.role == "INSTRUCTOR") {
     notSubmittedMentees={notSubmittedMentees}
     isCourseAdmin={isCourseAdmin ?? false}
     username={username ?? ""}
-    
     client:load
   />
 </RootLayout>

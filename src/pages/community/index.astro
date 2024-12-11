@@ -4,28 +4,28 @@ import CommunityForum from "./_components/community";
 import db from "@/lib/db";
 
 const currentuser = Astro.locals.user;
-if(!currentuser) return null;
+if (!currentuser) return null;
 const allDoubts = await db.course.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          username: currentuser.username,
-        },
+  where: {
+    enrolledUsers: {
+      some: {
+        username: currentuser.username,
       },
     },
-    include: {
-      doubts: {
-        include: {
-          user: true,
-          response: {
-            include: {
-              user: true,
-            },
+  },
+  include: {
+    doubts: {
+      include: {
+        user: true,
+        response: {
+          include: {
+            user: true,
           },
         },
       },
     },
-  });
+  },
+});
 ---
 
 <ReactLayout title="Community Forum">

@@ -1,6 +1,7 @@
-import db from "@/lib/db";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
+
+import db from "@/lib/db";
 
 export const getAllCourses = defineAction({
   async handler(_, { locals }) {
@@ -63,12 +64,12 @@ export const getAllCourses = defineAction({
       console.log("error while fetching courses :", e);
       return { error: "Failed to fetch courses" };
     }
-  }
+  },
 });
 
 export const getCourseClasses = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }, { locals }) {
     const currentUser = locals.user;
@@ -89,12 +90,12 @@ export const getCourseClasses = defineAction({
       },
     });
     return { success: true, data: classes };
-  }
+  },
 });
 
 export const foldersByCourseId = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }) {
     const folders = await db.folder.findMany({
@@ -107,7 +108,7 @@ export const foldersByCourseId = defineAction({
       },
     });
     return folders ?? [];
-  }
+  },
 });
 
 export const getEnrolledCourses = defineAction({
@@ -147,7 +148,7 @@ export const getEnrolledCourses = defineAction({
       return { success: true, data: courses };
     }
     return { success: true, data: publishedCourses };
-  }
+  },
 });
 
 export const getCreatedCourses = defineAction({
@@ -177,12 +178,12 @@ export const getCreatedCourses = defineAction({
     });
 
     return { success: true, data: courses };
-  }
+  },
 });
 
 export const getEnrolledCoursesById = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }) {
     const courses = await db.course.findMany({
@@ -206,12 +207,12 @@ export const getEnrolledCoursesById = defineAction({
       },
     });
     return { success: true, data: courses };
-  }
+  },
 });
 
 export const getEnrolledCoursesByUsername = defineAction({
   input: z.object({
-    username: z.string()
+    username: z.string(),
   }),
   async handler({ username }) {
     const courses = await db.course.findMany({
@@ -235,12 +236,12 @@ export const getEnrolledCoursesByUsername = defineAction({
       },
     });
     return { success: true, data: courses };
-  }
+  },
 });
 
 export const getMentorStudents = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ courseId }, { locals }) {
     const currentUser = locals.user;
@@ -266,13 +267,13 @@ export const getMentorStudents = defineAction({
     });
 
     return { success: true, data: students };
-  }
+  },
 });
 
 export const getMentorStudentsById = defineAction({
   input: z.object({
     id: z.string(),
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ id, courseId }, { locals }) {
     const currentUser = locals.user;
@@ -297,12 +298,12 @@ export const getMentorStudentsById = defineAction({
     });
 
     return { success: true, data: students };
-  }
+  },
 });
 
 export const getEnrolledStudents = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ courseId }, { locals }) {
     const currentUser = locals.user;
@@ -326,7 +327,7 @@ export const getEnrolledStudents = defineAction({
     });
 
     return { success: true, data: students };
-  }
+  },
 });
 
 export const getAllStudents = defineAction({
@@ -345,12 +346,12 @@ export const getAllStudents = defineAction({
     });
 
     return { success: true, data: students };
-  }
+  },
 });
 
 export const getEnrolledMentees = defineAction({
   input: z.object({
-    courseId: z.string()
+    courseId: z.string(),
   }),
   async handler({ courseId }, { locals }) {
     const currentUser = locals.user;
@@ -374,14 +375,14 @@ export const getEnrolledMentees = defineAction({
     });
 
     return { success: true, data: students };
-  }
+  },
 });
 
 export const createCourse = defineAction({
   input: z.object({
     title: z.string(),
     isPublished: z.boolean(),
-    image: z.string().optional()
+    image: z.string().optional(),
   }),
   async handler({ title, isPublished, image }, { locals }) {
     const currentUser = locals.user;
@@ -404,7 +405,7 @@ export const createCourse = defineAction({
       },
     });
     return { success: true, data: newCourse };
-  }
+  },
 });
 
 export const updateCourse = defineAction({
@@ -412,7 +413,7 @@ export const updateCourse = defineAction({
     id: z.string(),
     title: z.string(),
     isPublished: z.boolean(),
-    image: z.string().optional()
+    image: z.string().optional(),
   }),
   async handler({ id, title, isPublished, image }, { locals }) {
     const currentUser = locals.user;
@@ -433,7 +434,7 @@ export const updateCourse = defineAction({
       },
     });
     return course;
-  }
+  },
 });
 
 export const getMentorCourses = defineAction({
@@ -467,12 +468,12 @@ export const getMentorCourses = defineAction({
     });
 
     return { success: true, data: courses };
-  }
+  },
 });
 
 export const getClassDetails = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }) {
     try {
@@ -486,7 +487,7 @@ export const getClassDetails = defineAction({
           Folder: true,
         },
       });
-      
+
       if (!classDetails) {
         return { success: false, error: "Class not found" };
       }
@@ -496,12 +497,12 @@ export const getClassDetails = defineAction({
       console.error("Error fetching class details:", error);
       return { success: false, error: "Failed to fetch class details" };
     }
-  }
+  },
 });
 
 export const getCourseByCourseId = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }) {
     const course = await db.course.findUnique({
@@ -510,13 +511,13 @@ export const getCourseByCourseId = defineAction({
       },
     });
     return { success: true, data: course };
-  }
+  },
 });
 
 export const enrollStudentToCourse = defineAction({
   input: z.object({
     courseId: z.string(),
-    username: z.string()
+    username: z.string(),
   }),
   async handler({ courseId, username }, { locals }) {
     try {
@@ -571,15 +572,15 @@ export const enrollStudentToCourse = defineAction({
     } catch {
       return { error: "Failed to enroll student" };
     }
-  }
+  },
 });
 
 export const unenrollStudentFromCourse = defineAction({
   input: z.object({
     courseId: z.string(),
-    username: z.string()
+    username: z.string(),
   }),
-  async handler({ courseId, username },{ locals }) {
+  async handler({ courseId, username }, { locals }) {
     try {
       const currentUser = locals.user;
       if (!currentUser || currentUser.role !== "INSTRUCTOR") {
@@ -601,7 +602,7 @@ export const unenrollStudentFromCourse = defineAction({
       if (!course) {
         return { error: "Course not found" };
       }
-      
+
       const existingEnrollment = await db.enrolledUsers.findFirst({
         where: {
           courseId: courseId,
@@ -613,7 +614,6 @@ export const unenrollStudentFromCourse = defineAction({
         return { error: "User is not enrolled in the course" };
       }
 
-      
       await db.enrolledUsers.delete({
         where: {
           id: existingEnrollment.id,
@@ -624,13 +624,13 @@ export const unenrollStudentFromCourse = defineAction({
     } catch {
       return { error: "Failed to unenroll student" };
     }
-  }
+  },
 });
 
 export const updateRole = defineAction({
   input: z.object({
     username: z.string(),
-    role: z.enum(["STUDENT", "MENTOR"])
+    role: z.enum(["STUDENT", "MENTOR"]),
   }),
   async handler({ username, role }, { locals }) {
     try {
@@ -645,7 +645,7 @@ export const updateRole = defineAction({
 
       if (!user) {
         return { error: "User not found" };
-      }      
+      }
 
       const updatedUser = await db.user.update({
         where: {
@@ -660,14 +660,14 @@ export const updateRole = defineAction({
     } catch {
       return { error: "Failed to update user role" };
     }
-  }
+  },
 });
 
 export const updateMentor = defineAction({
   input: z.object({
     courseId: z.string(),
     username: z.string(),
-    mentorUsername: z.string()
+    mentorUsername: z.string(),
   }),
   async handler({ courseId, username, mentorUsername }, { locals }) {
     try {
@@ -700,12 +700,12 @@ export const updateMentor = defineAction({
     } catch {
       return { error: "Failed to update mentor" };
     }
-  }
+  },
 });
 
 export const deleteCourse = defineAction({
   input: z.object({
-    id: z.string()
+    id: z.string(),
   }),
   async handler({ id }, { locals }) {
     const currentUser = locals.user;
@@ -715,13 +715,13 @@ export const deleteCourse = defineAction({
       await db.course.delete({
         where: {
           id: id,
-          createdById: currentUser.id
-        }
+          createdById: currentUser.id,
+        },
       });
 
       return { success: true };
     } catch {
       return { error: "Failed to delete course" };
     }
-  }
+  },
 });

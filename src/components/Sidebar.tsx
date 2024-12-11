@@ -1,5 +1,16 @@
 import { Role, User } from "@prisma/client";
-import { BarChart, ChevronRight, ClipboardList, FileBarChart, GraduationCap, Home, Terminal, Trophy, UserCheck, Users } from "lucide-react";
+import {
+  BarChart,
+  ChevronRight,
+  ClipboardList,
+  FileBarChart,
+  GraduationCap,
+  Home,
+  Terminal,
+  Trophy,
+  UserCheck,
+  Users,
+} from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -75,7 +86,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
       title: "Report",
       url: "/instructor/report",
       icon: FileBarChart,
-    }
+    },
   ];
 
   const MentorItems = [
@@ -118,7 +129,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
       title: "Report",
       url: "/mentor/report",
       icon: FileBarChart,
-    }
+    },
   ];
 
   const StudentItems = [
@@ -156,7 +167,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
       title: "Statistics",
       url: "/statistics",
       icon: BarChart,
-    }
+    },
   ];
 
   let sideBarItems: any[] = initialSideBarItems || [];

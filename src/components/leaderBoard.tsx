@@ -1,7 +1,8 @@
-import { FaCrown } from "react-icons/fa6";
-import { useState, useEffect } from "react";
-import NoDataFound from "./NoDataFound";
 import { User } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { FaCrown } from "react-icons/fa6";
+
+import NoDataFound from "./NoDataFound";
 
 interface Submission {
   enrolledUser: {
@@ -50,9 +51,7 @@ export default function Leaderboard({
   currentUser,
   mentors,
 }: LeaderboardProps) {
-  const [currentCourse, setCurrentCourse] = useState<string>(
-    courses[0]?.id || "",
-  );
+  const [currentCourse, setCurrentCourse] = useState<string>(courses[0]?.id || "");
   const [leaderboardData, setLeaderboardData] = useState<
     Array<{
       userId: string;
@@ -65,14 +64,14 @@ export default function Leaderboard({
   >([]);
 
   const [mentorUsername, setMentorUsername] = useState<string>(
-    mentors ? mentors[0]?.username || "" : "",
+    mentors ? mentors[0]?.username || "" : ""
   );
   useEffect(() => {
     const filteredSubmissions = submissions.filter((submission) =>
       currentUser.role === "INSTRUCTOR"
         ? submission.enrolledUser.mentor.username === mentorUsername &&
           submission.assignment.class.course.id === currentCourse
-        : submission.assignment.class.course.id === currentCourse,
+        : submission.assignment.class.course.id === currentCourse
     );
 
     const leaderboardMap = new Map<
@@ -115,9 +114,7 @@ export default function Leaderboard({
       {/* Leaderboard-header */}
       <div className="flex flex-col text-center">
         <FaCrown className="m-auto h-20 w-20 text-blue-500 dark:text-yellow-400" />
-        <h1 className="text-2xl font-semibold text-blue-500 dark:text-yellow-400">
-          Leaderboard
-        </h1>
+        <h1 className="text-2xl font-semibold text-blue-500 dark:text-yellow-400">Leaderboard</h1>
       </div>
       {/* Mentors list for instructor */}
       {currentUser.role === "INSTRUCTOR" && (
@@ -127,9 +124,7 @@ export default function Leaderboard({
               onClick={() => setMentorUsername(mentor.username)}
               key={mentor.id}
               className={`rounded p-1 px-2 text-blue-500 dark:text-primary-500 ${
-                mentor.username === mentorUsername
-                  ? "shadow-sm shadow-primary-500"
-                  : ""
+                mentor.username === mentorUsername ? "shadow-sm shadow-primary-500" : ""
               }`}
             >
               {mentor.username}
@@ -148,9 +143,7 @@ export default function Leaderboard({
             }`}
             key={course.id}
           >
-            <h1 className="max-w-xs truncate text-sm font-medium">
-              {course.title}
-            </h1>
+            <h1 className="max-w-xs truncate text-sm font-medium">{course.title}</h1>
           </button>
         ))}
       </div>
@@ -200,9 +193,7 @@ export default function Leaderboard({
                     </div>
                   </td>
                   <td>
-                    <h1 className="text-xs font-medium md:text-sm">
-                      {data.totalPoints} points
-                    </h1>
+                    <h1 className="text-xs font-medium md:text-sm">{data.totalPoints} points</h1>
                   </td>
                 </tr>
               );

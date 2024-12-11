@@ -25,41 +25,40 @@ if (role === Role.STUDENT) {
             title: true,
             attachments: {
               where: {
-                attachmentType: "ASSIGNMENT"
+                attachmentType: "ASSIGNMENT",
               },
               select: {
                 id: true,
                 submissions: {
                   where: {
                     enrolledUser: {
-                      username: currentUser.username
-                    }
+                      username: currentUser.username,
+                    },
                   },
                   select: {
                     id: true,
                     points: {
                       select: {
-                        score: true
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                        score: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: {
-        createdAt: "desc"
-      }
+        createdAt: "desc",
+      },
     });
-
 
     dashboardData = {
       courses: enrolledCourses.map((enrolledCourse) => {
         const courseAssignments = enrolledCourse.course?.attachments || [];
-        const submissions = courseAssignments.flatMap(a => a.submissions);
-        
+        const submissions = courseAssignments.flatMap((a) => a.submissions);
+
         const totalPoints = submissions.reduce(
           (acc, curr) => acc + curr.points.reduce((acc, curr) => acc + curr.score, 0),
           0
@@ -70,12 +69,11 @@ if (role === Role.STUDENT) {
           courseTitle: enrolledCourse.course?.title,
           assignmentsSubmitted: submissions.length,
           totalPoints,
-          totalAssignments: courseAssignments.length
+          totalAssignments: courseAssignments.length,
         };
       }),
-      currentUser
+      currentUser,
     };
-
   } catch (error) {
     console.error("Error fetching student dashboard data:", error);
   }
@@ -92,53 +90,53 @@ if (role === Role.STUDENT) {
             title: true,
             enrolledUsers: {
               where: {
-                mentorUsername: currentUser.username
+                mentorUsername: currentUser.username,
               },
               select: {
                 user: {
                   select: {
-                    username: true
-                  }
+                    username: true,
+                  },
                 },
                 submission: {
                   select: {
                     id: true,
                     points: {
                       select: {
-                        score: true
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                        score: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: {
-        createdAt: "desc"
-      }
+        createdAt: "desc",
+      },
     });
 
     dashboardData = {
       courses: mentorCourses.map((mentorCourse) => {
         const courseEnrollments = mentorCourse.course?.enrolledUsers || [];
-        const submissions = courseEnrollments.flatMap(e => e.submission);
-        const evaluatedSubmissions = submissions.filter(s => s.points.some(p => p.score > 0));
-        
+        const submissions = courseEnrollments.flatMap((e) => e.submission);
+        const evaluatedSubmissions = submissions.filter((s) => s.points.some((p) => p.score > 0));
+
         return {
           courseId: mentorCourse.course?.id,
           courseTitle: mentorCourse.course?.title,
           menteeCount: courseEnrollments.length,
           evaluatedAssignments: evaluatedSubmissions.length,
-          totalSubmissions: submissions.length
+          totalSubmissions: submissions.length,
         };
-      })
+      }),
     };
   } catch (error) {
     console.error("Error fetching mentor dashboard data:", error);
   }
-} else if (role === Role.INSTRUCTOR) {  
+} else if (role === Role.INSTRUCTOR) {
   try {
     const courses = await db.course.findMany({
       where: {
@@ -153,16 +151,16 @@ if (role === Role.STUDENT) {
             enrolledUsers: {
               where: {
                 user: {
-                  role: "STUDENT"
-                }
-              }
-            }
-          }
-        }
+                  role: "STUDENT",
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: {
-        createdAt: "desc"
-      }
+        createdAt: "desc",
+      },
     });
 
     const totalClassCount = courses.reduce((acc, course) => acc + course._count.classes, 0);
@@ -171,7 +169,7 @@ if (role === Role.STUDENT) {
     dashboardData = {
       coursesCount: courses.length,
       totalClasses: totalClassCount,
-      enrolledStudents: totalStudentCount
+      enrolledStudents: totalStudentCount,
     };
   } catch (error) {
     console.error("Error fetching instructor dashboard data:", error);
@@ -182,5 +180,5 @@ const name = currentUser.name;
 ---
 
 <RootLayout title="Dashboard">
-  <Dashboard data={dashboardData} name={name} client:load/>
+  <Dashboard data={dashboardData} name={name} client:load />
 </RootLayout>

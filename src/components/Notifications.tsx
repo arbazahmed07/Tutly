@@ -1,34 +1,42 @@
-import { Bell, Eye, EyeOff, Filter, RefreshCcw, Mail, MailOpen, BellOff, X, UserMinus, MessageSquare, BookOpen} from "lucide-react";
-import { useState, useEffect } from "react";
+import type { Notification, NotificationEvent, User } from "@prisma/client";
+import { actions } from "astro:actions";
+import { navigate } from "astro:transitions/client";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Bell,
+  BellOff,
+  BookOpen,
+  Eye,
+  EyeOff,
+  Filter,
+  Mail,
+  MailOpen,
+  MessageSquare,
+  RefreshCcw,
+  UserMinus,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { actions } from "astro:actions";
 import {
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuCheckboxItem,
+  DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import day from "@/lib/dayjs";
-import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface NotificationLink {
   href: string;
   external?: boolean;
 }
-import type { Notification, NotificationEvent, User } from "@prisma/client";
-import { navigate } from "astro:transitions/client";
 
 type NotificationEventTypes = keyof typeof NotificationEvent;
 
@@ -39,14 +47,15 @@ interface causedObjects {
   doubtId?: string;
 }
 
-export const NOTIFICATION_HREF_MAP: Record<NotificationEventTypes, (obj: causedObjects) => string> = {
-  "CLASS_CREATED": (obj: causedObjects) => `/classes/${obj.classId}`,
-  "ASSIGNMENT_CREATED": (obj: causedObjects) => `/assignments/${obj.assignmentId}`,
-  "ASSIGNMENT_REVIEWED": (obj: causedObjects) => `/assignments/${obj.assignmentId}`,
-  "LEADERBOARD_UPDATED": (_obj: causedObjects) => `/leaderboard`,
-  "DOUBT_RESPONDED": (obj: causedObjects) => `/doubts/${obj.doubtId}`,
-  "ATTENDANCE_MISSED": (_obj: causedObjects) => `/attendance`,
-}
+export const NOTIFICATION_HREF_MAP: Record<NotificationEventTypes, (obj: causedObjects) => string> =
+  {
+    CLASS_CREATED: (obj: causedObjects) => `/classes/${obj.classId}`,
+    ASSIGNMENT_CREATED: (obj: causedObjects) => `/assignments/${obj.assignmentId}`,
+    ASSIGNMENT_REVIEWED: (obj: causedObjects) => `/assignments/${obj.assignmentId}`,
+    LEADERBOARD_UPDATED: (_obj: causedObjects) => `/leaderboard`,
+    DOUBT_RESPONDED: (obj: causedObjects) => `/doubts/${obj.doubtId}`,
+    ATTENDANCE_MISSED: (_obj: causedObjects) => `/attendance`,
+  };
 
 const DEFAULT_NOTIFICATION_CONFIG = {
   label: "Notification",
@@ -59,14 +68,17 @@ const DEFAULT_NOTIFICATION_CONFIG = {
   }),
 };
 
-const NOTIFICATION_TYPES: Record<NotificationEventTypes, {
-  label: string;
-  icon: React.ElementType;
-  color: string;
-  bgColor: string;
-  getLink: (causedObjects: causedObjects) => NotificationLink;
-}> = {
-  "CLASS_CREATED": {
+const NOTIFICATION_TYPES: Record<
+  NotificationEventTypes,
+  {
+    label: string;
+    icon: React.ElementType;
+    color: string;
+    bgColor: string;
+    getLink: (causedObjects: causedObjects) => NotificationLink;
+  }
+> = {
+  CLASS_CREATED: {
     label: "Classes",
     icon: BookOpen,
     color: "text-purple-500",
@@ -76,7 +88,7 @@ const NOTIFICATION_TYPES: Record<NotificationEventTypes, {
       external: true,
     }),
   },
-  "ASSIGNMENT_CREATED": {
+  ASSIGNMENT_CREATED: {
     label: "Assignments",
     icon: BookOpen,
     color: "text-purple-500",
@@ -86,7 +98,7 @@ const NOTIFICATION_TYPES: Record<NotificationEventTypes, {
       external: true,
     }),
   },
-  "ASSIGNMENT_REVIEWED": {
+  ASSIGNMENT_REVIEWED: {
     label: "Reviews",
     icon: Eye,
     color: "text-emerald-500",
@@ -96,7 +108,7 @@ const NOTIFICATION_TYPES: Record<NotificationEventTypes, {
       external: true,
     }),
   },
-  "LEADERBOARD_UPDATED": {
+  LEADERBOARD_UPDATED: {
     label: "Leaderboard",
     icon: RefreshCcw,
     color: "text-amber-400",
@@ -106,7 +118,7 @@ const NOTIFICATION_TYPES: Record<NotificationEventTypes, {
       external: true,
     }),
   },
-  "DOUBT_RESPONDED": {
+  DOUBT_RESPONDED: {
     label: "Doubts",
     icon: MessageSquare,
     color: "text-gray-500",
@@ -116,7 +128,7 @@ const NOTIFICATION_TYPES: Record<NotificationEventTypes, {
       external: true,
     }),
   },
-  "ATTENDANCE_MISSED": {
+  ATTENDANCE_MISSED: {
     label: "Attendance",
     icon: UserMinus,
     color: "text-red-500",
@@ -128,9 +140,10 @@ const NOTIFICATION_TYPES: Record<NotificationEventTypes, {
   },
 };
 
-const filterCategories = Object.entries(NOTIFICATION_TYPES).map(
-  ([type, config]) => ({ type, label: config.label })
-);
+const filterCategories = Object.entries(NOTIFICATION_TYPES).map(([type, config]) => ({
+  type,
+  label: config.label,
+}));
 
 type SubscriptionStatus = "NotSubscribed" | "SubscribedOnThisDevice" | "SubscribedOnAnotherDevice";
 
@@ -146,11 +159,7 @@ function getNotificationLink(notification: Notification): string | null {
   return config.getLink(notification.causedObjects as causedObjects).href;
 }
 
-export default function Notifications({
-  user
-}: {
-  user: User
-}) {
+export default function Notifications({ user }: { user: User }) {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus>("NotSubscribed");
   const [activeTab, setActiveTab] = useState("all");
@@ -257,7 +266,6 @@ export default function Notifications({
         return;
       }
 
-
       try {
         const sw = await navigator.serviceWorker.ready;
         if (!sw.pushManager) {
@@ -299,12 +307,10 @@ export default function Notifications({
 
         setSubscriptionStatus("SubscribedOnThisDevice");
         toast.success("Subscribed successfully");
-
       } catch {
         toast.error("Service worker subscription failed");
         return;
       }
-
     } catch {
       toast.error("Subscription failed");
     } finally {
@@ -346,15 +352,15 @@ export default function Notifications({
 
   const unreadCount = notifications.filter((n: Notification) => !n.readAt).length;
 
-
   const [selectedCategories, setSelectedCategories] = useState<NotificationEventTypes[]>([]);
 
-  const filteredNotifications = notifications.filter((n: Notification) =>
-    selectedCategories.length === 0 || selectedCategories.includes(n.eventType)
+  const filteredNotifications = notifications.filter(
+    (n: Notification) => selectedCategories.length === 0 || selectedCategories.includes(n.eventType)
   );
 
   const handleNotificationClick = (notification: Notification) => {
-    const notificationType = NOTIFICATION_TYPES[notification.eventType] || DEFAULT_NOTIFICATION_CONFIG;
+    const notificationType =
+      NOTIFICATION_TYPES[notification.eventType] || DEFAULT_NOTIFICATION_CONFIG;
     if (!notificationType) return;
 
     const link = notificationType.getLink(notification.causedObjects as causedObjects);
@@ -459,7 +465,9 @@ export default function Notifications({
                 onClick={() => refetchNotifications()}
                 disabled={isRefetchingNotifications}
               >
-                <RefreshCcw className={cn("h-4 w-4", isRefetchingNotifications && "animate-spin")} />
+                <RefreshCcw
+                  className={cn("h-4 w-4", isRefetchingNotifications && "animate-spin")}
+                />
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -478,7 +486,7 @@ export default function Notifications({
                         setSelectedCategories(
                           checked
                             ? [...selectedCategories, type as NotificationEventTypes]
-                            : selectedCategories.filter(t => t !== type)
+                            : selectedCategories.filter((t) => t !== type)
                         );
                       }}
                     >
@@ -491,11 +499,7 @@ export default function Notifications({
           </div>
 
           {["all", "unread"].map((tab) => (
-            <TabsContent
-              key={tab}
-              value={tab}
-              className="m-0"
-            >
+            <TabsContent key={tab} value={tab} className="m-0">
               {selectedCategories.length > 0 && (
                 <div className="px-4 py-1 border-b flex overflow-x-auto items-center justify-between">
                   <div className="flex items-center gap-1.5">
@@ -504,30 +508,38 @@ export default function Notifications({
                         key={category}
                         className="text-xs bg-primary/10 text-primary rounded-full px-3 py-1.5 flex items-center gap-1.5"
                       >
-                        {filterCategories.find(f => f.type === category)?.label}
+                        {filterCategories.find((f) => f.type === category)?.label}
                         <Button
                           variant="ghost"
                           size="icon"
                           className="h-4 w-4 p-0.5 hover:bg-primary/20"
-                          onClick={() => setSelectedCategories(
-                            selectedCategories.filter(t => t !== category)
-                          )}
+                          onClick={() =>
+                            setSelectedCategories(selectedCategories.filter((t) => t !== category))
+                          }
                         >
                           <X className="h-3 w-3" />
                         </Button>
                       </div>
                     ))}
                   </div>
-                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-primary -ml-2" onClick={() => setSelectedCategories([])}>Clear all</Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-muted-foreground hover:text-primary -ml-2"
+                    onClick={() => setSelectedCategories([])}
+                  >
+                    Clear all
+                  </Button>
                 </div>
               )}
 
               <div className="overflow-y-auto h-[370px]">
                 <div className="space-y-1 py-2">
                   {filteredNotifications
-                    .filter((n: Notification) => tab === "all" ? true : !n.readAt)
+                    .filter((n: Notification) => (tab === "all" ? true : !n.readAt))
                     .map((notification: Notification) => {
-                      const config = NOTIFICATION_TYPES[notification.eventType] || DEFAULT_NOTIFICATION_CONFIG;
+                      const config =
+                        NOTIFICATION_TYPES[notification.eventType] || DEFAULT_NOTIFICATION_CONFIG;
                       return (
                         <div
                           key={notification.id}
@@ -544,18 +556,15 @@ export default function Notifications({
                               notification.readAt && "opacity-50"
                             )}
                           >
-                            <config.icon
-                              className={cn(
-                                "h-5 w-5",
-                                config.color
-                              )}
-                            />
+                            <config.icon className={cn("h-5 w-5", config.color)} />
                           </div>
                           <div className="space-y-1 flex-1">
-                            <p className={cn(
-                              "text-sm leading-tight",
-                              notification.readAt && "text-muted-foreground"
-                            )}>
+                            <p
+                              className={cn(
+                                "text-sm leading-tight",
+                                notification.readAt && "text-muted-foreground"
+                              )}
+                            >
                               {notification.message}
                             </p>
                             <p className="text-sm text-muted-foreground">
@@ -569,8 +578,8 @@ export default function Notifications({
                                   variant="ghost"
                                   size="icon"
                                   onClick={(e) => {
-                                    e.stopPropagation()
-                                    toggleReadStatus(notification.id)
+                                    e.stopPropagation();
+                                    toggleReadStatus(notification.id);
                                   }}
                                   className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
                                 >
@@ -594,19 +603,19 @@ export default function Notifications({
                 {filteredNotifications.filter((n: Notification) =>
                   tab === "all" ? true : !n.readAt
                 ).length === 0 && (
-                    <div className="h-full flex items-center justify-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <Eye className="h-8 w-8 text-muted-foreground/50" />
-                        <span className="text-sm text-muted-foreground">
-                          {selectedCategories.length > 0
-                            ? "No notifications in selected categories"
-                            : tab === "unread"
-                              ? "No unread notifications"
-                              : "No notifications"}
-                        </span>
-                      </div>
+                  <div className="h-full flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-2">
+                      <Eye className="h-8 w-8 text-muted-foreground/50" />
+                      <span className="text-sm text-muted-foreground">
+                        {selectedCategories.length > 0
+                          ? "No notifications in selected categories"
+                          : tab === "unread"
+                            ? "No unread notifications"
+                            : "No notifications"}
+                      </span>
                     </div>
-                  )}
+                  </div>
+                )}
               </div>
 
               <div className="border-t bg-background h-12">

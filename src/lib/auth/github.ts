@@ -1,4 +1,4 @@
-import { generateState, GitHub, OAuth2Tokens } from "arctic";
+import { GitHub, OAuth2Tokens, generateState } from "arctic";
 
 const ghClientId = import.meta.env.GITHUB_CLIENT_ID;
 const ghClientSecret = import.meta.env.GITHUB_CLIENT_SECRET;
@@ -7,7 +7,7 @@ function github(url?: URL) {
   return new GitHub(
     ghClientId,
     ghClientSecret,
-    url ? new URL("/auth/callback/github", url).toString() : null,
+    url ? new URL("/auth/callback/github", url).toString() : null
   );
 }
 

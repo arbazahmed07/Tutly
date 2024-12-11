@@ -20,19 +20,16 @@ const submission = submissionId
   : null;
 
 const initialFiles = submission?.data as SandpackFiles;
-  
+
 const studentAccess =
-  currentUser.role === "STUDENT" &&
-  submission?.enrolledUser.username === currentUser.username;
+  currentUser.role === "STUDENT" && submission?.enrolledUser.username === currentUser.username;
 const mentorAccess =
-  currentUser.role === "MENTOR" &&
-  submission?.enrolledUser.mentorUsername === currentUser.username;
+  currentUser.role === "MENTOR" && submission?.enrolledUser.mentorUsername === currentUser.username;
 const instrctorAccess = currentUser.role === "INSTRUCTOR";
 
 if (!studentAccess && !mentorAccess && !instrctorAccess && submissionId) {
   return Astro.redirect("/404");
 }
-
 ---
 
 <RootLayout>

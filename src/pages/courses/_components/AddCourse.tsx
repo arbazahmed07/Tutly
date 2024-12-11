@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
+
 import { Card } from "@/components/ui/card";
+
 import CourseFormModal from "./CourseFormModal";
 
 function AddCourse() {
@@ -18,11 +20,7 @@ function AddCourse() {
         </div>
       </Card>
 
-      <CourseFormModal
-        open={openModal}
-        onOpenChange={setOpenModal}
-        mode="add"
-      />
+      <CourseFormModal open={openModal} onOpenChange={setOpenModal} mode="add" />
     </>
   );
 }

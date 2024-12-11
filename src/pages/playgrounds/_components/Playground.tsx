@@ -1,20 +1,18 @@
-import { useState } from "react";
 import {
-  SandpackProvider,
-  SandpackPreview,
   type SandpackFiles,
   type SandpackPredefinedTemplate,
+  SandpackPreview,
+  SandpackProvider,
 } from "@codesandbox/sandpack-react";
-import MonacoEditor from "./MonacoEditor";
+import { useState } from "react";
+import { TfiFullscreen } from "react-icons/tfi";
+
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+
 import FileExplorer from "./FileExplorer";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+import MonacoEditor from "./MonacoEditor";
 import SandboxConsole from "./SandboxConsole";
 import SubmitAssignment from "./SubmitAssignment";
-import { TfiFullscreen } from "react-icons/tfi";
 
 const files = {
   "/index.html": `<!DOCTYPE html>
@@ -51,11 +49,7 @@ const Playground = ({
 
   return (
     <div className="relative h-[95vh]">
-      <SandpackProvider
-        files={initialFiles || files}
-        template={template}
-        theme="light"
-      >
+      <SandpackProvider files={initialFiles || files} template={template} theme="light">
         {isFullScreen && (
           <div className="fixed inset-0 z-50 bg-white">
             <button
@@ -85,10 +79,7 @@ const Playground = ({
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={43}>
-            <ResizablePanelGroup
-              direction="vertical"
-              className="h-[95vh] overflow-y-scroll"
-            >
+            <ResizablePanelGroup direction="vertical" className="h-[95vh] overflow-y-scroll">
               <ResizablePanel defaultSize={95}>
                 <div className="relative h-[95vh] overflow-y-scroll">
                   <div className="border-b bg-white text-black">
@@ -114,10 +105,7 @@ const Playground = ({
         </ResizablePanelGroup>
         {assignmentId && (
           <div className="absolute -top-6 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
-            <SubmitAssignment
-              currentUser={currentUser}
-              assignmentId={assignmentId}
-            />
+            <SubmitAssignment currentUser={currentUser} assignmentId={assignmentId} />
           </div>
         )}
       </SandpackProvider>
