@@ -9,15 +9,11 @@ import { toast } from "react-hot-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFileUpload } from "@/components/useFileUpload";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 
 const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [deleteReason, setDeleteReason] = useState("");
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
 
   const { uploadFile } = useFileUpload({
     fileType: "OTHER",
@@ -66,8 +62,6 @@ const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
         reason: deleteReason,
       });
       toast.success("File deleted successfully");
-      setIsDeleteDialogOpen(false);
-      setSelectedFileId(null);
       setDeleteReason("");
       window.location.reload();
     } catch (error) {
@@ -78,51 +72,60 @@ const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
   const fileTypes = ["ALL", "OTHER", "NOTES", "ATTACHMENT", "AVATAR"] as const;
 
   const DeleteDialog = ({ fileId }: { fileId: string }) => (
-    <Dialog 
-      open={isDeleteDialogOpen && selectedFileId === fileId} 
-      onOpenChange={(open) => {
-        if (!open) {
-          setDeleteReason("");
-          setSelectedFileId(null);
+    <Button
+      variant="ghost"
+      size="icon"
+      title="Delete"
+      onClick={async () => {
+        const reason = window.prompt("Please enter a reason for deletion:");
+        if (reason !== null) {
+          setDeleteReason(reason);
+          await handleArchive(fileId);
         }
-        setIsDeleteDialogOpen(open);
       }}
     >
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          title="Delete"
-          onClick={() => {
-            setSelectedFileId(fileId);
-            setIsDeleteDialogOpen(true);
-          }}
-        >
-          <Trash2 className="h-4 w-4 text-red-500" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent onPointerDownOutside={(e) => e.preventDefault()}>
-        <DialogHeader>
-          <DialogTitle>Are you sure you want to delete this file?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone.
-          </DialogDescription>
-        </DialogHeader>
-        <Textarea
-          id="reason"
-          placeholder="Enter reason for deletion"
-          className="mt-2 h-[100px]"
-          value={deleteReason}
-          onChange={(e) => setDeleteReason(e.target.value)}
-          autoFocus
-        />
-        <DialogFooter>
-          <Button variant="destructive" onClick={() => handleArchive(fileId)}>
-            Delete
+      <Trash2 className="h-4 w-4 text-red-500" />
+    </Button>
+  );
+
+  const FileCard = ({ file }: { file: File }) => (
+    <Card key={file.id} className="p-4 hover:shadow-lg transition-shadow">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center space-x-3">
+          <FileText className="h-8 w-8 text-blue-500" />
+          <div>
+            <h3 className="font-medium text-lg truncate max-w-[200px]">{file.name}</h3>
+            <p className="text-sm text-gray-500">
+              {formatDistanceToNow(new Date(file.createdAt), { addSuffix: true })}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex space-x-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDownload(file.id)}
+            title="Download"
+          >
+            <Download className="h-4 w-4" />
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DeleteDialog fileId={file.id} />
+        </div>
+      </div>
+    </Card>
+  );
+
+  const EmptyState = ({ fileType }: { fileType?: string }) => (
+    <div className="text-center py-12">
+      <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+      <h3 className="text-xl font-medium text-gray-600">
+        No {fileType ? `${fileType.toLowerCase()} ` : ""}files uploaded yet
+      </h3>
+      <p className="text-gray-500">
+        Your uploaded {fileType ? `${fileType.toLowerCase()} ` : ""}files will appear here
+      </p>
+    </div>
   );
 
   return (
@@ -164,89 +167,23 @@ const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
           ))}
         </TabsList>
 
-        <TabsContent value="ALL">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {uploadedFiles.map((file) => (
-              <Card key={file.id} className="p-4 hover:shadow-lg transition-shadow">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <FileText className="h-8 w-8 text-blue-500" />
-                    <div>
-                      <h3 className="font-medium text-lg truncate max-w-[200px]">{file.name}</h3>
-                      <p className="text-sm text-gray-500">
-                        {formatDistanceToNow(new Date(file.createdAt), { addSuffix: true })}
-                      </p>
-                    </div>
-                  </div>
+        {fileTypes.map((fileType) => {
+          const filteredFiles = fileType === "ALL" 
+            ? uploadedFiles 
+            : uploadedFiles.filter((file) => file.fileType === fileType);
 
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDownload(file.id)}
-                      title="Download"
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <DeleteDialog fileId={file.id} />
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-
-          {uploadedFiles.length === 0 && (
-            <div className="text-center py-12">
-              <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-xl font-medium text-gray-600">No files uploaded yet</h3>
-              <p className="text-gray-500">Your uploaded files will appear here</p>
-            </div>
-          )}
-        </TabsContent>
-
-        {fileTypes.slice(1).map((fileType) => (
-          <TabsContent key={fileType} value={fileType}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {uploadedFiles
-                .filter((file) => file.fileType === fileType)
-                .map((file) => (
-                  <Card key={file.id} className="p-4 hover:shadow-lg transition-shadow">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-3">
-                        <FileText className="h-8 w-8 text-blue-500" />
-                        <div>
-                          <h3 className="font-medium text-lg truncate max-w-[200px]">{file.name}</h3>
-                          <p className="text-sm text-gray-500">
-                            {formatDistanceToNow(new Date(file.createdAt), { addSuffix: true })}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDownload(file.id)}
-                          title="Download"
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <DeleteDialog fileId={file.id} />
-                      </div>
-                    </div>
-                  </Card>
+          return (
+            <TabsContent key={fileType} value={fileType}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredFiles.map((file) => (
+                  <FileCard key={file.id} file={file} />
                 ))}
-            </div>
-
-            {uploadedFiles.filter((file) => file.fileType === fileType).length === 0 && (
-              <div className="text-center py-12">
-                <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-medium text-gray-600">No {fileType.toLowerCase()} files uploaded yet</h3>
-                <p className="text-gray-500">Your uploaded {fileType.toLowerCase()} files will appear here</p>
               </div>
-            )}
-          </TabsContent>
-        ))}
+
+              {filteredFiles.length === 0 && <EmptyState fileType={fileType !== "ALL" ? fileType : ""} />}
+            </TabsContent>
+          );
+        })}
       </Tabs>
     </div>
   );
