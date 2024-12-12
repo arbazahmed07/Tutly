@@ -62,6 +62,7 @@ export default function ProfilePage({
         <TabsContent value="basic">
           <Card className="p-6">
             <BasicDetails 
+              avatar={userProfile?.image || ""}
               email={userProfile?.email || ""}
               secondaryEmail={profile?.secondaryEmail || ""}
               mobile={profile?.mobile || ""}

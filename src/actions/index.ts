@@ -16,6 +16,7 @@ import * as submissions from "./submission";
 import * as users from "./users";
 import * as notes from "./notes";
 import * as bookmarks from "./bookmarks";
+import * as fileupload from "./fileupload";
 
 export const server = {
   ...groupActions("courses", courses, "_"),
@@ -33,4 +34,5 @@ export const server = {
   ...groupActions("notifications", notifications, "_"),
   ...groupActions("bookmarks", bookmarks, "_"),
   ...groupActions("notes", notes, "_"),
+  ...groupActions("fileupload", fileupload, "_"),
 };

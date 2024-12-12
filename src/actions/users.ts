@@ -3,6 +3,25 @@ import { z } from "zod";
 
 import db from "@/lib/db";
 
+export const getCurrentUser = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return null;
+
+    const user = await db.user.findUnique({
+      where: { id: currentUser.id },
+      select: {
+        id: true,
+        image: true,
+        username: true,
+        name: true,
+        email: true,
+      },
+    });
+    return user;
+  },
+});
+
 export const getAllEnrolledUsers = defineAction({
   input: z.object({
     courseId: z.string(),
@@ -74,7 +93,7 @@ export const updateUserProfile = defineAction({
       gender: z.string(),
       tshirtSize: z.string(),
       secondaryEmail: z.string(),
-      dateOfBirth: z.union([z.date(), z.string()]).transform((val) => 
+      dateOfBirth: z.union([z.date(), z.string()]).transform((val) =>
         typeof val === "string" ? new Date(val) : val
       ).nullable(),
       hobbies: z.array(z.string()),
@@ -94,7 +113,7 @@ export const updateUserProfile = defineAction({
     const defaultValues = {
       userId: currentUser.id,
       mobile: null,
-      whatsapp: null, 
+      whatsapp: null,
       gender: null,
       tshirtSize: null,
       secondaryEmail: null,
@@ -126,6 +145,23 @@ export const updateUserProfile = defineAction({
       where: { userId: currentUser.id },
       create: createData,
       update: updateData,
+    });
+
+    return updatedProfile;
+  },
+});
+
+export const updateUserAvatar = defineAction({
+  input: z.object({
+    avatar: z.string(),
+  }),
+  async handler({ avatar }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return null;
+
+    const updatedProfile = await db.user.update({
+      where: { id: currentUser.id },
+      data: { image: avatar },
     });
 
     return updatedProfile;

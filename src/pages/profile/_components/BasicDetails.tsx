@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, type ChangeEvent } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -20,7 +20,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import MobileInput from "@/components/MobileInput";
-import type { Profile } from "@prisma/client";
+import { File, FileType, type Profile } from "@prisma/client";
+import { useFileUpload } from "@/components/useFileUpload";
+import { toast } from "sonner";
+import { actions } from "astro:actions";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -31,11 +34,12 @@ const formSchema = z.object({
     required_error: "Please select a gender",
   }),
   tshirtSize: z.enum(["XS", "S", "M", "L", "XL", "XXL"], {
-    required_error: "Please select a size", 
+    required_error: "Please select a size",
   }),
 });
 
 interface BasicDetailsProps {
+  avatar: string;
   email: string;
   secondaryEmail: string;
   mobile: string;
@@ -46,6 +50,7 @@ interface BasicDetailsProps {
 }
 
 export default function BasicDetails({
+  avatar,
   email,
   secondaryEmail,
   mobile,
@@ -94,145 +99,229 @@ export default function BasicDetails({
         </Button>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="email@example.com"
-                      {...field}
-                      disabled
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex-shrink-0">
+          <Avatar avatar={avatar} />
+        </div>
 
-            <FormField
-              control={form.control}
-              name="secondaryEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Secondary Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="email@example.com"
-                      {...field}
-                      disabled={!isEditing}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="mobile"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile Number</FormLabel>
-                  <FormControl>
-                    <MobileInput
-                      value={field.value}
-                      onChange={field.onChange}
-                      disabled={!isEditing}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="whatsapp"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>WhatsApp Number</FormLabel>
-                  <FormControl>
-                    <MobileInput
-                      value={field.value}
-                      onChange={field.onChange}
-                      disabled={!isEditing}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gender</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={!isEditing}
-                  >
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-grow">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
+                      <Input
+                        placeholder="email@example.com"
+                        {...field}
+                        disabled
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="tshirtSize"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>T-Shirt Size</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={!isEditing}
-                  >
+              <FormField
+                control={form.control}
+                name="secondaryEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Secondary Email</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select size" />
-                      </SelectTrigger>
+                      <Input
+                        placeholder="email@example.com"
+                        {...field}
+                        disabled={!isEditing}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
-                        <SelectItem key={size} value={size}>
-                          {size}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {isEditing && (
-            <Button type="submit" className="w-full md:w-auto">
-              Save Changes
-            </Button>
-          )}
-        </form>
-      </Form>
+              <FormField
+                control={form.control}
+                name="mobile"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile Number</FormLabel>
+                    <FormControl>
+                      <MobileInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={!isEditing}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="whatsapp"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>WhatsApp Number</FormLabel>
+                    <FormControl>
+                      <MobileInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={!isEditing}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gender</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={!isEditing}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tshirtSize"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>T-Shirt Size</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={!isEditing}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select size" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
+                          <SelectItem key={size} value={size}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {isEditing && (
+              <Button type="submit" className="w-full md:w-auto">
+                Save Changes
+              </Button>
+            )}
+          </form>
+        </Form>
+      </div>
     </div>
   );
-} 
+}
+
+const Avatar = ({ avatar }: { avatar: string }) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const { uploadFile } = useFileUpload({
+    fileType: FileType.AVATAR,
+    onUpload: async (file:File) => {
+      console.log("file", file);
+      if (!file || !file.publicUrl) return;
+      try {
+        await actions.users_updateUserAvatar({
+          avatar: file.publicUrl
+        });
+        toast.success("Profile picture updated successfully");
+        window.location.reload();
+      } catch (error) {
+        toast.error("Failed to update profile picture");
+      }
+    }
+  });
+
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+    setIsUploading(true);
+    
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
+      const user = await actions.users_getCurrentUser();
+      if (!user) return;
+      await uploadFile(file, user.data?.id);
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast.error("Failed to upload profile picture");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  return (
+    <div className="relative group">
+      <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-gray-200">
+        <img
+          src={avatar || "/placeholder.jpg"}
+          alt="Profile Avatar"
+          className="w-full h-full object-cover"
+        />
+        
+        {isUploading && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="loading-spinner text-white" />
+          </div>
+        )}
+      </div>
+
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="bg-black/50 text-white hover:bg-black/70"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+        >
+          Change Photo
+        </Button>
+      </div>
+
+      <Input 
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleUpload}
+        className="hidden"
+      />
+    </div>
+  );
+};
