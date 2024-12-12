@@ -25,6 +25,7 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model User {
   id       String  @id @default(uuid())
   name     String
@@ -38,7 +39,7 @@ model User {
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  lastSeen  DateTime?
+  lastSeen      DateTime?
   emailVerified DateTime?
 
   oneTimePassword String @default(uuid())
@@ -58,24 +59,26 @@ model User {
   assignedMentees EnrolledUsers[] @relation(name: "mentor")
   adminForCourses Course[]        @relation("CourseAdmins")
 
-  Session      Session[]
-  Events       Events[]
-  
-  notificationsFor Notification[] @relation("notificationIntendedFor")
+  Session Session[]
+  Events  Events[]
+
+  notificationsFor    Notification[] @relation("notificationIntendedFor")
   notificationsCaused Notification[] @relation("notificationCausedBy")
+  bookMarks           BookMarks[]
+  notes               Notes[]
 }
 
 model PushSubscription {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  endpoint  String   @unique
-  p256dh    String
-  auth      String
+  endpoint String @unique
+  p256dh   String
+  auth     String
 
   // deviceId  String   @unique
-  
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String 
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -126,8 +129,8 @@ model Notification {
   causedById String?
 
   eventType     NotificationEvent
-  message       String?   @db.Text
-  causedObjects Json?     @default("{}")
+  message       String?           @db.Text
+  causedObjects Json?             @default("{}")
   readAt        DateTime?
 
   createdAt DateTime @default(now())
@@ -192,6 +195,54 @@ model Class {
   Folder    Folder?  @relation(fields: [folderId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum BookMarkCategory {
+  ASSIGNMENT
+  CLASS
+  DOUBT
+  NOTIFICATION
+}
+
+model BookMarks {
+  id String @id @default(uuid())
+
+  category BookMarkCategory
+  objectId String
+  causedObjects Json? @default("{}")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, objectId])
+}
+
+enum NoteCategory {
+  CLASS
+  ASSIGNMENT
+  DOUBT
+}
+
+model Notes {
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  category NoteCategory
+  objectId String
+  causedObjects Json? @default("{}")
+
+  description String?
+  tags        String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, objectId])
 }
 
 model Folder {

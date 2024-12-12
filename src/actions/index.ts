@@ -14,6 +14,8 @@ import * as points from "./points";
 import * as report from "./report";
 import * as submissions from "./submission";
 import * as users from "./users";
+import * as notes from "./notes";
+import * as bookmarks from "./bookmarks";
 
 export const server = {
   ...groupActions("courses", courses, "_"),
@@ -29,4 +31,6 @@ export const server = {
   ...groupActions("mentors", mentors, "_"),
   ...groupActions("users", users, "_"),
   ...groupActions("notifications", notifications, "_"),
+  ...groupActions("bookmarks", bookmarks, "_"),
+  ...groupActions("notes", notes, "_"),
 };

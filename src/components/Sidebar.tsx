@@ -1,9 +1,11 @@
 import { Role, User } from "@prisma/client";
 import {
   BarChart,
+  Bookmark,
   ChevronRight,
   ClipboardList,
   FileBarChart,
+  FileText,
   GraduationCap,
   Home,
   Terminal,
@@ -59,6 +61,16 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
       icon: GraduationCap,
     },
     {
+      title: "Notes",
+      url: "/notes",
+      icon: FileText,
+    },
+    {
+      title: "Bookmarks",
+      url: "/bookmarks",
+      icon: Bookmark,
+    },
+    {
       title: "Assignments",
       url: "/instructor/assignments",
       icon: ClipboardList,
@@ -107,6 +119,16 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
       icon: GraduationCap,
     },
     {
+      title: "Notes",
+      url: "/notes",
+      icon: FileText,
+    },
+    {
+      title: "Bookmarks",
+      url: "/bookmarks",
+      icon: Bookmark,
+    },
+    {
       title: "Assignments",
       url: "/mentor/assignments",
       icon: ClipboardList,
@@ -148,6 +170,16 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
       title: "Courses",
       url: "/courses",
       icon: GraduationCap,
+    },
+    {
+      title: "Notes",
+      url: "/notes",
+      icon: FileText,
+    },
+    {
+      title: "Bookmarks",
+      url: "/bookmarks",
+      icon: Bookmark,
     },
     {
       title: "Assignments",
