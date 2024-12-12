@@ -7,4 +7,4 @@ export const isHandleValid = async (handle: string) => {
   } catch {
     return false;
   }
-}
+};

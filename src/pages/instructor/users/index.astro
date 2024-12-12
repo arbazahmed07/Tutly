@@ -3,16 +3,15 @@ import db from "@/lib/db";
 import RootLayout from "@/layouts/RootLayout.astro";
 import UserCards from "./_components/UserCards";
 
-const user = Astro.locals.user
+const user = Astro.locals.user;
 
-if(user?.role !=="INSTRUCTOR") {
-  return Astro.redirect(`/404`)
-};
+if (user?.role !== "INSTRUCTOR") {
+  return Astro.redirect(`/404`);
+}
 
-const allUsers = await db.user.findMany({})
-
+const allUsers = await db.user.findMany({});
 ---
 
 <RootLayout title="Users">
-  <UserCards users={allUsers} client:load/>
+  <UserCards users={allUsers as any} client:load />
 </RootLayout>

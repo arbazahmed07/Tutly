@@ -1,7 +1,10 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Profile } from "@prisma/client";
+import { Upload } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,8 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Upload } from "lucide-react";
-import type { Profile } from "@prisma/client";
 
 const formSchema = z.object({
   resume: z.string().optional(),
@@ -37,7 +38,7 @@ export default function Documents({ documents, onUpdate }: DocumentsProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await onUpdate({
-        documents: values
+        documents: values,
       });
       setIsEditing(false);
     } catch (error) {
@@ -49,7 +50,7 @@ export default function Documents({ documents, onUpdate }: DocumentsProps) {
     <div className="space-y-8">
       <div className="flex justify-between items-center py-4">
         <h2 className="text-2xl font-semibold">Documents</h2>
-        <Button 
+        <Button
           variant={isEditing ? "outline" : "default"}
           onClick={() => setIsEditing(!isEditing)}
           className="h-10"
@@ -82,8 +83,8 @@ export default function Documents({ documents, onUpdate }: DocumentsProps) {
                         className="h-18 p-2 file:mr-6 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                       />
                       {field.value && (
-                        <a 
-                          href="#" 
+                        <a
+                          href="#"
                           className="text-blue-500 hover:underline text-lg"
                           target="_blank"
                           rel="noopener noreferrer"
@@ -109,4 +110,4 @@ export default function Documents({ documents, onUpdate }: DocumentsProps) {
       </Form>
     </div>
   );
-} 
+}

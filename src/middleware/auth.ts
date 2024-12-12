@@ -13,6 +13,7 @@ export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, 
     const session = await getSession(sessionId);
     if (session?.user) {
       user = session.user;
+      // @ts-ignore
       locals.session = session;
       locals.organization = session.user.organization;
       locals.role = session.user.role;

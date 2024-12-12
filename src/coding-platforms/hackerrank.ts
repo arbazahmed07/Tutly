@@ -16,7 +16,7 @@ export async function getScore(handle: string): Promise<{
 }> {
   try {
     const response = await fetch(`${_HACKERRANK_BASE_URL}hackers/${handle}/scores_elo`, {
-      headers: { "Accept": "application/json" },
+      headers: { Accept: "application/json" },
     });
     const data = await response.json();
 
@@ -40,10 +40,15 @@ export async function getScore(handle: string): Promise<{
   }
 }
 
-export async function getHackerrankSubmissions(username: string, cursor: string = ""): Promise<any> {
+export async function getHackerrankSubmissions(
+  username: string,
+  cursor: string = ""
+): Promise<any> {
   const perPage = 11;
   try {
-    const response = await fetch(`${_HACKERRANK_BASE_URL}hackers/${username}/recent_challenges?limit=${perPage}&cursor=${cursor}`);
+    const response = await fetch(
+      `${_HACKERRANK_BASE_URL}hackers/${username}/recent_challenges?limit=${perPage}&cursor=${cursor}`
+    );
     const data = await response.json();
 
     if (data.error) {
@@ -57,20 +62,32 @@ export async function getHackerrankSubmissions(username: string, cursor: string 
   }
 }
 
-export async function getHackerrankContestProblems(contest: string, page: number, limit: number): Promise<any> {
+export async function getHackerrankContestProblems(
+  contest: string,
+  page: number,
+  limit: number
+): Promise<any> {
   const offset = page * limit;
   try {
-    const response = await fetch(`${_HACKERRANK_BASE_URL}contests/master/tracks/${contest}/challenges?offset=${offset}&limit=${limit}`);
+    const response = await fetch(
+      `${_HACKERRANK_BASE_URL}contests/master/tracks/${contest}/challenges?offset=${offset}&limit=${limit}`
+    );
     return await response.json();
   } catch (err) {
     throw new Error("ErrorFetchFailed");
   }
 }
 
-export async function getHackerrankLeaderBoard(contest: string, page: number, limit: number): Promise<any> {
+export async function getHackerrankLeaderBoard(
+  contest: string,
+  page: number,
+  limit: number
+): Promise<any> {
   const offset = page * limit;
   try {
-    const response = await fetch(`${_HACKERRANK_BASE_URL}contests/${contest}/leaderboard?offset=${offset}&limit=${limit}`);
+    const response = await fetch(
+      `${_HACKERRANK_BASE_URL}contests/${contest}/leaderboard?offset=${offset}&limit=${limit}`
+    );
     return await response.json();
   } catch (err) {
     throw new Error("ErrorFetchFailed");

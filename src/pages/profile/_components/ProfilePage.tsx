@@ -1,30 +1,27 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
-import BasicDetails from "./BasicDetails";
-import PersonalDetails from "./PersonalDetails";
-import SocialLinks from "./SocialLinks";
-import ProfessionalProfiles from "./ProfessionalProfiles";
-import AcademicDetails from "./AcademicDetails";
-import Experience from "./Experience";
-import Address from "./Address";
-import Documents from "./Documents";
-import type { User, Profile } from "@prisma/client";
-import {actions} from "astro:actions"
+import type { Profile, User } from "@prisma/client";
+import { actions } from "astro:actions";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function ProfilePage({
-  userProfile,
-}: {
-  userProfile: User & { profile: Profile };
-}) {
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import AcademicDetails from "./AcademicDetails";
+import Address from "./Address";
+import BasicDetails from "./BasicDetails";
+import Documents from "./Documents";
+import Experience from "./Experience";
+import PersonalDetails from "./PersonalDetails";
+import ProfessionalProfiles from "./ProfessionalProfiles";
+import SocialLinks from "./SocialLinks";
+
+export default function ProfilePage({ userProfile }: { userProfile: User & { profile: Profile } }) {
   const [profile, setProfile] = useState(userProfile.profile);
 
   const handleUpdateProfile = async (updatedFields: any) => {
     try {
       const { data, error } = await actions.users_updateUserProfile({
-        profile: updatedFields
+        profile: updatedFields,
       });
 
       if (error) {
@@ -41,7 +38,6 @@ export default function ProfilePage({
       console.error(error);
     }
   };
-
 
   return (
     <div className="p-6">
@@ -61,7 +57,7 @@ export default function ProfilePage({
 
         <TabsContent value="basic">
           <Card className="p-6">
-            <BasicDetails 
+            <BasicDetails
               avatar={userProfile?.image || ""}
               email={userProfile?.email || ""}
               secondaryEmail={profile?.secondaryEmail || ""}
@@ -76,7 +72,7 @@ export default function ProfilePage({
 
         <TabsContent value="personal">
           <Card className="p-6">
-            <PersonalDetails 
+            <PersonalDetails
               dateOfBirth={profile?.dateOfBirth as Date}
               hobbies={profile?.hobbies || []}
               aboutMe={profile?.aboutMe || ""}
@@ -87,7 +83,7 @@ export default function ProfilePage({
 
         <TabsContent value="social">
           <Card className="p-6">
-            <SocialLinks 
+            <SocialLinks
               socialLinks={profile?.socialLinks as Record<string, string>}
               onUpdate={handleUpdateProfile}
             />
@@ -96,7 +92,7 @@ export default function ProfilePage({
 
         <TabsContent value="professional">
           <Card className="p-6">
-            <ProfessionalProfiles 
+            <ProfessionalProfiles
               professionalProfiles={profile?.professionalProfiles as Record<string, string>}
               onUpdate={handleUpdateProfile}
             />
@@ -105,7 +101,7 @@ export default function ProfilePage({
 
         <TabsContent value="academic">
           <Card className="p-6">
-            <AcademicDetails 
+            <AcademicDetails
               academicDetails={profile?.academicDetails as Record<string, string>}
               onUpdate={handleUpdateProfile}
             />
@@ -114,7 +110,7 @@ export default function ProfilePage({
 
         <TabsContent value="experience">
           <Card className="p-6">
-            <Experience 
+            <Experience
               experiences={profile?.experiences as Array<Record<string, any>>}
               onUpdate={handleUpdateProfile}
             />
@@ -123,7 +119,7 @@ export default function ProfilePage({
 
         <TabsContent value="address">
           <Card className="p-6">
-            <Address 
+            <Address
               address={profile?.address as Record<string, string>}
               onUpdate={handleUpdateProfile}
             />
@@ -132,7 +128,7 @@ export default function ProfilePage({
 
         <TabsContent value="documents">
           <Card className="p-6">
-            <Documents 
+            <Documents
               documents={profile?.documents as Record<string, string>}
               onUpdate={handleUpdateProfile}
             />
@@ -141,4 +137,4 @@ export default function ProfilePage({
       </Tabs>
     </div>
   );
-} 
+}

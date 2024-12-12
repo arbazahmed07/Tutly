@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { toast } from "react-hot-toast";
-import axios from "axios";
 import { FileType } from "@prisma/client";
 import { actions } from "astro:actions";
+import axios from "axios";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 export type FileUploadOptions = {
   fileType: FileType;
-  onUpload?: (file: any) => void;
-}
+  onUpload?: (file: any) => Promise<void>;
+};
 
-const isPublicFileTypes: FileType[] = [FileType.AVATAR];
+export const isPublicFileTypes: FileType[] = [FileType.AVATAR];
 
 export const useFileUpload = (options: FileUploadOptions) => {
-  const {fileType, onUpload} = options;
+  const { fileType, onUpload } = options;
   const [isUploading, setIsUploading] = useState(false);
   const [uploadPercent, setUploadPercent] = useState<number | null>(null);
 
@@ -32,7 +32,7 @@ export const useFileUpload = (options: FileUploadOptions) => {
 
       if (!data) throw new Error("Failed to get upload URL");
 
-      const { signedUrl, file:uploadedFile } = data;
+      const { signedUrl, file: uploadedFile } = data;
 
       await axios.put(signedUrl, file, {
         headers: { "Content-Type": file.type },
@@ -44,12 +44,12 @@ export const useFileUpload = (options: FileUploadOptions) => {
         },
       });
 
-      const {data: updatedFile} = await actions.fileupload_markFileUploaded({
+      const { data: updatedFile } = await actions.fileupload_markFileUploaded({
         fileId: uploadedFile.id,
       });
 
       toast.success("File uploaded successfully");
-      onUpload && await onUpload(updatedFile);
+      onUpload && (await onUpload(updatedFile));
       return updatedFile;
     } catch (error) {
       toast.error("Error uploading file");
@@ -59,7 +59,6 @@ export const useFileUpload = (options: FileUploadOptions) => {
       setUploadPercent(null);
     }
   };
-
 
   return {
     uploadFile,

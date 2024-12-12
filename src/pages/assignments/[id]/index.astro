@@ -16,9 +16,9 @@ const assignment1 = await db.attachment.findUnique({
     class: {
       include: {
         course: {
-          include:{
-            classes:true
-          }
+          include: {
+            classes: true,
+          },
         },
       },
     },

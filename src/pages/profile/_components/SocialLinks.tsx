@@ -1,7 +1,11 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Profile } from "@prisma/client";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaQuora } from "react-icons/fa";
+import { RiFacebookBoxLine, RiGlobalLine, RiLinkedinBoxLine, RiTwitterLine } from "react-icons/ri";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,14 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { 
-  RiFacebookBoxLine, 
-  RiLinkedinBoxLine, 
-  RiTwitterLine, 
-  RiGlobalLine,
-} from "react-icons/ri";
-import { FaQuora } from "react-icons/fa";
-import type { Profile } from "@prisma/client";
 
 interface SocialLinksProps {
   socialLinks: Record<string, string>;
@@ -27,20 +23,33 @@ interface SocialLinksProps {
 }
 
 const formSchema = z.object({
-  facebook: z.string()
-    .refine(val => !val.includes("/") && !val.includes("facebook.com"), "Please enter only username")
+  facebook: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("facebook.com"),
+      "Please enter only username"
+    )
     .optional()
     .or(z.literal("")),
-  linkedin: z.string()
-    .refine(val => !val.includes("/") && !val.includes("linkedin.com"), "Please enter only username")
+  linkedin: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("linkedin.com"),
+      "Please enter only username"
+    )
     .optional()
     .or(z.literal("")),
-  twitter: z.string()
-    .refine(val => !val.includes("/") && !val.includes("twitter.com"), "Please enter only username")
+  twitter: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("twitter.com"),
+      "Please enter only username"
+    )
     .optional()
     .or(z.literal("")),
-  quora: z.string()
-    .refine(val => !val.includes("/") && !val.includes("quora.com"), "Please enter only username")
+  quora: z
+    .string()
+    .refine((val) => !val.includes("/") && !val.includes("quora.com"), "Please enter only username")
     .optional()
     .or(z.literal("")),
   website: z.string().url().optional().or(z.literal("")),
@@ -63,7 +72,7 @@ export default function SocialLinks({ socialLinks, onUpdate }: SocialLinksProps)
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await onUpdate({
-        socialLinks: values
+        socialLinks: values,
       });
       setIsEditing(false);
     } catch (error) {
@@ -75,7 +84,7 @@ export default function SocialLinks({ socialLinks, onUpdate }: SocialLinksProps)
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Social Links</h2>
-        <Button 
+        <Button
           variant={isEditing ? "outline" : "default"}
           onClick={() => setIsEditing(!isEditing)}
         >
@@ -96,11 +105,7 @@ export default function SocialLinks({ socialLinks, onUpdate }: SocialLinksProps)
                     Facebook Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,11 +122,7 @@ export default function SocialLinks({ socialLinks, onUpdate }: SocialLinksProps)
                     LinkedIn Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,11 +139,7 @@ export default function SocialLinks({ socialLinks, onUpdate }: SocialLinksProps)
                     Twitter Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,11 +156,7 @@ export default function SocialLinks({ socialLinks, onUpdate }: SocialLinksProps)
                     Quora Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -180,11 +173,7 @@ export default function SocialLinks({ socialLinks, onUpdate }: SocialLinksProps)
                     Personal Website
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="https://yourwebsite.com" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="https://yourwebsite.com" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,60 +1,52 @@
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+// @ts-nocheck
 import {
-  CAN_REDO_COMMAND,
-  CAN_UNDO_COMMAND,
-  REDO_COMMAND,
-  UNDO_COMMAND,
-  SELECTION_CHANGE_COMMAND,
-  FORMAT_TEXT_COMMAND,
-  $getSelection,
-  $isRangeSelection,
-  $createParagraphNode,
-  $getNodeByKey
-} from "lexical";
-import {
-  $isParentElementRTL,
-  $wrapNodes,
-  $isAtNodeEnd
-} from "@lexical/selection";
-import { $getNearestNodeOfType, mergeRegister } from "@lexical/utils";
-import {
+  $isListNode,
+  INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
-  INSERT_CHECK_LIST_COMMAND,
+  ListNode,
   REMOVE_LIST_COMMAND,
-  $isListNode,
-  ListNode
 } from "@lexical/list";
-import { createPortal } from "react-dom";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from "@lexical/rich-text";
+import { $isAtNodeEnd, $isParentElementRTL, $wrapNodes } from "@lexical/selection";
+import { $getNearestNodeOfType, mergeRegister } from "@lexical/utils";
 import {
-  $createHeadingNode,
-  $createQuoteNode,
-  $isHeadingNode
-} from "@lexical/rich-text";
-
-import { Button } from "@/components/ui/button";
-
+  $createParagraphNode,
+  $getNodeByKey,
+  $getSelection,
+  $isRangeSelection,
+  CAN_REDO_COMMAND,
+  CAN_UNDO_COMMAND,
+  FORMAT_TEXT_COMMAND,
+  REDO_COMMAND,
+  SELECTION_CHANGE_COMMAND,
+  UNDO_COMMAND,
+} from "lexical";
 import {
   BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  StrikethroughIcon,
+  CheckSquareIcon,
   Heading1Icon,
   Heading2Icon,
-  QuoteIcon,
+  ItalicIcon,
   ListIcon,
-  RedoIcon,
-  UndoIcon,
-  TextIcon,
   ListOrderedIcon,
-  CheckSquareIcon
+  QuoteIcon,
+  RedoIcon,
+  StrikethroughIcon,
+  TextIcon,
+  UnderlineIcon,
+  UndoIcon,
 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
+import { Button } from "@/components/ui/button";
 
 const LowPriority = 1;
 
 const blockTypeToBlockName = {
-  h1: "Large Heading", 
+  h1: "Large Heading",
   h2: "Small Heading",
   h3: "Heading",
   h4: "Heading",
@@ -63,7 +55,7 @@ const blockTypeToBlockName = {
   paragraph: "Normal",
   quote: "Quote",
   ul: "Bulleted List",
-  check: "Check List"
+  check: "Check List",
 };
 
 function Divider() {
@@ -117,9 +109,7 @@ export default function ToolbarPlugin() {
     if ($isRangeSelection(selection)) {
       const anchorNode = selection.anchor.getNode();
       const element =
-        anchorNode.getKey() === "root"
-          ? anchorNode
-          : anchorNode.getTopLevelElementOrThrow();
+        anchorNode.getKey() === "root" ? anchorNode : anchorNode.getTopLevelElementOrThrow();
       const elementKey = element.getKey();
       const elementDOM = editor.getElementByKey(elementKey);
       if (elementDOM !== null) {
@@ -129,9 +119,7 @@ export default function ToolbarPlugin() {
           const type = parentList ? parentList.getTag() : element.getTag();
           setBlockType(type);
         } else {
-          const type = $isHeadingNode(element)
-            ? element.getTag()
-            : element.getType();
+          const type = $isHeadingNode(element) ? element.getTag() : element.getType();
           setBlockType(type);
         }
       }
@@ -248,7 +236,7 @@ export default function ToolbarPlugin() {
       >
         <UndoIcon className="h-4 w-4" />
       </Button>
-      
+
       <Button
         disabled={!canRedo}
         onClick={() => editor.dispatchCommand(REDO_COMMAND)}
@@ -291,7 +279,7 @@ export default function ToolbarPlugin() {
       >
         <ListOrderedIcon className="h-4 w-4" />
       </Button>
-{/* 
+      {/* 
       <Button
         onClick={formatCheckList}
         variant={blockType === "check" ? "secondary" : "ghost"}
@@ -310,37 +298,37 @@ export default function ToolbarPlugin() {
 
       <Divider />
 
-          <Button
-            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}
-            variant={isBold ? "secondary" : "ghost"}
-            size="icon"
-          >
-            <BoldIcon className="h-4 w-4" />
-          </Button>
+      <Button
+        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}
+        variant={isBold ? "secondary" : "ghost"}
+        size="icon"
+      >
+        <BoldIcon className="h-4 w-4" />
+      </Button>
 
-          <Button
-            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}
-            variant={isItalic ? "secondary" : "ghost"}
-            size="icon"
-          >
-            <ItalicIcon className="h-4 w-4" />
-          </Button>
+      <Button
+        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic")}
+        variant={isItalic ? "secondary" : "ghost"}
+        size="icon"
+      >
+        <ItalicIcon className="h-4 w-4" />
+      </Button>
 
-          <Button
-            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}
-            variant={isUnderline ? "secondary" : "ghost"}
-            size="icon"
-          >
-            <UnderlineIcon className="h-4 w-4" />
-          </Button>
+      <Button
+        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline")}
+        variant={isUnderline ? "secondary" : "ghost"}
+        size="icon"
+      >
+        <UnderlineIcon className="h-4 w-4" />
+      </Button>
 
-          <Button
-            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}
-            variant={isStrikethrough ? "secondary" : "ghost"}
-            size="icon"
-          >
-            <StrikethroughIcon className="h-4 w-4" />
-          </Button>
+      <Button
+        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough")}
+        variant={isStrikethrough ? "secondary" : "ghost"}
+        size="icon"
+      >
+        <StrikethroughIcon className="h-4 w-4" />
+      </Button>
     </div>
   );
 }

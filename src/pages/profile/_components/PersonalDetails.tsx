@@ -1,7 +1,9 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Profile } from "@prisma/client";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import type { Profile } from "@prisma/client";
 
 const formSchema = z.object({
   dateOfBirth: z.date().nullable(),
@@ -32,7 +33,7 @@ export default function PersonalDetails({
   dateOfBirth,
   hobbies,
   aboutMe,
-  onUpdate
+  onUpdate,
 }: PersonalDetailsProps) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -49,8 +50,8 @@ export default function PersonalDetails({
     try {
       await onUpdate({
         dateOfBirth: values.dateOfBirth,
-        hobbies: values.hobbies.split(",").map(h => h.trim()),
-        aboutMe: values.aboutMe ?? null
+        hobbies: values.hobbies.split(",").map((h) => h.trim()),
+        aboutMe: values.aboutMe ?? null,
       });
       setIsEditing(false);
     } catch (error) {

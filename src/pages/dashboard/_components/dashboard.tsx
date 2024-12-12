@@ -64,9 +64,7 @@ const Dashboard = ({ data, name }: Props) => {
         </h1>
         {renderCourseSelector()}
       </div>
-      <div className="p-2 text-center">
-        {renderCards()}
-      </div>
+      <div className="p-2 text-center">{renderCards()}</div>
     </div>
   );
 };

@@ -19,12 +19,12 @@ export async function getScore(handle: string): Promise<{
 }> {
   try {
     const problemsSolved = await getInterviewBitProblemsSolved(handle);
-    
+
     let score = BigInt(0);
     for (const course of problemsSolved.course_problems_solved) {
       score += BigInt(course.total_user_score);
     }
-    
+
     score /= BigInt(3);
 
     return {
@@ -38,13 +38,15 @@ export async function getScore(handle: string): Promise<{
 
 export async function getInterviewBitProblemsSolved(handle: string): Promise<any> {
   try {
-    const response = await fetch(`${_INTERVIEWBIT_BASE_URL}problem_list/problems_solved_overview_count?username=${handle}`);
+    const response = await fetch(
+      `${_INTERVIEWBIT_BASE_URL}problem_list/problems_solved_overview_count?username=${handle}`
+    );
     const data = await response.json();
-    
+
     if (Object.keys(data).length === 0) {
       throw new Error("ErrorUserNotFound");
     }
-    
+
     return data;
   } catch (err: unknown) {
     if (err instanceof Error && err.message === "EOF") {

@@ -1,9 +1,10 @@
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { ChevronDown, Phone } from "lucide-react";
 import React, { forwardRef } from "react";
 import * as RPNInput from "react-phone-number-input";
 import flags from "react-phone-number-input/flags";
+
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export const MobileInput = ({
   value,
@@ -39,7 +40,7 @@ const PhoneInput = forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
         {...props}
       />
     );
-  },
+  }
 );
 
 PhoneInput.displayName = "PhoneInput";

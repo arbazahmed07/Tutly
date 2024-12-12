@@ -1,4 +1,4 @@
-import { type Attachment, attachmentType, submissionMode } from "@prisma/client";
+import { attachmentType, submissionMode } from "@prisma/client";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
 
@@ -8,7 +8,7 @@ export const createAttachment = defineAction({
   input: z.object({
     title: z.string(),
     details: z.string().optional(),
-    link: z.string().optional(), 
+    link: z.string().optional(),
     dueDate: z.date().optional(),
     attachmentType: z.enum(["ASSIGNMENT", "GITHUB", "ZOOM", "OTHERS"] as const),
     courseId: z.string(),

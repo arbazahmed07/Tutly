@@ -1,7 +1,12 @@
-import { useState, useRef, type ChangeEvent } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { File, FileType, type Profile } from "@prisma/client";
+import { actions } from "astro:actions";
+import { type ChangeEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
+
+import MobileInput from "@/components/MobileInput";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,17 +24,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import MobileInput from "@/components/MobileInput";
-import { File, FileType, type Profile } from "@prisma/client";
 import { useFileUpload } from "@/components/useFileUpload";
-import { toast } from "sonner";
-import { actions } from "astro:actions";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   secondaryEmail: z.string().email("Please enter a valid email address").optional(),
-  mobile: z.string().min(12, "Must include country code").max(14, "Invalid mobile number").refine(value => value.startsWith("+"), "Must start with +"),
-  whatsapp: z.string().min(12, "Must include country code").max(14, "Invalid WhatsApp number").refine(value => value.startsWith("+"), "Must start with +"),
+  mobile: z
+    .string()
+    .min(12, "Must include country code")
+    .max(14, "Invalid mobile number")
+    .refine((value) => value.startsWith("+"), "Must start with +"),
+  whatsapp: z
+    .string()
+    .min(12, "Must include country code")
+    .max(14, "Invalid WhatsApp number")
+    .refine((value) => value.startsWith("+"), "Must start with +"),
   gender: z.enum(["male", "female", "other"], {
     required_error: "Please select a gender",
   }),
@@ -57,7 +66,7 @@ export default function BasicDetails({
   whatsapp,
   gender,
   tshirtSize,
-  onUpdate
+  onUpdate,
 }: BasicDetailsProps) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -79,7 +88,7 @@ export default function BasicDetails({
         mobile: values?.mobile,
         whatsapp: values?.whatsapp,
         gender: values?.gender,
-        tshirtSize: values?.tshirtSize
+        tshirtSize: values?.tshirtSize,
       });
       setIsEditing(false);
     } catch (error) {
@@ -114,11 +123,7 @@ export default function BasicDetails({
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="email@example.com"
-                        {...field}
-                        disabled
-                      />
+                      <Input placeholder="email@example.com" {...field} disabled />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,11 +137,7 @@ export default function BasicDetails({
                   <FormItem>
                     <FormLabel>Secondary Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="email@example.com"
-                        {...field}
-                        disabled={!isEditing}
-                      />
+                      <Input placeholder="email@example.com" {...field} disabled={!isEditing} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -251,28 +252,28 @@ export default function BasicDetails({
 const Avatar = ({ avatar }: { avatar: string }) => {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const { uploadFile } = useFileUpload({
     fileType: FileType.AVATAR,
-    onUpload: async (file:File) => {
+    onUpload: async (file: File) => {
       console.log("file", file);
       if (!file || !file.publicUrl) return;
       try {
         await actions.users_updateUserAvatar({
-          avatar: file.publicUrl
+          avatar: file.publicUrl,
         });
         toast.success("Profile picture updated successfully");
         window.location.reload();
       } catch (error) {
         toast.error("Failed to update profile picture");
       }
-    }
+    },
   });
 
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
     setIsUploading(true);
-    
+
     try {
       const file = e.target.files[0];
       if (!file) return;
@@ -295,7 +296,7 @@ const Avatar = ({ avatar }: { avatar: string }) => {
           alt="Profile Avatar"
           className="w-full h-full object-cover"
         />
-        
+
         {isUploading && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <div className="loading-spinner text-white" />
@@ -315,7 +316,7 @@ const Avatar = ({ avatar }: { avatar: string }) => {
         </Button>
       </div>
 
-      <Input 
+      <Input
         ref={fileInputRef}
         type="file"
         accept="image/*"

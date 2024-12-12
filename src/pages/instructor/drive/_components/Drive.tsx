@@ -1,14 +1,15 @@
-import { useState, useRef, type ChangeEvent } from "react";
 import { File } from "@prisma/client";
-import { Card } from "@/components/ui/card";
-import { FileText, Download, Trash2, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { formatDistanceToNow } from "date-fns";
 import { actions } from "astro:actions";
+import { formatDistanceToNow } from "date-fns";
+import { Download, FileText, Plus, Trash2 } from "lucide-react";
+import { type ChangeEvent, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFileUpload } from "@/components/useFileUpload";
-import { Input } from "@/components/ui/input";
 
 const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
   const [isUploading, setIsUploading] = useState(false);
@@ -21,7 +22,7 @@ const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
       if (!file || !file.publicUrl) return;
       toast.success("File uploaded successfully");
       window.location.reload();
-    }
+    },
   });
 
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -141,12 +142,7 @@ const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
             <Plus className="h-4 w-4" />
             Upload File
           </Button>
-          <Input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleUpload}
-            className="hidden"
-          />
+          <Input ref={fileInputRef} type="file" onChange={handleUpload} className="hidden" />
         </div>
       </div>
 
@@ -168,9 +164,10 @@ const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
         </TabsList>
 
         {fileTypes.map((fileType) => {
-          const filteredFiles = fileType === "ALL" 
-            ? uploadedFiles 
-            : uploadedFiles.filter((file) => file.fileType === fileType);
+          const filteredFiles =
+            fileType === "ALL"
+              ? uploadedFiles
+              : uploadedFiles.filter((file) => file.fileType === fileType);
 
           return (
             <TabsContent key={fileType} value={fileType}>
@@ -180,7 +177,9 @@ const Drive = ({ uploadedFiles }: { uploadedFiles: File[] }) => {
                 ))}
               </div>
 
-              {filteredFiles.length === 0 && <EmptyState fileType={fileType !== "ALL" ? fileType : ""} />}
+              {filteredFiles.length === 0 && (
+                <EmptyState fileType={fileType !== "ALL" ? fileType : ""} />
+              )}
             </TabsContent>
           );
         })}

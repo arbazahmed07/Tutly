@@ -1,7 +1,9 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Profile } from "@prisma/client";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import type { Profile } from "@prisma/client";
 
 const formSchema = z.object({
   building: z.string().optional(),
@@ -46,7 +47,7 @@ export default function Address({ address, onUpdate }: AddressProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await onUpdate({
-        address: values
+        address: values,
       });
       setIsEditing(false);
     } catch (error) {
@@ -58,7 +59,7 @@ export default function Address({ address, onUpdate }: AddressProps) {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Address</h2>
-        <Button 
+        <Button
           variant={isEditing ? "outline" : "default"}
           onClick={() => setIsEditing(!isEditing)}
         >
@@ -76,9 +77,9 @@ export default function Address({ address, onUpdate }: AddressProps) {
                 <FormItem>
                   <FormLabel>Building/House No.</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter building/house number" 
-                      {...field} 
+                    <Input
+                      placeholder="Enter building/house number"
+                      {...field}
                       disabled={!isEditing}
                     />
                   </FormControl>
@@ -94,11 +95,7 @@ export default function Address({ address, onUpdate }: AddressProps) {
                 <FormItem>
                   <FormLabel>Street/Area</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter street/area" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="Enter street/area" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -112,11 +109,7 @@ export default function Address({ address, onUpdate }: AddressProps) {
                 <FormItem>
                   <FormLabel>City</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter city" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="Enter city" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -130,11 +123,7 @@ export default function Address({ address, onUpdate }: AddressProps) {
                 <FormItem>
                   <FormLabel>State</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter state" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="Enter state" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,11 +137,7 @@ export default function Address({ address, onUpdate }: AddressProps) {
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter country" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="Enter country" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,11 +151,7 @@ export default function Address({ address, onUpdate }: AddressProps) {
                 <FormItem>
                   <FormLabel>Pincode</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter pincode" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="Enter pincode" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -187,4 +168,4 @@ export default function Address({ address, onUpdate }: AddressProps) {
       </Form>
     </div>
   );
-} 
+}

@@ -1,11 +1,17 @@
-import { defineAction } from "astro:actions";
-import { z } from "zod";
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { defineAction } from "astro:actions";
 import { v4 as uuid } from "uuid";
+import { z } from "zod";
+
 import db from "@/lib/db";
 
-const allowedMimeTypes = [
+export const allowedMimeTypes = [
   // Images
   "image/jpeg",
   "image/png",
@@ -40,7 +46,7 @@ const allowedMimeTypes = [
   "application/vnd.ms-excel",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   "application/vnd.oasis.opendocument.spreadsheet",
-]
+];
 
 const s3Client = new S3Client({
   region: import.meta.env.AWS_BUCKET_REGION!,
@@ -102,7 +108,7 @@ export const getDownloadUrl = defineAction({
     });
     if (!file) throw new Error("File not found");
 
-    if(file.isPublic){
+    if (file.isPublic) {
       return file.publicUrl;
     }
 
@@ -148,21 +154,21 @@ export const markFileUploaded = defineAction({
     if (!currentUser) return null;
 
     const file = await db.file.findUnique({
-      where: { id: fileId }
+      where: { id: fileId },
     });
 
     if (!file) throw new Error("File not found");
 
-    const publicUrl = file.isPublic ? 
-      `https://${import.meta.env.AWS_BUCKET_NAME}.s3.${import.meta.env.AWS_BUCKET_REGION}.amazonaws.com/${file.fileType}/${file.internalName}` : 
-      null;
+    const publicUrl = file.isPublic
+      ? `https://${import.meta.env.AWS_BUCKET_NAME}.s3.${import.meta.env.AWS_BUCKET_REGION}.amazonaws.com/${file.fileType}/${file.internalName}`
+      : null;
 
     const updatedFile = await db.file.update({
       where: { id: fileId },
       data: {
         isUploaded: true,
         uploadedById: currentUser.id,
-        publicUrl
+        publicUrl,
       },
     });
 
@@ -200,4 +206,3 @@ function getExtension(filename: string): string {
   const parts = filename.split(".");
   return parts.length > 1 ? `.${parts[parts.length - 1]}` : "";
 }
-

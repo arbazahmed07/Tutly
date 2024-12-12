@@ -1,3 +1,4 @@
+import { actions } from "astro:actions";
 import day from "dayjs";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -6,8 +7,8 @@ import { FaEye } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
 import { RiWhatsappLine } from "react-icons/ri";
-import { actions } from "astro:actions";
 
+import MarkdownPreview from "@/components/MarkdownPreview";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,9 +21,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "@/hooks/use-router";
-import NewAttachmentPage from "@/pages/courses/[id]/classes/_components/NewAssignments";
-
 import {
   Table,
   TableBody,
@@ -31,7 +29,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import MarkdownPreview from "@/components/MarkdownPreview";
+import { useRouter } from "@/hooks/use-router";
+import NewAttachmentPage from "@/pages/courses/[id]/classes/_components/NewAssignments";
 
 interface Props {
   currentUser: any;
@@ -52,7 +51,6 @@ export default function AssignmentPage({
 }: Props) {
   const haveAdminAccess = currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
 
-
   return (
     <div className="relative mx-2 my-2 md:mx-10">
       <h1 className="rounded bg-gradient-to-l from-blue-500 to-blue-600 p-2 text-center text-sm font-medium text-white md:text-lg">
@@ -66,8 +64,9 @@ export default function AssignmentPage({
         <div className="flex items-center justify-center gap-4">
           {assignment?.dueDate != null && (
             <div
-              className={`rounded p-1 px-2 text-white ${new Date(assignment?.dueDate) > new Date() ? "bg-primary-600" : "bg-secondary-500"
-                }`}
+              className={`rounded p-1 px-2 text-white ${
+                new Date(assignment?.dueDate) > new Date() ? "bg-primary-600" : "bg-secondary-500"
+              }`}
             >
               Last Date : {assignment?.dueDate.toISOString().split("T")[0]}
             </div>
@@ -81,9 +80,11 @@ export default function AssignmentPage({
             Max responses : {assignment?.maxSubmissions}
           </h1>
           {haveAdminAccess && (
-            <Dialog >
+            <Dialog>
               <DialogTrigger asChild>
-                <Button className="rounded-md bg-emerald-700 p-1 px-3 hover:bg-emerald-800">Edit</Button>
+                <Button className="rounded-md bg-emerald-700 p-1 px-3 hover:bg-emerald-800">
+                  Edit
+                </Button>
               </DialogTrigger>
               <DialogContent className="min-w-[70vw] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
@@ -125,7 +126,14 @@ export default function AssignmentPage({
         {currentUser?.role === "STUDENT" ? (
           <StudentAssignmentSubmission courseId={assignment.courseId} assignment={assignment} />
         ) : (
-          <AdminAssignmentTable assignmentId={assignment.id} assignments={assignments} notSubmittedMentees={notSubmittedMentees} currentUser={currentUser} username={username} assignment={assignment} />
+          <AdminAssignmentTable
+            assignmentId={assignment.id}
+            assignments={assignments}
+            notSubmittedMentees={notSubmittedMentees}
+            currentUser={currentUser}
+            username={username}
+            assignment={assignment}
+          />
         )}
       </div>
     </div>
@@ -178,14 +186,18 @@ const StudentAssignmentSubmission = ({
         ) : isPlaygroundSubmission ? (
           <Button asChild>
             <a href={`/playgrounds/html-css-js?assignmentId=${assignment.id}`} target="_blank">
-              {assignment?.submissions.length === 0 ? "Submit through Playground" : "Submit another response"}
+              {assignment?.submissions.length === 0
+                ? "Submit through Playground"
+                : "Submit another response"}
             </a>
           </Button>
         ) : (
           <Dialog>
             <DialogTrigger asChild>
               <Button>
-                {assignment?.submissions.length === 0 ? "Submit External Link" : "Submit another response"}
+                {assignment?.submissions.length === 0
+                  ? "Submit External Link"
+                  : "Submit another response"}
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -194,7 +206,9 @@ const StudentAssignmentSubmission = ({
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="externalLink" className="text-right">Link</Label>
+                  <Label htmlFor="externalLink" className="text-right">
+                    Link
+                  </Label>
                   <Input
                     id="externalLink"
                     value={externalLink}
@@ -228,9 +242,10 @@ const StudentAssignmentSubmission = ({
           <TableBody>
             {assignment?.submissions.map((submission: any, index: number) => {
               const points = {
-                responsiveness: submission.points.find((p: any) => p.category === "RESPOSIVENESS")?.score || 0,
+                responsiveness:
+                  submission.points.find((p: any) => p.category === "RESPOSIVENESS")?.score || 0,
                 styling: submission.points.find((p: any) => p.category === "STYLING")?.score || 0,
-                other: submission.points.find((p: any) => p.category === "OTHER")?.score || 0
+                other: submission.points.find((p: any) => p.category === "OTHER")?.score || 0,
               };
 
               const totalScore = Object.values(points).reduce((sum, score) => sum + score, 0);
@@ -243,14 +258,20 @@ const StudentAssignmentSubmission = ({
                   <TableCell className="text-foreground">{index + 1}</TableCell>
                   <TableCell>
                     <Button variant="link" asChild>
-                      <a href={submissionUrl} target="_blank">View</a>
+                      <a href={submissionUrl} target="_blank">
+                        View
+                      </a>
                     </Button>
                   </TableCell>
                   <TableCell className="text-foreground">
                     {submission.submissionDate.toISOString().split("T")[0] || "NA"}
                   </TableCell>
-                  <TableCell className="text-foreground">{submission.overallFeedback || "NA"}</TableCell>
-                  <TableCell className="text-foreground">{totalScore ? "Submitted" : "NA"}</TableCell>
+                  <TableCell className="text-foreground">
+                    {submission.overallFeedback || "NA"}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {totalScore ? "Submitted" : "NA"}
+                  </TableCell>
                 </TableRow>
               );
             })}
@@ -267,14 +288,14 @@ const AdminAssignmentTable = ({
   notSubmittedMentees,
   currentUser,
   username,
-  assignment
+  assignment,
 }: {
-  assignmentId: string,
-  assignments: any,
-  notSubmittedMentees: any,
-  currentUser: any,
-  username: string,
-  assignment: any
+  assignmentId: string;
+  assignments: any;
+  notSubmittedMentees: any;
+  currentUser: any;
+  username: string;
+  assignment: any;
 }) => {
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editedScores, setEditedScores] = useState({
@@ -288,7 +309,7 @@ const AdminAssignmentTable = ({
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const messages = [
-    "Hi, how are you?", 
+    "Hi, how are you?",
     "Complete your assignments on time !!",
     "Make sure to review the recorded lectures for better understanding",
     "Good Work in web development,Keep Going",
@@ -299,12 +320,14 @@ const AdminAssignmentTable = ({
 
   const router = useRouter();
 
-  const filteredAssignments = assignments?.filter((assignment:any) => {
-    const usernameMatch = assignment.enrolledUser.username.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredAssignments = assignments?.filter((assignment: any) => {
+    const usernameMatch = assignment.enrolledUser.username
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     return username ? assignment.enrolledUser.username === username : usernameMatch;
   });
 
-  const filteredNonSubmittedMentees = notSubmittedMentees?.filter((mentee:any) =>
+  const filteredNonSubmittedMentees = notSubmittedMentees?.filter((mentee: any) =>
     mentee.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -322,7 +345,7 @@ const AdminAssignmentTable = ({
     try {
       await actions.submissions_addOverallFeedback({
         submissionId,
-        feedback
+        feedback,
       });
       toast.success("Feedback saved successfully");
     } catch {
@@ -332,16 +355,16 @@ const AdminAssignmentTable = ({
 
   const handleEdit = (index: number, submissionId: string) => {
     setEditingIndex(index);
-    const submission = filteredAssignments.find((x:any) => x.id === submissionId);
-    
+    const submission = filteredAssignments.find((x: any) => x.id === submissionId);
+
     const getScore = (category: string) => {
       return submission?.points.find((point: any) => point.category === category)?.score || 0;
     };
 
     setEditedScores({
       responsiveness: getScore("RESPOSIVENESS"),
-      styling: getScore("STYLING"), 
-      other: getScore("OTHER")
+      styling: getScore("STYLING"),
+      other: getScore("OTHER"),
     });
   };
 
@@ -353,12 +376,12 @@ const AdminAssignmentTable = ({
         .filter(([_, score]) => score > 0)
         .map(([category, score]) => ({
           category: category.toUpperCase(),
-          score
+          score,
         }));
 
       await actions.points_addPoints({
         submissionId: filteredAssignments[index].id,
-        marks
+        marks,
       });
 
       toast.success("Scores saved successfully");
@@ -445,8 +468,8 @@ const AdminAssignmentTable = ({
                   <TableCell className="text-foreground">{user.username}</TableCell>
                   <TableCell className="text-foreground">{user.mentorUsername}</TableCell>
                   <TableCell className="text-center">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="icon"
                       onClick={() => handleWhatsAppClick("9160804126")}
                     >
@@ -479,12 +502,8 @@ const AdminAssignmentTable = ({
                 const rValue = submission.points.find(
                   (point: any) => point.category === "RESPOSIVENESS"
                 );
-                const sValue = submission.points.find(
-                  (point: any) => point.category === "STYLING"
-                );
-                const oValue = submission.points.find(
-                  (point: any) => point.category === "OTHER"
-                );
+                const sValue = submission.points.find((point: any) => point.category === "STYLING");
+                const oValue = submission.points.find((point: any) => point.category === "OTHER");
 
                 const totalScore = [rValue, sValue, oValue].reduce((acc, currentValue) => {
                   return acc + (currentValue ? currentValue.score : 0);
@@ -495,9 +514,13 @@ const AdminAssignmentTable = ({
                     <TableCell className="text-foreground">{index + 1}</TableCell>
                     <TableCell className="text-foreground">
                       <div>{submission.enrolledUser.username}</div>
-                      <div className="text-xs text-muted-foreground">{submission.enrolledUser.mentorUsername}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {submission.enrolledUser.mentorUsername}
+                      </div>
                     </TableCell>
-                    <TableCell className="text-foreground">{day(submission.submissionDate).format("DD MMM YYYY, hh:mm:ss A")}</TableCell>
+                    <TableCell className="text-foreground">
+                      {day(submission.submissionDate).format("DD MMM YYYY, hh:mm:ss A")}
+                    </TableCell>
                     <TableCell className="text-foreground">
                       {editingIndex === index ? (
                         <Input
@@ -523,7 +546,7 @@ const AdminAssignmentTable = ({
                     <TableCell className="text-foreground">
                       {editingIndex === index ? (
                         <Input
-                          type="number" 
+                          type="number"
                           value={editedScores.styling}
                           onChange={(e) => {
                             const newScore = parseInt(e.target.value);
@@ -605,11 +628,7 @@ const AdminAssignmentTable = ({
                           </div>
                         ) : (
                           <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              asChild
-                            >
+                            <Button variant="ghost" size="icon" asChild>
                               <a
                                 href={
                                   assignment.submissionMode === "HTML_CSS_JS"
@@ -661,10 +680,7 @@ const AdminAssignmentTable = ({
                     className="flex items-center justify-between gap-4 border-b border-border py-2"
                   >
                     <p className="text-sm text-foreground">{msg}</p>
-                    <Button
-                      variant="link"
-                      onClick={() => handleSend(msg)}
-                    >
+                    <Button variant="link" onClick={() => handleSend(msg)}>
                       Send
                     </Button>
                   </div>
@@ -675,5 +691,5 @@ const AdminAssignmentTable = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};

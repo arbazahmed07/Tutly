@@ -94,9 +94,15 @@ async function getCodeforcesProfile(handle: string) {
   }
 }
 
-async function getCodeforcesSubmissions(handle: string, from: number, count: number): Promise<any[]> {
+async function getCodeforcesSubmissions(
+  handle: string,
+  from: number,
+  count: number
+): Promise<any[]> {
   try {
-    const res = await fetch(`${_CODEFORCES_API}user.status?handle=${handle}&from=${from}&count=${count}`);
+    const res = await fetch(
+      `${_CODEFORCES_API}user.status?handle=${handle}&from=${from}&count=${count}`
+    );
     const data = await res.json();
 
     if (data.status !== "OK") {

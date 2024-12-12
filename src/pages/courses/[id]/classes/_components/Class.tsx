@@ -1,7 +1,35 @@
-import { FaPlus, FaExternalLinkAlt, FaTrashAlt, FaPencilAlt, FaBookmark, FaRegBookmark, FaStickyNote, FaTags } from "react-icons/fa";
-import { RiEdit2Fill } from "react-icons/ri";
+import type { Attachment, Class, Notes, Video } from "@prisma/client";
+import { actions } from "astro:actions";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import {
+  FaBookmark,
+  FaExternalLinkAlt,
+  FaPencilAlt,
+  FaPlus,
+  FaRegBookmark,
+  FaStickyNote,
+  FaTags,
+  FaTrashAlt,
+} from "react-icons/fa";
+import { RiEdit2Fill } from "react-icons/ri";
+import { useDebounce } from "use-debounce";
 
+import VideoPlayer from "@/components/VideoPlayer";
+import RichTextEditor from "@/components/editor/RichTextEditor";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,28 +45,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 
 import NewAttachmentPage from "./NewAssignments";
-import VideoPlayer from "@/components/VideoPlayer";
-import type { Attachment, Class, Notes, Video } from "@prisma/client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useState, useEffect } from "react";
-import { actions } from "astro:actions";
-import toast from "react-hot-toast";
-import { useDebounce } from "use-debounce";
-import dayjs from "dayjs";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import RichTextEditor from "@/components/editor/RichTextEditor";
 
 export default function Class({
   classes,
@@ -53,10 +62,12 @@ export default function Class({
   classId: string;
   courseId: string;
   currentUser: any;
-  details: Class & {
-    video: Video | null;
-    attachments: Attachment[];
-  } | null;
+  details:
+    | (Class & {
+        video: Video | null;
+        attachments: Attachment[];
+      })
+    | null;
   isBookmarked: boolean;
   initialNote?: Notes | null;
 }) {
@@ -76,7 +87,8 @@ export default function Class({
     if (!videoLink || !videoType) return null;
 
     const PATTERNS = {
-      YOUTUBE: /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+      YOUTUBE:
+        /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
       DRIVE: /\/file\/d\/([^\/]+)/,
     };
 
@@ -97,7 +109,7 @@ export default function Class({
         </span>
       );
     }
-  
+
     return <VideoPlayer videoId={videoId} videoType={videoType as "YOUTUBE" | "DRIVE"} />;
   };
 
@@ -141,7 +153,7 @@ export default function Class({
             category: "CLASS",
             description: debouncedNotes,
             tags: tags,
-            causedObjects: {classId: classId, courseId: courseId},
+            causedObjects: { classId: classId, courseId: courseId },
           });
           setLastSaved(new Date());
           setNotesStatus("Saved");
@@ -171,10 +183,10 @@ export default function Class({
       const response = await actions.bookmarks_toggleBookmark({
         objectId: classId,
         category: "CLASS",
-        causedObjects: {classId: classId, courseId: courseId},
+        causedObjects: { classId: classId, courseId: courseId },
       });
 
-      if(response.error) {
+      if (response.error) {
         toast.error("failed to add bookmark");
       } else {
         toast.success(isBookmarked ? "Bookmark removed" : "Bookmark added");
@@ -193,7 +205,7 @@ export default function Class({
   };
 
   const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   return (
@@ -298,16 +310,18 @@ export default function Class({
                               <BsThreeDotsVertical className="h-5 w-5" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                              <DropdownMenuItem onClick={() => {
-                                setSelectedAttachment(attachment);
-                                setIsEditDialogOpen(true);
-                              }}>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedAttachment(attachment);
+                                  setIsEditDialogOpen(true);
+                                }}
+                              >
                                 <div className="flex items-center gap-2">
                                   <FaPencilAlt className="h-4 w-4" />
                                   Edit
                                 </div>
                               </DropdownMenuItem>
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 className="text-red-600"
                                 onClick={() => {
                                   setSelectedAttachment(attachment);
@@ -343,16 +357,9 @@ export default function Class({
             <FaTags className="h-5 w-5 text-blue-600" />
             <div className="flex flex-wrap gap-2 items-center">
               {tags.map((tag) => (
-                <Badge 
-                  key={tag}
-                  variant="secondary"
-                  className="px-3 py-1 flex items-center gap-2"
-                >
+                <Badge key={tag} variant="secondary" className="px-3 py-1 flex items-center gap-2">
                   {tag}
-                  <button 
-                    onClick={() => removeTag(tag)}
-                    className="text-xs hover:text-red-500"
-                  >
+                  <button onClick={() => removeTag(tag)} className="text-xs hover:text-red-500">
                     ×
                   </button>
                 </Badge>
@@ -366,11 +373,7 @@ export default function Class({
                   onKeyDown={(e) => e.key === "Enter" && addTag()}
                   className="w-32 h-8"
                 />
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={addTag}
-                >
+                <Button variant="outline" size="sm" onClick={addTag}>
                   Add
                 </Button>
               </div>
@@ -382,10 +385,7 @@ export default function Class({
           </div>
         </div>
 
-        <RichTextEditor
-          initialValue={notes || ""} 
-          onChange={(value) => setNotes(value || "")}
-        />
+        <RichTextEditor initialValue={notes || ""} onChange={(value) => setNotes(value || "")} />
       </div>
 
       {/* Edit Dialog */}
@@ -396,9 +396,9 @@ export default function Class({
             <DialogDescription>Modify the assignment details.</DialogDescription>
           </DialogHeader>
           {selectedAttachment && (
-            <NewAttachmentPage 
-              classes={classes} 
-              courseId={courseId} 
+            <NewAttachmentPage
+              classes={classes}
+              courseId={courseId}
               classId={classId}
               isEditing={true}
               attachment={selectedAttachment}
@@ -419,10 +419,7 @@ export default function Class({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

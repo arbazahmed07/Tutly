@@ -1,14 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Attachment, attachmentType, submissionMode } from "@prisma/client";
-import MDEditor from "@uiw/react-md-editor";
 import { actions } from "astro:actions";
-import katex from "katex";
-import "katex/dist/katex.css";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { getCodeString } from "rehype-rewrite";
 import * as z from "zod";
 
+import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,14 +24,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "@/hooks/use-router";
-import { MarkdownEditor } from "@/components/MarkdownEditor";
 
 const formSchema = z.object({
-  title: z
-    .string()
-    .min(1, {
-      message: "Title is required",
-    }),
+  title: z.string().min(1, {
+    message: "Title is required",
+  }),
   link: z.string().optional(),
   attachmentType: z.string().min(1, {
     message: "Type is required",
@@ -80,9 +74,7 @@ const NewAttachmentPage = ({
       class: classId || attachment?.classId || "",
       courseId: courseId || "",
       details: attachment?.details || "",
-      dueDate: attachment?.dueDate 
-        ? new Date(attachment.dueDate).toISOString().split('T')[0] 
-        : "",
+      dueDate: attachment?.dueDate ? new Date(attachment.dueDate).toISOString().split("T")[0] : "",
       maxSubmissions: attachment?.maxSubmissions?.toString() || "1",
     },
   });
@@ -90,9 +82,8 @@ const NewAttachmentPage = ({
   const { isSubmitting } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const dueDate = values?.dueDate !== "" && values?.dueDate 
-      ? new Date(values?.dueDate) 
-      : undefined;
+    const dueDate =
+      values?.dueDate !== "" && values?.dueDate ? new Date(values?.dueDate) : undefined;
 
     values.title = values.title.trim();
 

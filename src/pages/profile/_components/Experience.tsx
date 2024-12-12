@@ -1,8 +1,13 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Profile } from "@prisma/client";
+import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Form,
   FormControl,
@@ -12,10 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Plus, Trash2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import type { Profile } from "@prisma/client";
 
 const experienceSchema = z.object({
   company: z.string().min(1, "Company name is required"),
@@ -56,11 +57,12 @@ export default function Experience({ experiences, onUpdate }: ExperienceProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await onUpdate({
-        experiences: values.experiences?.map(exp => ({
-          ...exp,
-          startDate: exp.startDate.toISOString(),
-          endDate: exp.endDate?.toISOString()
-        })) ?? []
+        experiences:
+          values.experiences?.map((exp) => ({
+            ...exp,
+            startDate: exp.startDate.toISOString(),
+            endDate: exp.endDate?.toISOString(),
+          })) ?? [],
       });
       setIsEditing(false);
     } catch (error) {
@@ -134,11 +136,7 @@ export default function Experience({ experiences, onUpdate }: ExperienceProps) {
                         <FormItem>
                           <FormLabel>Role</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter role"
-                              {...field}
-                              disabled={!isEditing}
-                            />
+                            <Input placeholder="Enter role" {...field} disabled={!isEditing} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -170,11 +168,7 @@ export default function Experience({ experiences, onUpdate }: ExperienceProps) {
                         <FormItem>
                           <FormLabel>City</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter city"
-                              {...field}
-                              disabled={!isEditing}
-                            />
+                            <Input placeholder="Enter city" {...field} disabled={!isEditing} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -238,21 +232,15 @@ export default function Experience({ experiences, onUpdate }: ExperienceProps) {
 
           {isEditing && (
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={addExperience}
-              >
+              <Button type="button" variant="outline" onClick={addExperience}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add Experience
               </Button>
-              <Button type="submit">
-                Save Changes
-              </Button>
+              <Button type="submit">Save Changes</Button>
             </div>
           )}
         </form>
       </Form>
     </div>
   );
-} 
+}

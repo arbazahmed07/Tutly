@@ -1,9 +1,25 @@
-import { isHandleValid as isCodechefValid, getScore as getCodechefScore } from "../coding-platforms/codechef";
-import { isHandleValid as isCodeforcesValid, getScore as getCodeforcesScore } from "../coding-platforms/codeforces";
-import { isHandleValid as isHackerrankValid, getScore as getHackerrankScore } from "../coding-platforms/hackerrank";
-import { isHandleValid as isInterviewbitValid, getScore as getInterviewbitScore } from "../coding-platforms/interviewbit";
-import { isHandleValid as isLeetcodeValid, getScore as getLeetcodeScore } from "../coding-platforms/leetcode";
+import {
+  getScore as getCodechefScore,
+  isHandleValid as isCodechefValid,
+} from "../coding-platforms/codechef";
+import {
+  getScore as getCodeforcesScore,
+  isHandleValid as isCodeforcesValid,
+} from "../coding-platforms/codeforces";
 import { isHandleValid as isGithubValid } from "../coding-platforms/github";
+import {
+  getScore as getHackerrankScore,
+  isHandleValid as isHackerrankValid,
+} from "../coding-platforms/hackerrank";
+import {
+  getScore as getInterviewbitScore,
+  isHandleValid as isInterviewbitValid,
+} from "../coding-platforms/interviewbit";
+import {
+  getScore as getLeetcodeScore,
+  isHandleValid as isLeetcodeValid,
+} from "../coding-platforms/leetcode";
+
 export interface ValidationResult {
   valid: boolean;
   invalidFields: string[];
@@ -22,7 +38,9 @@ export interface PlatformScores {
   percentages: { [platform: string]: number };
 }
 
-export async function validatePlatformHandles(handles: Record<string, string>): Promise<ValidationResult> {
+export async function validatePlatformHandles(
+  handles: Record<string, string>
+): Promise<ValidationResult> {
   const invalidHandles: string[] = [];
   const validationPromises: Promise<void>[] = [];
 
@@ -32,10 +50,13 @@ export async function validatePlatformHandles(handles: Record<string, string>): 
     const validationPromise = (async () => {
       let isValid: boolean = false;
       let validationError: Error | null = null;
-      
+
       switch (platform) {
         case "github":
-          [isValid, validationError] = await isGithubValid(handle);
+          [isValid, validationError] = (await isGithubValid(handle)) as unknown as [
+            boolean,
+            Error | null,
+          ];
           break;
         case "codechef":
           [isValid, validationError] = await isCodechefValid(handle);
@@ -53,7 +74,7 @@ export async function validatePlatformHandles(handles: Record<string, string>): 
           [isValid, validationError] = await isLeetcodeValid(handle);
           break;
       }
-      
+
       if (!isValid || validationError) {
         invalidHandles.push(platform);
       }
@@ -63,10 +84,10 @@ export async function validatePlatformHandles(handles: Record<string, string>): 
   }
 
   await Promise.all(validationPromises);
-  
+
   return {
     valid: invalidHandles.length === 0,
-    invalidFields: invalidHandles
+    invalidFields: invalidHandles,
   };
 }
 
@@ -78,7 +99,7 @@ export async function getPlatformScores(handles: Record<string, string>): Promis
     codeforces: null,
     hackerrank: null,
     interviewbit: null,
-    leetcode: null
+    leetcode: null,
   } as PlatformScores;
 
   const scorePromises = Object.entries(handles).map(async ([platform, handle]) => {
@@ -118,7 +139,13 @@ export async function getPlatformScores(handles: Record<string, string>): Promis
   await Promise.all(scorePromises);
 
   Object.entries(scores).forEach(([platform, score]) => {
-    if (platform !== "totalScore" && platform !== "percentages" && score && typeof score !== "number" && "score" in score) {
+    if (
+      platform !== "totalScore" &&
+      platform !== "percentages" &&
+      score &&
+      typeof score !== "number" &&
+      "score" in score
+    ) {
       scores.percentages[platform] = Number(
         ((parseInt(score.score as string) / scores.totalScore) * 100).toFixed(2)
       );

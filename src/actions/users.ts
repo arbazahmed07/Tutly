@@ -87,24 +87,27 @@ export const getAllUsers = defineAction({
 
 export const updateUserProfile = defineAction({
   input: z.object({
-    profile: z.object({
-      mobile: z.string(),
-      whatsapp: z.string(),
-      gender: z.string(),
-      tshirtSize: z.string(),
-      secondaryEmail: z.string(),
-      dateOfBirth: z.union([z.date(), z.string()]).transform((val) =>
-        typeof val === "string" ? new Date(val) : val
-      ).nullable(),
-      hobbies: z.array(z.string()),
-      aboutMe: z.string(),
-      socialLinks: z.record(z.string()),
-      professionalProfiles: z.record(z.string()),
-      academicDetails: z.record(z.string()),
-      experiences: z.array(z.record(z.any())),
-      address: z.record(z.string()),
-      documents: z.record(z.string()),
-    }).partial(),
+    profile: z
+      .object({
+        mobile: z.string(),
+        whatsapp: z.string(),
+        gender: z.string(),
+        tshirtSize: z.string(),
+        secondaryEmail: z.string(),
+        dateOfBirth: z
+          .union([z.date(), z.string()])
+          .transform((val) => (typeof val === "string" ? new Date(val) : val))
+          .nullable(),
+        hobbies: z.array(z.string()),
+        aboutMe: z.string(),
+        socialLinks: z.record(z.string()),
+        professionalProfiles: z.record(z.string()),
+        academicDetails: z.record(z.string()),
+        experiences: z.array(z.record(z.any())),
+        address: z.record(z.string()),
+        documents: z.record(z.string()),
+      })
+      .partial(),
   }),
   async handler({ profile }, { locals }) {
     const currentUser = locals.user;
@@ -125,14 +128,17 @@ export const updateUserProfile = defineAction({
       academicDetails: {},
       experiences: [],
       address: {},
-      documents: {}
+      documents: {},
     };
 
     const createData = {
       ...defaultValues,
       ...Object.fromEntries(
-        Object.entries(profile).map(([key, value]) => [key, value ?? defaultValues[key as keyof typeof defaultValues]])
-      )
+        Object.entries(profile).map(([key, value]) => [
+          key,
+          value ?? defaultValues[key as keyof typeof defaultValues],
+        ])
+      ),
     };
 
     const updateData = Object.fromEntries(
