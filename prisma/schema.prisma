@@ -42,6 +42,8 @@ model User {
   lastSeen      DateTime?
   emailVerified DateTime?
 
+  isProfilePublic Boolean @default(true)
+
   oneTimePassword String @default(uuid())
 
   pushSubscriptions PushSubscription[]
@@ -68,6 +70,48 @@ model User {
   notes               Notes[]
 }
 
+model Profile {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  // Personal Details
+  dateOfBirth DateTime?
+  hobbies     String[]
+  aboutMe     String?
+
+  // Basic Details
+  secondaryEmail String?
+  mobile         String?
+  whatsapp       String?
+  gender         String?
+  tshirtSize     String?
+
+  // Social Links: {"facebook": null, "linkedin": null, "twitter": null, "quora": null, "website": null}
+  socialLinks Json? @default("{}")
+
+  // Professional Profiles: {"github": null, "leetcode": null, "codechef": null, "codeforces": null, "hackerrank": null}
+  professionalProfiles Json? @default("{}")
+
+  // Academic Details: {"rollNumber": null, "cgpa": null, "marks": null, "grade": null, "percentage": null, "section": null, "branch": null, "academicYear": null}
+  academicDetails Json? @default("{}")
+
+  // Experience: [{"company": null, "role": null, "workLocation": null, "workCity": null, "startDate": null, "endDate": null}]
+  experiences Json[]
+
+  // Address: {"building": null, "street": null, "city": null, "state": null, "country": null, "pincode": null}
+  address Json? @default("{}")
+
+  // Documents: {"resume": null}
+  documents Json? @default("{}")
+
+  // Additional Metadata for Future Extensions
+  metadata Json? @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model PushSubscription {
   id String @id @default(uuid())
 
@@ -84,19 +128,6 @@ model PushSubscription {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
-}
-
-model Profile {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
-
-  section      String?
-  branch       String?
-  academicYear String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 enum NotificationMedium {
@@ -207,9 +238,9 @@ enum BookMarkCategory {
 model BookMarks {
   id String @id @default(uuid())
 
-  category BookMarkCategory
-  objectId String
-  causedObjects Json? @default("{}")
+  category      BookMarkCategory
+  objectId      String
+  causedObjects Json?            @default("{}")
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
@@ -232,9 +263,9 @@ model Notes {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  category NoteCategory
-  objectId String
-  causedObjects Json? @default("{}")
+  category      NoteCategory
+  objectId      String
+  causedObjects Json?        @default("{}")
 
   description String?
   tags        String[]
