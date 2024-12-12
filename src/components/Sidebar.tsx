@@ -4,6 +4,7 @@ import {
   Bookmark,
   ChevronRight,
   ClipboardList,
+  File,
   FileBarChart,
   FileText,
   GraduationCap,
@@ -104,6 +105,11 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
       title:"Users",
       url: "/instructor/users",
       icon: Users2
+    },
+    {
+      title: "Drive",
+      url: "/instructor/drive",
+      icon: File
     }
   ];
 

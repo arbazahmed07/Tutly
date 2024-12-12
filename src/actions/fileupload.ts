@@ -62,9 +62,10 @@ export const createFileAndGetUploadUrl = defineAction({
     const currentUser = locals.user;
     if (!currentUser) return null;
 
-    if (mimeType && !allowedMimeTypes.includes(mimeType)) {
-      throw new Error("Invalid MIME type");
-    }
+    // todo: add mime type validation
+    // if (mimeType && !allowedMimeTypes.includes(mimeType)) {
+    //   throw new Error("Invalid MIME type");
+    // }
 
     const internalName = `${uuid()}_${Date.now()}${getExtension(name)}`;
 
@@ -100,6 +101,10 @@ export const getDownloadUrl = defineAction({
       where: { id: fileId },
     });
     if (!file) throw new Error("File not found");
+
+    if(file.isPublic){
+      return file.publicUrl;
+    }
 
     const command = new GetObjectCommand({
       Bucket: import.meta.env.AWS_BUCKET_NAME,

@@ -25,7 +25,8 @@ export const useFileUpload = (options: FileUploadOptions) => {
         name: file.name,
         fileType,
         associatingId,
-        isPublic: isPublicFileTypes.includes(fileType),
+        // TODO: make this dynamic
+        isPublic: true,
         mimeType: file.type,
       });
 
