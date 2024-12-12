@@ -20,6 +20,8 @@ import {
   RiCodeLine
 } from "react-icons/ri";
 import type { Profile } from "@prisma/client";
+// import { validatePlatformHandles } from "@/actions/codingPlatforms";
+import {toast} from "react-hot-toast"
 
 const formSchema = z.object({
   github: z.string()
@@ -68,12 +70,23 @@ export default function ProfessionalProfiles({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      // const validationValues = Object.fromEntries(
+      //   Object.entries(values).filter(([_, value]) => value !== "" && value !== undefined)
+      // );
+      // toast.loading("Validating handles...");
+      // const { valid, invalidFields } = await validatePlatformHandles(validationValues as Record<string, string>);
+      // if (!valid) {
+      //   toast.dismiss();
+      //   toast.error(`Invalid handles: ${invalidFields.join(", ")}`);
+      //   return;
+      // }
+      toast.dismiss();
       await onUpdate({
         professionalProfiles: values
       });
       setIsEditing(false);
     } catch (error) {
-      console.error(error);
+      toast.error("Something went wrong");
     }
   }
 
