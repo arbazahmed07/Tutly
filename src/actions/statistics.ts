@@ -362,3 +362,67 @@ export const studentBarchartData = defineAction({
     }
   },
 });
+
+export const studentHeatmapData = defineAction({
+  input: z.object({
+    courseId: z.string(),
+  }),
+  handler: async ({ courseId }, { locals }) => {
+    const currentUser = locals.user;
+    if (!currentUser) {
+      return null;
+    }
+    try {
+      const attendance = await db.attendance.findMany({
+        where: {
+          username: "23071A0572",
+          AND: {
+            class: {
+              course: {
+                id: courseId,
+              },
+            },
+          },
+        },
+        select: {
+          class: {
+            select: {
+              createdAt: true,
+            },
+          },
+        },
+      });
+      const attendanceDates = [] as any;
+      attendance.forEach((attendanceData) => {
+        attendanceDates.push(
+          attendanceData.class.createdAt.toISOString().split("T")[0],
+        );
+      });
+    
+      const getAllClasses = await db.class.findMany({
+        where: {
+          courseId,
+          Attendence: {
+            some: {},
+          },
+        },
+        select: {
+          id: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+      const classes = [] as any;
+      getAllClasses.forEach((classData) => {
+        // if (!attendanceDates.includes(classData.createdAt.toISOString().split("T")[0])) {
+        classes.push(classData.createdAt.toISOString().split("T")[0]);
+        // }
+      });
+      return { classes, attendanceDates };
+    } catch (e) {
+      return { error: "Failed to fetch barchart data", details: String(e) };
+    }
+  },
+});

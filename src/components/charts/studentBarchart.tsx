@@ -16,7 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
+let chartData = [
   { browser: "evaluated", submissions: 275, fill: "var(--color-evaluated)" },
   { browser: "unreviewed", submissions: 200, fill: "var(--color-unreviewed)" },
   { browser: "unsubmitted", submissions: 187, fill: "var(--color-unsubmitted)" },
@@ -48,7 +48,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function StudentBarchart() {
+export function StudentBarchart({data}:any) {
+  chartData.forEach((d,ind) => (d.submissions = data[ind]))
   return (
     <Card>
       <CardHeader>
