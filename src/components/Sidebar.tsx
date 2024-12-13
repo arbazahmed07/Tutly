@@ -92,7 +92,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
     },
     {
       title: "Statistics",
-      url: "/instructor/statistics",
+      url: "/tutor/statistics",
       icon: BarChart,
     },
     {
@@ -150,7 +150,7 @@ export function SidebarComponent({ user, initialSideBarItems }: SidebarComponent
     },
     {
       title: "Statistics",
-      url: "/mentor/statistics",
+      url: "/tutor/statistics",
       icon: BarChart,
     },
     {
