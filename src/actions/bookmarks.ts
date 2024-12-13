@@ -1,9 +1,8 @@
+import { BookMarkCategory } from "@prisma/client";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
 
 import db from "@/lib/db";
-import { BookMarkCategory } from "@prisma/client";
-
 
 export const toggleBookmark = defineAction({
   input: z.object({
@@ -16,15 +15,15 @@ export const toggleBookmark = defineAction({
       where: {
         category,
         objectId,
-        userId: locals.user?.id!
-      }
+        userId: locals.user?.id!,
+      },
     });
 
     if (existingBookmark) {
       await db.bookMarks.delete({
         where: {
-          id: existingBookmark.id
-        }
+          id: existingBookmark.id,
+        },
       });
     } else {
       await db.bookMarks.create({
@@ -33,7 +32,7 @@ export const toggleBookmark = defineAction({
           objectId,
           userId: locals.user?.id!,
           causedObjects: causedObjects,
-        }
+        },
       });
     }
 

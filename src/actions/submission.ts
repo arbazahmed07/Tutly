@@ -167,13 +167,13 @@ export const getAssignmentSubmissions = defineAction({
     let filteredSubmissions: SubmissionWithDetails[] = [];
 
     if (user.role === "INSTRUCTOR") {
-      filteredSubmissions = submissions;
+      filteredSubmissions = submissions as SubmissionWithDetails[];
     }
 
     if (user.role === "MENTOR") {
       filteredSubmissions = submissions.filter(
         (submission) => submission.enrolledUser.mentorUsername === user.username
-      );
+      ) as SubmissionWithDetails[];
     }
 
     if (assignment?.maxSubmissions && assignment.maxSubmissions > 1) {
@@ -239,13 +239,13 @@ export const getAllAssignmentSubmissions = defineAction({
     let filteredSubmissions: SubmissionWithDetails[] = [];
 
     if (user.role === "INSTRUCTOR") {
-      filteredSubmissions = submissions;
+      filteredSubmissions = submissions as SubmissionWithDetails[];
     }
 
     if (user.role === "MENTOR") {
       filteredSubmissions = submissions.filter(
         (submission) => submission.enrolledUser.mentorUsername === user.username
-      );
+      ) as SubmissionWithDetails[];
     }
 
     const submissionsByAssignment = filteredSubmissions.reduce(
@@ -330,7 +330,6 @@ export const getSubmissionById = defineAction({
     return { success: true, data: submission };
   },
 });
-
 
 export const deleteSubmission = defineAction({
   input: z.object({

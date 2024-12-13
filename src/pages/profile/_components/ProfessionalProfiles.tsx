@@ -1,7 +1,18 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Profile } from "@prisma/client";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+// import { validatePlatformHandles } from "@/actions/codingPlatforms";
+import { toast } from "react-hot-toast";
+import {
+  RiCodeBoxLine,
+  RiCodeLine,
+  RiCodeSSlashLine,
+  RiGithubLine,
+  RiTerminalBoxLine,
+} from "react-icons/ri";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,36 +23,46 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { 
-  RiGithubLine,
-  RiCodeBoxLine,
-  RiCodeSSlashLine,
-  RiTerminalBoxLine,
-  RiCodeLine
-} from "react-icons/ri";
-import type { Profile } from "@prisma/client";
-// import { validatePlatformHandles } from "@/actions/codingPlatforms";
-import {toast} from "react-hot-toast"
 
 const formSchema = z.object({
-  github: z.string()
-    .refine(val => !val.includes("/") && !val.includes("github.com"), "Please enter only username")
+  github: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("github.com"),
+      "Please enter only username"
+    )
     .optional()
     .or(z.literal("")),
-  leetcode: z.string()
-    .refine(val => !val.includes("/") && !val.includes("leetcode.com"), "Please enter only username")
+  leetcode: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("leetcode.com"),
+      "Please enter only username"
+    )
     .optional()
     .or(z.literal("")),
-  codechef: z.string()
-    .refine(val => !val.includes("/") && !val.includes("codechef.com"), "Please enter only username")
+  codechef: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("codechef.com"),
+      "Please enter only username"
+    )
     .optional()
     .or(z.literal("")),
-  codeforces: z.string()
-    .refine(val => !val.includes("/") && !val.includes("codeforces.com"), "Please enter only username")
+  codeforces: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("codeforces.com"),
+      "Please enter only username"
+    )
     .optional()
     .or(z.literal("")),
-  hackerrank: z.string()
-    .refine(val => !val.includes("/") && !val.includes("hackerrank.com"), "Please enter only username")
+  hackerrank: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("hackerrank.com"),
+      "Please enter only username"
+    )
     .optional()
     .or(z.literal("")),
 });
@@ -51,9 +72,9 @@ interface ProfessionalProfilesProps {
   onUpdate: (profile: Partial<Profile>) => Promise<void>;
 }
 
-export default function ProfessionalProfiles({ 
-  professionalProfiles, 
-  onUpdate 
+export default function ProfessionalProfiles({
+  professionalProfiles,
+  onUpdate,
 }: ProfessionalProfilesProps) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -82,7 +103,7 @@ export default function ProfessionalProfiles({
       // }
       toast.dismiss();
       await onUpdate({
-        professionalProfiles: values
+        professionalProfiles: values,
       });
       setIsEditing(false);
     } catch (error) {
@@ -94,7 +115,7 @@ export default function ProfessionalProfiles({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Professional Profiles</h2>
-        <Button 
+        <Button
           variant={isEditing ? "outline" : "default"}
           onClick={() => setIsEditing(!isEditing)}
         >
@@ -115,11 +136,7 @@ export default function ProfessionalProfiles({
                     GitHub Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -136,11 +153,7 @@ export default function ProfessionalProfiles({
                     LeetCode Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -157,11 +170,7 @@ export default function ProfessionalProfiles({
                     CodeChef Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -178,11 +187,7 @@ export default function ProfessionalProfiles({
                     Codeforces Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -199,11 +204,7 @@ export default function ProfessionalProfiles({
                     HackerRank Username
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="username" 
-                      {...field} 
-                      disabled={!isEditing}
-                    />
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -220,4 +221,4 @@ export default function ProfessionalProfiles({
       </Form>
     </div>
   );
-} 
+}

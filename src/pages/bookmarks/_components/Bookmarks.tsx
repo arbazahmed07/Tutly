@@ -1,51 +1,52 @@
-import type { BookMarks, BookMarkCategory } from "@prisma/client";
-import { Bell, BookOpen, FileQuestion, ScrollText } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { BookMarkCategory, BookMarks } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
+import { Bell, BookOpen, FileQuestion, ScrollText } from "lucide-react";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CausedObjects {
   courseId: string;
   classId: string;
 }
 
-const getBookmarkDetails = (category: BookMarkCategory, objectId: string, causedObjects: CausedObjects) => {
+const getBookmarkDetails = (
+  category: BookMarkCategory,
+  objectId: string,
+  causedObjects: CausedObjects
+) => {
   const config = {
-    "ASSIGNMENT": {
+    ASSIGNMENT: {
       icon: ScrollText,
       href: `/assignments/${objectId}`,
       style: "text-yellow-500",
-      label: "Assignment"
+      label: "Assignment",
     },
-    "CLASS": {
+    CLASS: {
       icon: BookOpen,
       href: `/courses/${causedObjects?.courseId}/classes/${objectId}`,
       style: "text-blue-500",
-      label: "Class"
+      label: "Class",
     },
-    "DOUBT": {
+    DOUBT: {
       icon: FileQuestion,
       href: `/doubts/${objectId}`,
       style: "text-green-500",
-      label: "Doubt"
+      label: "Doubt",
     },
-    "NOTIFICATION": {
+    NOTIFICATION: {
       icon: Bell,
       href: `/notifications/${objectId}`,
       style: "text-purple-500",
-      label: "Notification"
-    }
+      label: "Notification",
+    },
   };
 
   return config[category];
 };
 
-const Bookmarks = ({
-  bookmarks,
-}: {
-  bookmarks: BookMarks[];
-}) => {
-  const categories = ["ALL", ...new Set(bookmarks.map(b => b.category))];
+const Bookmarks = ({ bookmarks }: { bookmarks: BookMarks[] }) => {
+  const categories = ["ALL", ...new Set(bookmarks.map((b) => b.category))];
 
   return (
     <div className="w-full p-4">
@@ -62,11 +63,15 @@ const Bookmarks = ({
           <TabsContent key={category} value={category}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {bookmarks
-                .filter(bookmark => category === "ALL" || bookmark.category === category)
+                .filter((bookmark) => category === "ALL" || bookmark.category === category)
                 .map((bookmark) => {
-                  const details = getBookmarkDetails(bookmark.category, bookmark.objectId, bookmark.causedObjects as unknown as CausedObjects);
+                  const details = getBookmarkDetails(
+                    bookmark.category,
+                    bookmark.objectId,
+                    bookmark.causedObjects as unknown as CausedObjects
+                  );
                   const Icon = details.icon;
-                  
+
                   return (
                     <Card key={bookmark.id}>
                       <CardHeader className="flex flex-row items-center gap-4">
@@ -81,7 +86,7 @@ const Bookmarks = ({
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <a 
+                        <a
                           href={details.href}
                           className="text-sm text-muted-foreground hover:text-primary transition-colors"
                         >

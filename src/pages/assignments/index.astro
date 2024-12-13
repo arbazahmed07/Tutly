@@ -2,7 +2,7 @@
 import db from "@/lib/db";
 import RootLayout from "@layouts/RootLayout.astro";
 import AssignmentBoard from "./_components/AssignmentBoard";
-import NoDataFound from "@/components/NoDataFound"
+import NoDataFound from "@/components/NoDataFound";
 
 const currentuser = Astro.locals.user;
 if (!currentuser) return null;
@@ -103,15 +103,10 @@ const assignments = await db.course.findMany({
     {
       !courses || courses.length === 0 ? (
         <div class="mt-20 p-4 text-center font-semibold">
-          <NoDataFound message="No Assignments available"/>
+          <NoDataFound message="No Assignments available" />
         </div>
       ) : (
-          <AssignmentBoard
-            reviewed={true}
-            courses={courses}
-            assignments={assignments}
-            client:load
-          />
+        <AssignmentBoard reviewed={true} courses={courses} assignments={assignments} client:load />
       )
     }
   </div>

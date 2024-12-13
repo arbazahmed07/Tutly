@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { MdOutlineSportsScore } from "react-icons/md";
 
 import { useRouter } from "@/hooks/use-router";

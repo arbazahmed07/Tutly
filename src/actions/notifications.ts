@@ -1,8 +1,8 @@
+import { NotificationEvent, NotificationMedium } from "@prisma/client";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
 
 import db from "@/lib/db";
-import { NotificationEvent, NotificationMedium } from "@prisma/client";
 
 export const getNotifications = defineAction({
   async handler(_, { locals }) {
@@ -101,7 +101,6 @@ export const updateNotificationConfig = defineAction({
     return subscription;
   },
 });
-
 
 export const notifyUser = defineAction({
   input: z.object({

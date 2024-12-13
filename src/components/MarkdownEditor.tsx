@@ -1,9 +1,9 @@
 import MDEditor from "@uiw/react-md-editor";
+import { ContextStore } from "@uiw/react-md-editor";
 import katex from "katex";
 import "katex/dist/katex.css";
-import { getCodeString } from "rehype-rewrite";
 import { ChangeEvent } from "react";
-import { ContextStore } from "@uiw/react-md-editor";
+import { getCodeString } from "rehype-rewrite";
 
 export const MarkdownEditor = ({
   value,
@@ -11,8 +11,12 @@ export const MarkdownEditor = ({
   variant = "light",
 }: {
   value: string;
-  onChange: (value?: string, event?: ChangeEvent<HTMLTextAreaElement>, state?: ContextStore) => void;
-  variant?: "light" | "dark" | "transparent"
+  onChange: (
+    value?: string,
+    event?: ChangeEvent<HTMLTextAreaElement>,
+    state?: ContextStore
+  ) => void;
+  variant?: "light" | "dark" | "transparent";
 }) => {
   return (
     <div data-color-mode={variant} className="border rounded-md overflow-hidden">
@@ -26,10 +30,9 @@ export const MarkdownEditor = ({
           components: {
             code: ({ children = [], className, ...props }) => {
               if (typeof children === "string" && /^\$\$(.*)\$\$/.test(children)) {
-                const html = katex.renderToString(
-                  children.replace(/^\$\$(.*)\$\$/, "$1"),
-                  { throwOnError: false }
-                );
+                const html = katex.renderToString(children.replace(/^\$\$(.*)\$\$/, "$1"), {
+                  throwOnError: false,
+                });
                 return (
                   <code
                     dangerouslySetInnerHTML={{ __html: html }}
@@ -38,9 +41,7 @@ export const MarkdownEditor = ({
                 );
               }
               const code =
-                props.node && props.node.children
-                  ? getCodeString(props.node.children)
-                  : children;
+                props.node && props.node.children ? getCodeString(props.node.children) : children;
 
               if (
                 typeof code === "string" &&
@@ -51,10 +52,7 @@ export const MarkdownEditor = ({
                   throwOnError: false,
                 });
                 return (
-                  <code
-                    style={{ fontSize: "150%" }}
-                    dangerouslySetInnerHTML={{ __html: html }}
-                  />
+                  <code style={{ fontSize: "150%" }} dangerouslySetInnerHTML={{ __html: html }} />
                 );
               }
               return <code className={String(className)}>{children}</code>;
@@ -63,5 +61,5 @@ export const MarkdownEditor = ({
         }}
       />
     </div>
-  )
+  );
 };

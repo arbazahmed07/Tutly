@@ -1,7 +1,8 @@
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
 
 interface LinkDialogProps {
   isOpen: boolean;
@@ -10,7 +11,12 @@ interface LinkDialogProps {
   initialUrl?: string;
 }
 
-export default function LinkDialog({ isOpen, onClose, onSubmit, initialUrl = "" }: LinkDialogProps) {
+export default function LinkDialog({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialUrl = "",
+}: LinkDialogProps) {
   const [url, setUrl] = useState(initialUrl);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,4 +51,4 @@ export default function LinkDialog({ isOpen, onClose, onSubmit, initialUrl = "" 
       </DialogContent>
     </Dialog>
   );
-} 
+}

@@ -1,8 +1,8 @@
+import { NoteCategory } from "@prisma/client";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
 
 import db from "@/lib/db";
-import { NoteCategory } from "@prisma/client";
 
 export const updateNote = defineAction({
   input: z.object({
@@ -12,13 +12,13 @@ export const updateNote = defineAction({
     objectId: z.string(),
     causedObjects: z.record(z.string()).optional(),
   }),
-  async handler({ category, description, tags, objectId, causedObjects = {}}, { locals }) {
+  async handler({ category, description, tags, objectId, causedObjects = {} }, { locals }) {
     await db.notes.upsert({
       where: {
         userId_objectId: {
           userId: locals.user?.id!,
-          objectId
-        }
+          objectId,
+        },
       },
       create: {
         category,
@@ -32,7 +32,7 @@ export const updateNote = defineAction({
         description,
         tags,
         causedObjects: causedObjects,
-      }
+      },
     });
     return { success: true };
   },

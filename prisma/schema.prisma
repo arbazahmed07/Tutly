@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -68,6 +69,9 @@ model User {
   notificationsCaused Notification[] @relation("notificationCausedBy")
   bookMarks           BookMarks[]
   notes               Notes[]
+
+  uploadedFiles       File[] @relation("uploadedFiles")
+  archivedFiles       File[] @relation("archivedFiles")
 }
 
 model Profile {
@@ -107,6 +111,37 @@ model Profile {
 
   // Additional Metadata for Future Extensions
   metadata Json? @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FileType {
+  AVATAR
+  ATTACHMENT
+  NOTES
+  OTHER
+}
+
+model File {
+  id            String   @id @default(uuid())
+  name          String // fileName
+  internalName  String // uuid + timestamp + file extension
+  associatingId String? // reference model id
+  fileType      FileType @default(OTHER)
+
+  isPublic Boolean @default(false)
+  publicUrl String?
+
+  isUploaded   Boolean @default(false)
+  uploadedById String?
+  uploadedBy   User?   @relation("uploadedFiles", fields: [uploadedById], references: [id])
+
+  isArchived    Boolean   @default(false)
+  archivedById  String?
+  archivedBy    User?     @relation("archivedFiles", fields: [archivedById], references: [id])
+  archiveReason String?   @db.Text
+  archivedAt    DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
