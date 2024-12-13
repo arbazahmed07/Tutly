@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import { ViewTransitions } from "astro:transitions";
 import { Sidebar } from "./Sidebar.tsx";
 import { Toaster } from "react-hot-toast";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { SidebarItem } from "@/components/Sidebar";
 
 interface Props {
@@ -50,8 +51,7 @@ globalThis.pathname = pathname;
       <div class="loader-shimmer"></div>
     </div>
     <Toaster client:load />
-    {
-      user && (
+    {user && (
         <Sidebar
           client:load
           pathname={pathname}
@@ -61,8 +61,8 @@ globalThis.pathname = pathname;
         >
           <slot />
         </Sidebar>
-      )
-    }
+      )}
+    <SonnerToaster client:load  />
   </body>
 </html>
 
