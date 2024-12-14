@@ -99,7 +99,6 @@ export default function ImageComponent({
       if (!isResizing) return;
 
       const deltaX = e.clientX - resizeStartPos.current.x;
-      const deltaY = e.clientY - resizeStartPos.current.y;
 
       const aspectRatio = originalDimensions.current.width / originalDimensions.current.height;
       const newWidth = Math.round(Math.max(100, originalDimensions.current.width + deltaX));

@@ -34,7 +34,7 @@ export function SelectMentor({
           className="p-1 px-2 border border-primary rounded-lg"
         >
           {mentorName
-            ? mentors.find((mentor) => mentor.username === mentorName)?.username
+            ? mentors.find((mentor: any) => mentor.username === mentorName)?.username
             : "All Mentors"}
           <ChevronsUpDown className="opacity-50" />
         </Button>
@@ -45,7 +45,7 @@ export function SelectMentor({
           <CommandList>
             <CommandEmpty>No mentor found.</CommandEmpty>
             <CommandGroup>
-              {mentors.map((mentor) => (
+              {mentors.map((mentor: any) => (
                 <CommandItem
                   key={mentor.username}
                   value={mentor.username}

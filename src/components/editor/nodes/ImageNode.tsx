@@ -115,7 +115,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
 
   static override importDOM(): DOMConversionMap | null {
     return {
-      img: (node: Node) => ({
+      img: (_node: Node) => ({
         conversion: convertImageElement,
         priority: 0,
       }),
@@ -217,9 +217,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
           height={this.__height}
           maxWidth={this.__maxWidth}
           nodeKey={this.getKey()}
-          showCaption={this.__showCaption}
-          caption={this.__caption}
-          captionsEnabled={this.__captionsEnabled}
           resizable={true}
         />
       </Suspense>

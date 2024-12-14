@@ -6,7 +6,7 @@ import { Linechart } from "@/components/charts/linechart";
 import { Piechart } from "@/components/charts/piechart";
 import Header from "./_components/header";
 
-const courseId = Astro.params.id;
+const courseId = Astro.params.id!;
 const mentorUsername = Astro.url.searchParams.get("mentor");
 const piechart = await actions.statistics_getPiechartData({ courseId, mentorUsername });
 const barchart = await actions.statistics_getBarchartData({ courseId, mentorUsername });

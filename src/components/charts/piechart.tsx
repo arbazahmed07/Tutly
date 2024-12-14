@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Pie, PieChart, Sector } from "recharts";
 import { PieSectorDataItem } from "recharts/types/polar/Pie";
 

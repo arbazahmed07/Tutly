@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { TrendingUp } from "lucide-react";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 

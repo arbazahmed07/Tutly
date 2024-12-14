@@ -1,3 +1,4 @@
+
 FROM oven/bun:latest AS base
 WORKDIR /app
 
@@ -10,16 +11,16 @@ RUN bun install --global astro
 FROM base AS prod-deps
 # todo: change this
 ENV HUSKY=0
-RUN bun install --no-check
-RUN bun add @astrojs/check typescript --no-check
+RUN bun install
+RUN bun add @astrojs/check typescript
 RUN bunx prisma generate
 
 
 FROM base AS build
 COPY . .
 # todo: change this
-RUN bun install --no-check
-RUN bun run build --no-check
+RUN bun install
+RUN bun run build
 
 FROM base AS runtime
 COPY --from=prod-deps /app/node_modules ./node_modules

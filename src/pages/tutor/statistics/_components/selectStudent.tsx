@@ -34,7 +34,7 @@ export function SelectStudent({
           className="p-1 px-2 border border-primary rounded-lg"
         >
           {menteeName
-            ? mentees.find((mentee) => mentee.username === menteeName)?.username
+            ? mentees.find((mentee: any) => mentee.username === menteeName)?.username
             : "All Students"}
           <ChevronsUpDown className="opacity-50" />
         </Button>
@@ -45,7 +45,7 @@ export function SelectStudent({
           <CommandList>
             <CommandEmpty>No mentee found.</CommandEmpty>
             <CommandGroup>
-              {mentees.map((mentee) => (
+              {mentees.map((mentee: any) => (
                 <CommandItem
                   key={mentee.username}
                   value={mentee.username}

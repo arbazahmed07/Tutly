@@ -31,7 +31,7 @@ function Header({ mentors, mentees, currentUser, data, courseId }: any) {
   return (
     <div className="flex justify-between mx-4 md:mx-8">
       <div className="flex gap-2 items-center">
-        {data?.data?.map((course) => (
+        {data?.data?.map((course: any) => (
           <a
             href={`/tutor/statistics/${course.id}`}
             className={`p-1 px-2 border rounded-lg ${course.id === courseId ? "border-primary" : ""}`}
