@@ -68,7 +68,7 @@ export function AppSidebar({ user, forceClose = false, className, pathname }: Ap
           <SidebarTrigger className="hover:bg-accent" />
         </div>
       )}
-      <Sidebar collapsible="icon" className={cn("w-56 bg-background", className)}>
+      <Sidebar collapsible="icon" className={cn("bg-background", className)}>
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -97,11 +97,13 @@ export function AppSidebar({ user, forceClose = false, className, pathname }: Ap
             <SidebarMenu>
               {sidebarItems.map((item) => {
                 const ItemIcon = item.icon;
+                const isSubItemActive =
+                  item.items?.some((subItem) => pathname === subItem.url) || false;
                 return (
                   <Collapsible
                     key={item.title}
                     asChild
-                    defaultOpen={item.isActive || pathname.startsWith(item.url)}
+                    defaultOpen={item.isActive || pathname.startsWith(item.url) || isSubItemActive}
                     className={`group/collapsible ${item.className || ""}`}
                   >
                     <SidebarMenuItem>
@@ -109,7 +111,7 @@ export function AppSidebar({ user, forceClose = false, className, pathname }: Ap
                         <CollapsibleTrigger asChild>
                           <SidebarMenuButton
                             tooltip={item.title}
-                            className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
+                            className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base`}
                           >
                             <ItemIcon className="size-6" />
                             <span>{item.title}</span>
@@ -120,7 +122,7 @@ export function AppSidebar({ user, forceClose = false, className, pathname }: Ap
                         <a href={item.url}>
                           <SidebarMenuButton
                             tooltip={item.title}
-                            className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base`}
+                            className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base`}
                           >
                             <ItemIcon className="size-6" />
                             <span>{item.title}</span>
@@ -134,7 +136,7 @@ export function AppSidebar({ user, forceClose = false, className, pathname }: Ap
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton
                                   asChild
-                                  className={`${pathname === subItem.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-6 text-base ${subItem.className || ""}`}
+                                  className={`${pathname === subItem.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base ${subItem.className || ""}`}
                                 >
                                   <a href={subItem.url}>
                                     <span>{subItem.title}</span>

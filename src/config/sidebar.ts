@@ -3,19 +3,15 @@ import {
   BarChart,
   Bookmark,
   ClipboardList,
-  File,
-  FileBarChart,
-  FileText,
   GraduationCap,
+  HardDrive,
   Home,
   Terminal,
-  Trophy,
-  UserCheck,
   Users,
   Users2,
 } from "lucide-react";
 
-import type { SidebarItem } from "@/components/sidebar/SidebarComponent";
+import type { SidebarItem } from "@/components/sidebar/AppSidebar";
 
 const InstructorItems = [
   {
@@ -24,29 +20,53 @@ const InstructorItems = [
     icon: Home,
   },
   {
-    title: "Courses",
-    url: "/courses",
+    title: "Learning",
+    url: "#",
     icon: GraduationCap,
+    items: [
+      {
+        title: "Courses",
+        url: "/courses",
+      },
+      {
+        title: "Notes",
+        url: "/notes",
+      },
+    ],
   },
   {
-    title: "Notes",
-    url: "/notes",
-    icon: FileText,
-  },
-  {
-    title: "Bookmarks",
-    url: "/bookmarks",
-    icon: Bookmark,
-  },
-  {
-    title: "Assignments",
-    url: "/instructor/assignments",
+    title: "Assessment",
+    url: "#",
     icon: ClipboardList,
+    items: [
+      {
+        title: "Assignments",
+        url: "/instructor/assignments",
+      },
+      {
+        title: "Leaderboard",
+        url: "/instructor/leaderboard",
+      },
+      {
+        title: "Attendance",
+        url: "/instructor/attendance",
+      },
+    ],
   },
   {
-    title: "Leaderboard",
-    url: "/instructor/leaderboard",
-    icon: Trophy,
+    title: "Analytics",
+    url: "#",
+    icon: BarChart,
+    items: [
+      {
+        title: "Statistics",
+        url: "/tutor/statistics",
+      },
+      {
+        title: "Report",
+        url: "/instructor/report",
+      },
+    ],
   },
   {
     title: "Community",
@@ -54,29 +74,30 @@ const InstructorItems = [
     icon: Users,
   },
   {
-    title: "Attendance",
-    url: "/instructor/attendance",
-    icon: UserCheck,
-  },
-  {
-    title: "Statistics",
-    url: "/tutor/statistics",
-    icon: BarChart,
-  },
-  {
-    title: "Report",
-    url: "/instructor/report",
-    icon: FileBarChart,
-  },
-  {
-    title: "Users",
-    url: "/instructor/users",
+    title: "Management",
+    url: "#",
     icon: Users2,
+    items: [
+      {
+        title: "Users",
+        url: "/instructor/users",
+      },
+    ],
+  },
+  {
+    title: "Bookmarks",
+    url: "/bookmarks",
+    icon: Bookmark,
+  },
+  {
+    title: "Playgrounds",
+    url: "/playgrounds",
+    icon: Terminal,
   },
   {
     title: "Drive",
-    url: "/instructor/drive",
-    icon: File,
+    url: "/drive",
+    icon: HardDrive,
   },
 ];
 
@@ -87,29 +108,53 @@ const MentorItems = [
     icon: Home,
   },
   {
-    title: "Courses",
-    url: "/courses",
+    title: "Learning",
+    url: "#",
     icon: GraduationCap,
+    items: [
+      {
+        title: "Courses",
+        url: "/courses",
+      },
+      {
+        title: "Notes",
+        url: "/notes",
+      },
+    ],
   },
   {
-    title: "Notes",
-    url: "/notes",
-    icon: FileText,
-  },
-  {
-    title: "Bookmarks",
-    url: "/bookmarks",
-    icon: Bookmark,
-  },
-  {
-    title: "Assignments",
-    url: "/mentor/assignments",
+    title: "Assessment",
+    url: "#",
     icon: ClipboardList,
+    items: [
+      {
+        title: "Assignments",
+        url: "/mentor/assignments",
+      },
+      {
+        title: "Leaderboard",
+        url: "/mentor/leaderboard",
+      },
+      {
+        title: "Attendance",
+        url: "/mentor/attendance",
+      },
+    ],
   },
   {
-    title: "Leaderboard",
-    url: "/mentor/leaderboard",
-    icon: Trophy,
+    title: "Analytics",
+    url: "#",
+    icon: BarChart,
+    items: [
+      {
+        title: "Statistics",
+        url: "/tutor/statistics",
+      },
+      {
+        title: "Report",
+        url: "/mentor/report",
+      },
+    ],
   },
   {
     title: "Community",
@@ -117,19 +162,19 @@ const MentorItems = [
     icon: Users,
   },
   {
-    title: "Attendance",
-    url: "/mentor/attendance",
-    icon: UserCheck,
+    title: "Bookmarks",
+    url: "/bookmarks",
+    icon: Bookmark,
   },
   {
-    title: "Statistics",
-    url: "/tutor/statistics",
-    icon: BarChart,
+    title: "Playgrounds",
+    url: "/playgrounds",
+    icon: Terminal,
   },
   {
-    title: "Report",
-    url: "/mentor/report",
-    icon: FileBarChart,
+    title: "Drive",
+    url: "/drive",
+    icon: HardDrive,
   },
 ];
 
@@ -140,29 +185,45 @@ const StudentItems = [
     icon: Home,
   },
   {
-    title: "Courses",
-    url: "/courses",
+    title: "Learning",
+    url: "#",
     icon: GraduationCap,
+    items: [
+      {
+        title: "Courses",
+        url: "/courses",
+      },
+      {
+        title: "Notes",
+        url: "/notes",
+      },
+    ],
   },
   {
-    title: "Notes",
-    url: "/notes",
-    icon: FileText,
-  },
-  {
-    title: "Bookmarks",
-    url: "/bookmarks",
-    icon: Bookmark,
-  },
-  {
-    title: "Assignments",
-    url: "/assignments",
+    title: "Assessment",
+    url: "#",
     icon: ClipboardList,
+    items: [
+      {
+        title: "Assignments",
+        url: "/assignments",
+      },
+      {
+        title: "Leaderboard",
+        url: "/leaderboard",
+      },
+    ],
   },
   {
-    title: "Leaderboard",
-    url: "/leaderboard",
-    icon: Trophy,
+    title: "Analytics",
+    url: "#",
+    icon: BarChart,
+    items: [
+      {
+        title: "Statistics",
+        url: "/statistics",
+      },
+    ],
   },
   {
     title: "Community",
@@ -170,25 +231,30 @@ const StudentItems = [
     icon: Users,
   },
   {
+    title: "Bookmarks",
+    url: "/bookmarks",
+    icon: Bookmark,
+  },
+  {
     title: "Playgrounds",
     url: "/playgrounds",
     icon: Terminal,
   },
   {
-    title: "Statistics",
-    url: "/statistics",
-    icon: BarChart,
+    title: "Drive",
+    url: "/drive",
+    icon: HardDrive,
   },
 ];
 
 export function getDefaultSidebarItems(role: Role): SidebarItem[] {
   switch (role) {
     case "INSTRUCTOR":
-      return InstructorItems;
+      return InstructorItems as SidebarItem[];
     case "MENTOR":
-      return MentorItems;
+      return MentorItems as SidebarItem[];
     case "STUDENT":
-      return StudentItems;
+      return StudentItems as SidebarItem[];
     default:
       return [];
   }
