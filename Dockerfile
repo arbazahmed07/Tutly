@@ -13,7 +13,7 @@ FROM base AS prod-deps
 ENV HUSKY=0
 RUN bun install
 RUN bun add @astrojs/check typescript
-RUN bunx prisma generate
+RUN npx prisma generate
 
 
 FROM base AS build
@@ -35,4 +35,4 @@ ENV NODE_ENV=production
 
 EXPOSE 4321
 
-CMD ["sh", "-c", "bunx prisma migrate deploy && HOST=0.0.0.0 bun ./dist/server/entry.mjs"]
+CMD ["sh", "-c", "npx prisma migrate deploy && HOST=0.0.0.0 bun ./dist/server/entry.mjs"]
