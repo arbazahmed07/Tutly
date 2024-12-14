@@ -1,26 +1,25 @@
-
-FROM oven/bun:latest AS base
+FROM node:20-slim AS base
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y openssl curl
+RUN apt-get update && apt-get install -y openssl curl && apt-get clean
 
-COPY package.json bun.lockb ./
+RUN npm install -g astro
+
+COPY package.json package-lock.json ./
 COPY prisma ./prisma/
-RUN bun install --global astro
 
 FROM base AS prod-deps
-# todo: change this
+
 ENV HUSKY=0
-RUN bun install
-RUN bun add @astrojs/check typescript
+
+RUN npm ci
+RUN npm install @astrojs/check typescript
 RUN npx prisma generate
 
-
 FROM base AS build
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY . .
-# todo: change this
-RUN bun install
-RUN bun run build
+RUN npm run build
 
 FROM base AS runtime
 COPY --from=prod-deps /app/node_modules ./node_modules
@@ -35,4 +34,4 @@ ENV NODE_ENV=production
 
 EXPOSE 4321
 
-CMD ["sh", "-c", "npx prisma migrate deploy && HOST=0.0.0.0 bun ./dist/server/entry.mjs"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node ./dist/server/entry.mjs"]
