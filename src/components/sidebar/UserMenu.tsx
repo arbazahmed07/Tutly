@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import { Bell, LogOut } from "lucide-react";
+import { Bell, LogOut, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 
@@ -44,7 +44,7 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 rounded-lg" side="bottom" align="end" sideOffset={4}>
+      <DropdownMenuContent className="w-56 rounded-lg shadow-lg border border-border bg-background" side="bottom" align="end" sideOffset={4}>
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-7 w-7 rounded-full">
@@ -58,24 +58,27 @@ export function UserMenu({ user }: UserMenuProps) {
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">{user.name}</span>
-              <span className="truncate text-xs">{user.email}</span>
+              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
             </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <a href="/profile">
-            <DropdownMenuItem>Account</DropdownMenuItem>
+            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+              <UserIcon className="h-5 w-5" />
+              Profile
+            </DropdownMenuItem>
           </a>
-          <DropdownMenuItem>
-            <Bell className="size-6" />
+          <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+            <Bell className="h-5 w-5" />
             Notifications
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <a href="/api/auth/signout">
-          <DropdownMenuItem>
-            <LogOut className="size-6" />
+          <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive">
+            <LogOut className="h-5 w-5" />
             Log out
           </DropdownMenuItem>
         </a>
