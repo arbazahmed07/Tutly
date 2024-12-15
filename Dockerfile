@@ -15,6 +15,7 @@ ENV HUSKY=0
 RUN npm ci
 RUN npm install @astrojs/check typescript
 RUN npx prisma generate
+RUN cp ./node_modules/.prisma/client/*.js ./node_modules/@prisma/client/
 
 FROM base AS build
 COPY --from=prod-deps /app/node_modules ./node_modules
@@ -24,6 +25,7 @@ RUN npm run build
 FROM base AS runtime
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=prod-deps /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=prod-deps /app/node_modules/@prisma/client ./node_modules/@prisma/client
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/prisma ./prisma
