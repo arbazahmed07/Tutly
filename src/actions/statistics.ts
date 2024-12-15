@@ -310,8 +310,9 @@ export const getAllMentors = defineAction({
 export const studentBarchartData = defineAction({
   input: z.object({
     courseId: z.string(),
+    studentUsername: z.any().optional(),
   }),
-  handler: async ({ courseId }, { locals }) => {
+  handler: async ({ courseId, studentUsername }, { locals }) => {
     const currentUser = locals.user;
     if (!currentUser) {
       return null;
@@ -320,7 +321,7 @@ export const studentBarchartData = defineAction({
       let assignments = await db.submission.findMany({
         where: {
           enrolledUser: {
-            username: "23071A0522",
+            username: studentUsername || "23071A0522",
           },
           assignment: {
             courseId,
@@ -366,8 +367,9 @@ export const studentBarchartData = defineAction({
 export const studentHeatmapData = defineAction({
   input: z.object({
     courseId: z.string(),
+    studentUsername: z.any().optional(),
   }),
-  handler: async ({ courseId }, { locals }) => {
+  handler: async ({ courseId, studentUsername }, { locals }) => {
     const currentUser = locals.user;
     if (!currentUser) {
       return null;
@@ -375,7 +377,7 @@ export const studentHeatmapData = defineAction({
     try {
       const attendance = await db.attendance.findMany({
         where: {
-          username: "23071A0572",
+          username: studentUsername || "23071A0572",
           AND: {
             class: {
               course: {
