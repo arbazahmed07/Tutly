@@ -44,7 +44,12 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 rounded-lg shadow-lg border border-border bg-background" side="bottom" align="end" sideOffset={4}>
+      <DropdownMenuContent
+        className="w-56 rounded-lg shadow-lg border border-border bg-background"
+        side="bottom"
+        align="end"
+        sideOffset={4}
+      >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-7 w-7 rounded-full">

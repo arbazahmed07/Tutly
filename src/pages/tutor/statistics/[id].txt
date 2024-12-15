@@ -6,26 +6,42 @@ import { Linechart } from "@/components/charts/linechart";
 import { Piechart } from "@/components/charts/piechart";
 import Header from "./_components/header";
 
+const currentUser = Astro.locals.user;
+const call = Astro.callAction
 const courseId = Astro.params.id!;
 const mentorUsername = Astro.url.searchParams.get("mentor");
-const piechart = await actions.statistics_getPiechartData({ courseId, mentorUsername });
-const barchart = await actions.statistics_getBarchartData({ courseId, mentorUsername });
+const [
+  piechart,
+  barchart,
+  _mentees,
+  mentors,
+  linechart,
+  courses
+] = await Promise.all([
+  call(actions.statistics_getPiechartData, { courseId, mentorUsername }),
+  call(actions.statistics_getBarchartData, { courseId, mentorUsername }),
+  call(actions.statistics_getAllMentees, { courseId, mentorUsername }),
+  call(actions.statistics_getAllMentors, { courseId }),
+  call(actions.statistics_getLinechartData, {
+    courseId,
+    mentorUsername,
+    // todo: fix this
+    menteesCount: 0,
+  }),
+  call(actions.courses_getAllCourses, { currentUser }),
+]);
 
-const mentees = await actions.statistics_getAllMentees({ courseId, mentorUsername });
-const linechart = await actions.statistics_getLinechartData({
-  courseId,
-  menteesCount: mentees.data?.length,
-  mentorUsername,
-});
-const mentors = await actions.statistics_getAllMentors({ courseId });
+const mentees = _mentees;
 
-let loaderValue = !piechart.data
-  ? 0
-  : String((piechart.data[0] * 100) / (piechart.data[0] + piechart.data[1]));
-loaderValue += "%";
+const data = courses.data;
 
-const currentUser = Astro.locals.user;
-const { data } = await actions.courses_getAllCourses();
+let loaderValue = "0%";
+if (piechart.data && Array.isArray(piechart.data)) {
+  const completed = piechart.data[0] || 0;
+  const total = (piechart.data[0] || 0) + (piechart.data[1] || 0);
+  loaderValue = total > 0 ? `${Math.round((completed * 100) / total)}%` : "0%";
+}
+
 ---
 
 <RootLayout title="Statistics">

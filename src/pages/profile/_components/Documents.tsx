@@ -1,12 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { File, FileType, type Profile } from "@prisma/client";
+import { actions } from "astro:actions";
 import { Loader2, Upload } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
-import { useFileUpload } from "@/components/useFileUpload";
-import { Button } from "@/components/ui/button";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,8 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { actions } from "astro:actions";
+import { useFileUpload } from "@/components/useFileUpload";
 
 const formSchema = z.object({
   resume: z.string().optional(),
@@ -107,9 +107,9 @@ export default function Documents({ documents, onUpdate }: DocumentsProps) {
               control={form.control}
               name="resume"
               render={({ field }) => (
-                <FormItem className="space-y-4" >
+                <FormItem className="space-y-4">
                   <FormLabel className="text-lg">Resume</FormLabel>
-                  <FormControl >
+                  <FormControl>
                     <div className="flex items-center gap-6 min-h-[100px] p-6 border rounded-lg">
                       <div className="relative flex-1">
                         <Input

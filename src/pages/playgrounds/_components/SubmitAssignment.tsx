@@ -20,7 +20,7 @@ const SubmitAssignment = ({
     async function fetch() {
       setIsLoading(true);
       async function fetchData() {
-        const { data: res, error } = await actions.assignments_submitAssignment({
+        const { data: res } = await actions.assignments_submitAssignment({
           id: assignmentId,
         });
 

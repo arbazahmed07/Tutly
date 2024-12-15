@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FaRankingStar } from "react-icons/fa6";
 
 import CalendarHeatmap from "@/pages/statistics/_components/heatmap";

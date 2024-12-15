@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Profile } from "@prisma/client";
+import { actions } from "astro:actions";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { actions } from "astro:actions";
 import { toast } from "react-hot-toast";
 import {
   RiCodeBoxLine,
