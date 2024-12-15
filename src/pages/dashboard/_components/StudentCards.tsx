@@ -119,7 +119,15 @@ const AssignmentTable = ({
               </TableCell>
               <TableCell>{assignment.title}</TableCell>
               <TableCell>{assignment.submissions?.length || 0}</TableCell>
-              <TableCell>{assignment.points || 0}</TableCell>
+              <TableCell>
+                {
+                  assignment.submissions?.reduce(
+                    (total: number, submission: any) =>
+                      total + (submission.points?.[0]?.score || 0),
+                    0
+                  )
+                }
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -466,6 +474,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
 
   return (
     <>
+      <pre>{JSON.stringify(data,null,2)}</pre>
       <div className="flex flex-wrap justify-center gap-4 mb-10 md:gap-10">
         {[
           {
