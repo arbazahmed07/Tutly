@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Cell, Pie, Tooltip } from "recharts";
 import { PieChart as RechartsPieChart, ResponsiveContainer } from "recharts";
 import { toast } from "sonner";
-
+import {Button} from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
@@ -111,8 +111,6 @@ const AssignmentTable = ({
                   variant={
                     assignment.status === "Submitted"
                       ? "default"
-                      : assignment.status === "Not Evaluated"
-                        ? "secondary"
                         : "destructive"
                   }
                 >
@@ -132,52 +130,52 @@ const AssignmentTable = ({
 
 const ProgressBars = ({
   submittedCount,
-  notEvaluatedCount,
   notSubmittedCount,
   totalAssignments,
 }: {
   submittedCount: number;
-  notEvaluatedCount: number;
   notSubmittedCount: number;
   totalAssignments: number;
 }) => {
   return (
-    <Card className="flex-1 px-10">
-      <div className="flex flex-col justify-center h-full">
-        {[
-          {
-            label: "Successfully Completed and Evaluated",
-            count: submittedCount,
-            color: "bg-green-600",
-          },
-          {
-            label: "Not Evaluated",
-            count: notEvaluatedCount,
-            color: "bg-yellow-600",
-          },
-          {
-            label: "Not Submitted",
-            count: notSubmittedCount,
-            color: "bg-red-600",
-          },
-        ].map((item) => (
-          <div key={item.label}>
-            <div className="flex justify-between items-center mb-3 text-base font-medium dark:text-white">
-              <h1>{item.label}</h1>
-              <h1>
-                {item.count}/{totalAssignments}
-              </h1>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
-              <div
-                className={`${item.color} h-2.5 rounded-full`}
-                style={{ width: `${((item.count / totalAssignments) * 100).toFixed(2)}%` }}
-              ></div>
-            </div>
-          </div>
-        ))}
+    <Card className="flex-1 px-10 py-6">
+  <h2 className="text-lg font-semibold text-center dark:text-white">
+    Submission Summary
+  </h2>
+  <div className="flex flex-col justify-center h-full space-y-6">
+    {[
+      {
+        label: "Successfully Submitted",
+        count: submittedCount,
+        color: "bg-green-600",
+      },
+      {
+        label: "Not Submitted",
+        count: notSubmittedCount,
+        color: "bg-red-600",
+      },
+    ].map((item) => (
+      <div key={item.label} className="space-y-2">
+        <div className="flex justify-between items-center text-base font-medium dark:text-white">
+          <span>{item.label}</span>
+          <span>
+            {item.count}/{totalAssignments} (
+            {((item.count / totalAssignments) * 100).toFixed(2)}%)
+          </span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
+          <div
+            className={`${item.color} h-3.5 rounded-full`}
+            style={{
+              width: `${((item.count / totalAssignments) * 100).toFixed(2)}%`,
+            }}
+          ></div>
+        </div>
       </div>
-    </Card>
+    ))}
+  </div>
+</Card>
+
   );
 };
 const PlatformScores = () => {
@@ -434,12 +432,9 @@ export function StudentCards({ data, selectedCourse }: Props) {
   const groupedAssignments = course?.assignments?.reduce(
     (acc, assignment) => {
       const submissionsCount = assignment.submissions?.length || 0;
-      const hasPoints =
-        assignment.submissions?.some((sub) => sub.points?.some((p) => p.score > 0)) || false;
-
       let status = "Not Submitted";
       if (submissionsCount > 0) {
-        status = hasPoints ? "Submitted" : "Not Evaluated";
+        status = "Submitted" ;
       }
 
       if (!acc[status]) {
@@ -465,7 +460,6 @@ export function StudentCards({ data, selectedCourse }: Props) {
 
   const totalAssignments = course?.assignments.length || 0;
   const submittedCount = groupedAssignments?.["Submitted"]?.length || 0;
-  const notEvaluatedCount = groupedAssignments?.["Not Evaluated"]?.length || 0;
   const notSubmittedCount = groupedAssignments?.["Not Submitted"]?.length || 0;
 
   const completionPercentage = Math.round((submittedCount / totalAssignments) * 100) || 0;
@@ -503,9 +497,9 @@ export function StudentCards({ data, selectedCourse }: Props) {
             <div className="flex justify-center items-center gap-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="py-1.5 px-8 w-52 text-sm font-medium border text-gray-400 border-gray-300 rounded-md">
+                  <Button variant="ghost" className="py-1.5 px-2 w-60 text-sm font-medium border text-gray-400 border-gray-300 rounded-md">
                     {selectedStatus}
-                  </button>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => setSelectedStatus("All")}>All</DropdownMenuItem>
@@ -514,9 +508,6 @@ export function StudentCards({ data, selectedCourse }: Props) {
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setSelectedStatus("Not Submitted")}>
                     Not Submitted
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus("Not Evaluated")}>
-                    Not Evaluated
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -558,14 +549,12 @@ export function StudentCards({ data, selectedCourse }: Props) {
         <div className="flex justify-around mb-3 gap-3">
           <div className="flex-1">
             <Component
-              notEvaluated={notEvaluatedCount}
               notSubmitted={notSubmittedCount}
               submitted={submittedCount}
             />
           </div>
           <ProgressBars
             submittedCount={submittedCount}
-            notEvaluatedCount={notEvaluatedCount}
             notSubmittedCount={notSubmittedCount}
             totalAssignments={totalAssignments}
           />

@@ -12,17 +12,14 @@ import {
 } from "@/components/ui/chart";
 
 export default function Component({
-  notEvaluated,
   notSubmitted,
   submitted,
 }: {
-  notEvaluated: number;
   notSubmitted: number;
   submitted: number;
 }) {
   const chartData = [
-    { status: "Submitted and evaluated", assignments: submitted, fill: "hsl(var(--chart-1))" },
-    { status: "Not evaluated", assignments: notEvaluated, fill: "hsl(var(--chart-2))" },
+    { status: "Successfully Submitted", assignments: submitted, fill: "hsl(var(--chart-1))" },
     { status: "Not submitted", assignments: notSubmitted, fill: "hsl(var(--chart-3))" },
   ];
 
@@ -31,11 +28,7 @@ export default function Component({
       label: "Assignments",
     },
     submitted: {
-      label: "Submitted and evaluated",
-      color: "hsl(var(--chart-1))",
-    },
-    notEvaluated: {
-      label: "Not evaluated",
+      label: "Successfully Submitted",
       color: "hsl(var(--chart-2))",
     },
     notSubmitted: {
@@ -45,8 +38,8 @@ export default function Component({
   } satisfies ChartConfig;
 
   const totalAssignments = React.useMemo(() => {
-    return submitted + notEvaluated + notSubmitted;
-  }, [submitted, notEvaluated, notSubmitted]);
+    return submitted + notSubmitted;
+  }, [submitted, notSubmitted]);
 
   return (
     <Card className="flex flex-col">
