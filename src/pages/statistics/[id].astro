@@ -3,7 +3,7 @@ import StudentStats from "@/components/studentStats";
 import RootLayout from "@/layouts/RootLayout.astro";
 import { actions } from "astro:actions";
 
-const courseId = Astro.params.id;
+const courseId = Astro.params.id!;
 const { data } = await actions.courses_getAllCourses();
 const { data: studentData } = await actions.statistics_studentBarchartData({ courseId });
 const { data: attendanceData } = await actions.statistics_studentHeatmapData({ courseId });
