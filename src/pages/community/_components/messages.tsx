@@ -130,7 +130,6 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
     }
   };
 
-
   const toggleAccordion = (index: number) => {
     setOpenAccordion(openAccordion === index ? -1 : index);
   };

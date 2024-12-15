@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { AppHeader } from "@/components/sidebar/AppHeader";
 import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import CrispChatIntegration from "@/components/crisp";
 
 interface Props {
   title?: string;
@@ -53,6 +54,7 @@ globalThis.pathname = pathname;
       <div class="loader-shimmer"></div>
     </div>
     <Toaster client:load />
+    <CrispChatIntegration client:load />
     {
       user && (
         <div class="flex min-h-screen">

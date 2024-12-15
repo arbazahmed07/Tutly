@@ -220,7 +220,6 @@ export default function ProfessionalProfiles({
               )}
             />
 
-
             <FormField
               control={form.control}
               name="github"
@@ -237,7 +236,6 @@ export default function ProfessionalProfiles({
                 </FormItem>
               )}
             />
-
           </div>
 
           {isEditing && (

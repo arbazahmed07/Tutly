@@ -5,6 +5,7 @@ import * as attachments from "./attachments";
 import * as attendances from "./attendance";
 import * as bookmarks from "./bookmarks";
 import * as classes from "./classes";
+import * as codingPlatforms from "./codingPlatforms";
 import * as courses from "./courses";
 import * as doubts from "./doubts";
 import * as fileupload from "./fileupload";
@@ -19,7 +20,6 @@ import * as schedule from "./schedule";
 import * as statistics from "./statistics";
 import * as submissions from "./submission";
 import * as users from "./users";
-import * as codingPlatforms from "./codingPlatforms";
 
 export const server = {
   ...groupActions("courses", courses, "_"),

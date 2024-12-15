@@ -1,7 +1,19 @@
-import { useState, useEffect } from "react";
+import { actions } from "astro:actions";
+import { useEffect, useState } from "react";
+import { Cell, Pie, Tooltip } from "recharts";
+import { PieChart as RechartsPieChart, ResponsiveContainer } from "recharts";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,15 +30,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import ProfessionalProfiles from "@/pages/profile/_components/ProfessionalProfiles";
 
 import Component from "./charts";
-import { actions } from "astro:actions";
-import { Cell, Pie, Tooltip } from "recharts";
-import { ResponsiveContainer, PieChart as RechartsPieChart } from "recharts";
-import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
-import ProfessionalProfiles from "@/pages/profile/_components/ProfessionalProfiles";
-import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface Assignment {
   id: string;
@@ -52,7 +58,17 @@ interface Props {
   selectedCourse: string;
 }
 
-const StatCard = ({ imgSrc, alt, value, label }: { imgSrc: string; alt: string; value: number | string; label: string }) => {
+const StatCard = ({
+  imgSrc,
+  alt,
+  value,
+  label,
+}: {
+  imgSrc: string;
+  alt: string;
+  value: number | string;
+  label: string;
+}) => {
   return (
     <div className="flex flex-col sm:flex-row items-center w-full sm:w-80 rounded-md bg-white p-4 text-gray-900 shadow-xl">
       <div className="h-20 w-20 flex items-center justify-center">
@@ -67,9 +83,9 @@ const StatCard = ({ imgSrc, alt, value, label }: { imgSrc: string; alt: string; 
 };
 
 const AssignmentTable = ({
-  searchFilteredAssignments
+  searchFilteredAssignments,
 }: {
-  searchFilteredAssignments: (Assignment & { status: string })[]
+  searchFilteredAssignments: (Assignment & { status: string })[];
 }) => {
   return (
     <ScrollArea className="h-60">
@@ -115,7 +131,7 @@ const ProgressBars = ({
   submittedCount,
   notEvaluatedCount,
   notSubmittedCount,
-  totalAssignments
+  totalAssignments,
 }: {
   submittedCount: number;
   notEvaluatedCount: number;
@@ -145,7 +161,9 @@ const ProgressBars = ({
           <div key={item.label}>
             <div className="flex justify-between items-center mb-3 text-base font-medium dark:text-white">
               <h1>{item.label}</h1>
-              <h1>{item.count}/{totalAssignments}</h1>
+              <h1>
+                {item.count}/{totalAssignments}
+              </h1>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
               <div
@@ -201,7 +219,7 @@ const PlatformScores = () => {
             codeforces: data.codeforces || null,
             hackerrank: data.hackerrank || null,
             interviewbit: data.interviewbit || null,
-            leetcode: data.leetcode || null
+            leetcode: data.leetcode || null,
           };
           setPlatformScores(validatedData);
           console.log(data);
@@ -221,8 +239,8 @@ const PlatformScores = () => {
         hackerrank: profile.professionalProfiles?.hackerrank || "",
         leetcode: profile.professionalProfiles?.leetcode || "",
         interviewbit: profile.professionalProfiles?.interviewbit || "",
-        github: profile.professionalProfiles?.github || ""
-      }
+        github: profile.professionalProfiles?.github || "",
+      };
 
       // const res = await actions.codingPlatforms_validatePlatformHandlesAction({
       //   handles
@@ -235,8 +253,8 @@ const PlatformScores = () => {
 
       const { data, error } = await actions.users_updateUserProfile({
         profile: {
-          professionalProfiles: handles
-        }
+          professionalProfiles: handles,
+        },
       });
 
       if (error) {
@@ -254,24 +272,35 @@ const PlatformScores = () => {
   };
 
   const platforms = ["codechef", "codeforces", "hackerrank", "interviewbit", "leetcode"];
-  const colors = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
+  const colors = [
+    "hsl(var(--chart-1))",
+    "hsl(var(--chart-2))",
+    "hsl(var(--chart-3))",
+    "hsl(var(--chart-4))",
+    "hsl(var(--chart-5))",
+  ];
 
   const dummyData = platforms.map((platform) => ({
     name: platform,
-    value: 20
+    value: 20,
   }));
 
-  const shouldShowUpdateProfile = !platformScores || platforms.some(platform => !platformScores[platform as keyof PlatformScores]);
+  const shouldShowUpdateProfile =
+    !platformScores ||
+    platforms.some((platform) => !platformScores[platform as keyof PlatformScores]);
 
-  const data = platformScores && Object.keys(platformScores.percentages).length > 0
-    ? platforms.map((platform) => ({
-      name: platform,
-      value: platformScores.percentages[platform] || 0
-    }))
-    : dummyData;
+  const data =
+    platformScores && Object.keys(platformScores.percentages).length > 0
+      ? platforms.map((platform) => ({
+          name: platform,
+          value: platformScores.percentages[platform] || 0,
+        }))
+      : dummyData;
 
   const renderChart = () => (
-    <div className={`flex flex-col items-center gap-8 w-full ${shouldShowUpdateProfile ? "opacity-30" : ""}`}>
+    <div
+      className={`flex flex-col items-center gap-8 w-full ${shouldShowUpdateProfile ? "opacity-30" : ""}`}
+    >
       <div className="w-full h-[180px] relative">
         {shouldShowUpdateProfile && (
           <Dialog>
@@ -293,17 +322,22 @@ const PlatformScores = () => {
                   codechef: "",
                   codeforces: "",
                   hackerrank: "",
-                  interviewbit: ""
+                  interviewbit: "",
                 }}
                 onUpdate={handleUpdateProfile}
               />
             </DialogContent>
           </Dialog>
         )}
-        <ChartContainer config={Object.fromEntries(platforms.map((platform, index) => [
-          platform,
-          { label: platform, color: colors[index] || "" }
-        ]))} className="w-full h-[180px] relative">
+        <ChartContainer
+          config={Object.fromEntries(
+            platforms.map((platform, index) => [
+              platform,
+              { label: platform, color: colors[index] || "" },
+            ])
+          )}
+          className="w-full h-[180px] relative"
+        >
           <ResponsiveContainer width="100%" height="100%">
             <RechartsPieChart>
               <Pie
@@ -331,10 +365,7 @@ const PlatformScores = () => {
 
           return (
             <div key={platform} className="flex items-center gap-2">
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: colors[index] }}
-              />
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index] }} />
               <div className="flex-1">
                 <div className="flex flex-col">
                   <div className="flex justify-between items-center">
@@ -344,14 +375,15 @@ const PlatformScores = () => {
                     <span className="text-xs font-medium text-gray-800 dark:text-gray-200">
                       {platformScores && Object.keys(platformScores.percentages).length > 0
                         ? `${percentage.toFixed(1)}%`
-                        : "20%"
-                      }
+                        : "20%"}
                     </span>
                   </div>
                   {score && (
                     <div className="flex justify-between text-[10px] text-gray-600 dark:text-gray-400">
                       <span>Problems: {score.problemCount || 0}</span>
-                      {score.currentRating && <span>Rating: {Math.round(score.currentRating)}</span>}
+                      {score.currentRating && (
+                        <span>Rating: {Math.round(score.currentRating)}</span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -497,9 +529,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
           <Card>
             <CardHeader>
               <CardTitle>Platform Scores</CardTitle>
-              <CardDescription>
-                Your scores on various coding platforms
-              </CardDescription>
+              <CardDescription>Your scores on various coding platforms</CardDescription>
             </CardHeader>
             <CardContent>
               <PlatformScores />

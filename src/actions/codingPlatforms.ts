@@ -1,7 +1,8 @@
 import { defineAction } from "astro:actions";
 import { z } from "zod";
-import db from "@/lib/db";
+
 import { getPlatformScores, validatePlatformHandles } from "@/coding-platforms";
+import db from "@/lib/db";
 
 export const validatePlatformHandlesAction = defineAction({
   input: z.object({
@@ -20,7 +21,8 @@ export const getPlatformScoresAction = defineAction({
       },
     });
 
-    const { codechef, leetcode, codeforces, hackerrank, interviewbit } = profile?.professionalProfiles as Record<string, string> || {};
+    const { codechef, leetcode, codeforces, hackerrank, interviewbit } =
+      (profile?.professionalProfiles as Record<string, string>) || {};
 
     const platformHandles: Record<string, string> = Object.fromEntries(
       Object.entries({
@@ -28,7 +30,7 @@ export const getPlatformScoresAction = defineAction({
         leetcode,
         codeforces,
         hackerrank,
-        interviewbit
+        interviewbit,
       }).filter(([_, value]) => value !== undefined) as [string, string][]
     );
 

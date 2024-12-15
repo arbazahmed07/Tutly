@@ -10,7 +10,8 @@ import {
 } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState } from "react";
-import {Button} from "@/components/ui/button";
+
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 interface CalendarHeatmapProps {
