@@ -93,12 +93,11 @@ const AssignmentTable = ({
   searchFilteredAssignments: (Assignment & { status: string })[];
 }) => {
   return (
-    <ScrollArea className="h-60">
+    <ScrollArea className="h-full">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Status</TableHead>
-            <TableHead className="hidden md:table-cell">ID</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Submissions</TableHead>
             <TableHead>Points</TableHead>
@@ -120,7 +119,6 @@ const AssignmentTable = ({
                   {assignment.status}
                 </Badge>
               </TableCell>
-              <TableCell className="hidden md:table-cell">{assignment.id}</TableCell>
               <TableCell>{assignment.title}</TableCell>
               <TableCell>{assignment.submissions?.length || 0}</TableCell>
               <TableCell>{assignment.points || 0}</TableCell>
@@ -505,7 +503,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
             <div className="flex justify-center items-center gap-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="py-1.5 px-8 text-sm font-medium border text-gray-400 border-gray-300 rounded-md">
+                  <button className="py-1.5 px-8 w-52 text-sm font-medium border text-gray-400 border-gray-300 rounded-md">
                     {selectedStatus}
                   </button>
                 </DropdownMenuTrigger>
@@ -525,7 +523,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
               <Input
                 type="text"
                 placeholder="Search by assignment name"
-                className="w-full p-2 border border-gray-300 rounded-md"
+                className="p-2 border border-gray-300 rounded-md"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
