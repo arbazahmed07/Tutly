@@ -1,5 +1,4 @@
 // @ts-nocheck
-
 import React from "react";
 
 interface Props {
@@ -35,4 +34,4 @@ export class EditorErrorBoundary extends React.Component<Props, State> {
 
     return this.props.children;
   }
-} 
+}

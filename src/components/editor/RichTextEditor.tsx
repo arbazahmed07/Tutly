@@ -23,12 +23,12 @@ import { $createTextNode, LexicalNode, TextNode } from "lexical";
 
 import { cn } from "@/lib/utils";
 
+import { EditorErrorBoundary } from "./ErrorBoundary";
 import { $createImageNode, ImageNode } from "./nodes/ImageNode";
 import { CheckListPlugin } from "./plugins/CheckListPlugin";
 import ImagesPlugin from "./plugins/ImagePlugin";
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
-import { EditorErrorBoundary } from "./ErrorBoundary";
 
 const Placeholder = () => {
   return <div className="absolute top-3 left-3 text-muted-foreground">Enter some text...</div>;

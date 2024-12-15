@@ -220,11 +220,21 @@ const PlatformScores = () => {
           const validatedData: PlatformScores = {
             totalScore: data.totalScore || 0,
             percentages: data.percentages || {},
-            codechef: (data.codechef && typeof data.codechef === "object" ? data.codechef : null) as PlatformScore | null,
-            codeforces: (data.codeforces && typeof data.codeforces === "object" ? data.codeforces : null) as PlatformScore | null,
-            hackerrank: (data.hackerrank && typeof data.hackerrank === "object" ? data.hackerrank : null) as PlatformScore | null,
-            interviewbit: (data.interviewbit && typeof data.interviewbit === "object" ? data.interviewbit : null) as PlatformScore | null,
-            leetcode: (data.leetcode && typeof data.leetcode === "object" ? data.leetcode : null) as PlatformScore | null,
+            codechef: (data.codechef && typeof data.codechef === "object"
+              ? data.codechef
+              : null) as PlatformScore | null,
+            codeforces: (data.codeforces && typeof data.codeforces === "object"
+              ? data.codeforces
+              : null) as PlatformScore | null,
+            hackerrank: (data.hackerrank && typeof data.hackerrank === "object"
+              ? data.hackerrank
+              : null) as PlatformScore | null,
+            interviewbit: (data.interviewbit && typeof data.interviewbit === "object"
+              ? data.interviewbit
+              : null) as PlatformScore | null,
+            leetcode: (data.leetcode && typeof data.leetcode === "object"
+              ? data.leetcode
+              : null) as PlatformScore | null,
           };
           setPlatformScores(validatedData);
           console.log(data);
@@ -426,9 +436,8 @@ export function StudentCards({ data, selectedCourse }: Props) {
   const groupedAssignments = course?.assignments?.reduce(
     (acc, assignment) => {
       const submissionsCount = assignment.submissions?.length || 0;
-      const hasPoints = assignment.submissions?.some(sub => 
-        sub.points?.some(p => p.score > 0)
-      ) || false;
+      const hasPoints =
+        assignment.submissions?.some((sub) => sub.points?.some((p) => p.score > 0)) || false;
 
       let status = "Not Submitted";
       if (submissionsCount > 0) {
