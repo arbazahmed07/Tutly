@@ -120,3 +120,37 @@ export const notifyUser = defineAction({
     return notification;
   },
 });
+
+export const notifyBulkUsers = defineAction({
+  input: z.object({
+    courseId: z.string(),
+    message: z.string(),
+    customLink: z.string().optional(),
+  }),
+  async handler({ courseId, message, customLink }, { locals }) {
+    const enrolledUsers = await db.enrolledUsers.findMany({
+      where: {
+        courseId,
+        user: {
+          role: {
+            in: ["STUDENT", "MENTOR"],
+          }
+        },
+      },
+      select: { user: { select: { id: true } } },
+    });
+
+    const notifications = await db.notification.createMany({
+      data: enrolledUsers.map((user) => ({
+        message,
+        eventType: NotificationEvent.CUSTOM_MESSAGE,
+        causedById: locals.user?.id!,
+        intendedForId: user.user.id,
+        mediumSent: NotificationMedium.NOTIFICATION,
+        customLink: customLink || null,
+      })),
+    });
+
+    return notifications;
+  },
+});

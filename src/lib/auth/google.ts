@@ -2,7 +2,7 @@ import { Google, OAuth2Tokens, generateCodeVerifier, generateState } from "arcti
 
 import type { OAuthUser } from ".";
 
-const googleClientId = import.meta.env.GOOGLE_CLIENT_ID;
+// const googleClientId = import.meta.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = import.meta.env.GOOGLE_CLIENT_SECRET;
 
 function google(url?: URL) {
@@ -11,7 +11,7 @@ function google(url?: URL) {
     url.protocol = "https:";
   }
   return new Google(
-    googleClientId,
+    "460571681510-m89qo4361lus81uroooa2r5rg11u4nni.apps.googleusercontent.com",
     googleClientSecret,
     new URL("/api/auth/callback/google", url).toString()
   );

@@ -7,6 +7,9 @@ import { MdOutlineBlock } from "react-icons/md";
 import { RiGlobalLine } from "react-icons/ri";
 import { TbUserOff } from "react-icons/tb";
 import { TbUserSearch } from "react-icons/tb";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import { useRouter } from "@/hooks/use-router";
 
@@ -18,6 +21,8 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
   const roles = ["STUDENT", "MENTOR"];
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortColumn, setSortColumn] = useState<string>("");
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [redirectUrl, setRedirectUrl] = useState("");
 
   const filteredUsers = users.filter((user) =>
     user.username.toLowerCase().includes(searchBar.trim().toLowerCase())
@@ -33,6 +38,34 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
       user.enrolledUsers.find(({ course }: { course: any }) => course.id === params.id) !==
         undefined
   );
+
+  const handleNotifyUsers = async () => {
+    toast.loading("Sending notifications...");
+    try {
+      setLoading(true);
+
+      const { error } = await actions.notifications_notifyBulkUsers({
+        message: notificationMessage,
+        courseId: params.id,
+        customLink: redirectUrl,
+      });
+
+      if (error) {
+        toast.dismiss();
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
+
+      toast.dismiss();
+      toast.success("Notifications sent successfully");
+      setLoading(false);
+    } catch (err: any) {
+      setLoading(false);
+      toast.dismiss();
+      toast.error(err.response?.data?.error || "Failed to send notifications");
+    }
+  };
 
   const handleEnroll = async (username: string) => {
     toast.loading("Enrolling user...");
@@ -174,6 +207,32 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
           />
           <TbUserSearch className="absolute right-4 top-2 h-5 w-5" />
         </div>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline">Notify Users</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Send Notification</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 p-4">
+              <Input
+                placeholder="Enter notification message"
+                value={notificationMessage}
+                onChange={(e) => setNotificationMessage(e.target.value)}
+              />
+              <Input
+                placeholder="Enter redirect URL (optional)"
+                value={redirectUrl}
+                onChange={(e) => setRedirectUrl(e.target.value)}
+              />
+              <Button onClick={handleNotifyUsers} disabled={loading || !notificationMessage}>
+                Send Notification
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <div className="flex flex-col items-start space-y-2 max-sm:ms-3 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
           <label className="flex cursor-pointer items-center">

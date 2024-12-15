@@ -165,7 +165,7 @@ interface PushSubscriptionConfig {
 }
 
 function getNotificationLink(notification: Notification): string | null {
-  const config = NOTIFICATION_TYPES[notification.eventType];
+  const config = NOTIFICATION_TYPES[notification.eventType] || DEFAULT_NOTIFICATION_CONFIG;
   if (!config) return null;
   return config.getLink(notification.causedObjects as causedObjects).href;
 }
@@ -373,6 +373,14 @@ export default function Notifications({ user }: { user: User }) {
     const notificationType =
       NOTIFICATION_TYPES[notification.eventType] || DEFAULT_NOTIFICATION_CONFIG;
     if (!notificationType) return;
+    if (!notification.readAt) {
+      toggleReadStatus(notification.id);
+    }
+
+    if (notification.customLink) {
+      window.open(notification.customLink, "_blank");
+      return;
+    }
 
     const link = notificationType.getLink(notification.causedObjects as causedObjects);
     if (link) {
@@ -380,9 +388,6 @@ export default function Notifications({ user }: { user: User }) {
         window.open(link.href, "_blank");
       } else {
         navigate(link.href);
-      }
-      if (!notification.readAt) {
-        toggleReadStatus(notification.id);
       }
     }
   };

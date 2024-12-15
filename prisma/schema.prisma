@@ -191,6 +191,7 @@ model Notification {
   intendedForId String
 
   mediumSent NotificationMedium @default(PUSH)
+  customLink String?
 
   causedBy   User?   @relation("notificationCausedBy", fields: [causedById], references: [id])
   causedById String?
