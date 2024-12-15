@@ -232,7 +232,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                 <div className="relative ml-2 flex items-center justify-start space-x-5">
                   {qa.user.role === "STUDENT" && (
                     <img
-                      src={qa.user?.image || "/images/placeholder.jpg"}
+                      src={qa.user?.image || "/placeholder.jpg"}
                       alt="profile"
                       width={30}
                       height={30}
@@ -244,7 +244,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                       <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
 
                       <img
-                        src={qa.user?.image || "/images/placeholder.jpg"}
+                        src={qa.user?.image || "/placeholder.jpg"}
                         alt="profile"
                         width={30}
                         height={30}
@@ -256,7 +256,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                     <div className="relative">
                       <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-red-500 shadow-red-500 drop-shadow-sm hover:text-red-600" />
                       <img
-                        src={qa.user?.image || "/images/placeholder.jpg"}
+                        src={qa.user?.image || "/placeholder.jpg"}
                         alt="profile"
                         width={30}
                         height={30}
@@ -371,7 +371,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                         <div className="flex space-x-5">
                           {r.user?.role === "STUDENT" && (
                             <img
-                              src={r.user?.image || "/images/placeholder.jpg"}
+                              src={r.user?.image || "/placeholder.jpg"}
                               alt="profile"
                               width={30}
                               height={30}
@@ -382,7 +382,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                             <div className="relative">
                               <FaCrown className="absolute -left-3 -top-3 -rotate-45 text-yellow-400 shadow-yellow-500 drop-shadow-sm hover:text-yellow-500" />
                               <img
-                                src={r.user?.image || "/images/placeholder.jpg"}
+                                src={r.user?.image || "/placeholder.jpg"}
                                 alt="profile"
                                 width={30}
                                 height={30}
@@ -394,7 +394,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                             <div className="relative">
                               <PiCrownSimpleFill className="absolute -left-3 -top-3 -rotate-45 text-red-400 shadow-red-500 drop-shadow-sm hover:text-red-500" />
                               <img
-                                src={r.user?.image || "/images/placeholder.jpg"}
+                                src={r.user?.image || "/placeholder.jpg"}
                                 alt="profile"
                                 width={30}
                                 height={30}

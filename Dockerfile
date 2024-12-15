@@ -28,7 +28,8 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/prisma ./prisma
 
-ENV HOST=0.0.0.0
+ENV HOST=localhost
+ENV HOSTNAME=0.0.0.0
 ENV PORT=4321
 ENV NODE_ENV=production
 
