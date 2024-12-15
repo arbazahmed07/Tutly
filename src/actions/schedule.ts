@@ -1,7 +1,8 @@
+import type { EventAttachmentType } from "@prisma/client";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
+
 import db from "@/lib/db";
-import type { EventAttachmentType } from "@prisma/client";
 
 export const getSchedule = defineAction({
   input: z.object({
@@ -9,11 +10,11 @@ export const getSchedule = defineAction({
   }),
   async handler({ date }, { locals }) {
     const currentUser = locals.user!;
-    
+
     // Create start and end dates for the query
     const startDate = new Date(date);
     startDate.setHours(0, 0, 0, 0);
-    
+
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 1);
     endDate.setHours(0, 0, 0, 0);
@@ -23,20 +24,20 @@ export const getSchedule = defineAction({
         AND: [
           {
             startTime: {
-              gte: startDate
-            }
+              gte: startDate,
+            },
           },
           {
             startTime: {
-              lt: endDate
-            }
-          }
+              lt: endDate,
+            },
+          },
         ],
         course: {
           enrolledUsers: {
             some: { username: currentUser.username },
           },
-        }
+        },
       },
       include: {
         attachments: {
@@ -165,8 +166,15 @@ export const addAttachment = defineAction({
     id: z.string(),
     title: z.string(),
     type: z.enum([
-      "YOUTUBE", "YOUTUBE_LIVE", "GMEET", "JIOMEET",
-      "TEXT", "VIMEO", "VIDEOCRYPT", "DOCUMENT", "OTHER"
+      "YOUTUBE",
+      "YOUTUBE_LIVE",
+      "GMEET",
+      "JIOMEET",
+      "TEXT",
+      "VIMEO",
+      "VIDEOCRYPT",
+      "DOCUMENT",
+      "OTHER",
     ] as const satisfies readonly EventAttachmentType[]),
     link: z.string().optional().nullable(),
     details: z.string().optional().nullable(),

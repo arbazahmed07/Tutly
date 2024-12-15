@@ -1,12 +1,19 @@
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { actions } from "astro:actions";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -14,39 +21,40 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Plus } from "lucide-react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { actions } from "astro:actions"
-import { useState } from "react"
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   type: z.enum([
-    "YOUTUBE", "YOUTUBE_LIVE", "GMEET", "JIOMEET",
-    "TEXT", "VIMEO", "VIDEOCRYPT", "DOCUMENT", "OTHER"
+    "YOUTUBE",
+    "YOUTUBE_LIVE",
+    "GMEET",
+    "JIOMEET",
+    "TEXT",
+    "VIMEO",
+    "VIDEOCRYPT",
+    "DOCUMENT",
+    "OTHER",
   ] as const),
   link: z.string().optional(),
   details: z.string().optional(),
-})
+});
 
 type AttachmentDialogProps = {
-  eventId: string
-  onSuccess?: () => void
-}
+  eventId: string;
+  onSuccess?: () => void;
+};
 
 export default function AttachmentDialog({ eventId, onSuccess }: AttachmentDialogProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,22 +63,22 @@ export default function AttachmentDialog({ eventId, onSuccess }: AttachmentDialo
       type: "OTHER",
       link: "",
       details: "",
-    }
-  })
+    },
+  });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await actions.schedule_addAttachment({
         id: eventId,
         ...values,
-      })
-      setOpen(false)
-      form.reset()
-      onSuccess?.()
+      });
+      setOpen(false);
+      form.reset();
+      onSuccess?.();
     } catch (error) {
-      console.error("Failed to add attachment:", error)
+      console.error("Failed to add attachment:", error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -105,18 +113,24 @@ export default function AttachmentDialog({ eventId, onSuccess }: AttachmentDialo
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Type</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {["YOUTUBE", "YOUTUBE_LIVE", "GMEET", "JIOMEET", 
-                        "TEXT", "VIMEO", "VIDEOCRYPT", "DOCUMENT", "OTHER"].map((type) => (
+                      {[
+                        "YOUTUBE",
+                        "YOUTUBE_LIVE",
+                        "GMEET",
+                        "JIOMEET",
+                        "TEXT",
+                        "VIMEO",
+                        "VIDEOCRYPT",
+                        "DOCUMENT",
+                        "OTHER",
+                      ].map((type) => (
                         <SelectItem key={type} value={type}>
                           {type.replace("_", " ")}
                         </SelectItem>
@@ -160,5 +174,5 @@ export default function AttachmentDialog({ eventId, onSuccess }: AttachmentDialo
         </Form>
       </DialogContent>
     </Dialog>
-  )
-} 
+  );
+}

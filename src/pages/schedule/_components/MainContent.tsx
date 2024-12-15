@@ -1,24 +1,30 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Youtube, Video, VideoIcon, Link, CalendarIcon, ArrowUpRight } from "lucide-react"
-import dayjs from "dayjs"
-import type { EventWithDetails } from "./ScheduleLayout"
-import AttachmentDialog from "./AttachmentDialog"
-import { EventAttachmentType } from "@prisma/client"
+import { EventAttachmentType } from "@prisma/client";
+import dayjs from "dayjs";
+import { ArrowUpRight, CalendarIcon, Link, Video, VideoIcon, Youtube } from "lucide-react";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import AttachmentDialog from "./AttachmentDialog";
+import type { EventWithDetails } from "./ScheduleLayout";
 
 interface MainContentProps {
-  selectedEvent: EventWithDetails | null
-  isLoading?: boolean
-  haveAdminAccess: boolean
+  selectedEvent: EventWithDetails | null;
+  isLoading?: boolean;
+  haveAdminAccess: boolean;
 }
 
-export default function MainContent({ selectedEvent, isLoading = false, haveAdminAccess }: MainContentProps) {
+export default function MainContent({
+  selectedEvent,
+  isLoading = false,
+  haveAdminAccess,
+}: MainContentProps) {
   const onSuccess = () => {
     window.location.reload();
   };
 
   if (isLoading) {
-    return <LoadingState />
+    return <LoadingState />;
   }
 
   if (!selectedEvent) {
@@ -29,23 +35,23 @@ export default function MainContent({ selectedEvent, isLoading = false, haveAdmi
           <p className="text-base">Select an event to view attachments</p>
         </div>
       </div>
-    )
+    );
   }
 
   const getAttachmentIcon = (type: EventAttachmentType) => {
     switch (type) {
       case "YOUTUBE":
       case "YOUTUBE_LIVE":
-        return <Youtube className="h-5 w-5" />
+        return <Youtube className="h-5 w-5" />;
       case "VIMEO":
-        return <Video className="h-5 w-5" />
+        return <Video className="h-5 w-5" />;
       case "GMEET":
       case "JIOMEET":
-        return <VideoIcon className="h-5 w-5" />
+        return <VideoIcon className="h-5 w-5" />;
       default:
-        return <Link className="h-5 w-5" />
+        return <Link className="h-5 w-5" />;
     }
-  }
+  };
 
   return (
     <div className="h-full w-full flex flex-col">
@@ -57,10 +63,7 @@ export default function MainContent({ selectedEvent, isLoading = false, haveAdmi
         </div>
         {haveAdminAccess && (
           <div className="mt-2">
-            <AttachmentDialog
-              eventId={selectedEvent.id}
-              onSuccess={onSuccess}
-            />
+            <AttachmentDialog eventId={selectedEvent.id} onSuccess={onSuccess} />
           </div>
         )}
       </div>
@@ -94,7 +97,7 @@ export default function MainContent({ selectedEvent, isLoading = false, haveAdmi
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function LoadingState() {
@@ -105,18 +108,20 @@ function LoadingState() {
         <Skeleton className="h-5 w-1/3 mt-2" />
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {Array(6).fill(0).map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardHeader className="flex flex-row items-center gap-3 py-3">
-              <Skeleton className="h-10 w-10 rounded-lg" />
-              <Skeleton className="h-6 w-2/3" />
-            </CardHeader>
-            <CardContent className="py-2">
-              <Skeleton className="h-5 w-28" />
-            </CardContent>
-          </Card>
-        ))}
+        {Array(6)
+          .fill(0)
+          .map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader className="flex flex-row items-center gap-3 py-3">
+                <Skeleton className="h-10 w-10 rounded-lg" />
+                <Skeleton className="h-6 w-2/3" />
+              </CardHeader>
+              <CardContent className="py-2">
+                <Skeleton className="h-5 w-28" />
+              </CardContent>
+            </Card>
+          ))}
       </div>
     </div>
-  )
+  );
 }

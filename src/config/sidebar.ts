@@ -17,7 +17,7 @@ import type { SidebarItem } from "@/components/sidebar/AppSidebar";
 const InstructorItems = [
   {
     title: "Dashboard",
-    url: "/dashboard", 
+    url: "/dashboard",
     icon: Home,
   },
   {

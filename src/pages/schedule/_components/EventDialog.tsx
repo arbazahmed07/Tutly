@@ -1,12 +1,21 @@
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { EventAttachment, ScheduleEvent } from "@prisma/client";
+import { actions } from "astro:actions";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -14,24 +23,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Input } from "@/components/ui/input"
-import { Plus } from "lucide-react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { actions } from "astro:actions"
-import type { ScheduleEvent, EventAttachment } from "@prisma/client"
-import { useState, useEffect } from "react"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -39,59 +40,73 @@ const formSchema = z.object({
   endTime: z.string().min(1, "End time is required"),
   courseId: z.string().min(1, "Course is required"),
   isPublished: z.boolean().default(false),
-  isAllDay: z.boolean().default(false)
-})
+  isAllDay: z.boolean().default(false),
+});
 
 type EventWithDetails = ScheduleEvent & {
-  attachments: EventAttachment[]
+  attachments: EventAttachment[];
   course: {
-    id: string
-    title: string
-  } | null
-}
+    id: string;
+    title: string;
+  } | null;
+};
 
 type EventDialogProps = {
-  courses: { id: string; title: string }[]
-  event?: EventWithDetails | null
-  onSuccess?: () => void
-}
+  courses: { id: string; title: string }[];
+  event?: EventWithDetails | null;
+  onSuccess?: () => void;
+};
 
 export default function EventDialog({ courses, event, onSuccess }: EventDialogProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: event ? {
-      title: event.title,
-      startTime: new Date(event.startTime).toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16),
-      endTime: new Date(event.endTime).toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16),
-      courseId: event.courseId || "",
-      isPublished: event.isPublished,
-      isAllDay: false
-    } : {
-      title: "",
-      startTime: new Date().toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16),
-      endTime: new Date(new Date().setHours(new Date().getHours() + 1)).toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16),
-      courseId: "",
-      isPublished: false,
-      isAllDay: false
-    }
-  })
+    defaultValues: event
+      ? {
+          title: event.title,
+          startTime: new Date(event.startTime)
+            .toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" })
+            .slice(0, 16),
+          endTime: new Date(event.endTime)
+            .toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" })
+            .slice(0, 16),
+          courseId: event.courseId || "",
+          isPublished: event.isPublished,
+          isAllDay: false,
+        }
+      : {
+          title: "",
+          startTime: new Date().toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16),
+          endTime: new Date(new Date().setHours(new Date().getHours() + 1))
+            .toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" })
+            .slice(0, 16),
+          courseId: "",
+          isPublished: false,
+          isAllDay: false,
+        },
+  });
 
   useEffect(() => {
-    const isAllDay = form.watch("isAllDay")
-    const startTime = form.watch("startTime")
+    const isAllDay = form.watch("isAllDay");
+    const startTime = form.watch("startTime");
 
     if (isAllDay && startTime) {
-      const start = new Date(startTime)
-      start.setHours(0, 0, 0, 0)
-      const end = new Date(startTime)
-      end.setHours(23, 59, 59, 999)
+      const start = new Date(startTime);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(startTime);
+      end.setHours(23, 59, 59, 999);
 
-      form.setValue("startTime", start.toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16))
-      form.setValue("endTime", end.toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16))
+      form.setValue(
+        "startTime",
+        start.toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16)
+      );
+      form.setValue(
+        "endTime",
+        end.toLocaleString("sv-SE", { timeZone: "Asia/Kolkata" }).slice(0, 16)
+      );
     }
-  }, [form.watch("isAllDay")])
+  }, [form.watch("isAllDay")]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -101,8 +116,8 @@ export default function EventDialog({ courses, event, onSuccess }: EventDialogPr
         isPublished: values.isPublished,
         startTime: values.startTime,
         endTime: values.endTime,
-        isAllDay: values.isAllDay
-      }
+        isAllDay: values.isAllDay,
+      };
 
       if (event) {
         await actions.schedule_updateEvent({
@@ -110,34 +125,34 @@ export default function EventDialog({ courses, event, onSuccess }: EventDialogPr
           title: finalValues.title,
           startTime: finalValues.startTime,
           endTime: finalValues.endTime,
-          isPublished: finalValues.isPublished
-        })
+          isPublished: finalValues.isPublished,
+        });
       } else {
         await actions.schedule_createEvent({
           title: finalValues.title,
           startTime: finalValues.startTime,
           endTime: finalValues.endTime,
           courseId: finalValues.courseId,
-          isPublished: finalValues.isPublished
-        })
+          isPublished: finalValues.isPublished,
+        });
       }
-      setOpen(false)
-      onSuccess?.()
+      setOpen(false);
+      onSuccess?.();
     } catch (error) {
-      console.error("Failed to save event:", error)
+      console.error("Failed to save event:", error);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    if (!event) return
+    if (!event) return;
     try {
-      await actions.schedule_deleteEvent({ id: event.id })
-      setOpen(false)
-      onSuccess?.()
+      await actions.schedule_deleteEvent({ id: event.id });
+      setOpen(false);
+      onSuccess?.();
     } catch (error) {
-      console.error("Failed to delete event:", error)
+      console.error("Failed to delete event:", error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -159,10 +174,7 @@ export default function EventDialog({ courses, event, onSuccess }: EventDialogPr
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Course</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a course" />
@@ -199,10 +211,7 @@ export default function EventDialog({ courses, event, onSuccess }: EventDialogPr
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                   <FormLabel>All day</FormLabel>
                 </FormItem>
@@ -216,11 +225,7 @@ export default function EventDialog({ courses, event, onSuccess }: EventDialogPr
                   <FormItem className="flex flex-col">
                     <FormLabel>Start</FormLabel>
                     <FormControl>
-                      <Input
-                        type="datetime-local"
-                        {...field}
-                        disabled={form.watch("isAllDay")}
-                      />
+                      <Input type="datetime-local" {...field} disabled={form.watch("isAllDay")} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -233,11 +238,7 @@ export default function EventDialog({ courses, event, onSuccess }: EventDialogPr
                   <FormItem className="flex flex-col">
                     <FormLabel>End</FormLabel>
                     <FormControl>
-                      <Input
-                        type="datetime-local"
-                        {...field}
-                        disabled={form.watch("isAllDay")}
-                      />
+                      <Input type="datetime-local" {...field} disabled={form.watch("isAllDay")} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -256,10 +257,7 @@ export default function EventDialog({ courses, event, onSuccess }: EventDialogPr
                     </div>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -270,13 +268,11 @@ export default function EventDialog({ courses, event, onSuccess }: EventDialogPr
                   Delete Event
                 </Button>
               )}
-              <Button type="submit">
-                {event ? "Save Changes" : "Create Event"}
-              </Button>
+              <Button type="submit">{event ? "Save Changes" : "Create Event"}</Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
