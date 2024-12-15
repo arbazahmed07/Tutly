@@ -528,8 +528,16 @@ export function StudentCards({ data, selectedCourse }: Props) {
         </Card>
         <div className="w-1/3 pb-3">
           <Card>
-            <CardHeader>
-              <CardTitle>Platform Scores</CardTitle>
+            <CardHeader className="relative">
+              <div className="flex items-center justify-center gap-4">
+                <CardTitle>Platform Scores</CardTitle>
+                <a
+                  href="/coding-platforms/leaderboard"
+                  className="absolute right-2 text-xs font-medium text-primary hover:text-primary/80 dark:text-primary dark:hover:text-primary/80 underline-offset-4 hover:underline"
+                >
+                  Leaderboard
+                </a>
+              </div>
               <CardDescription>Your scores on various coding platforms</CardDescription>
             </CardHeader>
             <CardContent>
