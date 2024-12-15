@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Profile } from "@prisma/client";
-import { Upload } from "lucide-react";
-import { useState } from "react";
+import { File, FileType, type Profile } from "@prisma/client";
+import { Loader2, Upload } from "lucide-react";
+import { ChangeEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
+import { useFileUpload } from "@/components/useFileUpload";
 import { Button } from "@/components/ui/button";
+
 import {
   Form,
   FormControl,
@@ -15,6 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { actions } from "astro:actions";
 
 const formSchema = z.object({
   resume: z.string().optional(),
@@ -26,6 +29,44 @@ interface DocumentsProps {
 }
 
 export default function Documents({ documents, onUpdate }: DocumentsProps) {
+  // const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { uploadFile, isUploading } = useFileUpload({
+    fileType: FileType.OTHER,
+    onUpload: async (file: File) => {
+      if (!file || !file.publicUrl) return;
+      onUpdate({
+        documents: {
+          resume: file.publicUrl,
+        },
+      });
+      try {
+        window.location.reload();
+      } catch (error) {
+        toast.error("Failed to upload resume");
+      }
+    },
+  });
+
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+    // setIsUploading(true);
+
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
+      const user = await actions.users_getCurrentUser();
+      if (!user) return;
+      await uploadFile(file, user.data?.id);
+      toast.success("Resume uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload resume");
+    } finally {
+      // setIsUploading(false);
+    }
+  };
+
   const [isEditing, setIsEditing] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -66,25 +107,28 @@ export default function Documents({ documents, onUpdate }: DocumentsProps) {
               control={form.control}
               name="resume"
               render={({ field }) => (
-                <FormItem className="space-y-4">
+                <FormItem className="space-y-4" >
                   <FormLabel className="text-lg">Resume</FormLabel>
-                  <FormControl>
+                  <FormControl >
                     <div className="flex items-center gap-6 min-h-[100px] p-6 border rounded-lg">
-                      <Input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            field.onChange(file.name);
-                          }
-                        }}
-                        disabled={!isEditing}
-                        className="h-18 p-2 file:mr-6 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                      />
+                      <div className="relative flex-1">
+                        <Input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          ref={fileInputRef}
+                          onChange={handleUpload}
+                          disabled={!isEditing || isUploading}
+                          className="h-18 p-2 file:mr-6 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        />
+                        {isUploading && (
+                          <div className="absolute inset-0 bg-black/10 flex items-center justify-center rounded-lg">
+                            <Loader2 className="h-6 w-6 animate-spin" />
+                          </div>
+                        )}
+                      </div>
                       {field.value && (
                         <a
-                          href="#"
+                          href={field.value}
                           className="text-blue-500 hover:underline text-lg"
                           target="_blank"
                           rel="noopener noreferrer"

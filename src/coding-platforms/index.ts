@@ -42,48 +42,60 @@ export async function validatePlatformHandles(
   handles: Record<string, string>
 ): Promise<ValidationResult> {
   const invalidHandles: string[] = [];
-  const validationPromises: Promise<void>[] = [];
 
-  for (const [platform, handle] of Object.entries(handles)) {
-    if (!handle) continue;
+  const validationResults = await Promise.all(
+    Object.entries(handles).map(async ([platform, handle]) => {
+      if (!handle) return;
 
-    const validationPromise = (async () => {
-      let isValid: boolean = false;
-      let validationError: Error | null = null;
+      try {
+        let isValid = false;
+        switch (platform) {
+          case "github": {
+            const [valid] = await isGithubValid(handle);
+            isValid = valid;
+            break;
+          }
+          case "codechef": {
+            const [valid] = await isCodechefValid(handle);
+            isValid = valid;
+            break;
+          }
+          case "codeforces": {
+            const [valid] = await isCodeforcesValid(handle);
+            isValid = valid;
+            break;
+          }
+          case "hackerrank": {
+            const [valid] = await isHackerrankValid(handle);
+            isValid = valid;
+            break;
+          }
+          case "interviewbit": {
+            const [valid] = await isInterviewbitValid(handle);
+            isValid = valid;
+            break;
+          }
+          case "leetcode": {
+            const [valid] = await isLeetcodeValid(handle);
+            isValid = valid;
+            break;
+          }
+        }
 
-      switch (platform) {
-        case "github":
-          [isValid, validationError] = (await isGithubValid(handle)) as unknown as [
-            boolean,
-            Error | null,
-          ];
-          break;
-        case "codechef":
-          [isValid, validationError] = await isCodechefValid(handle);
-          break;
-        case "codeforces":
-          [isValid, validationError] = await isCodeforcesValid(handle);
-          break;
-        case "hackerrank":
-          [isValid, validationError] = await isHackerrankValid(handle);
-          break;
-        case "interviewbit":
-          [isValid, validationError] = await isInterviewbitValid(handle);
-          break;
-        case "leetcode":
-          [isValid, validationError] = await isLeetcodeValid(handle);
-          break;
+        return { platform, isValid };
+      } catch (error) {
+        return { platform, isValid: false };
       }
+    })
+  );
 
-      if (!isValid || validationError) {
+  validationResults
+    .filter((result): result is { platform: string; isValid: boolean } => result !== undefined)
+    .forEach(({ platform, isValid }) => {
+      if (!isValid) {
         invalidHandles.push(platform);
       }
-    })();
-
-    validationPromises.push(validationPromise);
-  }
-
-  await Promise.all(validationPromises);
+    });
 
   return {
     valid: invalidHandles.length === 0,

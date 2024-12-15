@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { Profile } from "@prisma/client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-// import { validatePlatformHandles } from "@/actions/codingPlatforms";
+import { actions } from "astro:actions";
 import { toast } from "react-hot-toast";
 import {
   RiCodeBoxLine,
@@ -100,16 +100,24 @@ export default function ProfessionalProfiles({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // const validationValues = Object.fromEntries(
-      //   Object.entries(values).filter(([_, value]) => value !== "" && value !== undefined)
-      // );
-      // toast.loading("Validating handles...");
-      // const { valid, invalidFields } = await validatePlatformHandles(validationValues as Record<string, string>);
-      // if (!valid) {
-      //   toast.dismiss();
-      //   toast.error(`Invalid handles: ${invalidFields.join(", ")}`);
-      //   return;
-      // }
+      const validationValues = Object.fromEntries(
+        Object.entries(values).filter(([_, value]) => value !== "" && value !== undefined)
+      );
+      toast.loading("Validating handles...");
+      const { data, error } = await actions.codingPlatforms_validatePlatformHandlesAction({
+        handles: validationValues as Record<string, string>,
+      });
+      if (error) {
+        toast.dismiss();
+        toast.error(`Invalid handles: ${error.message}`);
+        return;
+      }
+      const { valid, invalidFields } = data;
+      if (!valid) {
+        toast.dismiss();
+        toast.error(`Invalid handles: ${invalidFields.join(", ")}`);
+        return;
+      }
       toast.dismiss();
       await onUpdate({
         professionalProfiles: values,
