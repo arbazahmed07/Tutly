@@ -129,13 +129,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
       handleSubmit(e);
     }
   };
-
-  const handleCtrlEnterDown = (e: any) => {
-    if (e.key === "Enter" && e.ctrlKey) {
-      handleSubmit(e);
-    }
-  };
-
+  
   const toggleAccordion = (index: number) => {
     setOpenAccordion(openAccordion === index ? -1 : index);
   };
