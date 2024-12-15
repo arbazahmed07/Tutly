@@ -15,5 +15,5 @@ const uploadedFiles = await db.file.findMany({
 ---
 
 <RootLayout title="Drive">
-  <Drive uploadedFiles={uploadedFiles} client:load />
+  <Drive uploadedFiles={uploadedFiles} client:only />
 </RootLayout>

@@ -222,6 +222,26 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       </Suspense>
     );
   }
+
+  override remove(): void {
+    const writable = this.getWritable();
+    const dom = this.getDOMElement();
+    
+    // Safely remove the node if it exists and has a parent
+    if (dom && dom.parentNode) {
+      dom.parentNode.removeChild(dom);
+    }
+    
+    super.remove();
+  }
+
+  override destroy(): void {
+    // Cleanup any resources
+    if (this.__caption) {
+      this.__caption.destroy();
+    }
+    super.destroy();
+  }
 }
 
 export function $createImageNode({

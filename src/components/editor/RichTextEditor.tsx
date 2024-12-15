@@ -28,6 +28,7 @@ import { CheckListPlugin } from "./plugins/CheckListPlugin";
 import ImagesPlugin from "./plugins/ImagePlugin";
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
+import { EditorErrorBoundary } from "./ErrorBoundary";
 
 const Placeholder = () => {
   return <div className="absolute top-3 left-3 text-muted-foreground">Enter some text...</div>;
@@ -182,42 +183,44 @@ export default function RichTextEditor({
     },
   };
   return (
-    <LexicalComposer initialConfig={editorConfig}>
-      <div className="flex flex-col w-full">
-        <ToolbarPlugin fileUploadOptions={fileUploadOptions} allowUpload={allowUpload} />
-        <div className="relative">
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable
-                className={cn(
-                  "min-h-[200px] p-3 outline-none",
-                  "overflow-y-auto rounded-b-md border border-t-0",
-                  "bg-background text-foreground",
-                  "focus:outline-none",
-                  height
-                )}
-              />
-            }
-            placeholder={<Placeholder />}
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-          <HistoryPlugin />
-          <AutoFocusPlugin />
-          <ListPlugin />
-          <CheckListPlugin />
-          <ListMaxIndentLevelPlugin maxDepth={7} />
-          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-          <OnChangePlugin
-            onChange={(editorState) => {
-              editorState.read(() => {
-                const markdown = $convertToMarkdownString(customTransformers);
-                onChange(markdown);
-              });
-            }}
-          />
-          <ImagesPlugin captionsEnabled={false} />
+    <EditorErrorBoundary>
+      <LexicalComposer initialConfig={editorConfig}>
+        <div className="flex flex-col w-full">
+          <ToolbarPlugin fileUploadOptions={fileUploadOptions} allowUpload={allowUpload} />
+          <div className="relative">
+            <RichTextPlugin
+              contentEditable={
+                <ContentEditable
+                  className={cn(
+                    "min-h-[200px] p-3 outline-none",
+                    "overflow-y-auto rounded-b-md border border-t-0",
+                    "bg-background text-foreground",
+                    "focus:outline-none",
+                    height
+                  )}
+                />
+              }
+              placeholder={<Placeholder />}
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+            <HistoryPlugin />
+            <AutoFocusPlugin />
+            <ListPlugin />
+            <CheckListPlugin />
+            <ListMaxIndentLevelPlugin maxDepth={7} />
+            <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+            <OnChangePlugin
+              onChange={(editorState) => {
+                editorState.read(() => {
+                  const markdown = $convertToMarkdownString(customTransformers);
+                  onChange(markdown);
+                });
+              }}
+            />
+            <ImagesPlugin captionsEnabled={false} />
+          </div>
         </div>
-      </div>
-    </LexicalComposer>
+      </LexicalComposer>
+    </EditorErrorBoundary>
   );
 }

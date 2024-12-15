@@ -192,16 +192,24 @@ export default function ToolbarPlugin({ fileUploadOptions, allowUpload }) {
   }, [editor]);
 
   useEffect(() => {
-    return mergeRegister(
+    const cleanup = mergeRegister(
       editor.registerUpdateListener(({ editorState }) => {
-        editorState.read(() => {
-          updateToolbar();
-        });
+        try {
+          editorState.read(() => {
+            updateToolbar();
+          });
+        } catch (error) {
+          console.error("Error updating toolbar:", error);
+        }
       }),
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         (_payload, newEditor) => {
-          updateToolbar();
+          try {
+            updateToolbar();
+          } catch (error) {
+            console.error("Error handling selection change:", error);
+          }
           return false;
         },
         LowPriority
@@ -223,6 +231,15 @@ export default function ToolbarPlugin({ fileUploadOptions, allowUpload }) {
         LowPriority
       )
     );
+
+    return () => {
+      // Ensure cleanup runs even if there's an error
+      try {
+        cleanup();
+      } catch (error) {
+        console.error("Error during toolbar cleanup:", error);
+      }
+    };
   }, [editor, updateToolbar]);
 
   const formatParagraph = () => {
