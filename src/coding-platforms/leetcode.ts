@@ -20,6 +20,7 @@ export async function isHandleValid(handle: string): Promise<[boolean, Error | n
 export async function getScore(handle: string): Promise<{
   score: string;
   problemCount: number;
+  currentRating: number;
 }> {
   const query = `
     query userSessionProgress($username: String!) {
@@ -51,14 +52,16 @@ export async function getScore(handle: string): Promise<{
     ).count;
 
     let score = BigInt(problemsCount * 50);
+    const currentRating = data.userContestRanking?.rating || 0;
 
     if (data.userContestRanking && data.userContestRanking.attendedContestsCount >= 3) {
-      score += BigInt(Math.floor(Math.pow(data.userContestRanking.rating - 1300, 2) / 30));
+      score += BigInt(Math.floor(Math.pow(currentRating - 1300, 2) / 30));
     }
 
     return {
       score: score.toString(),
       problemCount: problemsCount,
+      currentRating: currentRating,
     };
   } catch (err) {
     throw err;

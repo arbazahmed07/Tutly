@@ -13,6 +13,7 @@ export async function isHandleValid(handle: string): Promise<[boolean, Error | n
 export async function getScore(handle: string): Promise<{
   score: string;
   problemCount: number;
+  currentRating: number;
 }> {
   try {
     const response = await fetch(`${_HACKERRANK_BASE_URL}hackers/${handle}/scores_elo`, {
@@ -22,10 +23,12 @@ export async function getScore(handle: string): Promise<{
 
     let score = BigInt(0);
     let done = false;
+    let currentRating = 0;
 
     for (const track of data) {
       if (track.slug === "algorithms" || track.slug === "data-structures") {
         score += BigInt(Math.floor(track.practice.score));
+        currentRating = Math.max(currentRating, track.practice.score);
         if (done) break;
         done = true;
       }
@@ -34,6 +37,7 @@ export async function getScore(handle: string): Promise<{
     return {
       score: score.toString(),
       problemCount: 0,
+      currentRating: currentRating,
     };
   } catch (err) {
     throw new Error("ErrorFetchFailed");

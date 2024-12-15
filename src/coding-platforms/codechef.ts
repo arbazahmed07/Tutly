@@ -22,6 +22,7 @@ export async function isHandleValid(handle: string): Promise<[boolean, Error | n
 export async function getScore(handle: string): Promise<{
   score: string;
   problemCount: number;
+  currentRating: number;
 }> {
   try {
     const rating = await getCodechefRating(handle);
@@ -34,6 +35,7 @@ export async function getScore(handle: string): Promise<{
     return {
       score: score.toString(),
       problemCount: rating.totalProblemsSolved,
+      currentRating: rating.rating,
     };
   } catch (err) {
     throw err;

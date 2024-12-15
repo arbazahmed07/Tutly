@@ -33,6 +33,14 @@ const formSchema = z.object({
     )
     .optional()
     .or(z.literal("")),
+  interviewbit: z
+    .string()
+    .refine(
+      (val) => !val.includes("/") && !val.includes("interviewbit.com"),
+      "Please enter only username"
+    )
+    .optional()
+    .or(z.literal("")),
   leetcode: z
     .string()
     .refine(
@@ -82,6 +90,7 @@ export default function ProfessionalProfiles({
     resolver: zodResolver(formSchema),
     defaultValues: {
       github: professionalProfiles?.github || "",
+      interviewbit: professionalProfiles?.interviewbit || "",
       leetcode: professionalProfiles?.leetcode || "",
       codechef: professionalProfiles?.codechef || "",
       codeforces: professionalProfiles?.codeforces || "",
@@ -126,23 +135,6 @@ export default function ProfessionalProfiles({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="github"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <RiGithubLine className="h-5 w-5" />
-                    GitHub Username
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="username" {...field} disabled={!isEditing} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="leetcode"
@@ -210,6 +202,42 @@ export default function ProfessionalProfiles({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="interviewbit"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <RiCodeLine className="h-5 w-5" />
+                    InterviewBit Username
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
+            <FormField
+              control={form.control}
+              name="github"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <RiGithubLine className="h-5 w-5" />
+                    GitHub Username
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="username" {...field} disabled={!isEditing} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
           </div>
 
           {isEditing && (

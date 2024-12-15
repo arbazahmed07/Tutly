@@ -111,7 +111,7 @@ export function AppSidebar({ user, forceClose = false, className, pathname }: Ap
                         <CollapsibleTrigger asChild>
                           <SidebarMenuButton
                             tooltip={item.title}
-                            className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base`}
+                            className={`${pathname === item.url ? "bg-primary text-primary-foreground" : ""} hover:bg-primary/90 hover:text-primary-foreground m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base`}
                           >
                             <ItemIcon className="size-6" />
                             <span>{item.title}</span>
@@ -122,7 +122,7 @@ export function AppSidebar({ user, forceClose = false, className, pathname }: Ap
                         <a href={item.url}>
                           <SidebarMenuButton
                             tooltip={item.title}
-                            className={`${pathname === item.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base`}
+                            className={`${pathname === item.url ? "bg-primary text-primary-foreground" : ""} hover:bg-primary/90 hover:text-primary-foreground m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base`}
                           >
                             <ItemIcon className="size-6" />
                             <span>{item.title}</span>
@@ -136,7 +136,7 @@ export function AppSidebar({ user, forceClose = false, className, pathname }: Ap
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton
                                   asChild
-                                  className={`${pathname === subItem.url ? "bg-blue-600 text-white" : ""} hover:bg-blue-500 text-white m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base ${subItem.className || ""}`}
+                                  className={`${pathname === subItem.url ? "bg-primary text-primary-foreground" : ""} hover:bg-primary/90 hover:text-primary-foreground m-auto flex cursor-pointer items-center gap-4 rounded px-5 py-5 text-base ${subItem.className || ""}`}
                                 >
                                   <a href={subItem.url}>
                                     <span>{subItem.title}</span>
