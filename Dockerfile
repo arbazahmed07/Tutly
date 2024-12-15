@@ -28,11 +28,10 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/prisma ./prisma
 
-ENV HOST=localhost
-ENV HOSTNAME=0.0.0.0
+ENV HOST=0.0.0.0
 ENV PORT=4321
 ENV NODE_ENV=production
 
 EXPOSE 4321
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node ./dist/server/entry.mjs"]
+CMD ["sh", "-c", "node ./dist/server/entry.mjs"]
