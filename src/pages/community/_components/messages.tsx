@@ -130,6 +130,7 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
     }
   };
 
+
   const toggleAccordion = (index: number) => {
     setOpenAccordion(openAccordion === index ? -1 : index);
   };
@@ -227,8 +228,8 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                     <img
                       src={qa.user?.image || "/placeholder.jpg"}
                       alt="profile"
-                      width={30}
-                      height={30}
+                      width={40}
+                      height={40}
                       className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-fuchsia-600 ring-offset-1"
                     />
                   )}
@@ -239,8 +240,8 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                       <img
                         src={qa.user?.image || "/placeholder.jpg"}
                         alt="profile"
-                        width={30}
-                        height={30}
+                        width={40}
+                        height={40}
                         className="rounded-full shadow-lg shadow-yellow-400/50"
                       />
                     </div>
@@ -251,8 +252,8 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                       <img
                         src={qa.user?.image || "/placeholder.jpg"}
                         alt="profile"
-                        width={30}
-                        height={30}
+                        width={40}
+                        height={40}
                         className="rounded-full shadow-lg shadow-red-400/50"
                       />
                     </div>
@@ -368,8 +369,8 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                             <img
                               src={r.user?.image || "/placeholder.jpg"}
                               alt="profile"
-                              width={30}
-                              height={30}
+                              width={40}
+                              height={40}
                               className="rounded-full shadow-lg shadow-fuchsia-500/50 ring ring-fuchsia-600 ring-offset-1"
                             />
                           )}
@@ -379,8 +380,8 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                               <img
                                 src={r.user?.image || "/placeholder.jpg"}
                                 alt="profile"
-                                width={30}
-                                height={30}
+                                width={40}
+                                height={40}
                                 className="rounded-full shadow-lg shadow-yellow-400/50"
                               />
                             </div>
@@ -391,8 +392,8 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                               <img
                                 src={r.user?.image || "/placeholder.jpg"}
                                 alt="profile"
-                                width={30}
-                                height={30}
+                                width={40}
+                                height={40}
                                 className="rounded-full shadow-lg shadow-red-400/50"
                               />
                             </div>
