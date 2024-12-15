@@ -1,9 +1,11 @@
 import { Google, OAuth2Tokens, generateCodeVerifier, generateState } from "arctic";
 
 import type { OAuthUser } from ".";
+import { envOrThrow } from "../utils";
 
-// const googleClientId = import.meta.env.GOOGLE_CLIENT_ID;
-const googleClientSecret = import.meta.env.GOOGLE_CLIENT_SECRET;
+
+const googleClientId = envOrThrow("GOOGLE_CLIENT_ID");
+const googleClientSecret = envOrThrow("GOOGLE_CLIENT_SECRET");
 
 function google(url?: URL) {
   url ??= new URL("http://localhost:4321");
@@ -11,7 +13,7 @@ function google(url?: URL) {
     url.protocol = "https:";
   }
   return new Google(
-    "460571681510-m89qo4361lus81uroooa2r5rg11u4nni.apps.googleusercontent.com",
+    googleClientId,
     googleClientSecret,
     new URL("/api/auth/callback/google", url).toString()
   );

@@ -93,7 +93,7 @@ const AssignmentTable = ({
   searchFilteredAssignments: (Assignment & { status: string })[];
 }) => {
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="max-h-[310px] overflow-y-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -497,7 +497,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
         ))}
       </div>
       <div className="flex gap-4">
-        <Card className="w-2/3 mb-3">
+        <Card className="w-2/3 mb-3 max-h-[435px]">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Assignments</CardTitle>
             <div className="flex justify-center items-center gap-4">
