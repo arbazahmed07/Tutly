@@ -37,8 +37,13 @@ import Component from "./charts";
 interface Assignment {
   id: string;
   title: string;
-  submissions: any[];
-  points: number;
+  submissions: {
+    id: string;
+    points: {
+      score: number;
+    }[];
+  }[];
+  points?: number;
 }
 
 interface Course {
@@ -421,15 +426,13 @@ export function StudentCards({ data, selectedCourse }: Props) {
   const groupedAssignments = course?.assignments?.reduce(
     (acc, assignment) => {
       const submissionsCount = assignment.submissions?.length || 0;
-      const points = Number(assignment.points) || 0;
+      const hasPoints = assignment.submissions?.some(sub => 
+        sub.points?.some(p => p.score > 0)
+      ) || false;
 
-      let status = "Unknown";
-      if (submissionsCount > 0 && points > 0) {
-        status = "Submitted";
-      } else if (submissionsCount > 0 && points === 0) {
-        status = "Not Evaluated";
-      } else if (submissionsCount === 0 && points === 0) {
-        status = "Not Submitted";
+      let status = "Not Submitted";
+      if (submissionsCount > 0) {
+        status = hasPoints ? "Submitted" : "Not Evaluated";
       }
 
       if (!acc[status]) {
@@ -458,10 +461,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
   const notEvaluatedCount = groupedAssignments?.["Not Evaluated"]?.length || 0;
   const notSubmittedCount = groupedAssignments?.["Not Submitted"]?.length || 0;
 
-  const completionPercentage =
-    course && course.assignmentsSubmitted && course.totalAssignments
-      ? Math.round((course.assignmentsSubmitted / course.totalAssignments) * 100)
-      : 0;
+  const completionPercentage = Math.round((submittedCount / totalAssignments) * 100) || 0;
 
   return (
     <>
