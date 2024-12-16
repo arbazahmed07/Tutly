@@ -1,11 +1,8 @@
-FROM node:20-slim AS base
+FROM node:lts AS base
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y openssl curl && apt-get clean
-
-RUN npm install -g npm@11.0.0
-
-RUN npm install -g astro@4.16.6
+RUN npm install -g astro
 
 COPY package.json package-lock.json ./
 COPY prisma ./prisma/

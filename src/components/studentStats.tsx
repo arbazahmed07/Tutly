@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { FaRankingStar } from "react-icons/fa6";
 
 import CalendarHeatmap from "@/pages/statistics/_components/heatmap";
@@ -11,7 +10,7 @@ function StudentStats({ studentData, attendanceData }: any) {
     (attendanceData?.attendanceDates.length * 100) /
     attendanceData?.classes.length
   ).toFixed(2);
-  function isDateInCurrentWeek(dateString) {
+  function isDateInCurrentWeek(dateString: string) {
     const inputDate = new Date(dateString);
     const today = new Date();
     const startOfWeek = new Date(today);
@@ -21,19 +20,19 @@ function StudentStats({ studentData, attendanceData }: any) {
     return inputDate >= startOfWeek && inputDate <= endOfWeek;
   }
 
-  const thisWeekAttended = attendanceData?.attendanceDates.filter((date) =>
+  const thisWeekAttended = attendanceData?.attendanceDates.filter((date: string) =>
     isDateInCurrentWeek(date)
   ).length;
-  const thisWeekClasses = attendanceData?.classes.filter((date) =>
+  const thisWeekClasses = attendanceData?.classes.filter((date: string) =>
     isDateInCurrentWeek(date)
   ).length;
   const uptoLastWeek =
     attendanceData?.classes.length - thisWeekClasses == 0
       ? 0
       : (
-          ((attendanceData?.attendanceDates.length - thisWeekAttended) * 100) /
-          (attendanceData?.classes.length - thisWeekClasses)
-        ).toFixed(2);
+        ((attendanceData?.attendanceDates.length - thisWeekAttended) * 100) /
+        (attendanceData?.classes.length - thisWeekClasses)
+      ).toFixed(2);
   return (
     <div className="mx-4 flex flex-col gap-4 md:mx-8 md:gap-6">
       <div className="flex flex-col gap-4 md:flex-row md:gap-6">
@@ -41,7 +40,7 @@ function StudentStats({ studentData, attendanceData }: any) {
           <Radialchart
             client:load
             data={attendancePercentage}
-            thisWeek={attendancePercentage - uptoLastWeek}
+            thisWeek={Number(attendancePercentage) - Number(uptoLastWeek)}
           />
         </div>
         <div className="flex w-full flex-col gap-4 rounded-xl shadow-xl shadow-blue-500/5 md:w-3/4 md:flex-row md:gap-2">
