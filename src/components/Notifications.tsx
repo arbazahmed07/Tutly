@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -426,6 +427,20 @@ export default function Notifications({ user }: { user: User }) {
   };
 
   const refetchNotifications = fetchNotifications;
+
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (isMobile && (subscriptionStatus === "NotSubscribed" || subscriptionStatus === "SubscribedOnAnotherDevice")) {
+      toast.message("Enable notifications", {
+        description: "Stay updated with your course notifications",
+        action: {
+          label: "Subscribe",
+          onClick: handleSubscribeClick
+        }
+      });
+    }
+  }, [isMobile, subscriptionStatus]);
 
   return (
     <Popover>

@@ -7,7 +7,7 @@ const currentUser = Astro.locals.user!;
 const call = Astro.callAction;
 if (!currentUser) return null;
 
-const { data } = await call(actions.courses_getAllCourses,{});
+const { data } = await call(actions.courses_getAllCourses, {});
 if (!data) return null;
 
 if (data.data && data.data.length > 0) {

@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { Cell, Pie, Tooltip } from "recharts";
 import { PieChart as RechartsPieChart, ResponsiveContainer } from "recharts";
 import { toast } from "sonner";
-import {Button} from "@/components/ui/button"
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import {
@@ -107,26 +108,17 @@ const AssignmentTable = ({
           {searchFilteredAssignments.map((assignment: any) => (
             <TableRow key={assignment.id} className="cursor-pointer text-left">
               <TableCell>
-                <Badge
-                  variant={
-                    assignment.status === "Submitted"
-                      ? "default"
-                        : "destructive"
-                  }
-                >
+                <Badge variant={assignment.status === "Submitted" ? "default" : "destructive"}>
                   {assignment.status}
                 </Badge>
               </TableCell>
               <TableCell>{assignment.title}</TableCell>
               <TableCell>{assignment.submissions?.length || 0}</TableCell>
               <TableCell>
-                {
-                  assignment.submissions?.reduce(
-                    (total: number, submission: any) =>
-                      total + (submission.points?.[0]?.score || 0),
-                    0
-                  )
-                }
+                {assignment.submissions?.reduce(
+                  (total: number, submission: any) => total + (submission.points?.[0]?.score || 0),
+                  0
+                )}
               </TableCell>
             </TableRow>
           ))}
@@ -147,43 +139,40 @@ const ProgressBars = ({
 }) => {
   return (
     <Card className="flex-1 px-10 py-6">
-  <h2 className="text-lg font-semibold text-center dark:text-white">
-    Submission Summary
-  </h2>
-  <div className="flex flex-col justify-center h-full space-y-6">
-    {[
-      {
-        label: "Successfully Submitted",
-        count: submittedCount,
-        color: "bg-green-600",
-      },
-      {
-        label: "Not Submitted",
-        count: notSubmittedCount,
-        color: "bg-red-600",
-      },
-    ].map((item) => (
-      <div key={item.label} className="space-y-2">
-        <div className="flex justify-between items-center text-base font-medium dark:text-white">
-          <span>{item.label}</span>
-          <span>
-            {item.count}/{totalAssignments} (
-            {((item.count / totalAssignments) * 100).toFixed(2)}%)
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
-          <div
-            className={`${item.color} h-3.5 rounded-full`}
-            style={{
-              width: `${((item.count / totalAssignments) * 100).toFixed(2)}%`,
-            }}
-          ></div>
-        </div>
+      <h2 className="text-lg font-semibold text-center dark:text-white">Submission Summary</h2>
+      <div className="flex flex-col justify-center h-full space-y-6">
+        {[
+          {
+            label: "Successfully Submitted",
+            count: submittedCount,
+            color: "bg-green-600",
+          },
+          {
+            label: "Not Submitted",
+            count: notSubmittedCount,
+            color: "bg-red-600",
+          },
+        ].map((item) => (
+          <div key={item.label} className="space-y-2">
+            <div className="flex justify-between items-center text-base font-medium dark:text-white">
+              <span>{item.label}</span>
+              <span>
+                {item.count}/{totalAssignments} (
+                {((item.count / totalAssignments) * 100).toFixed(2)}%)
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
+              <div
+                className={`${item.color} h-3.5 rounded-full`}
+                style={{
+                  width: `${((item.count / totalAssignments) * 100).toFixed(2)}%`,
+                }}
+              ></div>
+            </div>
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-</Card>
-
+    </Card>
   );
 };
 const PlatformScores = () => {
@@ -442,7 +431,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
       const submissionsCount = assignment.submissions?.length || 0;
       let status = "Not Submitted";
       if (submissionsCount > 0) {
-        status = "Submitted" ;
+        status = "Submitted";
       }
 
       if (!acc[status]) {
@@ -505,7 +494,10 @@ export function StudentCards({ data, selectedCourse }: Props) {
             <div className="flex justify-center items-center gap-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="py-1.5 px-2 w-60 text-sm font-medium border text-gray-400 border-gray-300 rounded-md">
+                  <Button
+                    variant="ghost"
+                    className="py-1.5 px-2 w-60 text-sm font-medium border text-gray-400 border-gray-300 rounded-md"
+                  >
                     {selectedStatus}
                   </Button>
                 </DropdownMenuTrigger>
@@ -556,10 +548,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
       {Number(totalAssignments) > 0 && (
         <div className="flex justify-around mb-3 gap-3">
           <div className="flex-1">
-            <Component
-              notSubmitted={notSubmittedCount}
-              submitted={submittedCount}
-            />
+            <Component notSubmitted={notSubmittedCount} submitted={submittedCount} />
           </div>
           <ProgressBars
             submittedCount={submittedCount}

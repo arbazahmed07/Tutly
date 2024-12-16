@@ -56,6 +56,6 @@ export default defineConfig({
   vite: {
     optimizeDeps: {
       exclude: ["@mapbox"],
-    }
-  }
+    },
+  },
 });

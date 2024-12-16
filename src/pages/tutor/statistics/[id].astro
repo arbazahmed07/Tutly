@@ -5,20 +5,13 @@ import { Barchart } from "@/components/charts/barchart";
 import { Linechart } from "@/components/charts/linechart";
 import { Piechart } from "@/components/charts/piechart";
 import Header from "./_components/header";
-import {Card} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 const currentUser = Astro.locals.user;
-const call = Astro.callAction
+const call = Astro.callAction;
 const courseId = Astro.params.id!;
 const mentorUsername = Astro.url.searchParams.get("mentor");
-const [
-  piechart,
-  barchart,
-  _mentees,
-  mentors,
-  linechart,
-  courses
-]: any = await Promise.all([
+const [piechart, barchart, _mentees, mentors, linechart, courses]: any = await Promise.all([
   call(actions.statistics_getPiechartData, { courseId, mentorUsername }),
   call(actions.statistics_getBarchartData, { courseId, mentorUsername }),
   call(actions.statistics_getAllMentees, { courseId, mentorUsername }),
@@ -42,7 +35,6 @@ if (piechart.data && Array.isArray(piechart.data)) {
   const total = (piechart.data[0] || 0) + (piechart.data[1] || 0);
   loaderValue = total > 0 ? `${Math.round((completed * 100) / total)}%` : "0%";
 }
-
 ---
 
 <RootLayout title="Statistics">

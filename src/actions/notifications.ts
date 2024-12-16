@@ -1,8 +1,47 @@
 import { NotificationEvent, NotificationMedium } from "@prisma/client";
 import { defineAction } from "astro:actions";
+import webPush from "web-push";
 import { z } from "zod";
 
 import db from "@/lib/db";
+
+webPush.setVapidDetails(
+  import.meta.env.VAPID_SUBJECT,
+  import.meta.env.PUBLIC_VAPID_PUBLIC_KEY,
+  import.meta.env.VAPID_PRIVATE_KEY
+);
+
+async function sendPushNotification(userId: string, message: string, notificationId: string) {
+  const subscription = await db.pushSubscription.findFirst({
+    where: { userId },
+  });
+
+  if (!subscription) return;
+
+  try {
+    await webPush.sendNotification(
+      {
+        endpoint: subscription.endpoint,
+        keys: {
+          p256dh: subscription.p256dh,
+          auth: subscription.auth,
+        },
+      },
+      JSON.stringify({
+        message,
+        id: notificationId,
+        type: "NOTIFICATION",
+      })
+    );
+  } catch (error) {
+    console.error("Failed to send push notification:", error);
+    if ((error as any).statusCode === 410) {
+      await db.pushSubscription.delete({
+        where: { endpoint: subscription.endpoint },
+      });
+    }
+  }
+}
 
 export const getNotifications = defineAction({
   async handler(_, { locals }) {
@@ -117,10 +156,12 @@ export const notifyUser = defineAction({
         mediumSent: NotificationMedium.NOTIFICATION,
       },
     });
+
+    await sendPushNotification(userId, message, notification.id);
+
     return notification;
   },
 });
-
 export const notifyBulkUsers = defineAction({
   input: z.object({
     courseId: z.string(),
@@ -140,16 +181,30 @@ export const notifyBulkUsers = defineAction({
       select: { user: { select: { id: true } } },
     });
 
-    const notifications = await db.notification.createMany({
-      data: enrolledUsers.map((user) => ({
-        message,
-        eventType: NotificationEvent.CUSTOM_MESSAGE,
-        causedById: locals.user?.id!,
-        intendedForId: user.user.id,
-        mediumSent: NotificationMedium.NOTIFICATION,
-        customLink: customLink || null,
-      })),
-    });
+    const notifications = await Promise.all(
+      enrolledUsers.map((user) =>
+        db.notification.create({
+          data: {
+            message,
+            eventType: NotificationEvent.CUSTOM_MESSAGE,
+            causedById: locals.user?.id!,
+            intendedForId: user.user.id,
+            mediumSent: NotificationMedium.NOTIFICATION,
+            customLink: customLink || null,
+          },
+        })
+      )
+    );
+
+    await Promise.all(
+      enrolledUsers.map(async (enrolled, index) => {
+        const notification = notifications[index];
+        if (!notification) {
+          throw new Error("Notification not found");
+        }
+        await sendPushNotification(enrolled.user.id, message, notification.id);
+      })
+    );
 
     return notifications;
   },

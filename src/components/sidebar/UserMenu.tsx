@@ -1,8 +1,12 @@
 import { User } from "@prisma/client";
-import { Bell, LogOut, UserIcon } from "lucide-react";
+import { Bell, Download, LogOut, UserIcon } from "lucide-react";
 // import {  Settings } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
+
+import { ToastAction } from "@/components/ui/toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useToast } from "@/hooks/use-toast";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -21,6 +25,54 @@ interface UserMenuProps {
 
 export function UserMenu({ user }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const isMobile = useIsMobile();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      setDeferredPrompt(e);
+    };
+
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null);
+      setIsStandalone(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isMobile && !isStandalone && deferredPrompt) {
+      toast({
+        title: "Install our app",
+        description: "Install our app for a better experience!",
+        action: (
+          <ToastAction altText="Install app" onClick={handleInstallClick}>
+            Install
+          </ToastAction>
+        ),
+        duration: 10000,
+      });
+    }
+  }, [isMobile, isStandalone, deferredPrompt]);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+  };
 
   return (
     <DropdownMenu onOpenChange={setIsOpen}>
@@ -87,6 +139,14 @@ export function UserMenu({ user }: UserMenuProps) {
           <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
             <Bell className="h-5 w-5" />
             Notifications
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={handleInstallClick}
+            disabled={!deferredPrompt || isStandalone}
+          >
+            <Download className="h-5 w-5" />
+            {isStandalone ? "App Installed" : "Install App"}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
