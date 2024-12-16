@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +30,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
 import day from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
 
@@ -179,6 +179,8 @@ export default function Notifications({ user }: { user: User }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isRefetchingNotifications, setIsRefetchingNotifications] = useState(false);
 
+  const [hasShownSubscribeToast, setHasShownSubscribeToast] = useState(false);
+
   const fetchNotifications = async () => {
     setIsRefetchingNotifications(true);
     try {
@@ -232,20 +234,18 @@ export default function Notifications({ user }: { user: User }) {
       const reg = await navigator.serviceWorker.ready;
       const subscription = await reg.pushManager.getSubscription();
 
-      // No subscription and no config endpoint
-      if (!subscription && !config?.endpoint) {
-        setSubscriptionStatus("NotSubscribed");
-      }
-      // Subscription exists and endpoints match
-      else if (subscription && subscription.endpoint === config?.endpoint) {
+      // Check if there's an active subscription on this device
+      const hasActiveSubscription = subscription && subscription.endpoint === config?.endpoint;
+
+      // Check if there's a subscription on another device
+      const hasOtherDeviceSubscription = config?.endpoint && !hasActiveSubscription;
+
+      // Set subscription status based on conditions
+      if (hasActiveSubscription) {
         setSubscriptionStatus("SubscribedOnThisDevice");
-      }
-      // Config endpoint exists but doesn't match current subscription
-      else if (config?.endpoint) {
+      } else if (hasOtherDeviceSubscription) {
         setSubscriptionStatus("SubscribedOnAnotherDevice");
-      }
-      // Fallback
-      else {
+      } else {
         setSubscriptionStatus("NotSubscribed");
       }
     } catch {
@@ -272,7 +272,8 @@ export default function Notifications({ user }: { user: User }) {
         }
       }
 
-      const public_key = "BIXtNCh-RojjGDEG9fEl9FNLY6YTFI-WeNhiumk9VYBTObZOs6l6thdm2Lrtttu4q-qL-QeAoaMD--vcavgR9d8";
+      const public_key =
+        "BIXtNCh-RojjGDEG9fEl9FNLY6YTFI-WeNhiumk9VYBTObZOs6l6thdm2Lrtttu4q-qL-QeAoaMD--vcavgR9d8";
       if (!public_key) {
         toast.error("Failed to get public key");
         return;
@@ -431,16 +432,21 @@ export default function Notifications({ user }: { user: User }) {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (isMobile && (subscriptionStatus === "NotSubscribed" || subscriptionStatus === "SubscribedOnAnotherDevice")) {
+    if (
+      isMobile &&
+      !hasShownSubscribeToast &&
+      (subscriptionStatus === "NotSubscribed" || subscriptionStatus === "SubscribedOnAnotherDevice")
+    ) {
+      setHasShownSubscribeToast(true);
       toast.message("Enable notifications", {
         description: "Stay updated with your course notifications",
         action: {
           label: "Subscribe",
-          onClick: handleSubscribeClick
-        }
+          onClick: handleSubscribeClick,
+        },
       });
     }
-  }, [isMobile, subscriptionStatus]);
+  }, [isMobile, subscriptionStatus, hasShownSubscribeToast]);
 
   return (
     <Popover>

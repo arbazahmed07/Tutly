@@ -5,7 +5,7 @@ export function useMediaQuery(query: string) {
 
   useEffect(() => {
     const media = window.matchMedia(query);
-    
+
     // Set initial value
     setMatches(media.matches);
 
@@ -24,4 +24,4 @@ export function useMediaQuery(query: string) {
   }, [query]);
 
   return matches;
-} 
+}

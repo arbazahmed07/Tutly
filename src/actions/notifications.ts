@@ -6,7 +6,6 @@ import { z } from "zod";
 import db from "@/lib/db";
 import { envOrThrow } from "@/lib/utils";
 
-
 webPush.setVapidDetails(
   envOrThrow("VAPID_SUBJECT"),
   envOrThrow("PUBLIC_VAPID_PUBLIC_KEY"),

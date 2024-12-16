@@ -94,7 +94,7 @@ const AssignmentTable = ({
   searchFilteredAssignments: (Assignment & { status: string })[];
 }) => {
   return (
-    <ScrollArea className="max-h-[310px] overflow-y-auto">
+    <ScrollArea className="h-[310px] overflow-y-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -463,7 +463,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
 
   return (
     <>
-      <div className="flex flex-wrap justify-center gap-4 mb-10 md:gap-10">
+      <div className="flex flex-wrap justify-center gap-4 mb-6 md:mb-10 md:gap-10">
         {[
           {
             imgSrc: "/score.png",
@@ -487,16 +487,16 @@ export function StudentCards({ data, selectedCourse }: Props) {
           <StatCard key={index} {...item} />
         ))}
       </div>
-      <div className="flex gap-4">
-        <Card className="w-2/3 mb-3 max-h-[435px]">
-          <CardHeader className="flex flex-row items-center justify-between">
+      <div className="flex flex-col lg:flex-row gap-4">
+        <Card className="w-full lg:w-2/3 mb-3 ">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle>Assignments</CardTitle>
-            <div className="flex justify-center items-center gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="py-1.5 px-2 w-60 text-sm font-medium border text-gray-400 border-gray-300 rounded-md"
+                    className="py-1.5 px-2 w-full text-sm font-medium border text-gray-400 border-gray-300 rounded-md"
                   >
                     {selectedStatus}
                   </Button>
@@ -514,7 +514,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
               <Input
                 type="text"
                 placeholder="Search by assignment name"
-                className="p-2 border border-gray-300 rounded-md"
+                className="p-2 w-full border border-gray-300 rounded-md"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -524,7 +524,8 @@ export function StudentCards({ data, selectedCourse }: Props) {
             <AssignmentTable searchFilteredAssignments={searchFilteredAssignments} />
           </CardContent>
         </Card>
-        <div className="w-1/3 pb-3">
+
+        <div className="w-full lg:w-1/3 pb-3">
           <Card>
             <CardHeader className="relative">
               <div className="flex items-center justify-center gap-4">
@@ -546,7 +547,7 @@ export function StudentCards({ data, selectedCourse }: Props) {
       </div>
 
       {Number(totalAssignments) > 0 && (
-        <div className="flex justify-around mb-3 gap-3">
+        <div className="flex flex-col md:flex-row justify-around mb-3 gap-3">
           <div className="flex-1">
             <Component notSubmitted={notSubmittedCount} submitted={submittedCount} />
           </div>
