@@ -423,3 +423,109 @@ export const changePassword = defineAction({
     }
   },
 });
+
+export const deleteSession = defineAction({
+  input: z.object({
+    sessionId: z.string(),
+  }),
+  async handler({ sessionId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) {
+      throw new ActionError({
+        message: "Not authenticated",
+        code: "UNAUTHORIZED",
+      });
+    }
+
+    const session = await db.session.findUnique({
+      where: {
+        id: sessionId,
+        userId: currentUser.id,
+      },
+    });
+
+    if (!session) {
+      throw new ActionError({
+        message: "Session not found",
+        code: "NOT_FOUND",
+      });
+    }
+
+    if (locals.session?.id === sessionId) {
+      throw new ActionError({
+        message: "Cannot delete current session",
+        code: "BAD_REQUEST",
+      });
+    }
+
+    try {
+      await db.session.delete({
+        where: {
+          id: sessionId,
+          userId: currentUser.id,
+        },
+      });
+    } catch (error) {
+      throw new ActionError({
+        message: "Failed to delete session",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  },
+});
+
+export const unlinkAccount = defineAction({
+  input: z.object({
+    provider: z.string(),
+  }),
+  async handler({ provider }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) {
+      throw new ActionError({
+        message: "Not authenticated",
+        code: "UNAUTHORIZED",
+      });
+    }
+
+    const account = await db.account.findUnique({
+      where: {
+        userId: currentUser.id,
+        provider,
+      },
+    });
+
+    if (!account) {
+      throw new ActionError({
+        message: "Account not found",
+        code: "NOT_FOUND",
+      });
+    }
+
+    const accountCount = await db.account.count({
+      where: {
+        userId: currentUser.id,
+      },
+    });
+
+    if (accountCount <= 1) {
+      throw new ActionError({
+        message: "Cannot unlink last account",
+        code: "BAD_REQUEST",
+      });
+    }
+
+    try {
+      await db.account.delete({
+        where: {
+          userId: currentUser.id,
+          provider,
+        },
+      });
+    } catch (error) {
+      throw new ActionError({
+        message: "Failed to unlink account",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  },
+});

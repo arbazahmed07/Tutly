@@ -7,10 +7,16 @@ import { MdOutlineBlock } from "react-icons/md";
 import { RiGlobalLine } from "react-icons/ri";
 import { TbUserOff } from "react-icons/tb";
 import { TbUserSearch } from "react-icons/tb";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { useRouter } from "@/hooks/use-router";
 
 const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
