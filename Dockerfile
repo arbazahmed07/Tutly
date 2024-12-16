@@ -2,7 +2,6 @@ FROM node:lts AS base
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y openssl curl && apt-get clean
-RUN npm install -g astro
 
 COPY package.json package-lock.json ./
 COPY prisma ./prisma/
@@ -11,8 +10,7 @@ FROM base AS prod-deps
 
 ENV HUSKY=0
 
-RUN npm ci
-RUN npm install @astrojs/check typescript
+RUN npm cache clean --force && npm install --legacy-peer-deps
 RUN npx prisma generate
 
 RUN cp ./node_modules/.prisma/client/*.* ./node_modules/@prisma/client/
