@@ -18,14 +18,40 @@ export const GET: APIRoute = async ({ params, url, cookies, request, redirect })
 
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
-  const storedState = cookies.get(AUTH_STATE_COOKIE)?.json() as AuthState;
+  const storedStateCookie = cookies.get(AUTH_STATE_COOKIE);
+  let storedState: AuthState | null = null;
+
+  try {
+    storedState = storedStateCookie?.json() as AuthState;
+  } catch (error) {
+    console.error("Failed to parse stored state:", error);
+  }
 
   cookies.delete(AUTH_STATE_COOKIE, {
     path: "/api/auth",
+    secure: import.meta.env.PROD,
+    sameSite: "lax",
   });
 
-  if (!code || !state || state !== storedState?.state) {
-    return new Response("Invalid request", { status: 400 });
+  console.log({
+    code: !!code,
+    state,
+    storedStateCookie: !!storedStateCookie,
+    storedStateValue: storedState,
+  });
+
+  if (!code || !state) {
+    return new Response("Missing code or state parameter", { status: 400 });
+  }
+
+  if (!storedState?.state) {
+    console.error("No stored state found in cookies");
+    return redirect("/sign-in?error=" + encodeURIComponent("Session expired. Please try again."));
+  }
+
+  if (state !== storedState.state) {
+    console.error("State mismatch", { received: state, stored: storedState.state });
+    return redirect("/sign-in?error=" + encodeURIComponent("Invalid state. Please try again."));
   }
 
   try {
@@ -91,7 +117,7 @@ export const GET: APIRoute = async ({ params, url, cookies, request, redirect })
     console.error("OAuth callback error:", error);
     return redirect(
       "/sign-in?error=" +
-        encodeURIComponent(error instanceof Error ? error.message : "Authentication failed")
+      encodeURIComponent(error instanceof Error ? error.message : "Authentication failed")
     );
   }
 };

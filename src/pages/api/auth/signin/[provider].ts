@@ -29,6 +29,7 @@ export const GET: APIRoute = async ({ params, url, cookies, redirect }) => {
       httpOnly: true,
       maxAge: 60 * 10, // 10 minutes
       path: "/api/auth",
+      sameSite: "lax",
     }
   );
 
