@@ -4,11 +4,13 @@ import webPush from "web-push";
 import { z } from "zod";
 
 import db from "@/lib/db";
+import { envOrThrow } from "@/lib/utils";
+
 
 webPush.setVapidDetails(
-  import.meta.env.VAPID_SUBJECT,
-  import.meta.env.PUBLIC_VAPID_PUBLIC_KEY,
-  import.meta.env.VAPID_PRIVATE_KEY
+  envOrThrow("VAPID_SUBJECT"),
+  envOrThrow("PUBLIC_VAPID_PUBLIC_KEY"),
+  envOrThrow("VAPID_PRIVATE_KEY")
 );
 
 async function sendPushNotification(userId: string, message: string, notificationId: string) {

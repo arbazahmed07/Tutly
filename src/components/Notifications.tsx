@@ -33,6 +33,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import day from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
+import { envOrThrow } from "@/lib/utils";
 
 interface NotificationLink {
   href: string;
@@ -272,7 +273,7 @@ export default function Notifications({ user }: { user: User }) {
         }
       }
 
-      const public_key = import.meta.env.PUBLIC_VAPID_PUBLIC_KEY;
+      const public_key = envOrThrow("PUBLIC_VAPID_PUBLIC_KEY");
       if (!public_key) {
         toast.error("Failed to get public key");
         return;
