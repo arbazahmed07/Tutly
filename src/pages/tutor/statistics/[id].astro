@@ -5,7 +5,7 @@ import { Barchart } from "@/components/charts/barchart";
 import { Linechart } from "@/components/charts/linechart";
 import { Piechart } from "@/components/charts/piechart";
 import Header from "./_components/header";
-import {Card} from "@/components/ui/Card";
+import {Card} from "@/components/ui/card";
 
 const currentUser = Astro.locals.user;
 const call = Astro.callAction
@@ -18,7 +18,7 @@ const [
   mentors,
   linechart,
   courses
-] = await Promise.all([
+]: any = await Promise.all([
   call(actions.statistics_getPiechartData, { courseId, mentorUsername }),
   call(actions.statistics_getBarchartData, { courseId, mentorUsername }),
   call(actions.statistics_getAllMentees, { courseId, mentorUsername }),
@@ -32,7 +32,7 @@ const [
   call(actions.courses_getAllCourses, { currentUser }),
 ]);
 
-const mentees = _mentees;
+const mentees: any = _mentees;
 
 const data = courses.data;
 
@@ -87,7 +87,7 @@ if (piechart.data && Array.isArray(piechart.data)) {
       <div class="max-h-[300px] w-full rounded-xl shadow-xl shadow-blue-500/5 lg:w-3/4">
         <Barchart client:load data={barchart.data} />
       </div>
-      <Card class="w-full rounded-xl p-4 shadow-xl shadow-blue-500/5 md:p-8 lg:w-1/4">
+      <Card className="w-full rounded-xl p-4 shadow-xl shadow-blue-500/5 md:p-8 lg:w-1/4">
         <h1 class="pb-4 text-white font-semibold md:py-8 text-center">Evaluation</h1>
         <div class="px-4 text-center font-semibold text-blue-500 md:px-16">
           <span class="text-2xl font-bold md:text-3xl">
