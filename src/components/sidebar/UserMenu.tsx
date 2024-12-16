@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import { Bell, LogOut, UserIcon } from "lucide-react";
+// import {  Settings } from "lucide-react";
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 
@@ -75,6 +76,14 @@ export function UserMenu({ user }: UserMenuProps) {
               Profile
             </DropdownMenuItem>
           </a>
+          {/* <a href="/sessions">
+            <DropdownMenuItem
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <Settings className="h-5 w-5" />
+              Security Settings
+            </DropdownMenuItem>
+          </a> */}
           <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
             <Bell className="h-5 w-5" />
             Notifications

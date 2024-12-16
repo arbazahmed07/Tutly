@@ -3,7 +3,6 @@ import { Google, OAuth2Tokens, generateCodeVerifier, generateState } from "arcti
 import type { OAuthUser } from ".";
 import { envOrThrow } from "../utils";
 
-
 const googleClientId = envOrThrow("GOOGLE_CLIENT_ID");
 const googleClientSecret = envOrThrow("GOOGLE_CLIENT_SECRET");
 

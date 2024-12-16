@@ -1,4 +1,5 @@
 import { GitHub, OAuth2Tokens, generateState } from "arctic";
+
 import { envOrThrow } from "../utils";
 
 const ghClientId = envOrThrow("GITHUB_CLIENT_ID");
