@@ -238,11 +238,17 @@ export async function createSession(
 }
 
 export async function deleteSession(sessionId: string) {
-  await db.session.delete({
-    where: {
-      id: sessionId,
-    },
+  const session = await db.session.findFirst({
+    where: { id: sessionId },
   });
+
+  if (session) {
+    await db.session.delete({
+      where: {
+        id: sessionId,
+      },
+    });
+  }
 }
 
 export async function getSession(sessionId: string) {
