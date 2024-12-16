@@ -474,7 +474,6 @@ export function StudentCards({ data, selectedCourse }: Props) {
 
   return (
     <>
-      <pre>{JSON.stringify(data,null,2)}</pre>
       <div className="flex flex-wrap justify-center gap-4 mb-10 md:gap-10">
         {[
           {

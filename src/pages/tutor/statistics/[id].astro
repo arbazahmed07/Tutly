@@ -5,6 +5,7 @@ import { Barchart } from "@/components/charts/barchart";
 import { Linechart } from "@/components/charts/linechart";
 import { Piechart } from "@/components/charts/piechart";
 import Header from "./_components/header";
+import {Card} from "@/components/ui/Card";
 
 const currentUser = Astro.locals.user;
 const call = Astro.callAction
@@ -53,7 +54,7 @@ if (piechart.data && Array.isArray(piechart.data)) {
     data={data}
     courseId={courseId}
   />
-  <div class="m-4 flex flex-col gap-4 md:mx-8 md:gap-6 mt-2">
+  <div class="m-4 flex flex-col gap-4 md:mx-8 md:gap-6 mt-6">
     <div class="flex flex-col gap-4 md:gap-6 lg:flex-row">
       <div class="w-full rounded-xl shadow-xl shadow-blue-500/5 lg:w-1/4">
         <Piechart client:load data={piechart.data} />
@@ -62,7 +63,7 @@ if (piechart.data && Array.isArray(piechart.data)) {
         class="flex w-full flex-col gap-2 rounded-xl shadow-xl shadow-blue-500/5 md:flex-row lg:w-3/4"
       >
         <div class="flex w-full flex-col gap-4 p-4 text-gray-500 md:w-1/3 md:gap-6 md:p-14">
-          <div class="relative rounded-xl border p-4">
+          <div class="relative rounded-xl border-4 p-4">
             <h1 class="absolute -top-3 bg-background px-1 text-sm md:text-base">Total Students</h1>
             <h1
               class="flex items-baseline justify-between text-2xl font-bold text-primary-500 md:text-4xl"
@@ -70,7 +71,7 @@ if (piechart.data && Array.isArray(piechart.data)) {
               {mentees.data?.length}
             </h1>
           </div>
-          <div class="relative rounded-xl border p-4">
+          <div class="relative rounded-xl border-4 p-4">
             <h1 class="absolute -top-3 bg-background px-1 text-sm md:text-base">Total Sessions</h1>
             <h1 class="text-2xl font-bold text-primary-500 md:text-4xl">
               {linechart.data?.length}
@@ -86,8 +87,8 @@ if (piechart.data && Array.isArray(piechart.data)) {
       <div class="max-h-[300px] w-full rounded-xl shadow-xl shadow-blue-500/5 lg:w-3/4">
         <Barchart client:load data={barchart.data} />
       </div>
-      <div class="w-full rounded-xl p-4 shadow-xl shadow-blue-500/5 md:p-8 lg:w-1/4">
-        <h1 class="pb-4 text-gray-500 md:pb-14">Evaluation</h1>
+      <Card class="w-full rounded-xl p-4 shadow-xl shadow-blue-500/5 md:p-8 lg:w-1/4">
+        <h1 class="pb-4 text-white font-semibold md:py-8 text-center">Evaluation</h1>
         <div class="px-4 text-center font-semibold text-blue-500 md:px-16">
           <span class="text-2xl font-bold md:text-3xl">
             {piechart.data ? piechart.data[0] : 0}
@@ -102,7 +103,7 @@ if (piechart.data && Array.isArray(piechart.data)) {
         <h1 class="p-2 text-center text-sm text-gray-500 md:text-base">
           Assignments evaluated by the mentors
         </h1>
-      </div>
+      </Card>
     </div>
   </div>
 </RootLayout>

@@ -4,10 +4,10 @@ import { actions } from "astro:actions";
 import StudentWiseAssignments from "@/components/StudentWiseAssignments";
 
 type Props = {};
-
+const call = Astro.callAction;
 const { id } = Astro.params;
 
-const { data } = await actions.assignments_getAllAssignedAssignmentsByUserId(id);
+const { data } = await call(actions.assignments_getAllAssignedAssignmentsByUserId,{id});
 const { courses, coursesWithAssignments } = data || {};
 ---
 

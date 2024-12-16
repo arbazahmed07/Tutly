@@ -224,7 +224,7 @@ const Report = ({
             {isMentor ? (
               <div className="flex items-center">
                 <span className="mr-2">Mentor:</span>
-                <div className="rounded-lg border bg-white p-2 text-sm text-gray-900">
+                <div className="rounded-lg border  p-2 text-sm text-white">
                   {uniqueMentors.map((mentor) => (
                     <span key={mentor}>{mentor}</span>
                   ))}
@@ -237,7 +237,7 @@ const Report = ({
                   title="mentor name"
                   value={selectedMentor}
                   onChange={handleMentorChange}
-                  className="rounded-lg border bg-white p-2 text-sm text-gray-900"
+                  className="rounded-lg border p-2 text-sm text-gray-900"
                 >
                   <option value="">All Mentors</option>
                   {uniqueMentors.map((mentor) => (

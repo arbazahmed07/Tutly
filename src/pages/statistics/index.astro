@@ -12,7 +12,7 @@ const { data } = await call(actions.courses_getAllCourses, {});
 if (!data) return null;
 
 if (data.data && data.data.length > 0) {
-  return Astro.redirect(`/statistics/${data.data[0].id}`);
+  return Astro.redirect(`/statistics/${data?.data[0]?.id}`);
 }
 ---
 
