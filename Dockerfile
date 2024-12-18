@@ -10,7 +10,7 @@ FROM base AS prod-deps
 
 ENV HUSKY=0
 
-RUN npm cache clean --force && npm install --legacy-peer-deps
+RUN npm ci
 RUN npx prisma generate
 
 RUN cp ./node_modules/.prisma/client/*.* ./node_modules/@prisma/client/

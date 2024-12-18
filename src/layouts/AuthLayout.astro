@@ -23,6 +23,25 @@ const { title = "Tutly" } = Astro.props;
   </body>
 </html>
 
+<script is:inline>
+  const getTheme = () => {
+    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+      return localStorage.getItem("theme");
+    }
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+    return "light";
+  };
+
+  const theme = getTheme();
+  document.documentElement.classList[theme === "dark" ? "add" : "remove"]("dark");
+
+  document.addEventListener("astro:after-swap", () => {
+    document.documentElement.classList[getTheme() === "dark" ? "add" : "remove"]("dark");
+  });
+</script>
+
 <script>
   // @ts-nocheck
   !(function (t, e) {
