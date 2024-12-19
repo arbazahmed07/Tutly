@@ -32,5 +32,5 @@ export const GET: APIRoute = async ({ params, url, cookies, redirect }) => {
     }
   );
 
-  return redirect(redirectUrl);
+  return redirect(redirectUrl.toString());
 };

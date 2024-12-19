@@ -27,6 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface UserMenuProps {
   user: User;
@@ -60,8 +61,10 @@ export function UserMenu({ user }: UserMenuProps) {
     };
   }, []);
 
+  const isMobile = useIsMobile();
+
   useEffect(() => {
-    if (!isStandalone && deferredPrompt) {
+    if (isMobile && !isStandalone && deferredPrompt) {
       toast({
         title: "Install our app",
         description: "Install our app for a better experience!",

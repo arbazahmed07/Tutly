@@ -33,7 +33,7 @@ export function createAuthorizationURL(url?: URL) {
   return {
     state,
     codeVerifier,
-    redirectUrl: redirectUrl.toString(),
+    redirectUrl,
   };
 }
 
