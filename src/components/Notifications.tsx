@@ -469,7 +469,7 @@ export default function Notifications({ user }: { user: User }) {
     if (
       isMobile &&
       !hasShownSubscribeToast &&
-      (subscriptionStatus === "NotSubscribed" || subscriptionStatus === "SubscribedOnAnotherDevice")
+      (subscriptionStatus === "NotSubscribed")
     ) {
       setHasShownSubscribeToast(true);
       toast.message("Enable notifications", {

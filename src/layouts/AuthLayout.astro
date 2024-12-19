@@ -1,6 +1,7 @@
 ---
 import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
+import { Crisp } from "@/components/Crisp";
 
 interface Props {
   title?: string;
@@ -38,21 +39,11 @@ const { title = "Tutly" } = Astro.props;
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <script is:inline>
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID="b1db5fec-2104-4c63-a771-59dcdcd17215";
-      (function(){
-        d=document;
-        s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";
-        s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      })();
-    </script>
   </head>
   <body>
     <Toaster client:load />
     <slot />
+    <Crisp client:only />
   </body>
 </html>
 
