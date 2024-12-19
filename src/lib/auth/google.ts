@@ -33,11 +33,19 @@ export function createAuthorizationURL(url?: URL) {
   return {
     state,
     codeVerifier,
-    redirectUrl,
+    redirectUrl: redirectUrl.toString(),
   };
 }
 
-export function validateAuthorizationCode(code: string, codeVerifier: string, url?: URL) {
+export function validateState(receivedState: string, storedState: string) {
+  return receivedState === storedState;
+}
+
+export function validateAuthorizationCode(
+  code: string, 
+  codeVerifier: string,
+  url?: URL
+) {
   const g = url ? google(url) : google.default;
   return g.validateAuthorizationCode(code, codeVerifier);
 }

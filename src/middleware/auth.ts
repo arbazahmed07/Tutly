@@ -4,7 +4,13 @@ import { defineMiddleware } from "astro:middleware";
 export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, next) => {
   const sessionId = cookies.get(AUTH_SESSION_COOKIE)?.value;
   const pathname = url.pathname;
-  const publicRoutes = ["/sign-in", "/sign-up", "/forgot-password", "/api/auth/callback/google"];
+  const publicRoutes = [
+    "/sign-in", 
+    "/sign-up", 
+    "/forgot-password", 
+    "/api/auth/callback/google",
+    "/api/auth/signin/google"
+  ];
 
   if (pathname.startsWith("/api/auth")) return next();
 
