@@ -61,6 +61,7 @@ self.addEventListener("push", async function (event) {
           icon: "/logo-192x192.png",
           badge: "/logo-192x192.png",
           data: {
+            notificationId: data.id,
             url: `/notifications/${data.id}`,
           },
         } as NotificationOptions)
@@ -69,19 +70,31 @@ self.addEventListener("push", async function (event) {
   }
 });
 
-self.addEventListener("notificationclick", (e) => {
-  e.notification.close();
-  e.waitUntil(
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  
+  const notificationId = event.notification.data?.notificationId;
+  
+  if (!notificationId) {
+    console.error("No notification ID found");
+    return;
+  }
+
+  event.waitUntil(
     self.clients.matchAll({ type: "window" }).then((clientsArr) => {
-      const hadWindowToFocus = clientsArr.some((windowClient) =>
-        windowClient.url === "/notifications/".concat(e.notification.tag)
-          ? (windowClient.focus(), true)
-          : false
-      );
-      if (!hadWindowToFocus)
+      const hadWindowToFocus = clientsArr.some((windowClient) => {
+        const url = `/notifications/${notificationId}`;
+        if (windowClient.url.includes(url)) {
+          return windowClient.focus();
+        }
+        return false;
+      });
+
+      if (!hadWindowToFocus) {
         self.clients
-          .openWindow("/notifications/".concat(e.notification.tag))
-          .then((windowClient) => (windowClient ? windowClient.focus() : null));
+          .openWindow(`/notifications/${notificationId}`)
+          .then((windowClient) => windowClient?.focus());
+      }
     })
   );
 });

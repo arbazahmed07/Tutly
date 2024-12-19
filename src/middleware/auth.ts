@@ -4,7 +4,7 @@ import { defineMiddleware } from "astro:middleware";
 export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, next) => {
   const sessionId = cookies.get(AUTH_SESSION_COOKIE)?.value;
   const pathname = url.pathname;
-  const publicRoutes = ["/sign-in", "/sign-up", "/forgot-password"];
+  const publicRoutes = ["/sign-in", "/sign-up", "/forgot-password", "/api/auth/callback/google"];
 
   if (pathname.startsWith("/api/auth")) return next();
 
@@ -29,6 +29,10 @@ export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, 
         secure: import.meta.env.PROD,
         path: "/",
       });
+      
+      if (!publicRoutes.includes(pathname)) {
+        return redirect("/sign-in");
+      }
     }
   } else if (!publicRoutes.includes(pathname)) {
     return redirect("/sign-in");

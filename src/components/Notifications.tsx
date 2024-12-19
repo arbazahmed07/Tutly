@@ -15,7 +15,7 @@ import {
   UserMinus,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -49,15 +49,15 @@ interface causedObjects {
 }
 
 export const NOTIFICATION_HREF_MAP: Record<NotificationEventTypes, (obj: causedObjects) => string> =
-  {
-    CLASS_CREATED: (obj: causedObjects) => `/classes/${obj.classId}`,
-    ASSIGNMENT_CREATED: (obj: causedObjects) => `/assignments/${obj.assignmentId}`,
-    ASSIGNMENT_REVIEWED: (obj: causedObjects) => `/assignments/${obj.assignmentId}`,
-    LEADERBOARD_UPDATED: (_obj: causedObjects) => `/leaderboard`,
-    DOUBT_RESPONDED: (obj: causedObjects) => `/doubts/${obj.doubtId}`,
-    ATTENDANCE_MISSED: (_obj: causedObjects) => `/attendance`,
-    CUSTOM_MESSAGE: (_obj: causedObjects) => `/`,
-  };
+{
+  CLASS_CREATED: (obj: causedObjects) => `/classes/${obj.classId}`,
+  ASSIGNMENT_CREATED: (obj: causedObjects) => `/assignments/${obj.assignmentId}`,
+  ASSIGNMENT_REVIEWED: (obj: causedObjects) => `/assignments/${obj.assignmentId}`,
+  LEADERBOARD_UPDATED: (_obj: causedObjects) => `/leaderboard`,
+  DOUBT_RESPONDED: (obj: causedObjects) => `/doubts/${obj.doubtId}`,
+  ATTENDANCE_MISSED: (_obj: causedObjects) => `/attendance`,
+  CUSTOM_MESSAGE: (_obj: causedObjects) => `/`,
+};
 
 const DEFAULT_NOTIFICATION_CONFIG = {
   label: "Notification",
@@ -234,21 +234,28 @@ export default function Notifications({ user }: { user: User }) {
       const reg = await navigator.serviceWorker.ready;
       const subscription = await reg.pushManager.getSubscription();
 
-      // Check if there's an active subscription on this device
-      const hasActiveSubscription = subscription && subscription.endpoint === config?.endpoint;
-
-      // Check if there's a subscription on another device
-      const hasOtherDeviceSubscription = config?.endpoint && !hasActiveSubscription;
-
-      // Set subscription status based on conditions
-      if (hasActiveSubscription) {
-        setSubscriptionStatus("SubscribedOnThisDevice");
-      } else if (hasOtherDeviceSubscription) {
-        setSubscriptionStatus("SubscribedOnAnotherDevice");
-      } else {
+      // If no config endpoint exists, user is not subscribed anywhere
+      if (!config?.endpoint) {
         setSubscriptionStatus("NotSubscribed");
+        return;
       }
-    } catch {
+
+      // If there's a subscription on this device
+      if (subscription) {
+        // Compare current subscription endpoint with stored config
+        if (subscription.endpoint === config.endpoint) {
+          setSubscriptionStatus("SubscribedOnThisDevice");
+        } else {
+          // Different subscription exists on this device
+          await subscription.unsubscribe(); // Clean up old subscription
+          setSubscriptionStatus("SubscribedOnAnotherDevice");
+        }
+      } else {
+        // No subscription on this device, but config exists
+        setSubscriptionStatus("SubscribedOnAnotherDevice");
+      }
+    } catch (error) {
+      console.error("Failed to fetch subscription status:", error);
       toast.error("Failed to fetch subscription status");
     }
   };
@@ -258,6 +265,16 @@ export default function Notifications({ user }: { user: User }) {
 
     try {
       setIsSubscribing(true);
+
+      if (!("serviceWorker" in navigator)) {
+        toast.error("Service Workers are not supported in this browser");
+        return;
+      }
+
+      if (!("PushManager" in window)) {
+        toast.error("Push notifications are not supported in this browser");
+        return;
+      }
 
       if (Notification.permission === "denied") {
         toast.warning("Notification permission denied");
@@ -274,10 +291,10 @@ export default function Notifications({ user }: { user: User }) {
 
       const public_key =
         "BIXtNCh-RojjGDEG9fEl9FNLY6YTFI-WeNhiumk9VYBTObZOs6l6thdm2Lrtttu4q-qL-QeAoaMD--vcavgR9d8";
-      if (!public_key) {
-        toast.error("Failed to get public key");
-        return;
-      }
+      // if (!public_key) {
+      //   toast.error("Failed to get public key");
+      //   return;
+      // }
 
       try {
         const sw = await navigator.serviceWorker.ready;
@@ -363,12 +380,18 @@ export default function Notifications({ user }: { user: User }) {
     }
   };
 
-  const unreadCount = notifications.filter((n: Notification) => !n.readAt).length;
+  const unreadCount = useMemo(() =>
+    notifications.filter((n: Notification) => !n.readAt).length,
+    [notifications]
+  );
 
   const [selectedCategories, setSelectedCategories] = useState<NotificationEventTypes[]>([]);
 
-  const filteredNotifications = notifications.filter(
-    (n: Notification) => selectedCategories.length === 0 || selectedCategories.includes(n.eventType)
+  const filteredNotifications = useMemo(() =>
+    notifications.filter((n: Notification) =>
+      selectedCategories.length === 0 || selectedCategories.includes(n.eventType)
+    ),
+    [notifications, selectedCategories]
   );
 
   const handleNotificationClick = (notification: Notification) => {
@@ -408,7 +431,18 @@ export default function Notifications({ user }: { user: User }) {
   };
 
   useEffect(() => {
-    intialSubscriptionState();
+    let mounted = true;
+
+    const checkSubscription = async () => {
+      if (!mounted) return;
+      await intialSubscriptionState();
+    };
+
+    checkSubscription();
+
+    return () => {
+      mounted = false;
+    };
   }, [user?.id]);
 
   useEffect(() => {
@@ -451,7 +485,12 @@ export default function Notifications({ user }: { user: User }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-accent/50">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative h-9 w-9 hover:bg-accent/50"
+          aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ""}`}
+        >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white flex items-center justify-center">
@@ -640,19 +679,19 @@ export default function Notifications({ user }: { user: User }) {
                 {filteredNotifications.filter((n: Notification) =>
                   tab === "all" ? true : !n.readAt
                 ).length === 0 && (
-                  <div className="h-full flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <Eye className="h-8 w-8 text-muted-foreground/50" />
-                      <span className="text-sm text-muted-foreground">
-                        {selectedCategories.length > 0
-                          ? "No notifications in selected categories"
-                          : tab === "unread"
-                            ? "No unread notifications"
-                            : "No notifications"}
-                      </span>
+                    <div className="h-full flex items-center justify-center">
+                      <div className="flex flex-col items-center gap-2">
+                        <Eye className="h-8 w-8 text-muted-foreground/50" />
+                        <span className="text-sm text-muted-foreground">
+                          {selectedCategories.length > 0
+                            ? "No notifications in selected categories"
+                            : tab === "unread"
+                              ? "No unread notifications"
+                              : "No notifications"}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
 
               <div className="border-t bg-background h-12">

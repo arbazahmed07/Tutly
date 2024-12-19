@@ -16,31 +16,45 @@ const { title = "Tutly" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <script is:inline>
+      const getTheme = () => {
+        if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+          return localStorage.getItem("theme");
+        }
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return "dark";
+        }
+        return "light";
+      };
+
+      const theme = getTheme();
+      document.documentElement.classList[theme === "dark" ? "add" : "remove"]("dark");
+
+      document.addEventListener("astro:after-swap", () => {
+        document.documentElement.classList[getTheme() === "dark" ? "add" : "remove"]("dark");
+      });
+    </script>
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <script is:inline>
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID="b1db5fec-2104-4c63-a771-59dcdcd17215";
+      (function(){
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      })();
+    </script>
   </head>
   <body>
     <Toaster client:load />
     <slot />
   </body>
 </html>
-
-<script is:inline>
-  const getTheme = () => {
-    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
-      return localStorage.getItem("theme");
-    }
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
-    return "light";
-  };
-
-  const theme = getTheme();
-  document.documentElement.classList[theme === "dark" ? "add" : "remove"]("dark");
-
-  document.addEventListener("astro:after-swap", () => {
-    document.documentElement.classList[getTheme() === "dark" ? "add" : "remove"]("dark");
-  });
-</script>
 
 <script>
   // @ts-nocheck

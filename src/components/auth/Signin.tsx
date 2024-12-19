@@ -63,7 +63,7 @@ export function SignIn() {
       <div className="absolute top-4 right-4">
         <ModeToggle />
       </div>
-      <Card className="mx-auto w-[300px] sm:w-[400px] rounded-xl backdrop-blur-md bg-white/50 dark:bg-gray-900/50 shadow-2xl border-2 border-white/30 dark:border-gray-700/50">
+      <Card className="mx-auto w-full sm:w-[400px] rounded-xl backdrop-blur-md bg-white/50 dark:bg-gray-900/50 shadow-2xl border-2 border-white/30 dark:border-gray-700/50">
         <CardHeader className="px-6 py-4">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Sign in

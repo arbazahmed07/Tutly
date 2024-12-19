@@ -8,13 +8,17 @@ const googleClientSecret = envOrThrow("GOOGLE_CLIENT_SECRET");
 
 function google(url?: URL) {
   url ??= new URL("http://localhost:4321");
-  if (import.meta.env.PROD && url.hostname !== "localhost") {
-    url.protocol = "https:";
-  }
+  const httpsUrl = new URL(url.toString());
+  httpsUrl.protocol = "https:";
+
+  const callbackUrl = import.meta.env.PROD && url.hostname !== "localhost" 
+    ? new URL("/api/auth/callback/google", httpsUrl).toString()
+    : new URL("/api/auth/callback/google", url).toString();
+
   return new Google(
     googleClientId,
     googleClientSecret,
-    new URL("/api/auth/callback/google", url).toString()
+    callbackUrl
   );
 }
 
@@ -67,7 +71,7 @@ export async function fetchUser(tokens: OAuth2Tokens) {
   })
     .then((res) => res.json() as Promise<GoogleUser>)
     .catch((err) => {
-      console.error(err);
+      console.error("Error fetching Google user:", err);
       return null;
     });
 
@@ -77,5 +81,6 @@ export async function fetchUser(tokens: OAuth2Tokens) {
     name: res.name,
     email: res.email,
     avatar_url: res.picture,
+    providerAccountId: res.id
   } as OAuthUser;
 }

@@ -9,6 +9,7 @@ export type OAuthUser = {
   name: string;
   email: string;
   avatar_url: string;
+  providerAccountId?: string;
 };
 
 export function tryOr<T, E>(fn: () => T, fallback: E | ((error: unknown) => E)): T | E {
@@ -116,27 +117,22 @@ export async function findOrCreateUser(
       return existingAccount.user;
     }
 
-    // No account exists, try to find user by email
-    const existingUser = userInfo.email
-      ? await db.user.findFirst({
-          where: {
-            email: userInfo.email,
-          },
-        })
-      : null;
-
-    if (existingUser) {
-      // User exists but not linked to this provider - return user for linking
-      return existingUser;
-    }
-
-    // Create new user if none exists
+    const username = userInfo.email?.split("@")[0]?.toLowerCase() || 
+                    `user_${Math.random().toString(36).slice(2, 7)}`;
+                    
     return await db.user.create({
       data: {
         email: userInfo.email,
         name: userInfo.name,
         image: userInfo.avatar_url,
-        username: userInfo.email?.split("@")[0]?.toUpperCase() || "",
+        username: username,
+        account: {
+          create: {
+            provider,
+            providerAccountId,
+            type: "oauth"
+          }
+        }
       },
     });
   } catch (error) {
@@ -238,16 +234,14 @@ export async function createSession(
 }
 
 export async function deleteSession(sessionId: string) {
-  const session = await db.session.findFirst({
-    where: { id: sessionId },
-  });
-
-  if (session) {
+  try {
     await db.session.delete({
       where: {
         id: sessionId,
       },
     });
+  } catch (error) {
+    console.error("Error deleting session:", error);
   }
 }
 
