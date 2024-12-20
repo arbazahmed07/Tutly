@@ -7,6 +7,8 @@ import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { Toaster as ShadcnToaster } from "@/components/ui/toaster";
 import { Crisp } from "@/components/Crisp";
+import { RefreshCw } from "lucide-react";
+import { getVersion } from "@/lib/version";
 
 interface Props {
   title?: string;
@@ -21,6 +23,8 @@ const organization = Astro.locals.organization!;
 
 // @ts-ignore
 globalThis.pathname = pathname;
+
+const version = getVersion();
 ---
 
 <html lang="en">
@@ -65,6 +69,16 @@ globalThis.pathname = pathname;
         <div class="flex min-h-screen">
           <div class="relative">
             <AppSidebar client:load user={user} pathname={pathname} forceClose={forceClose} />
+            <div class="absolute bottom-2 left-0 z-[999] right-0 flex items-center justify-center gap-1.5 px-2 text-xs text-muted-foreground">
+              <span>{version}</span>
+              <button 
+                id="checkUpdate"
+                class="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted"
+                title="Check for updates"
+              >
+                <RefreshCw className="h-3 w-3 transition-transform" />
+              </button>
+            </div>
           </div>
           <main class="w-full">
             <AppHeader client:load user={user} pathname={pathname} />
@@ -111,6 +125,31 @@ globalThis.pathname = pathname;
           if (!refreshing) {
             refreshing = true;
             window.location.reload();
+          }
+        });
+      }
+
+      const checkUpdateBtn = document.getElementById("checkUpdate");
+      const refreshIcon = checkUpdateBtn?.querySelector("svg");
+      
+      if (checkUpdateBtn) {
+        checkUpdateBtn.addEventListener("click", async () => {
+          if ("serviceWorker" in navigator) {
+            refreshIcon?.classList.add("animate-spin");
+            try {
+              const registration = await navigator.serviceWorker.ready;
+              await registration.update();
+              alert("Successfully checked for updates");
+            } catch (error) {
+              alert("Failed to check for updates");
+              console.error("Update check failed:", error);
+            } finally {
+              setTimeout(() => {
+                refreshIcon?.classList.remove("animate-spin");
+              }, 1000);
+            }
+          } else {
+            alert("Service Worker is not supported in this browser");
           }
         });
       }
@@ -176,6 +215,26 @@ globalThis.pathname = pathname;
     100% {
       transform: translateX(200%);
     }
+  }
+
+  :root {
+    --logo-size: 32px;
+  }
+
+  [data-logo] {
+    width: var(--logo-size);
+    height: var(--logo-size);
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  [data-logo] img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 </style>
 

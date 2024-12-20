@@ -2,12 +2,16 @@
 import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { Crisp } from "@/components/Crisp";
+import { RefreshCw } from "lucide-react";
+import { getVersion } from "@/lib/version";
 
 interface Props {
   title?: string;
 }
 
 const { title = "Tutly" } = Astro.props;
+
+const version = getVersion();
 ---
 
 <html lang="en">
@@ -41,9 +45,80 @@ const { title = "Tutly" } = Astro.props;
     <link rel="manifest" href="/manifest.webmanifest" />
   </head>
   <body>
+    <div class="fixed bottom-2 left-2 flex items-center gap-1.5 px-2 text-xs text-muted-foreground">
+      <span>{version}</span>
+      <button 
+        id="checkUpdate"
+        class="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted"
+        title="Check for updates"
+      >
+        <RefreshCw className="h-3 w-3 transition-transform" />
+      </button>
+    </div>
     <Toaster client:load />
     <slot />
     <Crisp client:only />
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", async () => {
+          try {
+            const registration = await navigator.serviceWorker.register("/service-worker.js", {
+              scope: "/",
+            });
+
+            registration.addEventListener("updatefound", () => {
+              const newWorker = registration.installing;
+              if (newWorker) {
+                newWorker.addEventListener("statechange", () => {
+                  if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                    if (confirm("New version available! Would you like to update?")) {
+                      newWorker.postMessage({ type: "SKIP_WAITING" });
+                      window.location.reload();
+                    }
+                  }
+                });
+              }
+            });
+          } catch (error) {
+            console.error("Service Worker registration failed:", error);
+          }
+        });
+
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
+      }
+
+      const checkUpdateBtn = document.getElementById("checkUpdate");
+      const refreshIcon = checkUpdateBtn?.querySelector("svg");
+      
+      if (checkUpdateBtn) {
+        checkUpdateBtn.addEventListener("click", async () => {
+          if ("serviceWorker" in navigator) {
+            refreshIcon?.classList.add("animate-spin");
+            try {
+              const registration = await navigator.serviceWorker.ready;
+              await registration.update();
+              alert("Successfully checked for updates");
+            } catch (error) {
+              alert("Failed to check for updates");
+              console.error("Update check failed:", error);
+            } finally {
+              setTimeout(() => {
+                refreshIcon?.classList.remove("animate-spin");
+              }, 1000);
+            }
+          } else {
+            alert("Service Worker is not supported in this browser");
+          }
+        });
+      }
+    </script>
   </body>
 </html>
 
