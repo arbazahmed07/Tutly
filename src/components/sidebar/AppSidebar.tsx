@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getDefaultSidebarItems } from "@/config/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SessionUser } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 
 export interface SidebarItem {
@@ -30,7 +30,7 @@ export interface SidebarItem {
 }
 
 interface AppSidebarProps {
-  user: User;
+  user: SessionUser;
   forceClose?: boolean;
   className?: string;
   pathname: string;

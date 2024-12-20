@@ -1,4 +1,4 @@
-import { type Class, Folder, User } from "@prisma/client";
+import { type Class, Folder } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { FaFolder, FaFolderOpen } from "react-icons/fa6";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -6,6 +6,7 @@ import { MdOndemandVideo } from "react-icons/md";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SessionUser } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 
 import NewClassDialog from "./newClass";
@@ -20,7 +21,7 @@ function ClassSidebar({
   courseId: string;
   classes: (Class & { Folder: Folder | null })[];
   title: string;
-  currentUser: User;
+  currentUser: SessionUser;
   isCourseAdmin: boolean;
 }) {
   const [openFolders, setOpenFolders] = useState<string[]>([]);

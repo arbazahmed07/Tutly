@@ -1,6 +1,5 @@
-import { sha256 } from "@oslojs/crypto/sha2";
-import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
-import type { Organization, Role, Session, User } from "@prisma/client";
+import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
+import type { Course, Organization, Role, Session, User } from "@prisma/client";
 import type { APIContext } from "astro";
 
 import db from "../db";
@@ -8,6 +7,7 @@ import db from "../db";
 export type SessionUser = Omit<User, "password" | "oneTimePassword"> & {
   organization: Organization | null;
   role: Role;
+  adminForCourses: Course[];
 };
 
 export type SessionWithUser = Session & {
@@ -34,6 +34,7 @@ export async function validateSessionToken(token: string): Promise<SessionValida
           include: {
             organization: true,
             profile: true,
+            adminForCourses: true,
           },
         },
       },

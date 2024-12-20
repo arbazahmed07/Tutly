@@ -1,7 +1,6 @@
-import { User } from "@prisma/client";
-
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SessionUser } from "@/lib/auth/session";
 
 import { ModeToggle } from "../ModeToggle";
 import Notifications from "../Notifications";
@@ -9,7 +8,7 @@ import { DynamicBreadcrumbs } from "./DynamicBreadcrumbs";
 import { UserMenu } from "./UserMenu";
 
 interface AppHeaderProps {
-  user: User;
+  user: SessionUser;
   pathname: string;
   crumbReplacement?: { [key: string]: string };
 }

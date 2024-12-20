@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { Bell, Download, ExternalLink, LogOut, UserIcon } from "lucide-react";
 // import {  Settings } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -17,6 +16,7 @@ import {
 import { ToastAction } from "@/components/ui/toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
+import { SessionUser } from "@/lib/auth/session";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -30,7 +30,7 @@ import {
 } from "../ui/dropdown-menu";
 
 interface UserMenuProps {
-  user: User;
+  user: SessionUser;
 }
 
 export function UserMenu({ user }: UserMenuProps) {

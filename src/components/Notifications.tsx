@@ -1,4 +1,4 @@
-import type { Notification, NotificationEvent, User } from "@prisma/client";
+import type { Notification, NotificationEvent } from "@prisma/client";
 import { actions } from "astro:actions";
 import { navigate } from "astro:transitions/client";
 import {
@@ -31,6 +31,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SessionUser } from "@/lib/auth/session";
 import day from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
 
@@ -171,15 +172,13 @@ function getNotificationLink(notification: Notification): string | null {
   return config.getLink(notification.causedObjects as causedObjects).href;
 }
 
-export default function Notifications({ user }: { user: User }) {
+export default function Notifications({ user }: { user: SessionUser }) {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus>("NotSubscribed");
   const [activeTab, setActiveTab] = useState("all");
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isRefetchingNotifications, setIsRefetchingNotifications] = useState(false);
-
-  const [hasShownSubscribeToast, setHasShownSubscribeToast] = useState(false);
 
   const fetchNotifications = async () => {
     setIsRefetchingNotifications(true);
@@ -468,17 +467,23 @@ export default function Notifications({ user }: { user: User }) {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (isMobile && !hasShownSubscribeToast && subscriptionStatus === "NotSubscribed") {
-      setHasShownSubscribeToast(true);
-      toast.message("Enable notifications", {
-        description: "Stay updated with your course notifications",
-        action: {
-          label: "Subscribe",
-          onClick: handleSubscribeClick,
-        },
-      });
+    if (isMobile && subscriptionStatus === "NotSubscribed") {
+      const lastToastTime = localStorage.getItem('lastNotificationToastTime');
+      const currentTime = new Date().getTime();
+      const oneWeek = 7 * 24 * 60 * 60 * 1000; // One week in milliseconds
+
+      if (!lastToastTime || currentTime - parseInt(lastToastTime) > oneWeek) {
+        toast.message("Enable notifications", {
+          description: "Stay updated with your course notifications",
+          action: {
+            label: "Subscribe",
+            onClick: handleSubscribeClick,
+          },
+        });
+        localStorage.setItem('lastNotificationToastTime', currentTime.toString());
+      }
     }
-  }, [isMobile, subscriptionStatus, hasShownSubscribeToast]);
+  }, [isMobile, subscriptionStatus]);
 
   return (
     <Popover>

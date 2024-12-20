@@ -47,11 +47,11 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
         <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
           <TabsTrigger value="basic">Basic Details</TabsTrigger>
           <TabsTrigger value="personal">Personal</TabsTrigger>
-          <TabsTrigger value="social">Social</TabsTrigger>
           <TabsTrigger value="professional">Professional</TabsTrigger>
-          <TabsTrigger value="academic">Academic</TabsTrigger>
-          <TabsTrigger value="experience">Experience</TabsTrigger>
           <TabsTrigger value="address">Address</TabsTrigger>
+          <TabsTrigger value="academic">Academic</TabsTrigger>
+          <TabsTrigger value="social">Social</TabsTrigger>
+          <TabsTrigger value="experience">Experience</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
 

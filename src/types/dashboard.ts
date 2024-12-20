@@ -1,4 +1,4 @@
-import type { User } from "@prisma/client";
+import { SessionUser } from "@/lib/auth/session";
 
 interface CourseData {
   courseId: string | undefined;
@@ -20,7 +20,7 @@ export interface MentorCourseData extends CourseData {
 
 export type StudentDashboardData = {
   courses: StudentCourseData[];
-  currentUser: User;
+  currentUser: SessionUser;
 };
 
 export type MentorDashboardData = {
