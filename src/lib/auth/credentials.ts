@@ -10,7 +10,7 @@ async function validateCredentials(identifier: string, password: string) {
   const isEmail = identifier.includes("@");
   const query = isEmail
     ? { email: identifier.toLowerCase() }
-    : { username: identifier.toLowerCase() };
+    : { username: identifier.toUpperCase() };
 
   const user = await db.user.findFirst({
     where: query,
