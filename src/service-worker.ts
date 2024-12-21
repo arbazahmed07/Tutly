@@ -54,6 +54,7 @@ self.addEventListener("push", async function (event) {
         }
       });
     } else if (data.type === "NOTIFICATION") {
+      const url = `/notifications/${data.id}`;
       event.waitUntil(
         self.registration.showNotification("Tutly", {
           body: data.message,
@@ -61,8 +62,8 @@ self.addEventListener("push", async function (event) {
           icon: "/logo-192x192.png",
           badge: "/logo-192x192.png",
           data: {
+            url,
             notificationId: data.id,
-            url: `/notifications/${data.id}`,
           },
         } as NotificationOptions)
       );
@@ -73,17 +74,17 @@ self.addEventListener("push", async function (event) {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const notificationId = event.notification.data?.notificationId;
+  const notificationData = event.notification.data;
+  const url = notificationData?.url;
 
-  if (!notificationId) {
-    console.error("No notification ID found");
+  if (!url) {
+    console.error("No URL found in notification data");
     return;
   }
 
   event.waitUntil(
     self.clients.matchAll({ type: "window" }).then((clientsArr) => {
       const hadWindowToFocus = clientsArr.some((windowClient) => {
-        const url = `/notifications/${notificationId}`;
         if (windowClient.url.includes(url)) {
           return windowClient.focus();
         }
@@ -92,7 +93,7 @@ self.addEventListener("notificationclick", (event) => {
 
       if (!hadWindowToFocus) {
         self.clients
-          .openWindow(`/notifications/${notificationId}`)
+          .openWindow(url)
           .then((windowClient) => windowClient?.focus());
       }
     })

@@ -21,6 +21,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSearchParams } from "@/hooks/use-search-params";
 import day from "@/lib/dayjs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 type UserData = {
   id: string;
@@ -87,10 +89,17 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+  const [sortBy, setSortBy] = useState("recent");
+  const [filterOnline, setFilterOnline] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeUsersCount = users.filter(user => {
+    const lastSeenTime = user.lastSeen ? day(user.lastSeen) : null;
+    return lastSeenTime && day().diff(lastSeenTime, "minute") < 2;
+  }).length;
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -114,6 +123,28 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
     },
     [setSearchParams]
   );
+
+  const handleSort = (value: string) => {
+    setSortBy(value);
+    setSearchParams((prev: URLSearchParams) => {
+      prev.set("sort", value);
+      prev.set("page", "1");
+      return prev;
+    });
+  };
+
+  const handleFilterOnline = () => {
+    setFilterOnline(!filterOnline);
+    setSearchParams((prev: URLSearchParams) => {
+      if (!filterOnline) {
+        prev.set("online", "true");
+      } else {
+        prev.delete("online");
+      }
+      prev.set("page", "1");
+      return prev;
+    });
+  };
 
   const currentPage = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("limit") || defaultPageSize.toString());
@@ -148,27 +179,60 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
     });
   };
 
+  const displayedUsers = filterOnline 
+    ? users.filter(user => {
+        const lastSeenTime = user.lastSeen ? day(user.lastSeen) : null;
+        return lastSeenTime && day().diff(lastSeenTime, "minute") < 2;
+      })
+    : users;
+
   return (
     <div className="container mx-auto max-w-7xl space-y-8 px-4 py-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Users</h2>
-        <div className="w-full max-w-sm">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-2xl font-bold tracking-tight">Users</h2>
+          <div className="flex gap-2">
+            <Badge variant="secondary">Total: {totalItems}</Badge>
+            <Badge variant="outline">Active: {activeUsersCount}</Badge>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <Select defaultValue={sortBy} onValueChange={handleSort}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recent">Most Recent</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="active">Last Active</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button 
+            variant={filterOnline ? "default" : "outline"}
+            onClick={handleFilterOnline}
+            className="w-full sm:w-auto"
+          >
+            {filterOnline ? "Show All" : "Show Online Only"}
+          </Button>
           <Input
             placeholder="Search users..."
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full"
+            className="w-full sm:w-[200px]"
           />
         </div>
       </div>
 
-      {users.length === 0 ? (
+      {displayedUsers.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-muted-foreground">No users found</p>
+          <p className="text-muted-foreground">
+            {filterOnline ? "No users are currently online" : "No users found"}
+          </p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {users.map((user) => (
+          {displayedUsers.map((user) => (
             <Card
               key={user.id}
               className="group relative overflow-hidden bg-card transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"

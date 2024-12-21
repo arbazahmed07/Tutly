@@ -13,8 +13,19 @@ const searchParams = Astro.url.searchParams;
 const page = parseInt(searchParams.get("page") || "1");
 const limit = parseInt(searchParams.get("limit") || "10");
 const search = searchParams.get("search") || "";
+const sort = searchParams.get("sort") || "recent";
+const showOnline = searchParams.get("online") === "true";
 
 const skip = (page - 1) * limit;
+
+const onlineCutoff = new Date(Date.now() - 2 * 60 * 1000);
+
+const orderBy = {
+  recent: { createdAt: "desc" },
+  oldest: { createdAt: "asc" },
+  name: { name: "asc" },
+  active: { lastSeen: "desc" },
+}[sort] as any;
 
 const [users, totalCount] = await Promise.all([
   db.user.findMany({
@@ -37,10 +48,11 @@ const [users, totalCount] = await Promise.all([
         { username: { contains: search, mode: "insensitive" } },
       ],
       role: { in: ["MENTOR", "STUDENT"] },
+      ...(showOnline ? { lastSeen: { gte: onlineCutoff } } : {}),
     },
     skip,
     take: limit,
-    orderBy: { createdAt: "desc" },
+    orderBy,
   }),
   db.user.count({
     where: {
@@ -49,6 +61,8 @@ const [users, totalCount] = await Promise.all([
         { email: { contains: search, mode: "insensitive" } },
         { username: { contains: search, mode: "insensitive" } },
       ],
+      role: { in: ["MENTOR", "STUDENT"] },
+      ...(showOnline ? { lastSeen: { gte: onlineCutoff } } : {}),
     },
   }),
 ]);

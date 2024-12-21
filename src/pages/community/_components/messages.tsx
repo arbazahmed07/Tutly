@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { actions } from "astro:actions";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -32,8 +31,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SessionUser } from "@/lib/auth/session";
 
-export default function Accordion({ doubts, currentUser, currentCourseId }: any) {
+export default function Accordion({
+  doubts,
+  currentUser,
+  currentCourseId,
+}: {
+  doubts: any;
+  currentUser: SessionUser;
+  currentCourseId: string;
+}) {
   const [openAccordion, setOpenAccordion] = useState<number>(0);
   const [show, setShow] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -286,16 +294,13 @@ export default function Accordion({ doubts, currentUser, currentCourseId }: any)
                           <LuReply className="mr-2 h-4 w-4" />
                           <span>Reply</span>
                         </DropdownMenuItem>
-                        <div
-                          hidden={
-                            currentUser.role !== "INSTRUCTOR" && qa.user.role === "INSTRUCTOR"
-                          }
-                        >
-                          <DropdownMenuItem hidden={currentUser.role === "STUDENT"}>
+                        {(currentUser.role === "INSTRUCTOR" || 
+                          (currentUser.role === "MENTOR" && qa.user.id === currentUser.id)) && (
+                          <DropdownMenuItem>
                             <MdDelete className="mr-2 h-4 w-4" />
                             <AlertDialogTrigger>Delete</AlertDialogTrigger>
                           </DropdownMenuItem>
-                        </div>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                     <AlertDialogContent>

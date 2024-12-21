@@ -4,8 +4,12 @@ import { Tabs } from "@/components/ui/tabs";
 
 // import Accordion from "./accordion";
 import Messages from "./messages";
+import { SessionUser } from "@/lib/auth/session";
 
-export default function Community({ allDoubts, currentUser }: any) {
+export default function Community({ allDoubts, currentUser }: {
+  allDoubts: any;
+  currentUser: SessionUser;
+}) {
   const [currentCourse, setCurrentCourse] = useState<string>(allDoubts[0]?.id);
   const filteredallDoubts = allDoubts.filter((x: any) => x.id === currentCourse);
 

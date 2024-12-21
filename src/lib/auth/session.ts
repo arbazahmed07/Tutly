@@ -44,6 +44,11 @@ export async function validateSessionToken(token: string): Promise<SessionValida
       return { session: null, user: null };
     }
 
+    await db.user.update({
+      where: { id: session.user.id },
+      data: { lastSeen: new Date() },
+    });
+
     if (Date.now() >= session.expiresAt.getTime()) {
       await db.session.delete({ where: { id: token } });
       return { session: null, user: null };
