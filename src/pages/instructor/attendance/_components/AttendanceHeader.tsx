@@ -147,7 +147,7 @@ export default function AttendanceHeader({
   openCourses,
   setOpenClasses,
   setOpenCourses,
-  // onSelectFile,
+  onSelectFile,
   fileData,
   selectedFile,
   handleUpload,
@@ -342,7 +342,7 @@ export default function AttendanceHeader({
         {role == "INSTRUCTOR" &&
           (pastpresentStudents.length === 0 ? (
             <div className="flex items-center gap-2">
-              {/* <input
+              <input
                 title="file"
                 type="file"
                 className="w-60 cursor-pointer rounded border-none bg-primary-600 font-semibold text-white shadow-md outline-none transition duration-300 ease-in-out hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-gray-700"
@@ -356,7 +356,7 @@ export default function AttendanceHeader({
                     onSelectFile(files[0]);
                   }
                 }}
-              /> */}
+              />
               {currentClass ? (
                 <BulkImport data={[]} columns={columns} onImport={handleBulkUpload} />
               ) : (

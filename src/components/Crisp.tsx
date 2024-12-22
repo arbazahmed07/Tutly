@@ -22,7 +22,7 @@ declare global {
   }
 }
 
-export function Crisp({ user, organization }: any) {
+export default function Crisp({ user, organization }: any) {
   useEffect(() => {
     window.$crisp = [];
     window.CRISP_WEBSITE_ID = "b1db5fec-2104-4c63-a771-59dcdcd17215";

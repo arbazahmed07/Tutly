@@ -1,3 +1,3 @@
 import { version } from "../../package.json";
 
-export const getVersion = () => `v${version}`; 
+export const getVersion = () => `v${version}`;

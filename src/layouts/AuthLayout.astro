@@ -1,7 +1,7 @@
 ---
 import "@/styles/globals.css";
 import { Toaster } from "react-hot-toast";
-import { Crisp } from "@/components/Crisp";
+import Crisp  from "@/components/Crisp";
 import { RefreshCw } from "lucide-react";
 import { getVersion } from "@/lib/version";
 
@@ -47,7 +47,7 @@ const version = getVersion();
   <body>
     <div class="fixed bottom-2 left-2 flex items-center gap-1.5 px-2 text-xs text-muted-foreground">
       <span>{version}</span>
-      <button 
+      <button
         id="checkUpdate"
         class="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted"
         title="Check for updates"
@@ -96,7 +96,7 @@ const version = getVersion();
 
       const checkUpdateBtn = document.getElementById("checkUpdate");
       const refreshIcon = checkUpdateBtn?.querySelector("svg");
-      
+
       if (checkUpdateBtn) {
         checkUpdateBtn.addEventListener("click", async () => {
           if ("serviceWorker" in navigator) {

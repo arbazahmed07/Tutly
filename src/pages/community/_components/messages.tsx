@@ -63,7 +63,6 @@ export default function Accordion({
       description: data.message,
     });
 
-    console.log(res);
     if (error) {
       toast.error("Failed to add doubt");
     } else {
@@ -294,7 +293,7 @@ export default function Accordion({
                           <LuReply className="mr-2 h-4 w-4" />
                           <span>Reply</span>
                         </DropdownMenuItem>
-                        {(currentUser.role === "INSTRUCTOR" || 
+                        {(currentUser.role === "INSTRUCTOR" ||
                           (currentUser.role === "MENTOR" && qa.user.id === currentUser.id)) && (
                           <DropdownMenuItem>
                             <MdDelete className="mr-2 h-4 w-4" />

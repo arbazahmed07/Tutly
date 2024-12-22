@@ -1,9 +1,8 @@
+import { Role } from "@prisma/client";
 import { defineAction } from "astro:actions";
 import { z } from "zod";
 
 import db from "@/lib/db";
-
-import { totalNumberOfClasses } from "./classes";
 
 export const postAttendance = defineAction({
   input: z.object({
@@ -17,9 +16,7 @@ export const postAttendance = defineAction({
     maxInstructionDuration: z.number(),
   }),
   async handler({ classId, data, maxInstructionDuration }) {
-    console.log("data", data);
     const parsedData = JSON.parse(JSON.stringify(data));
-    console.log("parsedData", parsedData);
 
     const postAttendance = await db.attendance.createMany({
       data: [
@@ -345,18 +342,111 @@ export const getAttendanceForLeaderbaord = defineAction({
   },
 });
 
+export const serverActionOfgetTotalNumberOfClassesAttended = async (
+  username: string,
+  role: Role,
+  courseId: string
+) => {
+  let attendance;
+  if (role === "MENTOR") {
+    attendance = await db.attendance.findMany({
+      where: {
+        user: {
+          enrolledUsers: {
+            some: {
+              mentorUsername: username,
+              courseId,
+            },
+          },
+        },
+      },
+      select: {
+        username: true,
+        user: true,
+        attended: true,
+      },
+    });
+  } else {
+    attendance = await db.attendance.findMany({
+      where: {
+        user: {
+          role: "STUDENT",
+        },
+        class: {
+          courseId,
+        },
+      },
+      select: {
+        username: true,
+        user: true,
+        attended: true,
+      },
+    });
+  }
+
+  const groupByTotalAttendance = [] as any;
+
+  attendance.forEach((attendanceData) => {
+    if (attendanceData.attended) {
+      if (groupByTotalAttendance[attendanceData.username]) {
+        groupByTotalAttendance[attendanceData.username] = {
+          ...groupByTotalAttendance[attendanceData.username],
+          count: groupByTotalAttendance[attendanceData.username].count + 1,
+        };
+      } else {
+        groupByTotalAttendance[attendanceData.username] = {
+          username: attendanceData.username,
+          name: attendanceData.user.name,
+          mail: attendanceData.user.email,
+          image: attendanceData.user.image,
+          role: attendanceData.user.role,
+          count: 1,
+        };
+      }
+    }
+  });
+
+  return groupByTotalAttendance;
+};
+
+export const serverActionOftotatlNumberOfClasses = async (courseId: string) => {
+  const getAllClasses = await db.class.count({
+    where: {
+      courseId,
+    },
+  });
+
+  return getAllClasses;
+};
+
 export const getAttendanceOfAllStudents = defineAction({
   async handler(_, { locals }) {
     const currentUser = locals.user!;
+
+    const enrolledUsers = await db.enrolledUsers.findMany({
+      where: {
+        username: currentUser?.username || "",
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    const courseId = enrolledUsers[0]?.courseId || "";
 
     if (!currentUser) {
       return { error: "You must be logged in to attend a class" };
     }
 
-    const totalAttendance = await getTotalNumberOfClassesAttended();
-    const totalCount = await totalNumberOfClasses();
-    const jsonData = totalAttendance.data
-      ? Object.entries(totalAttendance.data).map(([_, value]: [string, any]) => ({
+    const totalAttendance = await serverActionOfgetTotalNumberOfClassesAttended(
+      currentUser.username,
+      currentUser.role,
+      courseId
+    );
+    const totalCount = await serverActionOftotatlNumberOfClasses(courseId);
+
+    const jsonData = totalAttendance
+      ? Object.entries(totalAttendance).map(([_, value]: [string, any]) => ({
           username: value.username,
           name: value.name,
           mail: value.mail,
@@ -367,5 +457,52 @@ export const getAttendanceOfAllStudents = defineAction({
       : [];
 
     return { success: true, data: jsonData };
+  },
+});
+
+export const viewAttendanceByClassId = defineAction({
+  input: z.object({
+    classId: z.string(),
+  }),
+  async handler({ classId }, { locals }) {
+    const currentUser = locals.user!;
+
+    if (!currentUser) {
+      return { error: "You must be logged in to view attendance" };
+    }
+
+    if (currentUser.role === "STUDENT") {
+      return { error: "You must be an instructor or mentor to view attendance" };
+    }
+
+    const attendance =
+      currentUser.role === "MENTOR"
+        ? await db.attendance.findMany({
+            where: {
+              classId: classId,
+              user: {
+                enrolledUsers: {
+                  some: {
+                    mentorUsername: currentUser.username,
+                  },
+                },
+              },
+            },
+          })
+        : await db.attendance.findMany({
+            where: {
+              classId: classId,
+            },
+          });
+
+    let present = 0;
+
+    attendance.forEach((ele) => {
+      if (ele.attended) {
+        present++;
+      }
+    });
+
+    return { success: true, data: { attendance, present } };
   },
 });

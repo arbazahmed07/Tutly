@@ -1,12 +1,15 @@
 import { useState } from "react";
 
 import { Tabs } from "@/components/ui/tabs";
+import { SessionUser } from "@/lib/auth/session";
 
 // import Accordion from "./accordion";
 import Messages from "./messages";
-import { SessionUser } from "@/lib/auth/session";
 
-export default function Community({ allDoubts, currentUser }: {
+export default function Community({
+  allDoubts,
+  currentUser,
+}: {
   allDoubts: any;
   currentUser: SessionUser;
 }) {

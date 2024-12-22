@@ -8,6 +8,7 @@ import type { Course, Class } from "@prisma/client";
 const currentUser = Astro.locals.user;
 
 const call = Astro.callAction;
+
 const { data: attendance } = await call(actions.attendances_getAttendanceOfAllStudents, {});
 
 let courses = await db.course.findMany({
@@ -67,7 +68,7 @@ if (currentUser?.role !== "INSTRUCTOR") {
 <RootLayout title="Attendance">
   <div>
     <AttendanceClient
-      attendance={attendance}
+      attendance={attendance?.data ?? ""}
       courses={courses}
       role={currentUser?.role ?? ""}
       client:load

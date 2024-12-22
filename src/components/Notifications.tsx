@@ -468,7 +468,7 @@ export default function Notifications({ user }: { user: SessionUser }) {
 
   useEffect(() => {
     if (isMobile && subscriptionStatus === "NotSubscribed") {
-      const lastToastTime = localStorage.getItem('lastNotificationToastTime');
+      const lastToastTime = localStorage.getItem("lastNotificationToastTime");
       const currentTime = new Date().getTime();
       const oneWeek = 7 * 24 * 60 * 60 * 1000; // One week in milliseconds
 
@@ -480,7 +480,7 @@ export default function Notifications({ user }: { user: SessionUser }) {
             onClick: handleSubscribeClick,
           },
         });
-        localStorage.setItem('lastNotificationToastTime', currentTime.toString());
+        localStorage.setItem("lastNotificationToastTime", currentTime.toString());
       }
     }
   }, [isMobile, subscriptionStatus]);

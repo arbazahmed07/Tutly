@@ -6,7 +6,7 @@ import { AppHeader } from "@/components/sidebar/AppHeader";
 import { Toaster } from "react-hot-toast";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { Toaster as ShadcnToaster } from "@/components/ui/toaster";
-import { Crisp } from "@/components/Crisp";
+import Crisp from "@/components/Crisp";
 import { RefreshCw } from "lucide-react";
 import { getVersion } from "@/lib/version";
 
@@ -71,7 +71,7 @@ const version = getVersion();
             <AppSidebar client:load user={user} pathname={pathname} forceClose={forceClose} />
             <div class="absolute bottom-2 left-0 z-[999] right-0 flex items-center justify-center gap-1.5 px-2 text-xs text-muted-foreground">
               <span>{version}</span>
-              <button 
+              <button
                 id="checkUpdate"
                 class="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 hover:bg-muted"
                 title="Check for updates"
@@ -91,7 +91,7 @@ const version = getVersion();
     }
     <SonnerToaster client:load />
     <ShadcnToaster client:load />
-    <Crisp client:only user={user} organization={organization} />
+    <Crisp client:load user={user} organization={organization} />
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", async () => {
@@ -131,7 +131,7 @@ const version = getVersion();
 
       const checkUpdateBtn = document.getElementById("checkUpdate");
       const refreshIcon = checkUpdateBtn?.querySelector("svg");
-      
+
       if (checkUpdateBtn) {
         checkUpdateBtn.addEventListener("click", async () => {
           if ("serviceWorker" in navigator) {

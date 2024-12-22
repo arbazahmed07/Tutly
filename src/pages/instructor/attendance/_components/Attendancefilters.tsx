@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { actions } from "astro:actions";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
@@ -202,8 +201,6 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
   // upload attendance to db
   const handleUpload = async () => {
     toast.loading("uploading attendance...");
-    console.log("present Students", presentStudents);
-    console.log("combined Students", combinedStudents);
 
     try {
       await actions.attendances_postAttendance({
@@ -239,7 +236,9 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
   const fetchStudentsAttendance = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/attendance/getTotalAttendance");
+      const { data: res } = await actions.attendances_getAttendanceOfAllStudents();
+
+      console.log("res at the attendance filters file line 247  ", res);
 
       setStudentsAttendance(res.data);
     } catch (e) {
@@ -256,19 +255,16 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
   useEffect(() => {
     const viewAttendance = async () => {
       if (currentClass) {
-        const { data: res } = await actions.attendances_getAttedanceByClassId({
-          id: currentClass.id,
+        const { data: res } = await actions.attendances_viewAttendanceByClassId({
+          classId: currentClass.id,
         });
 
-        console.log("response", res);
-
         if (!res) return;
-
-        setPastPresentStudents(res.data.attendance);
+        setPastPresentStudents(res.data?.attendance);
         setPresent(res.data.present);
         const Totaldata: any = [];
 
-        res.data.attendance.forEach((student: any) => {
+        res.data?.attendance.forEach((student: any) => {
           const { username, data } = student;
           data.forEach((join: any) => {
             Totaldata.push({
@@ -317,7 +313,7 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
         selectedFile={selectedFile}
         handleBulkUpload={handleBulkUpload}
         handleUpload={handleUpload}
-        count={[present, users.length - present, pastpresentStudents.length - present]}
+        count={[present, users?.length - present, pastpresentStudents?.length - present]}
         maxInstructionDuration={maxInstructionDuration}
         setMaxInstructionDuration={setMaxInstructionDuration}
       />

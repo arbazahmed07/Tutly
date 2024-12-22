@@ -230,7 +230,6 @@ const PlatformScores = () => {
               : null) as PlatformScore | null,
           };
           setPlatformScores(validatedData);
-          console.log(data);
         }
       } finally {
         setLoading(false);

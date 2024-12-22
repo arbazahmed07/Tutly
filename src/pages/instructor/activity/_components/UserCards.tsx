@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 
 import { Pagination } from "@/components/table/Pagination";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -17,12 +18,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSearchParams } from "@/hooks/use-search-params";
 import day from "@/lib/dayjs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 
 type UserData = {
   id: string;
@@ -95,8 +101,7 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
   const [filterOnline, setFilterOnline] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
-
-  const activeUsersCount = users.filter(user => {
+  const activeUsersCount = users.filter((user) => {
     const lastSeenTime = user.lastSeen ? day(user.lastSeen) : null;
     return lastSeenTime && day().diff(lastSeenTime, "minute") < 2;
   }).length;
@@ -179,8 +184,8 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
     });
   };
 
-  const displayedUsers = filterOnline 
-    ? users.filter(user => {
+  const displayedUsers = filterOnline
+    ? users.filter((user) => {
         const lastSeenTime = user.lastSeen ? day(user.lastSeen) : null;
         return lastSeenTime && day().diff(lastSeenTime, "minute") < 2;
       })
@@ -208,7 +213,7 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
               <SelectItem value="active">Last Active</SelectItem>
             </SelectContent>
           </Select>
-          <Button 
+          <Button
             variant={filterOnline ? "default" : "outline"}
             onClick={handleFilterOnline}
             className="w-full sm:w-auto"
