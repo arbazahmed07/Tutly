@@ -61,7 +61,6 @@ export const addPoints = defineAction({
 
       return { success: true, data: allCategories };
     } catch (error) {
-      console.log(error);
       return { error: "Error in adding points" };
     }
   },

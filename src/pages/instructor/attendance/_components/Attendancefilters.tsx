@@ -115,7 +115,6 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       InWaitingRoom: row["InWaitingRoom"],
     }));
     setFileData(modifiedData);
-    console.log("File Upload ", fileData);
   };
 
   const aggregatedStudents = fileData.reduce((acc: any, student: Student) => {
@@ -238,11 +237,9 @@ const AttendanceClient = ({ courses, role, attendance }: any) => {
       setLoading(true);
       const { data: res } = await actions.attendances_getAttendanceOfAllStudents();
 
-      console.log("res at the attendance filters file line 247  ", res);
-
       setStudentsAttendance(res.data);
     } catch (e) {
-      console.log(e);
+      console.log("Error at fetching students attendance at Attendance tab : ", e);
     } finally {
       setLoading(false);
     }

@@ -160,7 +160,7 @@ export const generateReport = defineAction({
             .filter((id): id is string => id !== undefined)
         ).size;
       } catch (e) {
-        console.log(ob.username);
+        console.log("Error while generating report : ", e);
       }
     });
 

@@ -91,7 +91,7 @@ const version = getVersion();
     }
     <SonnerToaster client:load />
     <ShadcnToaster client:load />
-    <Crisp client:load user={user} organization={organization} />
+    <Crisp client:only user={user} organization={organization} />
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", async () => {
