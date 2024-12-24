@@ -5,9 +5,8 @@ import GenerateCertificate from "./_components/Generate";
 const currentUser = Astro.locals.user;
 
 if (!currentUser) return Astro.redirect("/sign-in");
-
 ---
 
 <RootLayout title="Bookmarks">
-    <GenerateCertificate user={currentUser} client:load/>
+  <GenerateCertificate user={currentUser} client:load />
 </RootLayout>

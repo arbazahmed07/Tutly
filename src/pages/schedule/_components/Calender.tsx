@@ -1,50 +1,67 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
-import { format, set } from 'date-fns'
-import { CalendarIcon, Clock } from 'lucide-react'
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogAction, AlertDialogDescription } from '@/components/ui/alert-dialog'
+import { format, set } from "date-fns";
+import { CalendarIcon, Clock } from "lucide-react";
+import { useState } from "react";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 interface EventState {
   summary: string;
   description: string;
   startDate: Date | undefined;
   startTime: string;
-  startPeriod: 'AM' | 'PM';
+  startPeriod: "AM" | "PM";
   endDate: Date | undefined;
   endTime: string;
-  endPeriod: 'AM' | 'PM';
+  endPeriod: "AM" | "PM";
 }
 
 export default function CalendarComponent({ currentUser }: any) {
-  const your_calender_id = currentUser?.email
+  const your_calender_id = currentUser?.email;
   const [event, setEvent] = useState<EventState>({
-    summary: '',
-    description: '',
+    summary: "",
+    description: "",
     startDate: undefined,
-    startTime: '',
-    startPeriod: 'AM',
+    startTime: "",
+    startPeriod: "AM",
     endDate: undefined,
-    endTime: '',
-    endPeriod: 'AM',
-  })
-  
+    endTime: "",
+    endPeriod: "AM",
+  });
+
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-
-  const TimeInput = ({ value, onChange, period, onPeriodChange }: { 
-    value: string; 
-    onChange: (value: string) => void; 
-    period: 'AM' | 'PM'; 
-    onPeriodChange: (value: 'AM' | 'PM') => void; 
+  const TimeInput = ({
+    value,
+    onChange,
+    period,
+    onPeriodChange,
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+    period: "AM" | "PM";
+    onPeriodChange: (value: "AM" | "PM") => void;
   }) => (
     <div className="flex items-center space-x-2">
       <div className="relative">
@@ -57,7 +74,7 @@ export default function CalendarComponent({ currentUser }: any) {
         />
         <Clock className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
       </div>
-      <Select value={period} onValueChange={(value: 'AM' | 'PM') => onPeriodChange(value)}>
+      <Select value={period} onValueChange={(value: "AM" | "PM") => onPeriodChange(value)}>
         <SelectTrigger className="w-[70px]">
           <SelectValue placeholder="AM/PM" />
         </SelectTrigger>
@@ -67,18 +84,19 @@ export default function CalendarComponent({ currentUser }: any) {
         </SelectContent>
       </Select>
     </div>
-  )
+  );
 
   return (
-    <div className="space-y-3 mt-3">
+    <div className="space-y-3">
       <Card>
         <iframe
-          src={`https://calendar.google.com/calendar/embed?src=${your_calender_id}&ctz=America%2FNew_York`}
+          src={`https://calendar.google.com/calendar/embed?src=${your_calender_id}`}
           width="100%"
           height="600"
           frameBorder="0"
           scrolling="no"
           title="Google Calendar"
+          className="rounded-lg"
         ></iframe>
       </Card>
       <Card>
@@ -89,8 +107,8 @@ export default function CalendarComponent({ currentUser }: any) {
           <form
             className="space-y-4"
             onSubmit={(e) => {
-              e.preventDefault()
-              setDialogOpen(true)
+              e.preventDefault();
+              setDialogOpen(true);
             }}
           >
             <Input
@@ -170,9 +188,7 @@ export default function CalendarComponent({ currentUser }: any) {
                 />
               </div>
             </div>
-            <Button type="submit">
-              Add to Google Calendar
-            </Button>
+            <Button type="submit">Add to Google Calendar</Button>
           </form>
         </CardContent>
       </Card>
@@ -181,54 +197,64 @@ export default function CalendarComponent({ currentUser }: any) {
         <AlertDialogTrigger asChild />
         <AlertDialogContent>
           <AlertDialogDescription className="font-semibold text-sm">
-            Please open your associated mail before adding the event to your Google Calendar; otherwise, it will progress to your personal account calendar.
+            Are you sure? Do you want to add event to your calender.
           </AlertDialogDescription>
           <div className="space-x-2">
             <AlertDialogAction
               onClick={() => {
-                const formatDateForGoogle = (date: Date, time: string, period: 'AM' | 'PM'): string => {
-                  const [hoursStr, minutesStr] = time.split(':');
+                const formatDateForGoogle = (
+                  date: Date,
+                  time: string,
+                  period: "AM" | "PM"
+                ): string => {
+                  const [hoursStr, minutesStr] = time.split(":");
                   const hours = hoursStr ? Number(hoursStr) : 0;
                   const minutes = minutesStr ? Number(minutesStr) : 0;
                   const adjustedHours =
-                    period === 'AM' ? (hours === 12 ? 0 : hours) : (hours === 12 ? 12 : hours + 12);
+                    period === "AM" ? (hours === 12 ? 0 : hours) : hours === 12 ? 12 : hours + 12;
                   const newDate = set(date, { hours: adjustedHours, minutes });
                   return format(newDate, "yyyyMMdd'T'HHmmss");
                 };
 
-                const startDateTime = formatDateForGoogle(event.startDate!, event.startTime, event.startPeriod);
-                const endDateTime = formatDateForGoogle(event.endDate!, event.endTime, event.endPeriod);
+                const startDateTime = formatDateForGoogle(
+                  event.startDate!,
+                  event.startTime,
+                  event.startPeriod
+                );
+                const endDateTime = formatDateForGoogle(
+                  event.endDate!,
+                  event.endTime,
+                  event.endPeriod
+                );
 
-                const baseURL = `https://calendar.google.com/calendar/render`;
+                const baseURL = `https://calendar.google.com/calendar/u/2/r/eventedit`;
                 const params = new URLSearchParams({
-                  action: 'TEMPLATE',
+                  cid: your_calender_id,
                   text: event.summary,
                   details: event.description,
                   dates: `${startDateTime}/${endDateTime}`,
                 });
 
-                window.open(`${baseURL}?${params.toString()}`, '_blank');
+                window.open(`${baseURL}?${params.toString()}`, "_blank");
                 setEvent({
-                  summary: '',
-                  description: '',
+                  summary: "",
+                  description: "",
                   startDate: undefined,
-                  startTime: '',
-                  startPeriod: 'AM',
+                  startTime: "",
+                  startPeriod: "AM",
                   endDate: undefined,
-                  endTime: '',
-                  endPeriod: 'AM',
+                  endTime: "",
+                  endPeriod: "AM",
                 });
                 setDialogOpen(false);
               }}
             >
               OK
             </AlertDialogAction>
-            <AlertDialogAction onClick={() => setDialogOpen(false)}>
-              Cancel
-            </AlertDialogAction>
+            <AlertDialogAction onClick={() => setDialogOpen(false)}>Cancel</AlertDialogAction>
           </div>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

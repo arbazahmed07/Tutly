@@ -1,10 +1,10 @@
-import { useRef, useEffect, useState } from "react";
+import html2canvas from "html2canvas";
+import { useEffect, useRef, useState } from "react";
 import { FaCertificate, FaRegCheckCircle } from "react-icons/fa";
 import { FaDownload } from "react-icons/fa6";
-import html2canvas from "html2canvas";
 
 type GenerateProps = {
-  user: { username: string, name: string };
+  user: { username: string; name: string };
 };
 
 export default function Generate({ user }: GenerateProps) {
@@ -12,7 +12,7 @@ export default function Generate({ user }: GenerateProps) {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
-    const images = Array.from(document.querySelectorAll('img'));
+    const images = Array.from(document.querySelectorAll("img"));
     const imagePromises = images.map((img) => {
       return new Promise<void>((resolve) => {
         if (img.complete) {
@@ -62,7 +62,9 @@ export default function Generate({ user }: GenerateProps) {
           onClick={downloadImage}
           className="absolute top-0 right-0 bg-blue-900 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-[#3949ab] transition duration-200 space-x-2"
         >
-          <span><FaDownload /></span>
+          <span>
+            <FaDownload />
+          </span>
         </div>
       </div>
       <div className="flex flex-col justify-center items-center min-h-screen">
@@ -78,7 +80,7 @@ export default function Generate({ user }: GenerateProps) {
           <div className="absolute inset-0 p-5">
             <div className="absolute -top-80 -left-40 w-1/3 h-full bg-blue-900 rotate-45"></div>
             <div className="absolute -top-96 -left-40 w-1/3 h-full bg-yellow-500 rotate-45"></div>
-            
+
             <div className="text-center space-y-6">
               <img src="/logo.png" alt="Tutly Logo" className="w-40 mx-auto mb-6 mt-10" />
               <h1 className="text-4xl font-extrabold text-blue-900 flex items-center justify-center">
@@ -86,8 +88,11 @@ export default function Generate({ user }: GenerateProps) {
               </h1>
               <p className="text-xl font-semibold text-gray-600">Presented by Tutly</p>
               <p className="text-lg text-gray-800 font-semibold md:mx-10 md:my-5">
-                This certificate is awarded to <span className="font-bold text-xl uppercase text-blue-900">{user?.name}</span> for successfully completing the MERN Full Stack Development course.
-                We congratulate his accomplishment and wish them success in their future endeavors as a skilled MERN stack developer.
+                This certificate is awarded to{" "}
+                <span className="font-bold text-xl uppercase text-blue-900">{user?.name}</span> for
+                successfully completing the MERN Full Stack Development course. We congratulate his
+                accomplishment and wish them success in their future endeavors as a skilled MERN
+                stack developer.
               </p>
               <div className="mt-4 text-green-600 flex justify-center items-center space-x-2">
                 <FaRegCheckCircle className="text-3xl" />
