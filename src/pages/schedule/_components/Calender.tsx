@@ -107,6 +107,16 @@ export default function CalendarComponent({ currentUser }: any) {
   return (
     <div className="space-y-3 mt-3">
       <Card>
+          <iframe
+            src={`https://calendar.google.com/calendar/embed?src=${your_calender_id}&ctz=America%2FNew_York`}
+            width="100%"
+            height="600"
+            frameBorder="0"
+            scrolling="no"
+            title="Google Calendar"
+          ></iframe>
+      </Card>
+      <Card>
         <CardHeader>
           <CardTitle>Add Event to Google Calendar</CardTitle>
         </CardHeader>
@@ -130,7 +140,7 @@ export default function CalendarComponent({ currentUser }: any) {
               onChange={(e) => setEvent({ ...event, description: e.target.value })}
             />
             <div className="flex flex-col space-y-2">
-              <label>Start Date and Time</label>
+              <label className="text-sm font-medium">Start Date and Time</label>
               <div className="flex space-x-2">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -163,7 +173,7 @@ export default function CalendarComponent({ currentUser }: any) {
               </div>
             </div>
             <div className="flex flex-col space-y-2">
-              <label>End Date and Time</label>
+              <label className="text-sm font-medium">End Date and Time</label>
               <div className="flex space-x-2">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -199,22 +209,6 @@ export default function CalendarComponent({ currentUser }: any) {
               Add to Google Calendar
             </Button>
           </form>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Google Calendar with Events</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <iframe
-            src={`https://calendar.google.com/calendar/embed?src=${your_calender_id}&ctz=America%2FNew_York`}
-            width="100%"
-            height="600"
-            frameBorder="0"
-            scrolling="no"
-            title="Google Calendar"
-          ></iframe>
         </CardContent>
       </Card>
     </div>
