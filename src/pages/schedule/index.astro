@@ -76,9 +76,7 @@ const currentUser = Astro.locals.user!;
     courses={courses}
     haveAdminAccess={haveAdminAccess}
   /> -->
-  <div class="border-b pb-4">
-      <h1 class="text-xl text-gray-300 font-bold mt-2">View and manage your schedule</h1>
-  </div>
+  
   <Calender client:load currentUser={currentUser} />
 </RootLayout>
 

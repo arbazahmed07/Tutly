@@ -9,9 +9,9 @@ import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { format,set } from 'date-fns'
+import { format, set } from 'date-fns'
 import { CalendarIcon, Clock } from 'lucide-react'
-
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogAction, AlertDialogDescription } from '@/components/ui/alert-dialog'
 
 interface EventState {
   summary: string;
@@ -25,9 +25,7 @@ interface EventState {
 }
 
 export default function CalendarComponent({ currentUser }: any) {
-  // const your_calender_id = currentUser?.email
-  // for testing purpose
-  const your_calender_id ="goutham4126@gmail.com"
+  const your_calender_id = currentUser?.email
   const [event, setEvent] = useState<EventState>({
     summary: '',
     description: '',
@@ -38,42 +36,9 @@ export default function CalendarComponent({ currentUser }: any) {
     endTime: '',
     endPeriod: 'AM',
   })
+  
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const handleAddToCalendar = () => {
-    const { summary, description, startDate, startTime, startPeriod, endDate, endTime, endPeriod } = event
-    
-    if (!startDate || !endDate || !startTime || !endTime) {
-      alert('Please fill in all date and time fields')
-      return
-    }
-
-    const formatDateForGoogle = (date: Date, time: string, period: 'AM' | 'PM'): string => {
-      const [hoursStr, minutesStr] = time.split(':');
-      const hours = hoursStr ? Number(hoursStr) : 0;
-      const minutes = minutesStr ? Number(minutesStr) : 0;
-    
-      const adjustedHours =
-        period === 'AM' ? (hours === 12 ? 0 : hours) : (hours === 12 ? 12 : hours + 12);
-    
-      const newDate = set(date, { hours: adjustedHours, minutes });
-      return format(newDate, "yyyyMMdd'T'HHmmss");
-    };
-    
-    
-
-    const startDateTime = formatDateForGoogle(startDate, startTime, startPeriod)
-    const endDateTime = formatDateForGoogle(endDate, endTime, endPeriod)
-
-    const baseURL = 'https://calendar.google.com/calendar/render'
-    const params = new URLSearchParams({
-      action: 'TEMPLATE',
-      text: summary,
-      details: description,
-      dates: `${startDateTime}/${endDateTime}`,
-    })
-
-    window.open(`${baseURL}?${params.toString()}`, '_blank')
-  }
 
   const TimeInput = ({ value, onChange, period, onPeriodChange }: { 
     value: string; 
@@ -107,25 +72,25 @@ export default function CalendarComponent({ currentUser }: any) {
   return (
     <div className="space-y-3 mt-3">
       <Card>
-          <iframe
-            src={`https://calendar.google.com/calendar/embed?src=${your_calender_id}&ctz=America%2FNew_York`}
-            width="100%"
-            height="600"
-            frameBorder="0"
-            scrolling="no"
-            title="Google Calendar"
-          ></iframe>
+        <iframe
+          src={`https://calendar.google.com/calendar/embed?src=${your_calender_id}&ctz=America%2FNew_York`}
+          width="100%"
+          height="600"
+          frameBorder="0"
+          scrolling="no"
+          title="Google Calendar"
+        ></iframe>
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Add Event to Google Calendar</CardTitle>
+          <CardTitle>Add Event</CardTitle>
         </CardHeader>
         <CardContent>
           <form
             className="space-y-4"
             onSubmit={(e) => {
               e.preventDefault()
-              handleAddToCalendar()
+              setDialogOpen(true)
             }}
           >
             <Input
@@ -211,7 +176,59 @@ export default function CalendarComponent({ currentUser }: any) {
           </form>
         </CardContent>
       </Card>
+
+      <AlertDialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogTrigger asChild />
+        <AlertDialogContent>
+          <AlertDialogDescription className="font-semibold text-sm">
+            Please open your associated mail before adding the event to your Google Calendar; otherwise, it will progress to your personal account calendar.
+          </AlertDialogDescription>
+          <div className="space-x-2">
+            <AlertDialogAction
+              onClick={() => {
+                const formatDateForGoogle = (date: Date, time: string, period: 'AM' | 'PM'): string => {
+                  const [hoursStr, minutesStr] = time.split(':');
+                  const hours = hoursStr ? Number(hoursStr) : 0;
+                  const minutes = minutesStr ? Number(minutesStr) : 0;
+                  const adjustedHours =
+                    period === 'AM' ? (hours === 12 ? 0 : hours) : (hours === 12 ? 12 : hours + 12);
+                  const newDate = set(date, { hours: adjustedHours, minutes });
+                  return format(newDate, "yyyyMMdd'T'HHmmss");
+                };
+
+                const startDateTime = formatDateForGoogle(event.startDate!, event.startTime, event.startPeriod);
+                const endDateTime = formatDateForGoogle(event.endDate!, event.endTime, event.endPeriod);
+
+                const baseURL = `https://calendar.google.com/calendar/render`;
+                const params = new URLSearchParams({
+                  action: 'TEMPLATE',
+                  text: event.summary,
+                  details: event.description,
+                  dates: `${startDateTime}/${endDateTime}`,
+                });
+
+                window.open(`${baseURL}?${params.toString()}`, '_blank');
+                setEvent({
+                  summary: '',
+                  description: '',
+                  startDate: undefined,
+                  startTime: '',
+                  startPeriod: 'AM',
+                  endDate: undefined,
+                  endTime: '',
+                  endPeriod: 'AM',
+                });
+                setDialogOpen(false);
+              }}
+            >
+              OK
+            </AlertDialogAction>
+            <AlertDialogAction onClick={() => setDialogOpen(false)}>
+              Cancel
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
-
