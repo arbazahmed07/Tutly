@@ -1,107 +1,72 @@
+import { useState } from "react";
 import html2canvas from "html2canvas";
-import { useEffect, useRef, useState } from "react";
-import { FaCertificate, FaRegCheckCircle } from "react-icons/fa";
-import { FaDownload } from "react-icons/fa6";
 
 type GenerateProps = {
   user: { username: string; name: string };
 };
 
 export default function Generate({ user }: GenerateProps) {
-  const certificateRef = useRef<HTMLDivElement>(null);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
 
-  useEffect(() => {
-    const images = Array.from(document.querySelectorAll("img"));
-    const imagePromises = images.map((img) => {
-      return new Promise<void>((resolve) => {
-        if (img.complete) {
-          resolve();
-        } else {
-          img.onload = () => resolve();
-        }
-      });
-    });
+  const downloadCertificate = () => {
+    const certificateElement = document.getElementById("certificate");
+    if (!certificateElement) return;
 
-    Promise.all(imagePromises).then(() => setIsImageLoaded(true));
-  }, []);
-
-  const downloadImage = async () => {
-    if (!certificateRef.current) {
-      console.error("Certificate reference not found.");
-      return;
-    }
-
-    if (!isImageLoaded) {
-      console.log("Images not fully loaded yet.");
-      return;
-    }
-
-    try {
-      const canvas = await html2canvas(certificateRef.current, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: null,
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = imgData;
-      link.download = "Certificate.png";
-      link.click();
-    } catch (error) {
-      console.error("Error generating image:", error);
-    }
+    setIsLoading(true);
+    html2canvas(certificateElement)
+      .then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = imgData;
+        link.download = `${user?.name}_Certificate.png`;
+        link.click();
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
     <div>
-      <div className="relative">
-        <div
-          onClick={downloadImage}
-          className="absolute top-0 right-0 bg-blue-900 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-[#3949ab] transition duration-200 space-x-2"
-        >
-          <span>
-            <FaDownload />
-          </span>
+      {isLoading && (
+        <div className="fixed inset-0 bg-black text-white font-bold text-lg bg-opacity-50 flex items-center justify-center z-50">
+         Download in progreess...
         </div>
-      </div>
-      <div className="flex flex-col justify-center items-center min-h-screen">
-        <div
-          ref={certificateRef}
-          id="certificate"
-          className="relative w-full max-w-4xl aspect-[1.414/1] border-2 bg-white border-gray-300 rounded-lg overflow-hidden shadow-lg p-8"
-        >
-          <div className="absolute bottom-8 left-8 text-4xl text-gray-300 font-bold opacity-80 transform">
-            <span>Tutly</span>
-          </div>
-
-          <div className="absolute inset-0 p-5">
-            <div className="absolute -top-80 -left-40 w-1/3 h-full bg-blue-900 rotate-45"></div>
-            <div className="absolute -top-96 -left-40 w-1/3 h-full bg-yellow-500 rotate-45"></div>
-
-            <div className="text-center space-y-6">
-              <img src="/logo.png" alt="Tutly Logo" className="w-40 mx-auto mb-6 mt-10" />
-              <h1 className="text-4xl font-extrabold text-blue-900 flex items-center justify-center">
-                <FaCertificate className="mr-3 text-4xl" /> CERTIFICATE OF COMPLETION
-              </h1>
-              <p className="text-xl font-semibold text-gray-600">Presented by Tutly</p>
-              <p className="text-lg text-gray-800 font-semibold md:mx-10 md:my-5">
-                This certificate is awarded to{" "}
-                <span className="font-bold text-xl uppercase text-blue-900">{user?.name}</span> for
-                successfully completing the MERN Full Stack Development course. We congratulate his
-                accomplishment and wish them success in their future endeavors as a skilled MERN
-                stack developer.
-              </p>
-              <div className="mt-4 text-green-600 flex justify-center items-center space-x-2">
-                <FaRegCheckCircle className="text-3xl" />
-                <p className="font-semibold text-xl">Course Completion Verified</p>
-              </div>
-            </div>
-            <div className="absolute -bottom-80 -right-40 w-1/3 h-full bg-yellow-500 rotate-45"></div>
-            <div className="absolute -bottom-96 -right-40 w-1/3 h-full bg-blue-900 rotate-45"></div>
-          </div>
+      )}
+      <button
+        onClick={downloadCertificate}
+        className="mb-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded shadow hover:bg-blue-700"
+        disabled={isLoading}
+      >
+        {isLoading ? "Downloading..." : "Download Certificate"}
+      </button>
+      <div
+        id="certificate"
+        className="relative w-[800px] h-[566px] mx-auto border border-gray-400"
+      >
+        <img
+          src="/gold_template.png"
+          alt="Certificate"
+          className="w-full h-full object-cover"
+        />
+        {/* <img src="/silver_template.png" alt="Certificate" className="w-full h-full object-cover" /> */}
+        {/* <img src="/bronze_template.png" alt="Certificate" className="w-full h-full object-cover" /> */}
+        <div className="absolute top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-3xl font-bold uppercase text-black w-[70%]">
+          {user?.name}
+        </div>
+        <div className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-lg font-medium text-[#333] w-[75%] leading-relaxed">
+          This certificate is awarded to{" "}
+          <span className="font-bold">{user?.name}</span>, bearing roll number{" "}
+          <span className="font-bold">{user?.username}</span>, for successfully
+          completing the Web Development Course (MERN Stack). We recognize
+          their dedication and hard work in acquiring the skills necessary for
+          modern web development.
+        </div>
+        <div className="absolute top-[70%] left-16 flex flex-col items-center">
+          <img src="/signature.png" alt="Signature" className="w-40 h-auto" />
+          <p className="text-sm font-bold text-gray-600">Rajesh Thappeta</p>
+          <p className="text-xs text-gray-600">Course Instructor</p>
+        </div>
+        <div className="absolute top-[88%] left-1/2 transform -translate-x-1/2 text-center text-sm font-semibold text-[#555]">
+          Presented by <span className="text-blue-900">Tutly</span>
         </div>
       </div>
     </div>
