@@ -1,12 +1,23 @@
 ---
 import RootLayout from "@layouts/RootLayout.astro";
-import GenerateCertificate from "./_components/Generate";
-
+import StudentCertificate from "./_components/StudentCertificate";
+import MentorCertificate from "./_components/MentorCertificate";
 const currentUser = Astro.locals.user;
 
 if (!currentUser) return Astro.redirect("/sign-in");
 ---
 
-<RootLayout title="Bookmarks">
-  <GenerateCertificate user={currentUser} client:load />
+<RootLayout title="Certificate">
+  {
+    currentUser.role === "STUDENT" ? (
+      <div>
+         <StudentCertificate user={currentUser} client:load />
+      </div>
+    ) : (
+      currentUser.role === "MENTOR" && 
+      <div>
+        <MentorCertificate user={currentUser} client:load />
+      </div>
+    )
+  }
 </RootLayout>

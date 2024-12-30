@@ -1,11 +1,16 @@
+"use client"
+
 import { useState } from "react";
 import html2canvas from "html2canvas";
+import { Button } from "@/components/ui/button";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription } from "@/components/ui/alert-dialog";
+import { Loader2 } from 'lucide-react';
 
 type GenerateProps = {
   user: { username: string; name: string };
 };
 
-export default function Generate({ user }: GenerateProps) {
+export default function StudentCertificate({ user }: GenerateProps) {
   const [isLoading, setIsLoading] = useState(false); 
 
   const downloadCertificate = () => {
@@ -26,21 +31,32 @@ export default function Generate({ user }: GenerateProps) {
 
   return (
     <div>
-      {isLoading && (
-        <div className="fixed inset-0 bg-black text-white font-bold text-lg bg-opacity-50 flex items-center justify-center z-50">
-         Download in progreess...
-        </div>
-      )}
-      <button
+      <AlertDialog open={isLoading}>
+        <AlertDialogContent className="flex items-center justify-center">
+          <AlertDialogDescription className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            Download in progress...
+          </AlertDialogDescription>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Button
         onClick={downloadCertificate}
-        className="mb-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded shadow hover:bg-blue-700"
+        className="mb-4"
         disabled={isLoading}
       >
-        {isLoading ? "Downloading..." : "Download Certificate"}
-      </button>
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Downloading...
+          </>
+        ) : (
+          "Download Certificate"
+        )}
+      </Button>
       <div
         id="certificate"
-        className="relative w-[800px] h-[566px] mx-auto border border-gray-400"
+        className="relative w-[800px] h-[566px] mx-auto"
       >
         <img
           src="/gold_template.png"
@@ -49,10 +65,10 @@ export default function Generate({ user }: GenerateProps) {
         />
         {/* <img src="/silver_template.png" alt="Certificate" className="w-full h-full object-cover" /> */}
         {/* <img src="/bronze_template.png" alt="Certificate" className="w-full h-full object-cover" /> */}
-        <div className="absolute top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-3xl font-bold uppercase text-black w-[70%]">
+        <div className="absolute top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-3xl font-bold uppercase text-black w-[70%]">
           {user?.name}
         </div>
-        <div className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-lg font-medium text-[#333] w-[75%] leading-relaxed">
+        <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-lg font-medium text-[#333] w-[75%] leading-relaxed">
           This certificate is awarded to{" "}
           <span className="font-bold">{user?.name}</span>, bearing roll number{" "}
           <span className="font-bold">{user?.username}</span>, for successfully
