@@ -5,6 +5,8 @@ import html2canvas from "html2canvas";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription } from "@/components/ui/alert-dialog";
 import { Loader2 } from 'lucide-react';
+import {ScrollArea} from "@/components/ui/scroll-area";
+import { IoMdDownload } from "react-icons/io";
 
 type GenerateProps = {
   user: { username: string; name: string };
@@ -40,20 +42,15 @@ export default function StudentCertificate({ user }: GenerateProps) {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Button
+      <div
         onClick={downloadCertificate}
-        className="mb-4"
-        disabled={isLoading}
+        className="m-4 flex justify-end"
       >
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Downloading...
-          </>
-        ) : (
-          "Download Certificate"
-        )}
-      </Button>
+        <IoMdDownload className="h-6 w-6"/>
+      </div>
+
+      
+      <ScrollArea className="max-w-full">
       <div
         id="certificate"
         className="relative w-[800px] h-[566px] mx-auto"
@@ -85,6 +82,7 @@ export default function StudentCertificate({ user }: GenerateProps) {
           Presented by <span className="text-blue-900">Tutly</span>
         </div>
       </div>
+      </ScrollArea>
     </div>
   );
 }
