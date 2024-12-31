@@ -14,6 +14,7 @@ import Experience from "./Experience";
 import PersonalDetails from "./PersonalDetails";
 import ProfessionalProfiles from "./ProfessionalProfiles";
 import SocialLinks from "./SocialLinks";
+import ManagePassword from "./ManagePassword";
 
 export default function ProfilePage({ userProfile }: { userProfile: User & { profile: Profile } }) {
   const [profile, setProfile] = useState(userProfile.profile);
@@ -44,7 +45,7 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
       <h1 className="text-3xl font-bold mb-6">Profile</h1>
 
       <Tabs defaultValue="basic" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
           <TabsTrigger value="basic">Basic Details</TabsTrigger>
           <TabsTrigger value="personal">Personal</TabsTrigger>
           <TabsTrigger value="professional">Professional</TabsTrigger>
@@ -53,6 +54,7 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
           <TabsTrigger value="social">Social</TabsTrigger>
           <TabsTrigger value="experience">Experience</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic">
@@ -134,6 +136,14 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
             />
           </Card>
         </TabsContent>
+
+        <TabsContent value="password">
+          <Card className="p-6">
+            <ManagePassword userProfile={userProfile} />
+          </Card>
+        </TabsContent>
+        
+        
       </Tabs>
     </div>
   );
