@@ -11,10 +11,10 @@ import Address from "./Address";
 import BasicDetails from "./BasicDetails";
 import Documents from "./Documents";
 import Experience from "./Experience";
+import ManagePassword from "./ManagePassword";
 import PersonalDetails from "./PersonalDetails";
 import ProfessionalProfiles from "./ProfessionalProfiles";
 import SocialLinks from "./SocialLinks";
-import ManagePassword from "./ManagePassword";
 
 export default function ProfilePage({ userProfile }: { userProfile: User & { profile: Profile } }) {
   const [profile, setProfile] = useState(userProfile.profile);
@@ -142,8 +142,6 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
             <ManagePassword userProfile={userProfile} />
           </Card>
         </TabsContent>
-        
-        
       </Tabs>
     </div>
   );

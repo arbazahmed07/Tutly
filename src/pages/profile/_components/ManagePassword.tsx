@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react";
-import { toast } from "react-hot-toast";
-import { useForm } from "react-hook-form";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { Check, X } from 'lucide-react';
 import { actions } from "astro:actions";
+import { Check, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const Profile = ({ userProfile }: any) => {
   const email = userProfile?.email;
@@ -57,8 +57,14 @@ const Profile = ({ userProfile }: any) => {
     return strength.filter((req) => req.met).length;
   };
 
-  const newPasswordScore = useMemo(() => getStrengthScore(newPasswordStrength), [newPasswordStrength]);
-  const confirmPasswordScore = useMemo(() => getStrengthScore(confirmPasswordStrength), [confirmPasswordStrength]);
+  const newPasswordScore = useMemo(
+    () => getStrengthScore(newPasswordStrength),
+    [newPasswordStrength]
+  );
+  const confirmPasswordScore = useMemo(
+    () => getStrengthScore(confirmPasswordStrength),
+    [confirmPasswordStrength]
+  );
 
   const getStrengthColor = (score: number) => {
     if (score === 0) return "bg-border";
@@ -87,22 +93,21 @@ const Profile = ({ userProfile }: any) => {
     }
 
     try {
-      const {data:response,error} = await actions.users_updatePassword({
+      const { data: response, error } = await actions.users_updatePassword({
         email: userProfile?.email,
         oldPassword: data.oldPassword,
         newPassword: data.newPassword,
         confirmPassword: data.confirmPassword,
       });
-      
+
       if (error || !response) {
         toast.error("Failed to update the profile");
-        return
+        return;
       }
-      
+
       if (response.success) {
-      toast.success("Profile updated successfully");
-      }
-      else {
+        toast.success("Profile updated successfully");
+      } else {
         toast.error(response?.error?.message ?? "An unknown error occurred");
       }
     } catch (error) {
@@ -163,15 +168,8 @@ const Profile = ({ userProfile }: any) => {
           className="w-full rounded-md border border-gray-300 bg-background px-3 py-2 outline-none"
           {...register(fieldName, { required: true, minLength: 8 })}
         />
-        <span
-          className="absolute right-2 top-2 cursor-pointer"
-          onClick={toggleVisibility}
-        >
-          {showPassword ? (
-            <FaRegEyeSlash className="h-5 w-5" />
-          ) : (
-            <FaRegEye className="h-5 w-5" />
-          )}
+        <span className="absolute right-2 top-2 cursor-pointer" onClick={toggleVisibility}>
+          {showPassword ? <FaRegEyeSlash className="h-5 w-5" /> : <FaRegEye className="h-5 w-5" />}
         </span>
       </div>
       {fieldName !== "oldPassword" && (
@@ -200,7 +198,9 @@ const Profile = ({ userProfile }: any) => {
                 ) : (
                   <X size={16} className="text-muted-foreground/80" aria-hidden="true" />
                 )}
-                <span className={`text-xs ${req.met ? "text-emerald-600" : "text-muted-foreground"}`}>
+                <span
+                  className={`text-xs ${req.met ? "text-emerald-600" : "text-muted-foreground"}`}
+                >
                   {req.text}
                   <span className="sr-only">
                     {req.met ? " - Requirement met" : " - Requirement not met"}
@@ -215,9 +215,7 @@ const Profile = ({ userProfile }: any) => {
         <span className="text-red-500">{label} is required</span>
       )}
       {errors[fieldName]?.type === "minLength" && (
-        <span className="text-red-500">
-          {label} must have more than 8 characters
-        </span>
+        <span className="text-red-500">{label} must have more than 8 characters</span>
       )}
     </div>
   );
@@ -227,7 +225,6 @@ const Profile = ({ userProfile }: any) => {
       <div className="m-auto rounded-lg p-5">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex w-[300px] flex-col gap-2">
-            
             {renderPasswordField(
               "oldPassword",
               "Old Password",
@@ -262,7 +259,9 @@ const Profile = ({ userProfile }: any) => {
             <button
               type="submit"
               className="mt-4 rounded-md bg-blue-600 p-3 text-sm font-semibold text-white"
-              disabled={newPassword !== confirmPassword || newPasswordScore < 4 || confirmPasswordScore < 4}
+              disabled={
+                newPassword !== confirmPassword || newPasswordScore < 4 || confirmPasswordScore < 4
+              }
             >
               Update
             </button>
@@ -274,4 +273,3 @@ const Profile = ({ userProfile }: any) => {
 };
 
 export default Profile;
-

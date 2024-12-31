@@ -530,7 +530,6 @@ export const unlinkAccount = defineAction({
   },
 });
 
-
 export const resetPassword = defineAction({
   input: z.object({
     email: z.string(),
@@ -550,40 +549,37 @@ export const resetPassword = defineAction({
     await db.user.update({
       where: { id: user.id },
       data: {
-        password : null
-      }
+        password: null,
+      },
     });
 
-    return user;     
-  },  
+    return user;
+  },
 });
-
-
 
 export const updatePassword = defineAction({
   input: z.object({
-    email : z.string(),
+    email: z.string(),
     oldPassword: z.string().optional(),
     newPassword: z
-    .string()
-    .min(1, "Password is required")
-    .min(8, "Password must have than 8 characters"),
-  confirmPassword: z
-    .string()
-    .min(1, "Password is required")
-    .min(8, "Password must have than 8 characters"),
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must have than 8 characters"),
+    confirmPassword: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must have than 8 characters"),
   }),
   async handler({ email, oldPassword, newPassword, confirmPassword }, { locals }) {
-
     console.log(email, oldPassword, newPassword, confirmPassword);
-  const currentUser = locals.user;
-  if (!currentUser) {
-    return {
-      error: {
-        message: "Unauthorized",
-      },
-    };
-  }
+    const currentUser = locals.user;
+    if (!currentUser) {
+      return {
+        error: {
+          message: "Unauthorized",
+        },
+      };
+    }
 
     if (newPassword !== confirmPassword) {
       return {
@@ -644,5 +640,5 @@ export const updatePassword = defineAction({
       success: true,
       message: "User updated successfully",
     };
-}
+  },
 });
