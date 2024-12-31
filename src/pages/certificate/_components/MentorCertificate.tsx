@@ -41,14 +41,12 @@ export default function MentorCertificate({ user }: GenerateProps) {
           </AlertDialogDescription>
         </AlertDialogContent>
       </AlertDialog>
-
-      <div
-        onClick={downloadCertificate}
-        className="m-4 flex justify-end"
-      >
-        <IoMdDownload className="h-6 w-6"/>
-      </div>
-
+      <Button
+          onClick={downloadCertificate}
+          className="mb-4"
+        >
+          <IoMdDownload className="h-6 w-6"/>
+        </Button>
 
       <ScrollArea className="max-w-full">
         <div className="w-[800px] mx-auto">
