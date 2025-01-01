@@ -6,7 +6,6 @@ import { toast } from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const Profile = ({ userProfile }: any) => {
-  const email = userProfile?.email;
   const {
     register,
     handleSubmit,
@@ -118,7 +117,7 @@ const Profile = ({ userProfile }: any) => {
 
   const handleForgotPassword = async () => {
     try {
-      const { data: response, error } = await actions.users_resetPassword({
+      const { error } = await actions.users_resetPassword({
         email: userProfile?.email,
       });
 
@@ -128,13 +127,14 @@ const Profile = ({ userProfile }: any) => {
       }
 
       toast.success("Login again to create new password");
-      const signout = await fetch("/api/auth/signout", {
+      await fetch("/api/auth/signout", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-      window.location.href = "/login";
+
+      window.location.reload();
     } catch (error) {
       console.error("Error:", error);
       toast.error("An error occurred while sending password reset link");
