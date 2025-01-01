@@ -101,6 +101,20 @@ export function UserMenu({ user }: UserMenuProps) {
     setShowOpenInAppDialog(false);
   };
 
+  const handleSignout = async () => {
+    setIsOpen(false);
+    try {
+      await fetch("/api/auth/signout", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      window.location.reload();
+    } catch (error) {
+      console.log("Error at user-menu: ", error);
+    }
+  };
+
   return (
     <div className="relative">
       <DropdownMenu onOpenChange={setIsOpen}>
@@ -201,12 +215,13 @@ export function UserMenu({ user }: UserMenuProps) {
             )}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <a href="/api/auth/signout">
-            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive">
-              <LogOut className="h-5 w-5" />
-              Log out
-            </DropdownMenuItem>
-          </a>
+          <DropdownMenuItem
+            onClick={handleSignout}
+            className="flex items-center gap-2 cursor-pointer text-destructive"
+          >
+            <LogOut className="h-5 w-5" />
+            Log out
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 

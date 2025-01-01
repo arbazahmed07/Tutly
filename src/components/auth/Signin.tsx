@@ -56,6 +56,8 @@ export function SignIn() {
       if (result.success) {
         router.push(result.redirectTo || "/dashboard");
       }
+
+      window.location.reload();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign in");
     } finally {
