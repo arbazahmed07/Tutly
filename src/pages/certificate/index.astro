@@ -8,7 +8,6 @@ let dashboardData: DashboardData | null = null;
 
 if (!currentUser) return Astro.redirect("/sign-in");
 
-
 if (currentUser.role === "STUDENT") {
   const enrolledCourses = await db.enrolledUsers.findMany({
     where: {
@@ -79,7 +78,7 @@ if (currentUser.role === "STUDENT") {
   {
     currentUser.role === "STUDENT" && (
       <div>
-         <StudentCertificate user={currentUser} data={dashboardData} client:load />
+        <StudentCertificate user={currentUser} data={dashboardData} client:load />
       </div>
     )
   }

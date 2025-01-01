@@ -1,12 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react";
 import html2canvas from "html2canvas";
-import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogContent, AlertDialogDescription } from "@/components/ui/alert-dialog";
-import { Loader2 } from 'lucide-react';
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { IoMdDownload } from "react-icons/io";
+
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Course {
@@ -43,11 +48,12 @@ export default function StudentCertificate({ user, data }: { user: User; data: a
   };
 
   const renderCertificate = (course: Course) => {
-    if ((course.assignmentsSubmitted !== course.totalAssignments)|| (course.totalAssignments <= 0)) {
+    if (course.assignmentsSubmitted !== course.totalAssignments || course.totalAssignments <= 0) {
       return (
         <div className="max-w-3xl mx-auto text-center p-4 bg-yellow-100 rounded-lg">
           <p className="text-lg font-semibold text-yellow-700">
-            Complete all {course.courseTitle} assignments to unlock your {course.courseTitle} certificate!
+            Complete all {course.courseTitle} assignments to unlock your {course.courseTitle}{" "}
+            certificate!
           </p>
           <p className="text-sm text-yellow-600 mt-2">
             Assignments completed: {course.assignmentsSubmitted} / {course.totalAssignments}
@@ -59,10 +65,7 @@ export default function StudentCertificate({ user, data }: { user: User; data: a
     return (
       <ScrollArea className="w-full">
         <div className="w-[800px] mx-auto">
-          <div
-            id={`certificate-${course.courseTitle}`}
-            className="relative w-[800px] h-[566px]"
-          >
+          <div id={`certificate-${course.courseTitle}`} className="relative w-[800px] h-[566px]">
             <img
               src="/gold_template.png"
               alt="Certificate"
@@ -72,11 +75,10 @@ export default function StudentCertificate({ user, data }: { user: User; data: a
               {user.name}
             </div>
             <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-lg font-medium text-[#333] w-[75%] leading-relaxed">
-              This certificate is awarded to{" "}
-              <span className="font-bold">{user.name}</span> for successfully
-              completing the <span className="font-bold">{course.courseTitle}</span> Course. We recognize
-              their dedication and hard work in acquiring the skills necessary for
-              this course.
+              This certificate is awarded to <span className="font-bold">{user.name}</span> for
+              successfully completing the <span className="font-bold">{course.courseTitle}</span>{" "}
+              Course. We recognize their dedication and hard work in acquiring the skills necessary
+              for this course.
             </div>
             <div className="absolute top-[70%] left-16 flex flex-col items-center">
               <img src="/signature.png" alt="Signature" className="w-40 h-auto" />
@@ -107,13 +109,13 @@ export default function StudentCertificate({ user, data }: { user: User; data: a
         {data.courses.map((course: Course) => (
           <TabsContent key={course.courseId} value={course.courseId}>
             <div className="flex justify-between items-center mb-6">
-            <TabsList className="">
-              {data.courses.map((course: Course) => (
-                <TabsTrigger key={course.courseId} value={course.courseId}>
-                  {course.courseTitle}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+              <TabsList className="">
+                {data.courses.map((course: Course) => (
+                  <TabsTrigger key={course.courseId} value={course.courseId}>
+                    {course.courseTitle}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
               {course.assignmentsSubmitted === course.totalAssignments && (
                 <Button
                   onClick={() => downloadCertificate(course.courseTitle)}
@@ -124,13 +126,10 @@ export default function StudentCertificate({ user, data }: { user: User; data: a
                 </Button>
               )}
             </div>
-            <div>
-              {renderCertificate(course)}
-            </div>
+            <div>{renderCertificate(course)}</div>
           </TabsContent>
         ))}
       </Tabs>
     </div>
   );
 }
-
