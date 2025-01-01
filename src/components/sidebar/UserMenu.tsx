@@ -159,12 +159,16 @@ export function UserMenu({ user }: UserMenuProps) {
                 Profile
               </DropdownMenuItem>
             </a>
-            <a href="/certificate">
-              <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-                <GrCertificate className="h-5 w-5" />
-                Certificate
-              </DropdownMenuItem>
-            </a>
+            {
+              user.role === "STUDENT" && (
+                <a href="/certificate">
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <GrCertificate className="h-5 w-5" />
+                    Certificate
+                  </DropdownMenuItem>
+                </a>
+              )
+            }
             {/* <a href="/sessions">
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"

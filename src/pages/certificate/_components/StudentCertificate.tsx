@@ -45,9 +45,9 @@ export default function StudentCertificate({ user, data }: { user: User; data: a
   const renderCertificate = (course: Course) => {
     if ((course.assignmentsSubmitted !== course.totalAssignments)|| (course.totalAssignments <= 0)) {
       return (
-        <div className="text-center p-4 bg-yellow-100 rounded-lg">
+        <div className="max-w-3xl mx-auto text-center p-4 bg-yellow-100 rounded-lg">
           <p className="text-lg font-semibold text-yellow-700">
-            Complete all assignments to unlock your certificate!
+            Complete all {course.courseTitle} assignments to unlock your {course.courseTitle} certificate!
           </p>
           <p className="text-sm text-yellow-600 mt-2">
             Assignments completed: {course.assignmentsSubmitted} / {course.totalAssignments}
@@ -57,34 +57,39 @@ export default function StudentCertificate({ user, data }: { user: User; data: a
     }
 
     return (
-      <div
-        id={`certificate-${course.courseTitle}`}
-        className="relative w-[800px] h-[566px]"
-      >
-        <img
-          src="/gold_template.png"
-          alt="Certificate"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-3xl font-bold uppercase text-black w-[70%]">
-          {user.name}
+      <ScrollArea className="w-full">
+        <div className="w-[800px] mx-auto">
+          <div
+            id={`certificate-${course.courseTitle}`}
+            className="relative w-[800px] h-[566px]"
+          >
+            <img
+              src="/gold_template.png"
+              alt="Certificate"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-[40%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-3xl font-bold uppercase text-black w-[70%]">
+              {user.name}
+            </div>
+            <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-lg font-medium text-[#333] w-[75%] leading-relaxed">
+              This certificate is awarded to{" "}
+              <span className="font-bold">{user.name}</span> for successfully
+              completing the <span className="font-bold">{course.courseTitle}</span> Course. We recognize
+              their dedication and hard work in acquiring the skills necessary for
+              this course.
+            </div>
+            <div className="absolute top-[70%] left-16 flex flex-col items-center">
+              <img src="/signature.png" alt="Signature" className="w-40 h-auto" />
+              <p className="text-sm font-bold text-gray-600">Rajesh Thappeta</p>
+              <p className="text-xs text-gray-600">Course Instructor</p>
+            </div>
+            <div className="absolute top-[88%] left-1/2 transform -translate-x-1/2 text-center text-sm font-semibold text-[#555]">
+              Presented by <span className="text-blue-900">Tutly</span>
+            </div>
+          </div>
         </div>
-        <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-lg font-medium text-[#333] w-[75%] leading-relaxed">
-          This certificate is awarded to{" "}
-          <span className="font-bold">{user.name}</span> for successfully
-          completing the <span className="font-bold">{course.courseTitle}</span> Course. We recognize
-          their dedication and hard work in acquiring the skills necessary for
-          this course.
-        </div>
-        <div className="absolute top-[70%] left-16 flex flex-col items-center">
-          <img src="/signature.png" alt="Signature" className="w-40 h-auto" />
-          <p className="text-sm font-bold text-gray-600">Rajesh Thappeta</p>
-          <p className="text-xs text-gray-600">Course Instructor</p>
-        </div>
-        <div className="absolute top-[88%] left-1/2 transform -translate-x-1/2 text-center text-sm font-semibold text-[#555]">
-          Presented by <span className="text-blue-900">Tutly</span>
-        </div>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     );
   };
 
@@ -119,13 +124,9 @@ export default function StudentCertificate({ user, data }: { user: User; data: a
                 </Button>
               )}
             </div>
-
-            <ScrollArea className="w-full">
-              <div className="w-[800px] mx-auto">
-                {renderCertificate(course)}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
+            <div>
+              {renderCertificate(course)}
+            </div>
           </TabsContent>
         ))}
       </Tabs>
