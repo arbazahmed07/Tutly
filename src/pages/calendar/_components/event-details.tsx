@@ -1,12 +1,13 @@
 'use client'
-import { AlertDialog, AlertDialogCancel, AlertDialogContent,AlertDialogAction, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogAction, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
+import dayjs from "dayjs";
 
 interface Event {
   name: string;
   description: string;
   startDate: Date;
   endDate: Date;
-  link:string
+  link: string;
 }
 
 interface EventDetailsProps {
@@ -27,11 +28,14 @@ export function EventDetails({ event, onClose }: EventDetailsProps) {
           </div>
         </AlertDialogDescription>
         <AlertDialogFooter>
-          <AlertDialogAction><a href={event.link}>View</a></AlertDialogAction>
+          <AlertDialogAction>
+            <a href={event.link} className="hover:underline" target="_blank" rel="noopener noreferrer">
+              View
+            </a>
+          </AlertDialogAction>
           <AlertDialogCancel onClick={onClose}>Close</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   )
 }
-

@@ -1,33 +1,38 @@
 "use client";
-
+import { CiStreamOn } from "react-icons/ci";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MdEventRepeat } from "react-icons/md";
 import { PiTagChevronBold } from "react-icons/pi";
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+
+dayjs.extend(isBetween);
 
 export function EventsSidebar({ events }: { events: any[] }) {
-  const getStatusBadge = (startDate: string, endDate: string) => {
-    const today = dayjs().startOf("day");
-    const start = dayjs(startDate).startOf("day");
-    const end = dayjs(endDate).startOf("day");
+  const getStatusBadge = (startDate: string, endDate: string, type: string) => {
+    const now = dayjs();
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
 
-    if (end.isBefore(today)) {
+    if (type === "Holiday" || type === "Assignment") {
+      return (
+        <span className="ml-auto text-xs font-medium text-blue-500 bg-blue-100 px-2 py-1 rounded-full">
+          {type}
+        </span>
+      );
+    }
+    if (now.isBetween(start, end, null, "[]")) {
+      return (
+        <span className="flex justify-center gap-1 ml-auto text-xs font-medium text-purple-500 bg-purple-100 px-2 py-1 rounded-full">
+          <CiStreamOn className="text-base font-bold "/> Live
+        </span>
+      );
+    }
+    if (end.isBefore(now)) {
       return (
         <span className="ml-auto text-xs font-medium text-red-500 bg-red-100 px-2 py-1 rounded-full">
           Completed
-        </span>
-      );
-    } else if (start.isSame(today)) {
-      return (
-        <span className="ml-auto text-xs font-medium text-orange-500 bg-orange-100 px-2 py-1 rounded-full">
-          Ongoing
-        </span>
-      );
-    } else if (start.isBefore(today) && end.isAfter(today)) {
-      return (
-        <span className="ml-auto text-xs font-medium text-blue-500 bg-blue-100 px-2 py-1 rounded-full">
-          In Progress
         </span>
       );
     } else {
@@ -50,25 +55,41 @@ export function EventsSidebar({ events }: { events: any[] }) {
           {event.name}
         </h1>
       </div>
-      {getStatusBadge(event.startDate, event.endDate)}
+      {getStatusBadge(event.startDate, event.endDate, event.type)}
     </div>
   );
 
-  const today = dayjs().startOf("day");
-
-  // Categorize events
-  const todayEvents = events?.filter(
-    (event) =>
-      dayjs(event.startDate).isSame(today, "day") ||
-      (dayjs(event.startDate).isBefore(today) && dayjs(event.endDate).isAfter(today))
+  const renderAssignmentItem = (assignment: any) => (
+    <div
+      key={assignment.id}
+      className="flex items-center p-3 gap-3 bg-gray-100 dark:bg-gray-800 rounded-md mb-2 shadow-sm hover:shadow-md transition-all duration-200"
+    >
+      <div>
+        <h1 className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+          {assignment.name}
+        </h1>
+      </div>
+      {getStatusBadge(assignment.startDate, assignment.endDate, assignment.type)}
+    </div>
   );
 
-  const upcomingEvents = events?.filter(
-    (event) => dayjs(event.startDate).isAfter(today, "day")
+  const now = dayjs();
+  const assignments = events?.filter((event) => event.type === "Assignment");
+  const otherEvents = events?.filter((event) => event.type !== "Assignment");
+
+  // live events
+  const liveEvents = otherEvents?.filter((event) =>
+    now.isBetween(dayjs(event.startDate), dayjs(event.endDate), null, "[]")
   );
 
-  const completedEvents = events?.filter((event) =>
-    dayjs(event.endDate).isBefore(today, "day")
+  // upcoming events
+  const upcomingEvents = otherEvents?.filter((event) =>
+    dayjs(event.startDate).isAfter(now)
+  );
+
+  // completed events
+  const completedEvents = otherEvents?.filter((event) =>
+    dayjs(event.endDate).isBefore(now)
   );
 
   const renderEventSection = (
@@ -91,11 +112,27 @@ export function EventsSidebar({ events }: { events: any[] }) {
     </>
   );
 
+  const renderAssignmentSection = (assignments: any[]) => (
+    <>
+      <h2 className="text-base font-bold text-gray-700 dark:text-gray-200 p-2">
+        Assignments
+      </h2>
+      {assignments.length === 0 ? (
+        <div className="flex flex-col justify-center items-center text-gray-500 dark:text-gray-400 my-5">
+          <MdEventRepeat className="h-12 w-12 md:h-16 md:w-16 text-gray-300 dark:text-gray-500" />
+          <p className="text-sm mt-4">No assignments available</p>
+        </div>
+      ) : (
+        assignments.map(renderAssignmentItem)
+      )}
+    </>
+  );
+
   return (
     <div>
       <ScrollArea className="md:h-[550px] overflow-auto">
-        <Card className="w-full md:w-[270px] bg-white dark:bg-gray-900 p-4 rounded-lg shadow-md">
-          {renderEventSection("Today's Events", todayEvents, "No events today")}
+        <Card className="w-full md:w-[290px] bg-white dark:bg-gray-900 p-4 rounded-lg shadow-md">
+          {renderEventSection("Live Events", liveEvents, "No live events")}
           {renderEventSection(
             "Upcoming Events",
             upcomingEvents,
@@ -106,8 +143,10 @@ export function EventsSidebar({ events }: { events: any[] }) {
             completedEvents,
             "No completed events"
           )}
+          {renderAssignmentSection(assignments)}
         </Card>
       </ScrollArea>
     </div>
   );
 }
+

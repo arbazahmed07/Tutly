@@ -4,12 +4,12 @@ import {
   getDate, 
   isSameDay, 
   isSameMonth, 
-  isWithinInterval, 
   startOfMonth, 
   startOfWeek 
 } from "date-fns";
-
+import { CiStreamOn } from "react-icons/ci";
 interface Event {
+  type:string,
   name: string;
   startDate: Date;
   endDate: Date;
@@ -27,7 +27,6 @@ export function MonthView({ selectedDate, events, onEventClick }: MonthViewProps
   const startDate = startOfWeek(monthStart, { weekStartsOn: 0 });
   const today = new Date();
 
-  // Generate all the weeks and days for the calendar
   const weeks = [];
   let currentDay = startDate;
 
@@ -93,7 +92,16 @@ export function MonthView({ selectedDate, events, onEventClick }: MonthViewProps
                       onClick={() => onEventClick(event)}
                       title={event.name}
                     >
-                      {event.name}
+                      {
+                        event.type==="Holiday"?
+                        <div>{event.type}</div>
+                        :
+                        (
+                        event.type==="Assignment"?
+                        <div>{event.name}</div>:
+                        <div className="flex items-center gap-1"><CiStreamOn className="font-bold"/>{event.name}</div>
+                        )
+                      }
                     </div>
                   ))}
                 </div>

@@ -39,6 +39,7 @@ const assignments = courses.flatMap((course) =>
       endDate.setHours(23, 59, 59, 999);
 
       return {
+        type:"Assignment",
         name: attachment.title,
         description: `Assignment added on ${new Date(attachment.createdAt).toDateString()}`,
         startDate,
@@ -52,6 +53,7 @@ const assignments = courses.flatMap((course) =>
 
 const classEvents = courses.flatMap((course) =>
   course.classes.map((classItem) => ({
+    type:"Class",
     name: classItem.title,
     description: `Session starts at ${new Date(classItem.createdAt).toDateString()}`,
     startDate: new Date(classItem.createdAt),
@@ -59,6 +61,28 @@ const classEvents = courses.flatMap((course) =>
     link: `courses/${course.id}/classes/${classItem.id}`,
   }))
 );
+  
+
+// const holidays = [
+//   {
+//     type: "Holiday",
+//     name: "Bhogi",
+//     description: "Declared as Holiday",
+//     startDate: new Date('2025-01-13').setHours(0, 0, 0, 0),
+//     endDate: new Date('2025-01-13').setHours(23, 59, 0, 0),
+//     link: "/calendar",
+//   },
+//   {
+//     type: "Holiday",
+//     name: "Kanuma",
+//     description: "Declared as Holiday",
+//     startDate: new Date('2025-01-14').setHours(0, 0, 0, 0),
+//     endDate: new Date('2025-01-14').setHours(23, 59, 0, 0),
+//     link: "/calendar",
+//   },
+// ];
+// const events = [...assignments, ...classEvents,...holidays];
+
 
 const events = [...assignments, ...classEvents];
 ---

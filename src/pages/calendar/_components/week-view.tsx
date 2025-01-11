@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   addDays,
@@ -54,26 +54,33 @@ export function WeekView({ selectedDate, events, onEventClick }: WeekViewProps) 
       .map((event) => splitEventForDay(event, day));
   };
 
-  const getEventsLayout = (dayEvents: Event[]): { left: number; width: number }[] => {
-    const sortedEvents = dayEvents.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
-    const eventLayouts: { left: number; width: number }[] = [];
+  const getEventsLayout = (dayEvents: Event[]) => {
+    const columns: Event[][] = [];
 
-    sortedEvents.forEach((event, index) => {
-      const conflictingEvents = sortedEvents.filter((e, i) => 
-        i < index && e.endDate > event.startDate
-      );
-
-      const column = conflictingEvents.length;
-      const maxColumn = Math.max(column, ...eventLayouts.map(layout => layout.left / 25));
-      const totalColumns = maxColumn + 1;
-
-      const left = column * (100 / totalColumns);
-      const width = 100 / totalColumns;
-
-      eventLayouts.push({ left, width });
+    dayEvents.forEach((event) => {
+      let placed = false;
+      for (const column of columns) {
+        if (!column.some((e) => e.endDate > event.startDate)) {
+          column.push(event);
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        columns.push([event]);
+      }
     });
 
-    return eventLayouts;
+    return dayEvents.map((event) => {
+      const columnIndex = columns.findIndex((column) =>
+        column.includes(event)
+      );
+      const totalColumns = columns.length;
+      return {
+        left: (columnIndex / totalColumns) * 100,
+        width: 100 / totalColumns,
+      };
+    });
   };
 
   const getEventStyle = (
@@ -83,17 +90,16 @@ export function WeekView({ selectedDate, events, onEventClick }: WeekViewProps) 
     const startMinutes = event.startDate.getHours() * 60 + event.startDate.getMinutes();
     const endMinutes = event.endDate.getHours() * 60 + event.endDate.getMinutes();
     const duration = endMinutes - startMinutes;
-  
+
     return {
       top: `${startMinutes}px`,
       height: `${duration}px`,
       backgroundColor: event.color || "#3b82f6",
-      left: `${layout.left + layout.width / 2 - 1}px`,
-      width: "40px",
+      left: `${layout.left}%`,
+      width: `${layout.width}%`,
       position: "absolute" as const,
     };
   };
-  
 
   return (
     <div className="h-full overflow-auto">
@@ -123,7 +129,7 @@ export function WeekView({ selectedDate, events, onEventClick }: WeekViewProps) 
               key={hour}
               className="flex items-center justify-end pr-2 h-[60px] text-sm text-muted-foreground"
             >
-              {format(new Date().setHours(hour, 0, 0, 0), 'h a')}
+              {format(new Date().setHours(hour, 0, 0, 0), "h a")}
             </div>
           ))}
         </div>
@@ -143,12 +149,15 @@ export function WeekView({ selectedDate, events, onEventClick }: WeekViewProps) 
 
                   return (
                     <div
-                      key={`${event.name}-${event.startDate.getTime()}`}
-                      className="absolute p-1 text-xs font-semibold rounded cursor-pointer overflow-hidden text-primary-foreground"
-                      style={getEventStyle(event, layout)}
-                      onClick={() => onEventClick(event)}
-                    >
-                    </div>
+                        key={`${event.name}-${event.startDate.getTime()}`}
+                        className="text-xs font-semibold rounded cursor-pointer text-primary-foreground break-words whitespace-normal p-2"
+                        style={getEventStyle(event, layout)}
+                        onClick={() => onEventClick(event)}
+                      >
+                        <h1>
+                          {event.name}
+                        </h1>
+                      </div>
                   );
                 })}
               </div>
@@ -159,4 +168,3 @@ export function WeekView({ selectedDate, events, onEventClick }: WeekViewProps) 
     </div>
   );
 }
-
