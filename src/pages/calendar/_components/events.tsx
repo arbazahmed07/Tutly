@@ -17,27 +17,27 @@ export function EventsSidebar({ events }: { events: any[] }) {
 
     if (type === "Holiday" || type === "Assignment") {
       return (
-        <span className="ml-auto text-xs font-medium text-blue-500 bg-blue-100 px-2 py-1 rounded-full">
+        <span className="ml-auto text-xs font-medium text-blue-700 bg-blue-100 px-3 py-1.5 rounded-full">
           {type}
         </span>
       );
     }
     if (now.isBetween(start, end, null, "[]")) {
       return (
-        <span className="flex justify-center gap-1 ml-auto text-xs font-medium text-purple-500 bg-purple-100 px-2 py-1 rounded-full">
+        <span className="flex justify-center gap-1 ml-auto text-xs font-medium text-purple-500 bg-purple-100 px-3 py-1.5 rounded-full">
           <CiStreamOn className="text-base font-bold "/> Live
         </span>
       );
     }
     if (end.isBefore(now)) {
       return (
-        <span className="ml-auto text-xs font-medium text-red-500 bg-red-100 px-2 py-1 rounded-full">
+        <span className="ml-auto text-xs font-medium text-red-500 bg-red-100 px-3 py-1.5 rounded-full">
           Completed
         </span>
       );
     } else {
       return (
-        <span className="ml-auto text-xs font-medium text-green-500 bg-green-100 px-2 py-1 rounded-full">
+        <span className="ml-auto text-xs font-medium text-green-800 bg-green-100 px-3 py-1.5 rounded-full">
           Upcoming
         </span>
       );
@@ -130,7 +130,7 @@ export function EventsSidebar({ events }: { events: any[] }) {
 
   return (
     <div>
-      <ScrollArea className="md:h-[550px] overflow-auto">
+      <ScrollArea className="md:h-[570px] overflow-auto">
         <Card className="w-full md:w-[290px] bg-white dark:bg-gray-900 p-4 rounded-lg shadow-md">
           {renderEventSection("Live Events", liveEvents, "No live events")}
           {renderEventSection(

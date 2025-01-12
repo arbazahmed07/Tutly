@@ -10,9 +10,12 @@ import {
 } from "date-fns";
 
 interface Event {
+  type:string,
   name: string;
+  description: string;
   startDate: Date;
   endDate: Date;
+  link: string;
 }
 
 interface MonthCalendarProps {
@@ -88,7 +91,7 @@ export function MonthCalendar({
                 } ${
                   isCurrentMonth ? "bg-background" : "bg-muted/50"
                 } ${
-                  isToday ? "bg-green-600 text-white rounded" : ""
+                  isToday ? "bg-green-600 text-white rounded-full" : ""
                 } flex flex-col items-center justify-center relative m-0.5`}
               >
                 <span>{getDate(day)}</span>
@@ -97,7 +100,7 @@ export function MonthCalendar({
                     {dayEvents.map((event, index) => (
                       <div
                         key={index}
-                        className="w-4 h-1 bg-blue-500 rounded-full cursor-pointer mt-1"
+                        className="w-4 h-1 bg-red-500 rounded-full cursor-pointer mt-1"
                         title={event.name}
                         onClick={() => onEventClick(event)}
                       ></div>

@@ -11,11 +11,11 @@ import {
 
 interface Event {
   name: string;
+  description: string;
   startDate: Date;
   endDate: Date;
-  color?: string;
+  link: string;
 }
-
 interface WeekViewProps {
   selectedDate: Date;
   events: Event[];
@@ -94,7 +94,7 @@ export function WeekView({ selectedDate, events, onEventClick }: WeekViewProps) 
     return {
       top: `${startMinutes}px`,
       height: `${duration}px`,
-      backgroundColor: event.color || "#3b82f6",
+      backgroundColor:"#3b82f6",
       left: `${layout.left}%`,
       width: `${layout.width}%`,
       position: "absolute" as const,

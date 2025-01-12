@@ -7,12 +7,13 @@ import {
   startOfMonth, 
   startOfWeek 
 } from "date-fns";
-import { CiStreamOn } from "react-icons/ci";
 interface Event {
   type:string,
   name: string;
+  description: string;
   startDate: Date;
   endDate: Date;
+  link: string;
 }
 
 interface MonthViewProps {
@@ -74,32 +75,38 @@ export function MonthView({ selectedDate, events, onEventClick }: MonthViewProps
                 key={dayIndex}
                 className={`flex flex-col items-start p-2 min-h-[90px] border border-border ${
                   isCurrentMonth ? "bg-background" : "bg-muted/50"
-                } ${isToday ? "bg-green-600 text-white" : ""}`}
+                }`}
               >
                 <div
                   className={`text-sm mb-1 ${
-                    isToday ? "font-bold" : ""
+                    isToday ? "flex justify-center items-center font-bold bg-green-600 w-10 h-10 rounded-full" : ""
                   }`}
                 >
                   {getDate(day)}
                 </div>
 
-                <div className="flex flex-col w-full space-y-1">
+                <div className="flex flex-col w-full">
                   {dayEvents.map((event, index) => (
                     <div
                       key={index}
-                      className="text-xs bg-blue-500 text-white rounded px-2 py-1 cursor-pointer overflow-hidden"
+                      className="text-xs rounded text-center px-2 py-1 cursor-pointer overflow-hidden"
                       onClick={() => onEventClick(event)}
                       title={event.name}
                     >
                       {
                         event.type==="Holiday"?
-                        <div>{event.type}</div>
+                        <div className="ml-auto text-xs font-semibold text-red-500 bg-red-100 px-2 py-1 rounded-full">
+                          {event.type}
+                        </div>
                         :
                         (
                         event.type==="Assignment"?
-                        <div>{event.name}</div>:
-                        <div className="flex items-center gap-1"><CiStreamOn className="font-bold"/>{event.name}</div>
+                        <div className="ml-auto text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
+                          {event.name}
+                        </div>:
+                        <div className="ml-auto text-xs font-semibold bg-violet-100 text-violet-600 px-2 py-1 rounded-full">
+                          {event.name}
+                        </div>
                         )
                       }
                     </div>

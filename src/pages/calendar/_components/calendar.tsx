@@ -14,10 +14,11 @@ type ViewType = "day" | "week" | "month" | "year"
 
 interface Event {
   name: string;
+  description: string;
   startDate: Date;
   endDate: Date;
+  link: string;
 }
-
 
 export function Calendar({ events }: any) {
   const [selectedDate, setSelectedDate] = useState(new Date())

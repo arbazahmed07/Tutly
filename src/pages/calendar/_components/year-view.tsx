@@ -2,9 +2,12 @@ import { addMonths, format,startOfYear } from "date-fns"
 import { MonthCalendar } from "./month-calendar"
 
 interface Event {
+  type:string,
   name: string;
+  description: string;
   startDate: Date;
   endDate: Date;
+  link: string;
 }
 
 interface YearViewProps {

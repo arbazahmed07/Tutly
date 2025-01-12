@@ -2,8 +2,10 @@ import { format, startOfDay, endOfDay } from "date-fns";
 
 interface Event {
   name: string;
+  description: string;
   startDate: Date;
   endDate: Date;
+  link: string;
 }
 
 interface DayViewProps {

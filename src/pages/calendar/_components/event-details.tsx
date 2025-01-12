@@ -1,6 +1,5 @@
 'use client'
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogAction, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
-import dayjs from "dayjs";
 
 interface Event {
   name: string;
