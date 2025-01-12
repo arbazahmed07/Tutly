@@ -20,6 +20,7 @@ import * as schedule from "./schedule";
 import * as statistics from "./statistics";
 import * as submissions from "./submission";
 import * as users from "./users";
+import * as holidays from "./holidays";
 
 export const server = {
   ...groupActions("courses", courses, "_"),
@@ -41,4 +42,5 @@ export const server = {
   ...groupActions("fileupload", fileupload, "_"),
   ...groupActions("schedule", schedule, "_"),
   ...groupActions("codingPlatforms", codingPlatforms, "_"),
+  ...groupActions("holidays", holidays, "_"),
 };

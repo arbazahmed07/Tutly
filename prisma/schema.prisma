@@ -567,3 +567,12 @@ model EventAttachment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+
+model Holidays{
+  id String @id @default(uuid())
+  reason String
+  description String?
+  startDate DateTime
+  endDate DateTime 
+}

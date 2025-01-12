@@ -29,6 +29,8 @@ let courses = await db.course.findMany({
   },
 });
 
+let holidays= await db.holidays.findMany({})
+
 const assignments = courses.flatMap((course) =>
   course.classes.flatMap((classItem) =>
     classItem.attachments.map((attachment) => {
@@ -61,30 +63,27 @@ const classEvents = courses.flatMap((course) =>
     link: `courses/${course.id}/classes/${classItem.id}`,
   }))
 );
-  
 
-// const holidays = [
-//   {
-//     type: "Holiday",
-//     name: "Bhogi",
-//     description: "Declared as Holiday",
-//     startDate: new Date('2025-01-13').setHours(0, 0, 0, 0),
-//     endDate: new Date('2025-01-13').setHours(23, 59, 0, 0),
-//     link: "/calendar",
-//   },
-//   {
-//     type: "Holiday",
-//     name: "Kanuma",
-//     description: "Declared as Holiday",
-//     startDate: new Date('2025-01-14').setHours(0, 0, 0, 0),
-//     endDate: new Date('2025-01-14').setHours(23, 59, 0, 0),
-//     link: "/calendar",
-//   },
-// ];
-// const events = [...assignments, ...classEvents,...holidays];
+const holidayEvents = holidays.map((holiday) => {
+  const startDate = new Date(holiday.startDate);
+  const endDate = new Date(holiday.endDate);
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999);
+
+  return {
+    type: "Holiday",
+    name: holiday.reason,
+    description: holiday?.description || "Observed holiday",
+    startDate: startDate,
+    endDate: endDate,
+    link: "/calendar",
+  };
+});
 
 
-const events = [...assignments, ...classEvents];
+
+const events = [...assignments, ...classEvents,...holidayEvents];
+
 ---
 
 <RootLayout title="Events">

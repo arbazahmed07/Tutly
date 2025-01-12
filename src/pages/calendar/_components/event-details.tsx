@@ -29,7 +29,7 @@ export function EventDetails({ event, onClose }: EventDetailsProps) {
         </AlertDialogDescription>
         <AlertDialogFooter>
           <AlertDialogAction>
-            <a href={event.link} className="hover:underline" target="_blank" rel="noopener noreferrer">
+            <a href={event.link} className="hover:underline">
               View
             </a>
           </AlertDialogAction>
