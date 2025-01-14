@@ -1,7 +1,6 @@
 import { MdOutlineNoteAlt } from "react-icons/md";
 import { PiStudentBold } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
-import Holidays from "./Holidays";
 import { InstructorDashboardData } from "@/types/dashboard";
 
 interface Props {
@@ -27,9 +26,6 @@ export function InstructorCards({ data }: Props) {
           <p className="pt-2 font-bold text-blue-600">{data.enrolledStudents}</p>
           <h1 className="p-1 text-sm font-bold">Total no of students enrolled</h1>
         </div>
-      </div>
-      <div className="flex justify-end">
-        <Holidays />
       </div>
     </div>
   );

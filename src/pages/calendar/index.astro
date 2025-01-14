@@ -3,6 +3,7 @@ import RootLayout from "@layouts/RootLayout.astro";
 import { Calendar } from "./_components/calendar";
 import { EventsSidebar } from "./_components/events";
 import db from "@/lib/db";
+import { format } from 'date-fns';
 
 const currentUser = Astro.locals.user;
 
@@ -43,7 +44,7 @@ const assignments = courses.flatMap((course) =>
       return {
         type:"Assignment",
         name: attachment.title,
-        description: `Assignment added on ${new Date(attachment.createdAt).toDateString()}`,
+        description: `Assignment added on ${format(new Date(attachment.createdAt), 'MMMM d, yyyy, EEEE, h:mm a')}`,
         startDate,
         endDate,
         link: `assignments/${attachment.id}`,
@@ -57,7 +58,7 @@ const classEvents = courses.flatMap((course) =>
   course.classes.map((classItem) => ({
     type:"Class",
     name: classItem.title,
-    description: `Session starts at ${new Date(classItem.createdAt).toDateString()}`,
+    description: `Session starts at ${format(new Date(classItem.createdAt), 'MMMM d, yyyy, EEEE, h:mm a')}`,
     startDate: new Date(classItem.createdAt),
     endDate: new Date(classItem.createdAt.getTime() + 2000 * 60 * 60),
     link: `courses/${course.id}/classes/${classItem.id}`,
