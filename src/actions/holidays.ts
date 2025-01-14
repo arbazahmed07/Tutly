@@ -66,3 +66,32 @@ export const getAllHolidays = defineAction({
   },
 });
 
+export const editHolidays=defineAction({
+  input: z.object({
+    id: z.string(),
+    reason: z.string(),
+    description: z.string().optional(),
+    startDate: z.string().transform((str) => new Date(str)),
+    endDate: z.string().transform((str) => new Date(str)),
+  }),
+  async handler({ id, reason, description, startDate, endDate }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) throw new Error("Unauthorized");
+
+    try {
+      const holiday = await db.holidays.update({
+        where: { id },
+        data: {
+          reason,
+          description: description ?? null,
+          startDate,
+          endDate,
+        },
+      });
+      return { success: true, data: holiday };
+    } catch (error) {
+      console.error("Database error:", error);
+      throw new Error("Failed to update holiday");
+    }
+  },
+});
