@@ -1,5 +1,8 @@
+import { actions } from "astro:actions";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { MdHolidayVillage } from "react-icons/md";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +14,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {Calendar} from "@/components/ui/calendar"
-import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -20,12 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DashboardData } from "@/types/dashboard";
-import { getGreeting } from "@/utils/getGreeting";
-import { actions } from "astro:actions";
-import { InstructorCards } from "./InstructorCards";
-import { MentorCards } from "./MentorCards";
-import { StudentCards } from "./StudentCards";
 import {
   Table,
   TableBody,
@@ -34,12 +42,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import Holidays from "./Holidays";
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DashboardData } from "@/types/dashboard";
+import { getGreeting } from "@/utils/getGreeting";
+
+import Holidays from "./Holidays";
+import { InstructorCards } from "./InstructorCards";
+import { MentorCards } from "./MentorCards";
+import { StudentCards } from "./StudentCards";
 
 interface Props {
   data: DashboardData | null;
@@ -181,7 +191,6 @@ const Dashboard = ({ data, name, holidays, currentUser }: Props) => {
                         {currentUser.role === "INSTRUCTOR" && (
                           <TableCell>
                             <div className="flex gap-2">
-
                               <Dialog>
                                 <DialogTrigger asChild>
                                   <Button
@@ -196,7 +205,8 @@ const Dashboard = ({ data, name, holidays, currentUser }: Props) => {
                                   <DialogHeader>
                                     <DialogTitle>Edit Holiday</DialogTitle>
                                     <DialogDescription>
-                                      Make changes to the holiday details here. Click save when you're done.
+                                      Make changes to the holiday details here. Click save when
+                                      you're done.
                                     </DialogDescription>
                                   </DialogHeader>
                                   <form
@@ -210,7 +220,7 @@ const Dashboard = ({ data, name, holidays, currentUser }: Props) => {
                                         <label htmlFor="reason">Reason</label>
                                         <Input
                                           id="reason"
-                                           className="mt-2"
+                                          className="mt-2"
                                           value={editingHoliday?.reason || ""}
                                           onChange={(e) =>
                                             setEditingHoliday({
@@ -235,39 +245,41 @@ const Dashboard = ({ data, name, holidays, currentUser }: Props) => {
                                           }
                                         />
                                       </div>
-                                        <div className="p-3">
-                                          <label htmlFor="startDate">Start Date</label>
-                                          <Calendar
-                                            id="startDate"
-                                            mode="single"
-                                            selected={new Date(editingHoliday?.startDate)}
-                                            onSelect={(date) =>
-                                              setEditingHoliday({
-                                                ...editingHoliday,
-                                                startDate: date?.toISOString(),
-                                              })
-                                            }
-                                            className="mt-2"
-                                          />
-                                        </div>
-                                        <div className="p-3">
-                                          <label htmlFor="endDate">End Date</label>
-                                          <Calendar
-                                            id="endDate"
-                                            mode="single"
-                                            selected={new Date(editingHoliday?.endDate)}
-                                            onSelect={(date) =>
-                                              setEditingHoliday({
-                                                ...editingHoliday,
-                                                endDate: date?.toISOString(),
-                                              })
-                                            }
-                                            className="mt-2"
-                                          />
-                                        </div>
+                                      <div className="p-3">
+                                        <label htmlFor="startDate">Start Date</label>
+                                        <Calendar
+                                          id="startDate"
+                                          mode="single"
+                                          selected={new Date(editingHoliday?.startDate)}
+                                          onSelect={(date) =>
+                                            setEditingHoliday({
+                                              ...editingHoliday,
+                                              startDate: date?.toISOString(),
+                                            })
+                                          }
+                                          className="mt-2"
+                                        />
+                                      </div>
+                                      <div className="p-3">
+                                        <label htmlFor="endDate">End Date</label>
+                                        <Calendar
+                                          id="endDate"
+                                          mode="single"
+                                          selected={new Date(editingHoliday?.endDate)}
+                                          onSelect={(date) =>
+                                            setEditingHoliday({
+                                              ...editingHoliday,
+                                              endDate: date?.toISOString(),
+                                            })
+                                          }
+                                          className="mt-2"
+                                        />
+                                      </div>
                                     </ScrollArea>
                                     <DialogFooter>
-                                      <Button type="submit" className="mt-4">Save changes</Button>
+                                      <Button type="submit" className="mt-4">
+                                        Save changes
+                                      </Button>
                                     </DialogFooter>
                                   </form>
                                 </DialogContent>
@@ -281,19 +293,15 @@ const Dashboard = ({ data, name, holidays, currentUser }: Props) => {
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      Are you absolutely sure?
-                                    </AlertDialogTitle>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      This action cannot be undone. This will permanently delete
-                                      the holiday.
+                                      This action cannot be undone. This will permanently delete the
+                                      holiday.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDelete(holiday.id)}
-                                    >
+                                    <AlertDialogAction onClick={() => handleDelete(holiday.id)}>
                                       Delete
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
@@ -321,4 +329,3 @@ const Dashboard = ({ data, name, holidays, currentUser }: Props) => {
 };
 
 export default Dashboard;
-

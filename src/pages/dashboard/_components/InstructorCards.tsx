@@ -1,6 +1,7 @@
 import { MdOutlineNoteAlt } from "react-icons/md";
 import { PiStudentBold } from "react-icons/pi";
 import { SiGoogleclassroom } from "react-icons/si";
+
 import { InstructorDashboardData } from "@/types/dashboard";
 
 interface Props {

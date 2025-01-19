@@ -1,13 +1,25 @@
-'use client'
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogAction, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
+"use client";
+
 import { HiChevronDoubleLeft } from "react-icons/hi";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 interface Event {
   name: string;
   description: string;
   startDate: Date;
   endDate: Date;
   link: string;
-  type:string;
+  type: string;
 }
 
 interface EventDetailsProps {
@@ -28,17 +40,18 @@ export function EventDetails({ event, onClose }: EventDetailsProps) {
           </div>
         </AlertDialogDescription>
         <AlertDialogFooter>
-          {
-            event.type!=="Holiday"&&
+          {event.type !== "Holiday" && (
             <AlertDialogAction>
-            <a href={event.link} className="hover:underline">
-              View
-            </a>
-          </AlertDialogAction>
-          }
-          <AlertDialogCancel onClick={onClose}><HiChevronDoubleLeft/> Back</AlertDialogCancel>
+              <a href={event.link} className="hover:underline">
+                View
+              </a>
+            </AlertDialogAction>
+          )}
+          <AlertDialogCancel onClick={onClose}>
+            <HiChevronDoubleLeft /> Back
+          </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

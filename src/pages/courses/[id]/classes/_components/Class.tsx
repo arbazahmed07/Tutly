@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import { RiEdit2Fill } from "react-icons/ri";
 import { useDebounce } from "use-debounce";
-import {ScrollArea} from "@/components/ui/scroll-area";
+
 import VideoPlayer from "@/components/VideoPlayer";
 import RichTextEditor from "@/components/editor/RichTextEditor";
 import {
@@ -46,6 +46,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import NewAttachmentPage from "./NewAssignments";
 
@@ -269,7 +270,6 @@ export default function Class({
                     </ScrollArea>
                   </DialogContent>
                 </Dialog>
-
               </div>
             )}
 

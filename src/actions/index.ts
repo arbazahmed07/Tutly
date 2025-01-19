@@ -10,6 +10,7 @@ import * as courses from "./courses";
 import * as doubts from "./doubts";
 import * as fileupload from "./fileupload";
 import * as leaderboard from "./getLeaderboard";
+import * as holidays from "./holidays";
 import * as mentors from "./mentors";
 import * as notes from "./notes";
 // import * as resend from "./resend";
@@ -20,7 +21,6 @@ import * as schedule from "./schedule";
 import * as statistics from "./statistics";
 import * as submissions from "./submission";
 import * as users from "./users";
-import * as holidays from "./holidays";
 
 export const server = {
   ...groupActions("courses", courses, "_"),

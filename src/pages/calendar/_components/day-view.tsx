@@ -1,4 +1,4 @@
-import { format, startOfDay, endOfDay } from "date-fns";
+import { endOfDay, format, startOfDay } from "date-fns";
 
 interface Event {
   name: string;
@@ -6,6 +6,7 @@ interface Event {
   startDate: Date;
   endDate: Date;
   link: string;
+  type: string;
 }
 
 interface DayViewProps {
@@ -37,8 +38,7 @@ export function DayView({ selectedDate, events, onEventClick }: DayViewProps) {
     return events
       .filter(
         (event) =>
-          event.startDate <= endOfDay(selectedDate) &&
-          event.endDate >= startOfDay(selectedDate)
+          event.startDate <= endOfDay(selectedDate) && event.endDate >= startOfDay(selectedDate)
       )
       .map((event) => splitEventForDay(event, selectedDate));
   };
@@ -47,9 +47,7 @@ export function DayView({ selectedDate, events, onEventClick }: DayViewProps) {
 
   return (
     <div className="h-full">
-      <div className="text-2xl font-bold p-4 mb-4">
-        {format(selectedDate, "EEEE, d MMMM yyyy")}
-      </div>
+      <div className="text-2xl font-bold p-4 mb-4">{format(selectedDate, "EEEE, d MMMM yyyy")}</div>
       <div className="relative min-h-full">
         {hours.map((hour) => (
           <div key={hour} className="relative h-[60px]">
