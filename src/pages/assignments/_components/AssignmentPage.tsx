@@ -158,15 +158,23 @@ const StudentAssignmentSubmission = ({
 
     try {
       toast.loading("Submitting assignment...");
-      await actions.submissions_submitExternalLink({
+
+      const { data: res, error } = await actions.submissions_submitExternalLink({
         assignmentId: assignment.id,
         externalLink,
         maxSubmissions: assignment.maxSubmissions,
         courseId,
       });
+
+      console.log(res);
       toast.dismiss();
+      if (error || res.error) {
+        toast.error(`Error: ${res?.error}`);
+        return;
+      }
       toast.success("Assignment submitted successfully");
       setExternalLink("");
+      window.location.reload();
     } catch (error) {
       toast.dismiss();
       toast.error("Error submitting assignment");

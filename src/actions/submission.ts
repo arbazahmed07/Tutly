@@ -379,12 +379,30 @@ export const submitExternalLink = defineAction({
       return { error: "Maximum submission limit reached" };
     }
 
+    const mentorDetails = await db.enrolledUsers.findFirst({
+      where: {
+        username: user.username,
+        courseId: courseId,
+      },
+      select: {
+        mentor: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
+
+    if (!mentorDetails) {
+      return { error: "Mentor not found" };
+    }
+
     const enrolledUser = await db.enrolledUsers.findUnique({
       where: {
         username_courseId_mentorUsername: {
           username: user.username,
           courseId: courseId,
-          mentorUsername: user.username,
+          mentorUsername: mentorDetails.mentor?.username || "",
         },
       },
     });
