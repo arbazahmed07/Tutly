@@ -37,6 +37,8 @@ const version = getVersion();
     <ViewTransitions />
     <script is:inline>
       const getTheme = () => {
+        // default to dark
+        return "dark";
         if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
           return localStorage.getItem("theme");
         }

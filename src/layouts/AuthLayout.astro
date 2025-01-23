@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import Crisp from "@/components/Crisp";
 import { RefreshCw } from "lucide-react";
 import { getVersion } from "@/lib/version";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface Props {
   title?: string;
@@ -23,6 +24,9 @@ const version = getVersion();
     <title>{title}</title>
     <script is:inline>
       const getTheme = () => {
+        // change this
+        return "dark";
+
         if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
           return localStorage.getItem("theme");
         }
@@ -54,6 +58,9 @@ const version = getVersion();
       >
         <RefreshCw className="h-3 w-3 transition-transform" />
       </button>
+    </div>
+    <div class="fixed right-4 top-4">
+      <ThemeToggle client:load />
     </div>
     <Toaster client:load />
     <slot />

@@ -8,13 +8,12 @@ const googleClientSecret = envOrThrow("GOOGLE_CLIENT_SECRET");
 
 let lastState: { state: string; codeVerifier: string } | null = null;
 
-function google(url?: URL) {
-  url ??= new URL("http://localhost:4321");
-  const callbackUrl = new URL("/api/auth/callback/google", url);
-
-  if (import.meta.env.PROD) {
-    callbackUrl.protocol = "https:";
-  }
+const google = (url?: URL) => {
+  // If no URL is provided, try to use environment variable, fallback to localhost
+  const baseUrl = import.meta.env.SITE ?? "http://localhost:4321";
+  url ??= new URL(baseUrl);
+  
+  const callbackUrl = new URL("/api/auth/callback/google", url.origin);
 
   return new Google(googleClientId, googleClientSecret, callbackUrl.toString());
 }
