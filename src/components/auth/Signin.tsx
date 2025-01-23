@@ -28,7 +28,7 @@ type SignInInput = z.infer<typeof signInSchema>;
 export function SignIn() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isGoogleLoading, ] = useState(false);
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
