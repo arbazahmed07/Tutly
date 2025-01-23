@@ -64,15 +64,29 @@ export function SignIn() {
       setIsLoading(false);
     }
   }
-
   const handleGoogleSignIn = async () => {
-    try {
-      setIsGoogleLoading(true);
-      window.location.href = "/api/auth/signin/google";
-    } catch (error) {
-      toast.error("Failed to initiate Google sign in");
-      setIsGoogleLoading(false);
-    }
+    toast.custom(
+      <Card className="border-border bg-background/95 p-3">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          <p className="text-sm text-foreground">Google Sign-in is under maintenance. Please sign in with email instead.</p>
+        </div>
+      </Card>,
+      {
+        duration: 2000,
+        position: "top-center",
+      }
+    );
+
+    return;
+    
+    // try {
+    //   setIsGoogleLoading(true);
+    //   window.location.href = "/api/auth/signin/google";
+    // } catch (error) {
+    //   toast.error("Failed to initiate Google sign in");
+    //   setIsGoogleLoading(false);
+    // }
   };
 
   return (
