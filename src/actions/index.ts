@@ -17,6 +17,7 @@ import * as notes from "./notes";
 import * as notifications from "./notifications";
 import * as points from "./points";
 import * as report from "./report";
+import * as resetPassword from "./reset-password";
 import * as schedule from "./schedule";
 import * as statistics from "./statistics";
 import * as submissions from "./submission";
@@ -43,4 +44,5 @@ export const server = {
   ...groupActions("schedule", schedule, "_"),
   ...groupActions("codingPlatforms", codingPlatforms, "_"),
   ...groupActions("holidays", holidays, "_"),
+  ...groupActions("reset_password", resetPassword, "_"),
 };

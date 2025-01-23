@@ -24,9 +24,10 @@ export const GET: APIRoute = async ({ params, url, cookies, request, redirect })
   }
 
   try {
-    const codeVerifier = providerName === "google" 
-      ? provider.getCodeVerifierByState?.(state)
-      : provider.getLastCodeVerifier?.();
+    const codeVerifier =
+      providerName === "google"
+        ? provider.getCodeVerifierByState?.(state)
+        : provider.getLastCodeVerifier?.();
 
     if (!codeVerifier) {
       throw new Error("Invalid or expired OAuth state");

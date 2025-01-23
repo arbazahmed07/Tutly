@@ -1,4 +1,4 @@
-import { Bell, Download, ExternalLink, LogOut, UserIcon } from "lucide-react";
+import { Download, ExternalLink, LockIcon, LogOut, UserIcon } from "lucide-react";
 // import {  Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
@@ -173,6 +173,12 @@ export function UserMenu({ user }: UserMenuProps) {
                 Profile
               </DropdownMenuItem>
             </a>
+            <a href="/reset-password">
+              <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                <LockIcon className="h-5 w-5" />
+                Reset Password
+              </DropdownMenuItem>
+            </a>
             {/* {user.role === "STUDENT" && (
               <a href="/certificate">
                 <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
@@ -190,10 +196,10 @@ export function UserMenu({ user }: UserMenuProps) {
                 Security Settings
               </DropdownMenuItem>
             </a> */}
-            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+            {/* <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
               <Bell className="h-5 w-5" />
               Notifications
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             {(isStandalone || (!isStandalone && deferredPrompt)) && (
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"

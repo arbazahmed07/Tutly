@@ -1,39 +1,31 @@
 import { actions } from "astro:actions";
-import { Check, X } from "lucide-react";
+import { Check, Eye, EyeOff, Loader2, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-const Profile = ({ userProfile }: any) => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-  const [showOldPassword, setShowOldPassword] = useState(false);
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { Label } from "@/components/ui/label";
+
+const ManagePassword = () => {
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const newPassword = watch("newPassword", "");
-  const confirmPassword = watch("confirmPassword", "");
-
-  const togglePasswordVisibility = (type: string) => {
-    switch (type) {
-      case "old":
-        setShowOldPassword(!showOldPassword);
-        break;
-      case "new":
-        setShowNewPassword(!showNewPassword);
-        break;
-      case "confirm":
-        setShowConfirmPassword(!showConfirmPassword);
-        break;
-      default:
-        break;
-    }
-  };
+  const [step, setStep] = useState<"email" | "otp" | "password">("email");
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [showPasswordStrength, setShowPasswordStrength] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+  const [canResend, setCanResend] = useState(true);
 
   const checkStrength = (pass: string) => {
     const requirements = [
@@ -50,7 +42,6 @@ const Profile = ({ userProfile }: any) => {
   };
 
   const newPasswordStrength = checkStrength(newPassword);
-  const confirmPasswordStrength = checkStrength(confirmPassword);
 
   const getStrengthScore = (strength: { met: boolean; text: string }[]) => {
     return strength.filter((req) => req.met).length;
@@ -59,10 +50,6 @@ const Profile = ({ userProfile }: any) => {
   const newPasswordScore = useMemo(
     () => getStrengthScore(newPasswordStrength),
     [newPasswordStrength]
-  );
-  const confirmPasswordScore = useMemo(
-    () => getStrengthScore(confirmPasswordStrength),
-    [confirmPasswordStrength]
   );
 
   const getStrengthColor = (score: number) => {
@@ -80,196 +67,321 @@ const Profile = ({ userProfile }: any) => {
     return "Strong password";
   };
 
-  const onSubmit = async (data: any) => {
-    if (data.newPassword !== data.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
+  const startResendTimer = (initialTime: number) => {
+    setCanResend(false);
+    setTimeRemaining(initialTime);
 
-    if (!userProfile?.email) {
-      toast.error("An error occurred while updating the profile");
-      return;
-    }
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev === null || prev <= 1000) {
+          clearInterval(timer);
+          setCanResend(true);
+          return null;
+        }
+        return prev - 1000;
+      });
+    }, 1000);
 
+    return () => clearInterval(timer);
+  };
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
     try {
-      const { data: response, error } = await actions.users_updatePassword({
-        email: userProfile?.email,
-        oldPassword: data.oldPassword,
-        newPassword: data.newPassword,
-        confirmPassword: data.confirmPassword,
+      const { data, error } = await actions.reset_password_sendOTPAction({
+        email: email,
       });
 
-      if (error || !response) {
-        toast.error("Failed to update the profile");
+      if (error || !data || data.error) {
+        const error = data?.error;
+        toast.error(error?.message || "Failed to send OTP");
+        if (error?.existingOTP) {
+          setStep("otp");
+          startResendTimer(error.timeRemaining);
+        }
         return;
       }
 
-      if (response.success) {
-        toast.success("Profile updated successfully");
-      } else {
-        toast.error(response?.error?.message ?? "An unknown error occurred");
+      if (data && data.success) {
+        toast.success("OTP sent to your email");
+        setStep("otp");
+        startResendTimer(10 * 60 * 1000);
       }
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred while updating the profile");
+      toast.error("An error occurred while sending OTP");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleForgotPassword = async () => {
+  const handleOTPSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
     try {
-      const { error } = await actions.users_resetPassword({
-        email: userProfile?.email,
+      const { data, error } = await actions.reset_password_verifyOTPAction({
+        email: email,
+        otp: otp,
       });
 
-      if (error) {
-        toast.error("Failed to send password reset link");
+      if (error || !data || data.error) {
+        toast.error(error?.message || "Invalid OTP");
         return;
       }
 
-      toast.success("Login again to create new password");
-      await fetch("/api/auth/signout", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      window.location.reload();
+      if (data && data.success) {
+        toast.success("OTP verified successfully");
+        setStep("password");
+      }
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred while sending password reset link");
+      toast.error("An error occurred while verifying OTP");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const renderPasswordField = (
-    fieldName: string,
-    label: string,
-    showPassword: boolean,
-    toggleVisibility: () => void,
-    strength: { met: boolean; text: string }[],
-    strengthScore: number
-  ) => (
-    <div>
-      <label className="mb-1 block w-full">
-        {label}
-        {fieldName === "oldPassword" && (
-          <a
-            onClick={handleForgotPassword}
-            className="text-xs ml-2 text-blue-500 hover:cursor-pointer hover:text-red-700"
-          >
-            forgot?
-          </a>
-        )}
-      </label>
-      <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          placeholder={label}
-          className="w-full rounded-md border border-gray-300 bg-background px-3 py-2 outline-none"
-          {...register(fieldName, { required: true, minLength: 8 })}
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsResetting(true);
+    try {
+      const { data, error } = await actions.reset_password_resetPasswordAction({
+        email,
+        otp,
+        password: newPassword,
+      });
+
+      if (error || !data || data.error) {
+        toast.error(error?.message || "Failed to reset password");
+        return;
+      }
+
+      if (data && data.success) {
+        toast.success("Password reset successfully");
+        window.location.href = "/sign-in";
+      }
+    } catch (error) {
+      toast.error("An error occurred while resetting password");
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
+  const renderEmailStep = () => (
+    <form onSubmit={handleEmailSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          Email
+        </label>
+        <Input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
-        <span className="absolute right-2 top-2 cursor-pointer" onClick={toggleVisibility}>
-          {showPassword ? <FaRegEyeSlash className="h-5 w-5" /> : <FaRegEye className="h-5 w-5" />}
-        </span>
       </div>
-      {fieldName !== "oldPassword" && (
-        <>
-          <div
-            className="mb-4 mt-3 h-1 w-full overflow-hidden rounded-full bg-border"
-            role="progressbar"
-            aria-valuenow={strengthScore}
-            aria-valuemin={0}
-            aria-valuemax={4}
-            aria-label="Password strength"
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Sending OTP...
+          </>
+        ) : (
+          "Send OTP"
+        )}
+      </Button>
+    </form>
+  );
+
+  const renderOTPStep = () => (
+    <form onSubmit={handleOTPSubmit} className="space-y-4 w-full">
+      <div className="space-y-2">
+        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          Enter OTP
+        </label>
+        <InputOTP
+          maxLength={6}
+          value={otp}
+          onChange={(value) => setOtp(value)}
+          className="w-full flex justify-center"
+        >
+          <InputOTPGroup className="w-full mx-auto">
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+            <InputOTPSeparator />
+            <InputOTPSlot index={3} />
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+          </InputOTPGroup>
+        </InputOTP>
+      </div>
+
+      {timeRemaining && (
+        <p className="text-sm text-muted-foreground">
+          Resend available in {Math.ceil(timeRemaining / 1000)} seconds
+        </p>
+      )}
+
+      <div className="flex flex-col gap-2">
+        <Button type="submit" className="w-full" disabled={isLoading || otp.length !== 6}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Verifying...
+            </>
+          ) : (
+            "Verify OTP"
+          )}
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          disabled={!canResend || isLoading}
+          onClick={handleEmailSubmit}
+        >
+          {!canResend ? (
+            "Wait to resend"
+          ) : isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Resending...
+            </>
+          ) : (
+            "Resend OTP"
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+
+  const renderPasswordStep = () => (
+    <form onSubmit={handlePasswordSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="new-password">New Password</Label>
+        <div className="relative">
+          <Input
+            id="new-password"
+            type={showNewPassword ? "text" : "password"}
+            value={newPassword}
+            onChange={(e) => {
+              setNewPassword(e.target.value);
+              setShowPasswordStrength(true);
+            }}
+            className="pe-9"
+            aria-invalid={newPasswordScore < 4}
+            aria-describedby="password-strength"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowNewPassword(!showNewPassword)}
+            className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center text-muted-foreground/80 hover:text-foreground"
+            aria-label={showNewPassword ? "Hide password" : "Show password"}
           >
+            {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+
+        {showPasswordStrength && (
+          <>
             <div
-              className={`h-full ${getStrengthColor(strengthScore)} transition-all duration-500 ease-out`}
-              style={{ width: `${(strengthScore / 4) * 100}%` }}
-            ></div>
-          </div>
-          <p className="mb-2 text-sm font-medium text-foreground">
-            {getStrengthText(strengthScore)}. Must contain:
-          </p>
-          <ul className="space-y-1.5" aria-label="Password requirements">
-            {strength.map((req, index) => (
-              <li key={index} className="flex items-center gap-2">
-                {req.met ? (
-                  <Check size={16} className="text-emerald-500" aria-hidden="true" />
-                ) : (
-                  <X size={16} className="text-muted-foreground/80" aria-hidden="true" />
-                )}
-                <span
-                  className={`text-xs ${req.met ? "text-emerald-600" : "text-muted-foreground"}`}
-                >
-                  {req.text}
-                  <span className="sr-only">
-                    {req.met ? " - Requirement met" : " - Requirement not met"}
+              className="mb-4 mt-3 h-1 w-full overflow-hidden rounded-full bg-border"
+              role="progressbar"
+              aria-valuenow={newPasswordScore}
+              aria-valuemin={0}
+              aria-valuemax={4}
+              aria-label="Password strength"
+            >
+              <div
+                className={`h-full ${getStrengthColor(newPasswordScore)} transition-all duration-500 ease-out`}
+                style={{ width: `${(newPasswordScore / 4) * 100}%` }}
+              />
+            </div>
+
+            <p id="password-strength" className="mb-2 text-sm font-medium text-foreground">
+              {getStrengthText(newPasswordScore)}. Must contain:
+            </p>
+
+            <ul className="space-y-1.5" aria-label="Password requirements">
+              {newPasswordStrength.map((req, index) => (
+                <li key={index} className="flex items-center gap-2">
+                  {req.met ? (
+                    <Check className="h-4 w-4 text-emerald-500" aria-hidden="true" />
+                  ) : (
+                    <X className="h-4 w-4 text-muted-foreground/80" aria-hidden="true" />
+                  )}
+                  <span
+                    className={`text-xs ${req.met ? "text-emerald-600" : "text-muted-foreground"}`}
+                  >
+                    {req.text}
+                    <span className="sr-only">
+                      {req.met ? " - Requirement met" : " - Requirement not met"}
+                    </span>
                   </span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="confirm-password">Confirm Password</Label>
+        <div className="relative">
+          <Input
+            id="confirm-password"
+            type={showConfirmPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="pe-9"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center text-muted-foreground/80 hover:text-foreground"
+            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+          >
+            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+
+      {newPassword !== confirmPassword && confirmPassword && (
+        <p className="text-sm text-destructive">Passwords do not match</p>
       )}
-      {errors[fieldName]?.type === "required" && (
-        <span className="text-red-500">{label} is required</span>
-      )}
-      {errors[fieldName]?.type === "minLength" && (
-        <span className="text-red-500">{label} must have more than 8 characters</span>
-      )}
-    </div>
+
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={
+          isResetting || !newPassword || !confirmPassword || newPassword !== confirmPassword
+        }
+      >
+        {isResetting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Resetting Password...
+          </>
+        ) : (
+          "Reset Password"
+        )}
+      </Button>
+    </form>
   );
 
   return (
-    <div className="flex justify-center text-sm font-semibold text-black dark:text-white">
-      <div className="m-auto rounded-lg p-5">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex w-[300px] flex-col gap-2">
-            {renderPasswordField(
-              "oldPassword",
-              "Old Password",
-              showOldPassword,
-              () => togglePasswordVisibility("old"),
-              [],
-              0
-            )}
-
-            {renderPasswordField(
-              "newPassword",
-              "New Password",
-              showNewPassword,
-              () => togglePasswordVisibility("new"),
-              newPasswordStrength,
-              newPasswordScore
-            )}
-
-            {renderPasswordField(
-              "confirmPassword",
-              "Confirm Password",
-              showConfirmPassword,
-              () => togglePasswordVisibility("confirm"),
-              confirmPasswordStrength,
-              confirmPasswordScore
-            )}
-
-            {newPassword !== confirmPassword && (
-              <span className="text-red-500">Passwords do not match</span>
-            )}
-
-            <button
-              type="submit"
-              className="mt-4 rounded-md bg-blue-600 p-3 text-sm font-semibold text-white"
-              disabled={
-                newPassword !== confirmPassword || newPasswordScore < 4 || confirmPasswordScore < 4
-              }
-            >
-              Update
-            </button>
-          </div>
-        </form>
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+      <div className="mx-auto w-full max-w-sm rounded-lg bg-background p-8 shadow-sm">
+        {step === "email" && renderEmailStep()}
+        {step === "otp" && renderOTPStep()}
+        {step === "password" && renderPasswordStep()}
       </div>
     </div>
   );
 };
 
-export default Profile;
+export default ManagePassword;

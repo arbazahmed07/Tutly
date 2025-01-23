@@ -61,6 +61,7 @@
     "cmdk": "1.0.0",
     "date-fns": "^3.0.0",
     "dayjs": "^1.11.13",
+    "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",

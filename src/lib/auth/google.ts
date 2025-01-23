@@ -31,11 +31,11 @@ const google = (url?: URL) => {
   // If no URL is provided, try to use environment variable, fallback to localhost
   const baseUrl = import.meta.env.SITE ?? "http://localhost:4321";
   url ??= new URL(baseUrl);
-  
+
   const callbackUrl = new URL("/api/auth/callback/google", url.origin);
 
   return new Google(googleClientId, googleClientSecret, callbackUrl.toString());
-}
+};
 
 export function createAuthorizationURL(url?: URL) {
   cleanupStaleStates(); // Cleanup old states

@@ -20,7 +20,11 @@ export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, 
     "/api/auth/signin/github",
   ];
 
-  if (pathname.startsWith("/api/auth")) {
+  if (
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/_actions/reset_password")
+  ) {
     return next();
   }
 

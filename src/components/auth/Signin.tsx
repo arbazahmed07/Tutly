@@ -83,7 +83,7 @@ export function SignIn() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
               <FormField
                 control={form.control}
                 name="email"
@@ -115,6 +115,11 @@ export function SignIn() {
                   </FormItem>
                 )}
               />
+              <div className="flex items-center justify-end mb-2">
+                <a href="/reset-password" className="text-sm text-primary hover:underline">
+                  Forgot Password?
+                </a>
+              </div>
               <Button
                 type="submit"
                 className="w-full bg-primary/90 hover:bg-primary transition-colors"

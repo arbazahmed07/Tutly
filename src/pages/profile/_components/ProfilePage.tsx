@@ -11,7 +11,6 @@ import Address from "./Address";
 import BasicDetails from "./BasicDetails";
 import Documents from "./Documents";
 import Experience from "./Experience";
-import ManagePassword from "./ManagePassword";
 import PersonalDetails from "./PersonalDetails";
 import ProfessionalProfiles from "./ProfessionalProfiles";
 import SocialLinks from "./SocialLinks";
@@ -54,7 +53,7 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
           <TabsTrigger value="social">Social</TabsTrigger>
           <TabsTrigger value="experience">Experience</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
+          {/* <TabsTrigger value="password">Password</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="basic">
@@ -134,12 +133,6 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
               documents={profile?.documents as Record<string, string>}
               onUpdate={handleUpdateProfile}
             />
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="password">
-          <Card className="p-6">
-            <ManagePassword userProfile={userProfile} />
           </Card>
         </TabsContent>
       </Tabs>
