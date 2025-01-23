@@ -3,7 +3,7 @@ import type { APIRoute } from "astro";
 import { signInWithCredentials } from "@/lib/auth/credentials";
 import { setSessionCookie } from "@/lib/auth/session";
 
-export const POST: APIRoute = async ({ request, cookies, redirect }) => {
+export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const { email, password } = await request.json();
     if (!email || !password) {
