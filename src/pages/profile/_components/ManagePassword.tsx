@@ -199,12 +199,7 @@ const ManagePassword = () => {
         <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
           Enter OTP
         </label>
-        <InputOTP
-          maxLength={6}
-          value={otp}
-          onChange={(value) => setOtp(value)}
-          className="gap-2"
-        >
+        <InputOTP maxLength={6} value={otp} onChange={(value) => setOtp(value)} className="gap-2">
           <InputOTPGroup className="flex justify-center gap-2">
             <InputOTPSlot index={0} />
             <InputOTPSlot index={1} />

@@ -44,7 +44,7 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
       <h1 className="text-3xl font-bold mb-6">Profile</h1>
 
       <Tabs defaultValue="basic" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
+        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
           <TabsTrigger value="basic">Basic Details</TabsTrigger>
           <TabsTrigger value="personal">Personal</TabsTrigger>
           <TabsTrigger value="professional">Professional</TabsTrigger>

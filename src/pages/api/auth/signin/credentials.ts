@@ -24,19 +24,16 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
     setSessionCookie({ cookies } as any, sessionId, new Date(Date.now() + 1000 * 60 * 60 * 24));
 
-    // return new Response(
-    //   JSON.stringify({
-    //     success: true,
-    //     user,
-    //     redirectTo: "/dashboard",
-    //   }),
-    //   {
-    //     status: 200,
-    //     headers: { "Content-Type": "application/json" },
-    //   }
-    // );
-
-    return redirect("/dashboard");
+    return new Response(
+      JSON.stringify({
+        success: true,
+        redirectTo: "/dashboard",
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error: any) {
     console.error("[Credentials API] Sign in error:", error);
     return new Response(

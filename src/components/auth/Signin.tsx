@@ -28,7 +28,7 @@ type SignInInput = z.infer<typeof signInSchema>;
 export function SignIn() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, ] = useState(false);
+  const [isGoogleLoading] = useState(false);
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -38,7 +38,7 @@ export function SignIn() {
     },
   });
 
-  async function onSubmit(data: SignInInput) {
+  const onSubmit = async (data: SignInInput) => {
     try {
       setIsLoading(true);
       const response = await fetch("/api/auth/signin/credentials", {
@@ -47,29 +47,28 @@ export function SignIn() {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
-
       if (!response.ok) {
+        const result = await response.json();
         throw new Error(result.message || "Authentication failed");
       }
 
-      if (result.success) {
-        router.push(result.redirectTo || "/dashboard");
-      }
-
-      window.location.reload();
+      const result = await response.json();
+      router.push(result.redirectTo || "/dashboard");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign in");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
+
   const handleGoogleSignIn = async () => {
     toast.custom(
       <Card className="border-border bg-background/95 p-3">
         <div className="flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-          <p className="text-sm text-foreground">Google Sign-in is under maintenance. Please sign in with email instead.</p>
+          <p className="text-sm text-foreground">
+            Google Sign-in is under maintenance. Please sign in with email instead.
+          </p>
         </div>
       </Card>,
       {
@@ -79,7 +78,7 @@ export function SignIn() {
     );
 
     return;
-    
+
     // try {
     //   setIsGoogleLoading(true);
     //   window.location.href = "/api/auth/signin/google";
