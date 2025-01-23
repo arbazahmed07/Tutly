@@ -203,9 +203,9 @@ const ManagePassword = () => {
           maxLength={6}
           value={otp}
           onChange={(value) => setOtp(value)}
-          className="w-full flex justify-center"
+          className="gap-2"
         >
-          <InputOTPGroup className="w-full mx-auto">
+          <InputOTPGroup className="flex justify-center gap-2">
             <InputOTPSlot index={0} />
             <InputOTPSlot index={1} />
             <InputOTPSlot index={2} />

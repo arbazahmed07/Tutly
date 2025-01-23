@@ -17,7 +17,7 @@ export const sendOTPAction = defineAction({
     try {
       // First check if user exists
       const user = await db.user.findUnique({
-        where: { email },
+        where: { email: email.toLowerCase() },
       });
 
       if (!user) {
