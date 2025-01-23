@@ -580,7 +580,7 @@ enum OTPType {
   PASSWORD_RESET
 }
 
-model OTP {
+model Otp {
   id        String   @id @default(uuid())
   email     String
   otp       String

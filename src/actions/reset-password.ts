@@ -30,7 +30,7 @@ export const sendOTPAction = defineAction({
       }
 
       // Check for existing valid OTP
-      const existingOTP = await db.OTP.findFirst({
+      const existingOTP = await db.otp.findFirst({
         where: {
           email,
           used: false,
@@ -61,7 +61,7 @@ export const sendOTPAction = defineAction({
       }
 
       // Delete any unused OTPs for this email
-      await db.OTP.deleteMany({
+      await db.otp.deleteMany({
         where: {
           email,
           used: false,
@@ -71,7 +71,7 @@ export const sendOTPAction = defineAction({
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-      await db.OTP.create({
+      await db.otp.create({
         data: {
           email,
           otp,
@@ -122,7 +122,7 @@ export const verifyOTPAction = defineAction({
     console.log(RESEND_API_KEY);
 
     try {
-      const otpRecord = await db.OTP.findFirst({
+      const otpRecord = await db.otp.findFirst({
         where: {
           email,
           otp,
@@ -161,7 +161,7 @@ export const resetPasswordAction = defineAction({
   }),
   async handler({ email, otp, password }) {
     try {
-      const otpRecord = await db.OTP.findFirst({
+      const otpRecord = await db.otp.findFirst({
         where: {
           email,
           otp,
@@ -188,7 +188,7 @@ export const resetPasswordAction = defineAction({
         data: { password: hashedPassword },
       });
 
-      await db.OTP.update({
+      await db.otp.update({
         where: { id: otpRecord.id },
         data: { used: true },
       });
