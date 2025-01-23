@@ -6,7 +6,26 @@ import { envOrThrow } from "../utils";
 const googleClientId = envOrThrow("GOOGLE_CLIENT_ID");
 const googleClientSecret = envOrThrow("GOOGLE_CLIENT_SECRET");
 
-let lastState: { state: string; codeVerifier: string } | null = null;
+// Create a more robust state management
+type StateStore = {
+  state: string;
+  codeVerifier: string;
+  timestamp: number;
+};
+
+// Use Map to store multiple states with cleanup
+const stateStore = new Map<string, StateStore>();
+
+// Add cleanup function
+const cleanupStaleStates = () => {
+  const now = Date.now();
+  for (const [state, data] of stateStore.entries()) {
+    // Remove states older than 10 minutes
+    if (now - data.timestamp > 10 * 60 * 1000) {
+      stateStore.delete(state);
+    }
+  }
+};
 
 const google = (url?: URL) => {
   // If no URL is provided, try to use environment variable, fallback to localhost
@@ -19,6 +38,8 @@ const google = (url?: URL) => {
 }
 
 export function createAuthorizationURL(url?: URL) {
+  cleanupStaleStates(); // Cleanup old states
+
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
   const scopes = ["email", "profile", "openid"];
@@ -26,7 +47,12 @@ export function createAuthorizationURL(url?: URL) {
   const g = google(url);
   const redirectUrl = g.createAuthorizationURL(state, codeVerifier, scopes);
 
-  lastState = { state, codeVerifier };
+  // Store state with timestamp
+  stateStore.set(state, {
+    state,
+    codeVerifier,
+    timestamp: Date.now(),
+  });
 
   return {
     state,
@@ -35,8 +61,17 @@ export function createAuthorizationURL(url?: URL) {
   };
 }
 
+export function getCodeVerifierByState(state: string): string | undefined {
+  const stateData = stateStore.get(state);
+  if (stateData) {
+    stateStore.delete(state); // Use once and delete
+    return stateData.codeVerifier;
+  }
+  return undefined;
+}
+
 export function getLastCodeVerifier() {
-  return lastState?.codeVerifier;
+  return undefined; // Deprecate this in favor of getCodeVerifierByState
 }
 
 export function validateAuthorizationCode(code: string, codeVerifier: string, url?: URL) {

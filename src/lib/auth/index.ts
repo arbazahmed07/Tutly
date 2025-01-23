@@ -24,6 +24,7 @@ interface Provider {
   revokeAccessToken(token: string): Promise<void>;
   fetchUser(tokens: OAuth2Tokens): Promise<OAuthUser | null>;
   getLastCodeVerifier?(): string | undefined;
+  getCodeVerifierByState?(state: string): string | undefined;
 }
 
 export const AUTH_SESSION_COOKIE = "session";

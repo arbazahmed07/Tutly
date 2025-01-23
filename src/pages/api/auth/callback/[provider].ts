@@ -24,9 +24,12 @@ export const GET: APIRoute = async ({ params, url, cookies, request, redirect })
   }
 
   try {
-    const codeVerifier = provider.getLastCodeVerifier?.();
+    const codeVerifier = providerName === "google" 
+      ? provider.getCodeVerifierByState?.(state)
+      : provider.getLastCodeVerifier?.();
+
     if (!codeVerifier) {
-      throw new Error("No code verifier found");
+      throw new Error("Invalid or expired OAuth state");
     }
 
     const tokens = await provider.validateAuthorizationCode(code, codeVerifier, url);
@@ -84,9 +87,8 @@ export const GET: APIRoute = async ({ params, url, cookies, request, redirect })
     return redirect("/dashboard");
   } catch (error) {
     console.error("[OAuth Callback] Error:", error);
-    return redirect(
-      "/sign-in?error=" +
-        encodeURIComponent(error instanceof Error ? error.message : "Authentication failed")
-    );
+    const errorMessage = error instanceof Error ? error.message : "Authentication failed";
+    const encodedError = encodeURIComponent("OAuth request error: " + errorMessage);
+    return redirect("/sign-in?error=" + encodedError);
   }
 };
