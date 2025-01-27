@@ -15,9 +15,9 @@ export const sendOTPAction = defineAction({
   }),
   async handler({ email }) {
     try {
-      // First check if user exists
+      const lowerCaseEmail = email.toLowerCase();
       const user = await db.user.findUnique({
-        where: { email: email.toLowerCase() },
+        where: { email: lowerCaseEmail },
       });
 
       if (!user) {
@@ -29,10 +29,9 @@ export const sendOTPAction = defineAction({
         };
       }
 
-      // Check for existing valid OTP
       const existingOTP = await db.otp.findFirst({
         where: {
-          email,
+          email: lowerCaseEmail,
           used: false,
           expiresAt: {
             gt: new Date(),
@@ -43,10 +42,9 @@ export const sendOTPAction = defineAction({
         },
       });
 
-      // If there's an existing valid OTP, check the rate limit
       if (existingOTP) {
         const timeSinceLastOTP = Date.now() - existingOTP.createdAt.getTime();
-        const timeRemaining = 10 * 60 * 1000 - timeSinceLastOTP; // 10 minutes in milliseconds
+        const timeRemaining = 10 * 60 * 1000 - timeSinceLastOTP;
 
         if (timeRemaining > 0) {
           return {
@@ -60,10 +58,9 @@ export const sendOTPAction = defineAction({
         }
       }
 
-      // Delete any unused OTPs for this email
       await db.otp.deleteMany({
         where: {
-          email,
+          email: lowerCaseEmail,
           used: false,
         },
       });
@@ -73,11 +70,11 @@ export const sendOTPAction = defineAction({
 
       await db.otp.create({
         data: {
-          email,
+          email: lowerCaseEmail,
           otp,
           type: "PASSWORD_RESET",
           expiresAt,
-          createdAt: new Date(), // Explicitly set creation time
+          createdAt: new Date(),
         },
       });
 
@@ -119,12 +116,12 @@ export const verifyOTPAction = defineAction({
     otp: z.string().length(6),
   }),
   async handler({ email, otp }) {
-    console.log(RESEND_API_KEY);
+    const lowerCaseEmail = email.toLowerCase();
 
     try {
       const otpRecord = await db.otp.findFirst({
         where: {
-          email,
+          email: lowerCaseEmail,
           otp,
           used: false,
           expiresAt: {
@@ -160,10 +157,12 @@ export const resetPasswordAction = defineAction({
     password: z.string().min(8),
   }),
   async handler({ email, otp, password }) {
+    const lowerCaseEmail = email.toLowerCase();
+
     try {
       const otpRecord = await db.otp.findFirst({
         where: {
-          email,
+          email: lowerCaseEmail,
           otp,
           used: false,
           expiresAt: {
@@ -182,9 +181,10 @@ export const resetPasswordAction = defineAction({
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
+      console.log(hashedPassword);
 
       await db.user.update({
-        where: { email },
+        where: { email: lowerCaseEmail },
         data: { password: hashedPassword },
       });
 
