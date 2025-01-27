@@ -421,6 +421,9 @@ export const getAttendanceOfAllStudents = defineAction({
     const enrolledUsers = await db.enrolledUsers.findMany({
       where: {
         username: currentUser?.username || "",
+        user: {
+          organizationId: currentUser.organizationId,
+        },
       },
       orderBy: {
         createdAt: "asc",

@@ -177,6 +177,7 @@ export const notifyBulkUsers = defineAction({
           role: {
             in: ["STUDENT", "MENTOR"],
           },
+          organizationId: locals.user?.organizationId!,
         },
       },
       select: { user: { select: { id: true } } },

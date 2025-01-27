@@ -17,6 +17,7 @@ const mentors =
   (await db.user.findMany({
     where: {
       role: "MENTOR",
+      organizationId: currentUser.organizationId,
       enrolledUsers: {
         some: {
           courseId: enrolledCourses?.data[0]?.id!,

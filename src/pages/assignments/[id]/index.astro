@@ -75,8 +75,8 @@ if (currentUser.role == "INSTRUCTOR") {
       course: {
         createdById: currentUser.id,
       },
-      mentorUsername: {
-        not: null,
+      user: {
+        organizationId: currentUser.organizationId,
       },
     },
   });
@@ -131,6 +131,7 @@ if (currentUser.role == "INSTRUCTOR") {
           mentorUsername: currentUser.username,
         },
       },
+      organizationId: currentUser.organizationId,
     },
   });
   notSubmittedMentees = mentees.filter((mentee) => {

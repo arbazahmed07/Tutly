@@ -16,6 +16,9 @@ if (role === Role.STUDENT) {
   const enrolledCourses = await db.enrolledUsers.findMany({
     where: {
       username: currentUser.username,
+      user: {
+        organizationId: currentUser.organizationId,
+      },
     },
     select: {
       course: {
@@ -79,6 +82,9 @@ if (role === Role.STUDENT) {
   const mentorCourses = await db.enrolledUsers.findMany({
     where: {
       mentorUsername: currentUser.username,
+      user: {
+        organizationId: currentUser.organizationId,
+      },
     },
     select: {
       course: {

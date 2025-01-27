@@ -28,10 +28,13 @@ export const getAllEnrolledUsers = defineAction({
   input: z.object({
     courseId: z.string(),
   }),
-  async handler({ courseId }) {
+  async handler({ courseId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return null;
     const enrolledUsers = await db.user.findMany({
       where: {
         role: "STUDENT",
+        organizationId: currentUser.organizationId,
         enrolledUsers: {
           some: {
             courseId: courseId,
@@ -60,6 +63,9 @@ export const getAllUsers = defineAction({
     if (!currentUser) return null;
 
     const globalUsers = await db.user.findMany({
+      where: {
+        organizationId: currentUser.organizationId,
+      },
       select: {
         id: true,
         image: true,

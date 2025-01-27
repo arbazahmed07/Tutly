@@ -30,6 +30,7 @@ export const generateReport = defineAction({
         courseId: courseId,
         user: {
           role: "STUDENT",
+          organizationId: currentUser.organizationId,
         },
       },
       include: {

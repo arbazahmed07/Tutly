@@ -12,6 +12,9 @@ if (currentUser.role === "STUDENT") {
   const enrolledCourses = await db.enrolledUsers.findMany({
     where: {
       username: currentUser.username,
+      user: {
+        organizationId: currentUser.organizationId,
+      },
     },
     select: {
       course: {
