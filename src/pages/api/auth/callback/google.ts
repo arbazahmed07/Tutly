@@ -1,6 +1,7 @@
 import type { APIContext } from "astro";
 
 import db from "@/lib/db";
+import { getSiteUrl } from "@/lib/utils/get-site-url";
 
 const checkUserExists = async ({ email, providerId }: { email: string; providerId: string }) => {
   const userExists = await db.user.findFirst({
@@ -61,10 +62,7 @@ export async function GET({ request, clientAddress, cookies }: APIContext) {
     formData.append("grant_type", "authorization_code");
     formData.append("client_id", import.meta.env.GOOGLE_CLIENT_ID);
     formData.append("client_secret", import.meta.env.GOOGLE_CLIENT_SECRET);
-    formData.append(
-      "redirect_uri",
-      `${import.meta.env.SITE ?? "http://localhost:4321"}/api/auth/callback/google`
-    );
+    formData.append("redirect_uri", `${getSiteUrl()}/api/auth/callback/google`);
     formData.append("code", code);
     formData.append("code_verifier", codeVerifier);
 

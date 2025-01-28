@@ -180,7 +180,7 @@ export function UserMenu({ user }: UserMenuProps) {
                 Profile
               </DropdownMenuItem>
             </a>
-            <a href="/reset-password">
+            <a href={`/reset-password?email=${user.email}`}>
               <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
                 <LockIcon className="h-5 w-5" />
                 Reset Password

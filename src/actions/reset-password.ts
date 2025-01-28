@@ -89,7 +89,7 @@ export const sendOTPAction = defineAction({
         return {
           success: false,
           error: {
-            message: "Failed to send OTP email",
+            message: "An error occurred while sending OTP",
           },
         };
       }

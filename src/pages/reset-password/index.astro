@@ -2,8 +2,11 @@
 import ManagePassword from "@/pages/profile/_components/ManagePassword";
 
 import AuthLayout from "@layouts/AuthLayout.astro";
+
+const searchParams = Astro.url.searchParams;
+const email = searchParams.get("email");
 ---
 
 <AuthLayout title="Reset Password">
-  <ManagePassword client:load />
+  <ManagePassword client:load initialEmail={email} />
 </AuthLayout>

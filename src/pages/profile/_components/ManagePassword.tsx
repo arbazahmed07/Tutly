@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
 
-const ManagePassword = () => {
+const ManagePassword = ({ initialEmail }: { initialEmail?: string }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState<"email" | "otp" | "password">("email");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail ?? "");
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
