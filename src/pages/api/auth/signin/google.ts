@@ -3,6 +3,7 @@ import type { APIContext } from "astro";
 import { createHash } from "node:crypto";
 import queryString from "query-string";
 
+import { env } from "@/lib/utils";
 import { getSiteUrl } from "@/lib/utils/get-site-url";
 
 export async function GET({ cookies }: APIContext) {
@@ -32,7 +33,7 @@ export async function GET({ cookies }: APIContext) {
     query: {
       scope: "openid email profile",
       response_type: "code",
-      client_id: import.meta.env.GOOGLE_CLIENT_ID,
+      client_id: env("GOOGLE_CLIENT_ID"),
       redirect_uri: `${getSiteUrl()}/api/auth/callback/google`,
       state: googleOauthState,
       code_challenge: codeChallenge,

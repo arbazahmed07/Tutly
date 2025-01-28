@@ -1,6 +1,7 @@
 import type { APIContext } from "astro";
 
 import db from "@/lib/db";
+import { env } from "@/lib/utils";
 import { getSiteUrl } from "@/lib/utils/get-site-url";
 
 const checkUserExists = async ({ email, providerId }: { email: string; providerId: string }) => {
@@ -60,8 +61,8 @@ export async function GET({ request, clientAddress, cookies }: APIContext) {
     const formData = new URLSearchParams();
 
     formData.append("grant_type", "authorization_code");
-    formData.append("client_id", import.meta.env.GOOGLE_CLIENT_ID);
-    formData.append("client_secret", import.meta.env.GOOGLE_CLIENT_SECRET);
+    formData.append("client_id", env("GOOGLE_CLIENT_ID"));
+    formData.append("client_secret", env("GOOGLE_CLIENT_SECRET"));
     formData.append("redirect_uri", `${getSiteUrl()}/api/auth/callback/google`);
     formData.append("code", code);
     formData.append("code_verifier", codeVerifier);
