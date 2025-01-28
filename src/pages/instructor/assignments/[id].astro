@@ -3,7 +3,9 @@ import RootLayout from "@/layouts/RootLayout.astro";
 import { actions } from "astro:actions";
 import StudentWiseAssignments from "@/components/StudentWiseAssignments";
 
-type Props = {};
+type Props = {
+  id: string;
+};
 const call = Astro.callAction;
 const { id } = Astro.params;
 

@@ -62,12 +62,28 @@ export const getAllAssignedAssignments = defineAction({
 });
 
 export const getAllAssignedAssignmentsByUserId = defineAction({
-  handler: async (_, { locals }) => {
+  input: z.object({
+    id: z.string()||undefined,
+  }),
+  handler: async ({ id }) => {
     try {
-      const currentUser = locals.user!;
-
-      const { data: courses } = await getEnrolledCoursesByUsername({
-        username: currentUser.username,
+      const courses = await db.course.findMany({
+        where: {
+          enrolledUsers: {
+            some: {
+              username: id,
+            },
+          },
+        },
+        include: {
+          classes: true,
+          createdBy: true,
+          _count: {
+            select: {
+              classes: true,
+            },
+          },
+        },
       });
 
       const coursesWithAssignments = await db.course.findMany({
@@ -75,7 +91,7 @@ export const getAllAssignedAssignmentsByUserId = defineAction({
           enrolledUsers: {
             some: {
               user: {
-                username: currentUser.username,
+                username: id,
               },
             },
           },
@@ -94,7 +110,7 @@ export const getAllAssignedAssignmentsByUserId = defineAction({
                     where: {
                       enrolledUser: {
                         user: {
-                          username: currentUser.username,
+                          username: id,
                         },
                       },
                     },
