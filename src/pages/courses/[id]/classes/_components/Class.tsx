@@ -46,6 +46,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import NewAttachmentPage from "./NewAssignments";
 
@@ -259,12 +260,14 @@ export default function Class({
                       <FaPlus />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="min-w-[70vw] max-h-[90vh] overflow-y-auto">
+                  <DialogContent className="min-w-[70vw] max-h-[90vh] overflow-hidden">
                     <DialogHeader>
                       <DialogTitle>Add Assignment</DialogTitle>
                       <DialogDescription>Create a new assignment for this class.</DialogDescription>
                     </DialogHeader>
-                    <NewAttachmentPage classes={classes} courseId={courseId} classId={classId} />
+                    <ScrollArea className="max-h-[70vh] overflow-y-auto">
+                      <NewAttachmentPage classes={classes} courseId={courseId} classId={classId} />
+                    </ScrollArea>
                   </DialogContent>
                 </Dialog>
               </div>

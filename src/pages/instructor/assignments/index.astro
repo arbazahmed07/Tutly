@@ -8,6 +8,7 @@ const currentUser = Astro.locals.user!;
 const students = await db.user.findMany({
   where: {
     role: "STUDENT",
+    organizationId: currentUser.organizationId,
   },
   include: {
     course: true,

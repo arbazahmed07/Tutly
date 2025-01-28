@@ -399,22 +399,29 @@ const UserTable = ({ users, params }: { users: Array<any>; params: any }) => {
                 <td className="border border-gray-300 px-2 py-2 text-sm">
                   {user.enrolledUsers.find(
                     ({ course }: { course: any }) => course.id === params.id
-                  ) === undefined ? (
-                    <button
-                      disabled={loading}
-                      onClick={() => handleEnroll(user.username)}
-                      className="flex select-none items-center justify-center rounded-full bg-emerald-700 px-2 py-1 text-sm text-white hover:bg-emerald-800 focus:bg-emerald-800 focus:outline-none"
-                    >
-                      Enroll <FaUserPlus className="ml-1 h-4 w-4" />
-                    </button>
-                  ) : (
-                    <button
-                      disabled={loading}
-                      onClick={() => handleUnenroll(user.username)}
-                      className="flex select-none items-center justify-center rounded-full bg-red-800 px-2 py-1 text-sm text-white hover:bg-red-700 focus:bg-red-800 focus:outline-none"
-                    >
-                      Unenroll <FaUserXmark className="ml-1 h-4 w-4" />
-                    </button>
+                  ) === undefined
+                    ? user.role !== "INSTRUCTOR" && (
+                        <button
+                          disabled={loading}
+                          onClick={() => handleEnroll(user.username)}
+                          className="flex select-none items-center justify-center rounded-full bg-emerald-700 px-2 py-1 text-sm text-white hover:bg-emerald-800 focus:bg-emerald-800 focus:outline-none"
+                        >
+                          Enroll <FaUserPlus className="ml-1 h-4 w-4" />
+                        </button>
+                      )
+                    : user.role !== "INSTRUCTOR" && (
+                        <button
+                          disabled={loading}
+                          onClick={() => handleUnenroll(user.username)}
+                          className="flex select-none items-center justify-center rounded-full bg-red-800 px-2 py-1 text-sm text-white hover:bg-red-700 focus:bg-red-800 focus:outline-none"
+                        >
+                          Unenroll <FaUserXmark className="ml-1 h-4 w-4" />
+                        </button>
+                      )}
+                  {user.role === "INSTRUCTOR" && (
+                    <span className="disabled cursor-not-allowed select-none rounded-md bg-zinc-700 px-2 py-1 text-sm font-semibold text-white">
+                      No Action
+                    </span>
                   )}
                 </td>
               </tr>

@@ -53,6 +53,7 @@ export default function ProfilePage({ userProfile }: { userProfile: User & { pro
           <TabsTrigger value="social">Social</TabsTrigger>
           <TabsTrigger value="experience">Experience</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
+          {/* <TabsTrigger value="password">Password</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="basic">

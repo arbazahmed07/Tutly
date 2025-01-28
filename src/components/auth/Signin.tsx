@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "astro/zod";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
@@ -38,7 +38,22 @@ export function SignIn() {
     },
   });
 
-  async function onSubmit(data: SignInInput) {
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const error = url.searchParams.get("error");
+
+    if (error) {
+      toast.error(decodeURIComponent(error).replace(/\+/g, " "), {
+        duration: 3000,
+        position: "top-center",
+      });
+
+      url.searchParams.delete("error");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
+
+  const onSubmit = async (data: SignInInput) => {
     try {
       setIsLoading(true);
       const response = await fetch("/api/auth/signin/credentials", {
@@ -47,28 +62,38 @@ export function SignIn() {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
-
       if (!response.ok) {
+        const result = await response.json();
         throw new Error(result.message || "Authentication failed");
       }
 
-      if (result.success) {
-        router.push(result.redirectTo || "/dashboard");
-      }
+      const result = await response.json();
+      router.push(result.redirectTo || "/dashboard");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign in");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
+
+      const currentUrl = new URL(window.location.href);
+      const error = currentUrl.searchParams.get("error");
+
+      if (error) {
+        throw new Error(decodeURIComponent(error).replace(/\+/g, " "));
+      }
+
       window.location.href = "/api/auth/signin/google";
     } catch (error) {
-      toast.error("Failed to initiate Google sign in");
+      toast.error(error instanceof Error ? error.message : "Failed to initiate Google sign in", {
+        duration: 3000,
+        position: "top-center",
+      });
+    } finally {
       setIsGoogleLoading(false);
     }
   };
@@ -81,7 +106,7 @@ export function SignIn() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
               <FormField
                 control={form.control}
                 name="email"
@@ -113,6 +138,11 @@ export function SignIn() {
                   </FormItem>
                 )}
               />
+              <div className="flex items-center justify-end mb-2">
+                <a href="/reset-password" className="text-sm text-primary hover:underline">
+                  Forgot Password?
+                </a>
+              </div>
               <Button
                 type="submit"
                 className="w-full bg-primary/90 hover:bg-primary transition-colors"

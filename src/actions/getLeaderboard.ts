@@ -27,6 +27,9 @@ export const getLeaderboardData = defineAction({
       const mentor = await db.enrolledUsers.findMany({
         where: {
           username: currentUser.username,
+          user: {
+            organizationId: currentUser.organizationId,
+          },
         },
         select: {
           mentorUsername: true,

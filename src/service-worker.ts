@@ -92,9 +92,7 @@ self.addEventListener("notificationclick", (event) => {
       });
 
       if (!hadWindowToFocus) {
-        self.clients
-          .openWindow(url)
-          .then((windowClient) => windowClient?.focus());
+        self.clients.openWindow(url).then((windowClient) => windowClient?.focus());
       }
     })
   );

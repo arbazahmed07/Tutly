@@ -246,6 +246,7 @@ export const getAllMentees = defineAction({
               },
             },
             role: "STUDENT",
+            organizationId: currentUser.organizationId,
           },
           include: {
             course: true,
@@ -263,6 +264,7 @@ export const getAllMentees = defineAction({
               },
             },
             role: "STUDENT",
+            organizationId: currentUser.organizationId,
           },
           include: {
             course: true,
@@ -298,6 +300,7 @@ export const getAllMentors = defineAction({
             },
           },
           role: "MENTOR",
+          organizationId: currentUser.organizationId,
         },
         include: {
           course: true,

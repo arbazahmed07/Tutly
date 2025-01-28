@@ -58,7 +58,7 @@ export default defineConfig({
       exclude: ["@mapbox"],
     },
     define: {
-      'APP_VERSION': JSON.stringify(process.env.npm_package_version)
-    }
+      APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    },
   },
 });

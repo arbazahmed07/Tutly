@@ -1,6 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 
-import { deleteSessionCookie, validateSessionToken } from "@/lib/auth/session";
+import { validateSessionToken } from "@/lib/auth/session";
 
 export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, next) => {
   locals.session = null;
@@ -8,7 +8,7 @@ export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, 
   locals.organization = null;
   locals.role = null;
 
-  const token = cookies.get("session")?.value;
+  const sessionId = cookies.get("app_auth_token")?.value;
   const pathname = url.pathname;
   const publicRoutes = [
     "/sign-in",
@@ -20,12 +20,16 @@ export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, 
     "/api/auth/signin/github",
   ];
 
-  if (pathname.startsWith("/api/auth")) {
+  if (
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/_actions/reset_password")
+  ) {
     return next();
   }
 
-  if (token) {
-    const { session, user } = await validateSessionToken(token);
+  if (sessionId) {
+    const { session, user } = await validateSessionToken(sessionId);
 
     if (session && user) {
       locals.session = session;
@@ -37,7 +41,9 @@ export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, 
         return redirect("/dashboard");
       }
     } else {
-      deleteSessionCookie({ cookies } as any);
+      cookies.delete("app_auth_token", {
+        path: "/",
+      });
       if (!publicRoutes.includes(pathname)) {
         return redirect("/sign-in");
       }

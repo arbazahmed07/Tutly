@@ -1,9 +1,8 @@
 import type { APIRoute } from "astro";
 
 import { signInWithCredentials } from "@/lib/auth/credentials";
-import { setSessionCookie } from "@/lib/auth/session";
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request }) => {
   try {
     const { email, password } = await request.json();
     if (!email || !password) {
@@ -20,19 +19,23 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     const userAgent = request.headers.get("user-agent");
-    const { sessionId, user } = await signInWithCredentials(email, password, userAgent);
+    const { sessionId } = await signInWithCredentials(email, password, userAgent);
 
-    setSessionCookie({ cookies } as any, sessionId, new Date(Date.now() + 1000 * 60 * 60 * 24));
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day
 
-    return new Response(
-      JSON.stringify({
+    return Response.json(
+      {
         success: true,
-        user,
+        message: "Logged In Successfully",
         redirectTo: "/dashboard",
-      }),
+      },
       {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Set-Cookie": `app_auth_token=${sessionId}; Path=/; HttpOnly; SameSite=Lax; Expires=${expiresAt.toUTCString()}; Secure=${
+            import.meta.env.PROD
+          }`,
+        },
       }
     );
   } catch (error: any) {

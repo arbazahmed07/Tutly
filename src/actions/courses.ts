@@ -260,6 +260,7 @@ export const getMentorStudents = defineAction({
             courseId,
           },
         },
+        organizationId: currentUser.organizationId,
       },
       include: {
         course: true,
@@ -291,6 +292,7 @@ export const getMentorStudentsById = defineAction({
             courseId: courseId,
           },
         },
+        organizationId: currentUser.organizationId,
       },
       include: {
         course: true,
@@ -323,6 +325,7 @@ export const getEnrolledStudents = defineAction({
           },
         },
         role: "STUDENT",
+        organizationId: currentUser.organizationId,
       },
       include: {
         course: true,
@@ -342,6 +345,7 @@ export const getAllStudents = defineAction({
     const students = await db.user.findMany({
       where: {
         role: "STUDENT",
+        organizationId: currentUser.organizationId,
       },
       include: {
         course: true,
@@ -371,6 +375,7 @@ export const getEnrolledMentees = defineAction({
             },
           },
         },
+        organizationId: currentUser.organizationId,
       },
       include: {
         course: true,

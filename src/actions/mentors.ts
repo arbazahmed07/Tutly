@@ -22,6 +22,7 @@ export const getMentors = defineAction({
             courseId: courseId,
           },
         },
+        organizationId: currentUser.organizationId,
       },
       include: {
         enrolledUsers: true,

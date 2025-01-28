@@ -256,7 +256,6 @@ const Avatar = ({ avatar }: { avatar: string }) => {
   const { uploadFile } = useFileUpload({
     fileType: FileType.AVATAR,
     onUpload: async (file: File) => {
-      console.log("file", file);
       if (!file || !file.publicUrl) return;
       try {
         await actions.users_updateUserAvatar({

@@ -5,7 +5,7 @@ import UserPage from "./_components/UserPage";
 
 const user = Astro.locals.user;
 
-if (user?.role !== "INSTRUCTOR") {
+if (user?.role !== "INSTRUCTOR" || !user) {
   return Astro.redirect(`/404`);
 }
 
@@ -67,7 +67,10 @@ activeFilters.forEach((filter) => {
 const totalItems = await db.user.count({ where });
 
 const allUsers = await db.user.findMany({
-  where,
+  where: {
+    ...where,
+    organizationId: user.organizationId,
+  },
   orderBy: {
     [sortField]: sortDirection,
   },

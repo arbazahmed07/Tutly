@@ -10,12 +10,14 @@ import * as courses from "./courses";
 import * as doubts from "./doubts";
 import * as fileupload from "./fileupload";
 import * as leaderboard from "./getLeaderboard";
+import * as holidays from "./holidays";
 import * as mentors from "./mentors";
 import * as notes from "./notes";
 // import * as resend from "./resend";
 import * as notifications from "./notifications";
 import * as points from "./points";
 import * as report from "./report";
+import * as resetPassword from "./reset-password";
 import * as schedule from "./schedule";
 import * as statistics from "./statistics";
 import * as submissions from "./submission";
@@ -41,4 +43,6 @@ export const server = {
   ...groupActions("fileupload", fileupload, "_"),
   ...groupActions("schedule", schedule, "_"),
   ...groupActions("codingPlatforms", codingPlatforms, "_"),
+  ...groupActions("holidays", holidays, "_"),
+  ...groupActions("reset_password", resetPassword, "_"),
 };

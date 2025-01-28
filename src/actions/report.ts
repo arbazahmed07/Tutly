@@ -30,6 +30,7 @@ export const generateReport = defineAction({
         courseId: courseId,
         user: {
           role: "STUDENT",
+          organizationId: currentUser.organizationId,
         },
       },
       include: {
@@ -160,7 +161,7 @@ export const generateReport = defineAction({
             .filter((id): id is string => id !== undefined)
         ).size;
       } catch (e) {
-        console.log(ob.username);
+        console.log("Error while generating report : ", e);
       }
     });
 

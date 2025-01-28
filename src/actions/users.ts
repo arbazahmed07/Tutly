@@ -28,10 +28,13 @@ export const getAllEnrolledUsers = defineAction({
   input: z.object({
     courseId: z.string(),
   }),
-  async handler({ courseId }) {
+  async handler({ courseId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return null;
     const enrolledUsers = await db.user.findMany({
       where: {
         role: "STUDENT",
+        organizationId: currentUser.organizationId,
         enrolledUsers: {
           some: {
             courseId: courseId,
@@ -60,6 +63,9 @@ export const getAllUsers = defineAction({
     if (!currentUser) return null;
 
     const globalUsers = await db.user.findMany({
+      where: {
+        organizationId: currentUser.organizationId,
+      },
       select: {
         id: true,
         image: true,
@@ -527,5 +533,118 @@ export const unlinkAccount = defineAction({
         code: "INTERNAL_SERVER_ERROR",
       });
     }
+  },
+});
+
+export const resetPassword = defineAction({
+  input: z.object({
+    email: z.string(),
+  }),
+  async handler({ email }) {
+    const user = await db.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new ActionError({
+        message: "User not found",
+        code: "NOT_FOUND",
+      });
+    }
+
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        password: null,
+      },
+    });
+
+    return user;
+  },
+});
+
+export const updatePassword = defineAction({
+  input: z.object({
+    email: z.string(),
+    oldPassword: z.string().optional(),
+    newPassword: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must have than 8 characters"),
+    confirmPassword: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must have than 8 characters"),
+  }),
+  async handler({ email, oldPassword, newPassword, confirmPassword }, { locals }) {
+    console.log(email, oldPassword, newPassword, confirmPassword);
+    const currentUser = locals.user;
+    if (!currentUser) {
+      return {
+        error: {
+          message: "Unauthorized",
+        },
+      };
+    }
+
+    if (newPassword !== confirmPassword) {
+      return {
+        error: {
+          message: "Passwords don't match",
+        },
+      };
+    }
+
+    const userExists = await db.user.findUnique({
+      where: {
+        email: email,
+      },
+      select: {
+        password: true,
+      },
+    });
+
+    if (!userExists) {
+      return {
+        error: {
+          message: "User does not exist",
+        },
+      };
+    }
+
+    if (userExists.password !== null) {
+      if (!oldPassword) {
+        return {
+          error: {
+            message: "Please provide old password",
+          },
+        };
+      }
+
+      const isPasswordValid = await bcrypt.compare(oldPassword, userExists.password);
+      if (!isPasswordValid) {
+        return {
+          error: {
+            message: "Old password is incorrect",
+          },
+        };
+      }
+    }
+
+    const password = await bcrypt.hash(newPassword, 10);
+
+    await db.user.update({
+      where: {
+        email: email,
+      },
+      data: {
+        password: password,
+      },
+    });
+
+    return {
+      success: true,
+      message: "User updated successfully",
+    };
   },
 });

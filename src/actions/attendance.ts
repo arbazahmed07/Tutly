@@ -7,12 +7,7 @@ import db from "@/lib/db";
 export const postAttendance = defineAction({
   input: z.object({
     classId: z.string(),
-    data: z.array(
-      z.object({
-        username: z.string(),
-        Duration: z.number(),
-      })
-    ),
+    data: z.array(z.any()),
     maxInstructionDuration: z.number(),
   }),
   async handler({ classId, data, maxInstructionDuration }) {
@@ -426,6 +421,9 @@ export const getAttendanceOfAllStudents = defineAction({
     const enrolledUsers = await db.enrolledUsers.findMany({
       where: {
         username: currentUser?.username || "",
+        user: {
+          organizationId: currentUser.organizationId,
+        },
       },
       orderBy: {
         createdAt: "asc",

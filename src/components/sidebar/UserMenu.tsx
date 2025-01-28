@@ -1,4 +1,4 @@
-import { Bell, Download, ExternalLink, LogOut, UserIcon } from "lucide-react";
+import { Download, ExternalLink, LockIcon, LogOut, UserIcon } from "lucide-react";
 // import {  Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
@@ -65,16 +65,23 @@ export function UserMenu({ user }: UserMenuProps) {
 
   useEffect(() => {
     if (isMobile && !isStandalone && deferredPrompt) {
-      toast({
-        title: "Install our app",
-        description: "Install our app for a better experience!",
-        action: (
-          <ToastAction altText="Install app" onClick={handleInstallClick}>
-            Install
-          </ToastAction>
-        ),
-        duration: 10000,
-      });
+      const lastInstallPromptTime = localStorage.getItem("lastInstallPromptTime");
+      const currentTime = new Date().getTime();
+      const oneWeek = 7 * 24 * 60 * 60 * 1000;
+
+      if (!lastInstallPromptTime || currentTime - parseInt(lastInstallPromptTime) > oneWeek) {
+        toast({
+          title: "Install our app",
+          description: "Install our app for a better experience!",
+          action: (
+            <ToastAction altText="Install app" onClick={handleInstallClick}>
+              Install
+            </ToastAction>
+          ),
+          duration: 10000,
+        });
+        localStorage.setItem("lastInstallPromptTime", currentTime.toString());
+      }
     }
   }, [isStandalone, deferredPrompt]);
 
@@ -99,6 +106,20 @@ export function UserMenu({ user }: UserMenuProps) {
   const handleOpenInApp = () => {
     window.location.href = window.location.href;
     setShowOpenInAppDialog(false);
+  };
+
+  const handleSignout = async () => {
+    setIsOpen(false);
+    try {
+      await fetch("/api/auth/signout", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      window.location.reload();
+    } catch (error) {
+      console.log("Error at user-menu: ", error);
+    }
   };
 
   return (
@@ -159,6 +180,21 @@ export function UserMenu({ user }: UserMenuProps) {
                 Profile
               </DropdownMenuItem>
             </a>
+            <a href={`/reset-password?email=${user.email}`}>
+              <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                <LockIcon className="h-5 w-5" />
+                Reset Password
+              </DropdownMenuItem>
+            </a>
+            {/* {user.role === "STUDENT" && (
+              <a href="/certificate">
+                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                  <GrCertificate className="h-5 w-5" />
+                  Certificate
+                </DropdownMenuItem>
+              </a>
+            )} */}
+
             {/* <a href="/sessions">
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"
@@ -167,10 +203,10 @@ export function UserMenu({ user }: UserMenuProps) {
                 Security Settings
               </DropdownMenuItem>
             </a> */}
-            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+            {/* <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
               <Bell className="h-5 w-5" />
               Notifications
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             {(isStandalone || (!isStandalone && deferredPrompt)) && (
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"
@@ -191,12 +227,13 @@ export function UserMenu({ user }: UserMenuProps) {
             )}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <a href="/api/auth/signout">
-            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-destructive">
-              <LogOut className="h-5 w-5" />
-              Log out
-            </DropdownMenuItem>
-          </a>
+          <DropdownMenuItem
+            onClick={handleSignout}
+            className="flex items-center gap-2 cursor-pointer text-destructive"
+          >
+            <LogOut className="h-5 w-5" />
+            Log out
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 

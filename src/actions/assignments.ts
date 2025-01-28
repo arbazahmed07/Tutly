@@ -490,6 +490,7 @@ export const getAllAssignmentDetailsBy = defineAction({
               mentorUsername: currentUser.username,
             },
           },
+          organizationId: currentUser.organizationId,
         },
       });
 
@@ -562,6 +563,9 @@ export const getAllAssignmentDetailsForInstructor = defineAction({
           },
           mentorUsername: {
             not: null,
+          },
+          user: {
+            organizationId: currentUser.organizationId,
           },
         },
       });
