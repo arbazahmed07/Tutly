@@ -89,7 +89,7 @@ export function Calendar({ events }: any) {
         </div>
       </header>
 
-      <main className="flex-1">
+      <main className="flex-1 h-[90vh]">
         {view === "day" && (
           <DayView selectedDate={selectedDate} events={events} onEventClick={handleEventClick} />
         )}

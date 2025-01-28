@@ -1,80 +1,97 @@
 ---
-import RootLayout from "@/layouts/RootLayout.astro";
-import ScheduleLayout from "./_components/ScheduleLayout.tsx";
+import RootLayout from "@layouts/RootLayout.astro";
+import { Calendar } from "./_components/calendar";
+import { EventsSidebar } from "./_components/events";
 import db from "@/lib/db";
-// import Calender from "./_components/Calender.tsx";
+import { format } from "date-fns";
 
-const queryDate = Astro.url.searchParams.get("date");
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-const date = queryDate ? new Date(queryDate) : today;
-date.setHours(0, 0, 0, 0);
+const currentUser = Astro.locals.user;
 
-const currentUser = Astro.locals.user!;
+if (!currentUser) return null;
 
-const haveAdminAccess = currentUser.role === "INSTRUCTOR" || currentUser.role === "ADMIN";
-
-const [events, courses] = await Promise.all([
-  db.scheduleEvent.findMany({
-    where: {
-      AND: [
-        {
-          startTime: {
-            gte: date,
+let courses = await db.course.findMany({
+  where: {
+    enrolledUsers: {
+      some: {
+        username: currentUser.username,
+      },
+    },
+  },
+  include: {
+    classes: {
+      include: {
+        attachments: {
+          where: {
+            attachmentType: "ASSIGNMENT",
           },
         },
-        {
-          startTime: {
-            lt: new Date(date.getTime() + 24 * 60 * 60 * 1000),
-          },
-        },
-      ],
-      course: {
-        enrolledUsers: {
-          some: { username: currentUser.username },
-        },
       },
     },
-    include: {
-      attachments: {
-        orderBy: {
-          ordering: "asc",
-        },
-      },
-      course: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
-    },
-  }),
-  db.course.findMany({
-    where: {
-      enrolledUsers: {
-        some: { username: currentUser.username },
-      },
-    },
-    select: {
-      id: true,
-      title: true,
-    },
-  }),
-]);
+  },
+});
 
-const eventsWithAccess = events.map((event) => ({
-  ...event,
-  haveAdminAccess,
-}));
+let holidays = await db.holidays.findMany({});
+
+const assignments = courses.flatMap((course) =>
+  course.classes.flatMap((classItem) =>
+    classItem.attachments.map((attachment) => {
+      const createdAtDate = new Date(attachment.createdAt);
+      const startDate = new Date(createdAtDate);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(createdAtDate);
+      endDate.setHours(23, 59, 59, 999);
+
+      return {
+        type: "Assignment",
+        name: attachment.title,
+        description: `Assignment added on ${format(new Date(attachment.createdAt), "MMMM d, yyyy, EEEE, h:mm a")}`,
+        startDate,
+        endDate,
+        link: `assignments/${attachment.id}`,
+      };
+    })
+  )
+);
+
+const classEvents = courses.flatMap((course) =>
+  course.classes.map((classItem) => ({
+    type: "Class",
+    name: classItem.title,
+    description: `Session starts at ${format(new Date(classItem.createdAt), "MMMM d, yyyy, EEEE, h:mm a")}`,
+    startDate: new Date(classItem.createdAt),
+    endDate: new Date(classItem.createdAt.getTime() + 2000 * 60 * 60),
+    link: `courses/${course.id}/classes/${classItem.id}`,
+  }))
+);
+
+const holidayEvents = holidays.map((holiday) => {
+  const startDate = new Date(holiday.startDate);
+  const endDate = new Date(holiday.endDate);
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999);
+
+  return {
+    type: "Holiday",
+    name: holiday.reason,
+    description: holiday?.description || "Observed holiday",
+    startDate: startDate,
+    endDate: endDate,
+    link: "/calendar",
+  };
+});
+
+const events = [...assignments, ...classEvents, ...holidayEvents];
 ---
 
-<RootLayout title="Schedule">
-  <ScheduleLayout
-    client:load
-    initialEvents={eventsWithAccess}
-    courses={courses}
-    haveAdminAccess={haveAdminAccess}
-  />
-
-  <!-- <Calender client:load currentUser={currentUser} /> -->
+<RootLayout title="Events">
+  <div class="bg-background h-full">
+    <div class="md:flex gap-2">
+      <div class="md:fixed">
+        <EventsSidebar events={events} client:load />
+      </div>
+      <div class="md:ml-[300px] md:flex-1">
+        <Calendar events={events} client:load />
+      </div>
+    </div>
+  </div>
 </RootLayout>

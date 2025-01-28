@@ -70,7 +70,7 @@ export function MonthView({ selectedDate, events, onEventClick }: MonthViewProps
             return (
               <div
                 key={dayIndex}
-                className={`flex flex-col items-start p-2 min-h-[90px] border border-border ${
+                className={`flex flex-col items-start p-2 h-[90px] md:h-[120px] border border-border ${
                   isCurrentMonth ? "bg-background" : "bg-muted/50"
                 }`}
               >
