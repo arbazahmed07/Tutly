@@ -1,7 +1,8 @@
-import { env } from "@/lib/utils";
+// import { env } from "@/lib/utils";
 
 const getSiteUrl = () => {
-  return env("SITE") || "http://localhost:4321";
+  return "https://learn.tutly.in";
+  // return env("SITE") || "http://localhost:4321";
 };
 
 export { getSiteUrl };
