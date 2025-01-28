@@ -564,9 +564,9 @@ export const getAllAssignmentDetailsForInstructor = defineAction({
           mentorUsername: {
             not: null,
           },
-          user:{
+          user: {
             organizationId: currentUser.organizationId,
-          }
+          },
         },
       });
 

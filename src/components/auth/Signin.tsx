@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "astro/zod";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
@@ -28,7 +28,7 @@ type SignInInput = z.infer<typeof signInSchema>;
 export function SignIn() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -37,6 +37,21 @@ export function SignIn() {
       password: "",
     },
   });
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const error = url.searchParams.get("error");
+
+    if (error) {
+      toast.error(decodeURIComponent(error).replace(/\+/g, " "), {
+        duration: 3000,
+        position: "top-center",
+      });
+
+      url.searchParams.delete("error");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
 
   const onSubmit = async (data: SignInInput) => {
     try {
@@ -62,30 +77,25 @@ export function SignIn() {
   };
 
   const handleGoogleSignIn = async () => {
-    toast.custom(
-      <Card className="border-border bg-background/95 p-3">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-          <p className="text-sm text-foreground">
-            Google Sign-in is under maintenance. Please sign in with email instead.
-          </p>
-        </div>
-      </Card>,
-      {
-        duration: 2000,
-        position: "top-center",
+    try {
+      setIsGoogleLoading(true);
+
+      const currentUrl = new URL(window.location.href);
+      const error = currentUrl.searchParams.get("error");
+
+      if (error) {
+        throw new Error(decodeURIComponent(error).replace(/\+/g, " "));
       }
-    );
 
-    return;
-
-    // try {
-    //   setIsGoogleLoading(true);
-    //   window.location.href = "/api/auth/signin/google";
-    // } catch (error) {
-    //   toast.error("Failed to initiate Google sign in");
-    //   setIsGoogleLoading(false);
-    // }
+      window.location.href = "/api/auth/signin/google";
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to initiate Google sign in", {
+        duration: 3000,
+        position: "top-center",
+      });
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (

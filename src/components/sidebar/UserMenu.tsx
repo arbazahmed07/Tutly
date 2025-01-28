@@ -65,16 +65,23 @@ export function UserMenu({ user }: UserMenuProps) {
 
   useEffect(() => {
     if (isMobile && !isStandalone && deferredPrompt) {
-      toast({
-        title: "Install our app",
-        description: "Install our app for a better experience!",
-        action: (
-          <ToastAction altText="Install app" onClick={handleInstallClick}>
-            Install
-          </ToastAction>
-        ),
-        duration: 10000,
-      });
+      const lastInstallPromptTime = localStorage.getItem("lastInstallPromptTime");
+      const currentTime = new Date().getTime();
+      const oneWeek = 7 * 24 * 60 * 60 * 1000;
+
+      if (!lastInstallPromptTime || currentTime - parseInt(lastInstallPromptTime) > oneWeek) {
+        toast({
+          title: "Install our app",
+          description: "Install our app for a better experience!",
+          action: (
+            <ToastAction altText="Install app" onClick={handleInstallClick}>
+              Install
+            </ToastAction>
+          ),
+          duration: 10000,
+        });
+        localStorage.setItem("lastInstallPromptTime", currentTime.toString());
+      }
     }
   }, [isStandalone, deferredPrompt]);
 

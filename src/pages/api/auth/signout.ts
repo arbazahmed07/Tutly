@@ -1,14 +1,31 @@
-import { deleteSession } from "@lib/auth";
-import { deleteSessionCookie } from "@lib/auth/session";
 import type { APIRoute } from "astro";
 
-export const GET: APIRoute = async ({ cookies, redirect }) => {
-  const token = cookies.get("session")?.value;
-  if (!token) return redirect("/sign-in");
+import db from "@/lib/db";
 
-  await deleteSession(token);
+export const GET: APIRoute = async ({ cookies }) => {
+  const sessionId = cookies.get("app_auth_token")?.value;
+  if (!sessionId) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/sign-in",
+      },
+    });
+  }
+  await db.session.delete({
+    where: {
+      id: sessionId,
+    },
+  });
 
-  deleteSessionCookie({ cookies } as any);
+  cookies.delete("app_auth_token", {
+    path: "/",
+  });
 
-  return redirect("/sign-in");
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: "/sign-in",
+    },
+  });
 };

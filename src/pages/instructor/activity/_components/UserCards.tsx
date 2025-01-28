@@ -88,23 +88,43 @@ const renderOnlineStatus = ({ lastSeen }: { lastSeen: Date | null }) => {
 interface UserCardsProps {
   users: UserData[];
   totalItems: number;
+  activeCount: number;
   defaultPageSize: number;
 }
 
-const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
+type SortOption = {
+  label: string;
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
+};
+
+const sortOptions: SortOption[] = [
+  { label: "Last Active", value: "last-login" },
+  { label: "Least Active", value: "active-asc" },
+  { label: "Name (A-Z)", value: "name-asc" },
+  { label: "Name (Z-A)", value: "name-desc" },
+  { label: "Join Date (Newest)", value: "join-date-desc" },
+  { label: "Join Date (Oldest)", value: "join-date-asc" },
+];
+
+const filterOptions: SortOption[] = [
+  { label: "All Users", value: "all" },
+  { label: "Online", value: "online" },
+  { label: "Students", value: "STUDENT" },
+  { label: "Mentors", value: "MENTOR" },
+];
+
+const UserCards = ({ users, totalItems, activeCount, defaultPageSize }: UserCardsProps) => {
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
-  const [sortBy, setSortBy] = useState("recent");
-  const [filterOnline, setFilterOnline] = useState(false);
+  const [sortBy, setSortBy] = useState(searchParams.get("sort") || "last-login");
+  const [activeFilter, setActiveFilter] = useState(
+    searchParams.get("online-only") === "true" ? "online" : searchParams.get("role") || "all"
+  );
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
-
-  const activeUsersCount = users.filter((user) => {
-    const lastSeenTime = user.lastSeen ? day(user.lastSeen) : null;
-    return lastSeenTime && day().diff(lastSeenTime, "minute") < 2;
-  }).length;
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -138,14 +158,20 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
     });
   };
 
-  const handleFilterOnline = () => {
-    setFilterOnline(!filterOnline);
+  const handleFilter = (value: string) => {
+    setActiveFilter(value);
     setSearchParams((prev: URLSearchParams) => {
-      if (!filterOnline) {
-        prev.set("online", "true");
-      } else {
-        prev.delete("online");
+      prev.delete("role");
+      prev.delete("online-only");
+
+      if (value !== "all") {
+        if (value === "online") {
+          prev.set("online-only", "true");
+        } else {
+          prev.set("role", value);
+        }
       }
+
       prev.set("page", "1");
       return prev;
     });
@@ -184,13 +210,6 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
     });
   };
 
-  const displayedUsers = filterOnline
-    ? users.filter((user) => {
-        const lastSeenTime = user.lastSeen ? day(user.lastSeen) : null;
-        return lastSeenTime && day().diff(lastSeenTime, "minute") < 2;
-      })
-    : users;
-
   return (
     <div className="container mx-auto max-w-7xl space-y-8 px-4 py-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -198,28 +217,36 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
           <h2 className="text-2xl font-bold tracking-tight">Users</h2>
           <div className="flex gap-2">
             <Badge variant="secondary">Total: {totalItems}</Badge>
-            <Badge variant="outline">Active: {activeUsersCount}</Badge>
+            <Badge variant="outline">Active: {activeCount}</Badge>
           </div>
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <Select defaultValue={sortBy} onValueChange={handleSort}>
+          <Select value={sortBy} onValueChange={handleSort}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="recent">Most Recent</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="active">Last Active</SelectItem>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          <Button
-            variant={filterOnline ? "default" : "outline"}
-            onClick={handleFilterOnline}
-            className="w-full sm:w-auto"
-          >
-            {filterOnline ? "Show All" : "Show Online Only"}
-          </Button>
+
+          <Select value={activeFilter} onValueChange={handleFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by" />
+            </SelectTrigger>
+            <SelectContent>
+              {filterOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <Input
             placeholder="Search users..."
             value={searchTerm}
@@ -229,15 +256,15 @@ const UserCards = ({ users, totalItems, defaultPageSize }: UserCardsProps) => {
         </div>
       </div>
 
-      {displayedUsers.length === 0 ? (
+      {users.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-muted-foreground">
-            {filterOnline ? "No users are currently online" : "No users found"}
+            {activeFilter === "online" ? "No users are currently online" : "No users found"}
           </p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {displayedUsers.map((user) => (
+          {users.map((user) => (
             <Card
               key={user.id}
               className="group relative overflow-hidden bg-card transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
