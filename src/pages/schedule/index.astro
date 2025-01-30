@@ -80,6 +80,8 @@ const holidayEvents = holidays.map((holiday) => {
   };
 });
 
+const isAuthorized = currentUser?.role === "INSTRUCTOR" || currentUser?.role === "MENTOR" || false;
+
 const events = [...assignments, ...classEvents, ...holidayEvents];
 ---
 
@@ -90,7 +92,7 @@ const events = [...assignments, ...classEvents, ...holidayEvents];
         <EventsSidebar events={events} client:load />
       </div>
       <div class="md:ml-[300px] md:flex-1">
-        <Calendar events={events} client:load />
+        <Calendar events={events} isAuthorized={isAuthorized} holidays={holidays} client:load />
       </div>
     </div>
   </div>
