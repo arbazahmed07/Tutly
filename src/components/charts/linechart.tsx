@@ -40,7 +40,7 @@ export function Linechart({ data }: { data: any }) {
         <ChartContainer config={chartConfig} className="h-[190px] w-full">
           <AreaChart
             accessibilityLayer
-            data={data}         // realtime data
+            data={data} // realtime data
             // data={chartData} // fake data
             margin={{
               left: 12,

@@ -214,35 +214,6 @@ export const getEnrolledCoursesById = defineAction({
   },
 });
 
-export const getEnrolledCoursesByUsername = defineAction({
-  input: z.object({
-    username: z.string(),
-  }),
-  async handler({ username }) {
-    const courses = await db.course.findMany({
-      where: {
-        enrolledUsers: {
-          some: {
-            user: {
-              username: username,
-            },
-          },
-        },
-      },
-      include: {
-        classes: true,
-        createdBy: true,
-        _count: {
-          select: {
-            classes: true,
-          },
-        },
-      },
-    });
-    return { success: true, data: courses };
-  },
-});
-
 export const getMentorStudents = defineAction({
   input: z.object({
     courseId: z.string(),

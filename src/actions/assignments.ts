@@ -3,12 +3,7 @@ import { z } from "zod";
 
 import db from "@/lib/db";
 
-import {
-  getEnrolledCourses,
-  getEnrolledCoursesById,
-  getEnrolledCoursesByUsername,
-  getMentorCourses,
-} from "./courses";
+import { getEnrolledCourses, getEnrolledCoursesById, getMentorCourses } from "./courses";
 
 export const getAllAssignedAssignments = defineAction({
   handler: async (_, { locals }) => {
@@ -63,7 +58,7 @@ export const getAllAssignedAssignments = defineAction({
 
 export const getAllAssignedAssignmentsByUserId = defineAction({
   input: z.object({
-    id: z.string()||undefined,
+    id: z.string() || undefined,
   }),
   handler: async ({ id }) => {
     try {
