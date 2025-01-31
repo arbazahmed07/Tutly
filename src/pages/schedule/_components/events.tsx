@@ -143,7 +143,7 @@ export const EventsSidebar = ({ events }: { events: any[] }) => {
   return (
     <div>
       <ScrollArea className="h-[85vh] overflow-y-auto">
-        <Card className="w-full h-[85vh] rounded-lg bg-background p-4 shadow-md md:w-[290px]">
+        <Card className="w-full h-[85vh] rounded-lg bg-background p-4 shadow-md md:w-[260px]">
           {renderEventSection("Live Events", liveEvents, "No live events", true)}
           {renderEventSection("Upcoming Events", upcomingEvents, "No upcoming events", true)}
           {renderAssignmentSection(assignments, false)}

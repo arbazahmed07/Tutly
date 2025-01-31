@@ -172,13 +172,14 @@ if (role === Role.STUDENT) {
     },
   });
 
-  const totalClassCount = courses.reduce((acc, course) => acc + course._count.classes, 0);
-  const totalStudentCount = courses.reduce((acc, course) => acc + course._count.enrolledUsers, 0);
-
   dashboardData = {
-    coursesCount: courses.length,
-    totalClasses: totalClassCount,
-    enrolledStudents: totalStudentCount,
+    courses: courses.map((course) => ({
+      courseId: course.id,
+      courseTitle: course.title,
+      classCount: course._count.classes,
+      studentCount: course._count.enrolledUsers,
+    })),
+    totalCourses: courses.length,
   };
 }
 

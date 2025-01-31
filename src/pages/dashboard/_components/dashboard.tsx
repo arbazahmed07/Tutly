@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import {
   Select,
   SelectContent,
@@ -7,9 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DashboardData } from "@/types/dashboard";
+import { DashboardData, StudentDashboardData, MentorDashboardData, InstructorDashboardData } from "@/types/dashboard";
 import { getGreeting } from "@/utils/getGreeting";
-
 import { InstructorCards } from "./InstructorCards";
 import { MentorCards } from "./MentorCards";
 import { StudentCards } from "./StudentCards";
@@ -17,10 +15,10 @@ import { StudentCards } from "./StudentCards";
 interface Props {
   data: DashboardData | null;
   name: string | null;
-  currentUser: any;
+  currentUser: { role: string };
 }
 
-const Dashboard = ({ data, name }: Props) => {
+const Dashboard = ({ data, name, currentUser }: Props) => {
   if (!data) return <div>No data available</div>;
 
   const [selectedCourse, setSelectedCourse] = useState<string>("");
@@ -32,17 +30,18 @@ const Dashboard = ({ data, name }: Props) => {
   }, [data]);
 
   const renderCards = () => {
-    if ("currentUser" in data) {
-      return <StudentCards data={data} selectedCourse={selectedCourse} />;
-    } else if ("courses" in data) {
-      return <MentorCards data={data} selectedCourse={selectedCourse} />;
-    } else {
-      return <InstructorCards data={data} />;
+    if (currentUser.role === "STUDENT" && "currentUser" in data) {
+      return <StudentCards data={data as StudentDashboardData} selectedCourse={selectedCourse} />;
+    } else if (currentUser.role === "MENTOR" && "courses" in data) {
+      return <MentorCards data={data as MentorDashboardData} selectedCourse={selectedCourse} />;
+    } else if (currentUser.role === "INSTRUCTOR") {
+      return <InstructorCards data={data as InstructorDashboardData} selectedCourse={selectedCourse} />;
     }
+    return null;
   };
 
   const renderCourseSelector = () => {
-    if ("courses" in data) {
+    if ("courses" in data && data.courses.length > 0) {
       return (
         <div className="text-base font-medium text-white">
           <Select

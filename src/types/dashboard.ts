@@ -28,9 +28,13 @@ export type MentorDashboardData = {
 };
 
 export type InstructorDashboardData = {
-  coursesCount: number;
-  totalClasses: number;
-  enrolledStudents: number;
+  totalCourses: number;
+  courses: Array<{
+    courseId: string;
+    courseTitle: string;
+    classCount:number;
+    studentCount: number;
+  }>;
 };
 
 export type DashboardData = StudentDashboardData | MentorDashboardData | InstructorDashboardData;
