@@ -1,6 +1,21 @@
 import { actions } from "astro:actions";
+import { Check, Eye, EyeOff, Loader2, X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { MdLockReset } from "react-icons/md";
 
 import DisplayTable, { type Column } from "@/components/table/DisplayTable";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface UserPageProps {
   data: Record<string, any>[];
@@ -84,25 +99,240 @@ const actionWrapper = (action: any) => {
   };
 };
 
-export default function UserPage({ data, totalItems }: UserPageProps) {
+const UserPage = ({ data, totalItems }: UserPageProps) => {
+  const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [showPasswordStrength, setShowPasswordStrength] = useState(false);
+
+  const checkStrength = (pass: string) => {
+    const requirements = [
+      { regex: /.{8,}/, text: "At least 8 characters" },
+      { regex: /[0-9]/, text: "At least 1 number" },
+      { regex: /[a-z]/, text: "At least 1 lowercase letter" },
+      { regex: /[A-Z]/, text: "At least 1 uppercase letter" },
+    ];
+
+    return requirements.map((req) => ({
+      met: req.regex.test(pass),
+      text: req.text,
+    }));
+  };
+
+  const newPasswordStrength = checkStrength(newPassword);
+  const newPasswordScore = newPasswordStrength.filter((req) => req.met).length;
+
+  const getStrengthColor = (score: number) => {
+    if (score === 0) return "bg-border";
+    if (score <= 1) return "bg-red-500";
+    if (score <= 2) return "bg-orange-500";
+    if (score === 3) return "bg-amber-500";
+    return "bg-emerald-500";
+  };
+
+  const getStrengthText = (score: number) => {
+    if (score === 0) return "Enter a password";
+    if (score <= 2) return "Weak password";
+    if (score === 3) return "Medium password";
+    return "Strong password";
+  };
+
+  const handleResetPassword = async () => {
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    if (newPasswordScore < 4) {
+      toast.error("Password does not meet strength requirements");
+      return;
+    }
+
+    setIsResetting(true);
+    try {
+      const result = await actions.users_instructor_resetPassword({
+        email: selectedUser.email,
+        newPassword,
+      });
+
+      if (result.data?.success) {
+        toast.success("Password reset successfully");
+        setOpen(false);
+        setNewPassword("");
+        setConfirmPassword("");
+        setSelectedUser(null);
+      } else {
+        toast.error(result.data?.message || "Failed to reset password");
+      }
+    } catch (error) {
+      toast.error("An error occurred while resetting password");
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   return (
-    <DisplayTable
-      data={data}
-      columns={columns}
-      defaultView="table"
-      filterable={true}
-      clientSideProcessing={false}
-      totalItems={totalItems}
-      defaultPageSize={10}
-      onView={async (data: any) => {
-        return (await actions.users_getUser(data)) as any;
-      }}
-      onCreate={actionWrapper(actions.users_createUser)}
-      onEdit={actionWrapper(actions.users_updateUser)}
-      onDelete={actionWrapper(actions.users_deleteUser)}
-      onBulkImport={actionWrapper(actions.users_bulkUpsert)}
-      title="Users Management"
-      actions={[]}
-    />
+    <>
+      <DisplayTable
+        data={data}
+        columns={columns}
+        defaultView="table"
+        filterable={true}
+        clientSideProcessing={false}
+        totalItems={totalItems}
+        defaultPageSize={10}
+        onView={async (data: any) => {
+          return (await actions.users_getUser(data)) as any;
+        }}
+        onCreate={actionWrapper(actions.users_createUser)}
+        onEdit={actionWrapper(actions.users_updateUser)}
+        onDelete={actionWrapper(actions.users_deleteUser)}
+        onBulkImport={actionWrapper(actions.users_bulkUpsert)}
+        title="Users Management"
+        actions={[
+          {
+            label: "Reset Password",
+            icon: <MdLockReset className="text-red-500 mr-2 h-5 w-5" />,
+            onClick: (user: any) => {
+              setSelectedUser(user);
+              setOpen(true);
+            },
+          },
+        ]}
+      />
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>Reset password for user: {selectedUser?.username}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-password">New Password</Label>
+              <div className="relative">
+                <Input
+                  id="new-password"
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                    setShowPasswordStrength(true);
+                  }}
+                  className="pr-9"
+                  aria-invalid={newPasswordScore < 4}
+                  aria-describedby="password-strength"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute inset-y-0 right-0 flex h-full w-9 items-center justify-center text-muted-foreground/80 hover:text-foreground"
+                >
+                  {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+
+              {showPasswordStrength && (
+                <>
+                  <div
+                    className="mb-4 mt-3 h-1 w-full overflow-hidden rounded-full bg-border"
+                    role="progressbar"
+                    aria-valuenow={newPasswordScore}
+                    aria-valuemin={0}
+                    aria-valuemax={4}
+                  >
+                    <div
+                      className={`h-full ${getStrengthColor(newPasswordScore)} transition-all duration-500 ease-out`}
+                      style={{ width: `${(newPasswordScore / 4) * 100}%` }}
+                    />
+                  </div>
+
+                  <p className="mb-2 text-sm font-medium text-foreground">
+                    {getStrengthText(newPasswordScore)}. Must contain:
+                  </p>
+
+                  <ul className="space-y-1.5">
+                    {newPasswordStrength.map((req, index) => (
+                      <li key={index} className="flex items-center gap-2">
+                        {req.met ? (
+                          <Check className="h-4 w-4 text-emerald-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-muted-foreground/80" />
+                        )}
+                        <span
+                          className={`text-xs ${
+                            req.met ? "text-emerald-600" : "text-muted-foreground"
+                          }`}
+                        >
+                          {req.text}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <div className="relative">
+                <Input
+                  id="confirm-password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="pr-9"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 flex h-full w-9 items-center justify-center text-muted-foreground/80 hover:text-foreground"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {newPassword !== confirmPassword && confirmPassword && (
+              <p className="text-sm text-destructive">Passwords do not match</p>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleResetPassword}
+              disabled={
+                isResetting ||
+                !newPassword ||
+                !confirmPassword ||
+                newPassword !== confirmPassword ||
+                newPasswordScore < 4
+              }
+            >
+              {isResetting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Resetting...
+                </>
+              ) : (
+                "Reset Password"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
-}
+};
+
+export default UserPage;

@@ -648,3 +648,44 @@ export const updatePassword = defineAction({
     };
   },
 });
+
+export const instructor_resetPassword = defineAction({
+  input: z.object({
+    email: z.string(),
+    newPassword: z.string(),
+  }),
+  async handler({ email, newPassword }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser || currentUser.role !== "INSTRUCTOR") {
+      return {
+        error: {
+          message: "Unauthorized",
+        },
+      };
+    }
+
+    const user = await db.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return {
+        error: {
+          message: "User not found",
+        },
+      };
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await db.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    return {
+      success: true,
+      message: "Password reset successfully",
+    };
+  },
+});
