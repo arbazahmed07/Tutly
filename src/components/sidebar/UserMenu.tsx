@@ -116,7 +116,10 @@ export function UserMenu({ user }: UserMenuProps) {
         headers: { "Content-Type": "application/json" },
       });
 
-      window.location.reload();
+      // Wait for 200ms before redirecting to avoid cookie issues
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      window.location.href = "/sign-in";
     } catch (error) {
       console.log("Error at user-menu: ", error);
     }
@@ -135,9 +138,9 @@ export function UserMenu({ user }: UserMenuProps) {
               <AvatarFallback className="rounded-full">
                 {user.name
                   ? user.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
                   : user.username}
               </AvatarFallback>
             </Avatar>

@@ -2,13 +2,14 @@ import { defineMiddleware } from "astro:middleware";
 
 import { validateSessionToken } from "@/lib/auth/session";
 
-export const auth = defineMiddleware(async ({ cookies, locals, url, redirect }, next) => {
+export const auth = defineMiddleware(async ({ cookies, locals, url, redirect, request }, next) => {
   locals.session = null;
   locals.user = null;
   locals.organization = null;
   locals.role = null;
 
-  const sessionId = cookies.get("app_auth_token")?.value;
+  // fallback to header
+  const sessionId = cookies.get("app_auth_token")?.value || request.headers.get("app_auth_token");
   const pathname = url.pathname;
   const publicRoutes = [
     "/sign-in",

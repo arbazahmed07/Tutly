@@ -68,6 +68,10 @@ export function SignIn() {
       }
 
       const result = await response.json();
+
+      // Wait for 200ms before redirecting to avoid cookie issues
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
       router.push(result.redirectTo || "/dashboard");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign in");

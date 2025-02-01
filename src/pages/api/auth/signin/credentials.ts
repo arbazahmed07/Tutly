@@ -22,19 +22,30 @@ export const POST: APIRoute = async ({ request }) => {
     const { sessionId } = await signInWithCredentials(email, password, userAgent);
 
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day
+    const isProduction = import.meta.env.PROD;
 
-    return Response.json(
-      {
+    const cookieOptions = [
+      `app_auth_token=${sessionId}`,
+      "Path=/",
+      "HttpOnly",
+      "SameSite=Lax",
+      `Expires=${expiresAt.toUTCString()}`,
+      isProduction ? "Secure" : "",
+    ]
+      .filter(Boolean)
+      .join("; ");
+
+    return new Response(
+      JSON.stringify({
         success: true,
         message: "Logged In Successfully",
         redirectTo: "/dashboard",
-      },
+      }),
       {
         status: 200,
         headers: {
-          "Set-Cookie": `app_auth_token=${sessionId}; Path=/; HttpOnly; SameSite=Lax; Expires=${expiresAt.toUTCString()}; Secure=${
-            import.meta.env.PROD
-          }`,
+          "Content-Type": "application/json",
+          "Set-Cookie": cookieOptions,
         },
       }
     );

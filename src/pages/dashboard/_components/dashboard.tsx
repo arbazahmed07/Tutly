@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   Select,
   SelectContent,
@@ -6,8 +7,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DashboardData, StudentDashboardData, MentorDashboardData, InstructorDashboardData } from "@/types/dashboard";
+import {
+  DashboardData,
+  InstructorDashboardData,
+  MentorDashboardData,
+  StudentDashboardData,
+} from "@/types/dashboard";
 import { getGreeting } from "@/utils/getGreeting";
+
 import { InstructorCards } from "./InstructorCards";
 import { MentorCards } from "./MentorCards";
 import { StudentCards } from "./StudentCards";
@@ -35,7 +42,9 @@ const Dashboard = ({ data, name, currentUser }: Props) => {
     } else if (currentUser.role === "MENTOR" && "courses" in data) {
       return <MentorCards data={data as MentorDashboardData} selectedCourse={selectedCourse} />;
     } else if (currentUser.role === "INSTRUCTOR") {
-      return <InstructorCards data={data as InstructorDashboardData} selectedCourse={selectedCourse} />;
+      return (
+        <InstructorCards data={data as InstructorDashboardData} selectedCourse={selectedCourse} />
+      );
     }
     return null;
   };

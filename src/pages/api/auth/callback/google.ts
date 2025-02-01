@@ -51,7 +51,7 @@ export async function GET({ request, clientAddress, cookies }: APIContext) {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/login?error=Server+Error",
+        Location: "/sign-in?error=Server+Error",
       },
     });
   }
@@ -141,7 +141,7 @@ export async function GET({ request, clientAddress, cookies }: APIContext) {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/login?error=Server+Error",
+        Location: "/sign-in?error=Server+Error",
       },
     });
   }

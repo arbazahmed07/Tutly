@@ -32,7 +32,7 @@ export type InstructorDashboardData = {
   courses: Array<{
     courseId: string;
     courseTitle: string;
-    classCount:number;
+    classCount: number;
     studentCount: number;
   }>;
 };

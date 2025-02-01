@@ -6,8 +6,7 @@ import { Role } from "@prisma/client";
 import { DashboardData } from "@/types/dashboard";
 import Dashboard from "./_components/dashboard";
 
-const currentUser = Astro.locals.user;
-if (currentUser == null) return Astro.redirect("/sign-in");
+const currentUser = Astro.locals.user!;
 
 const role: Role = currentUser.role;
 let dashboardData: DashboardData | null = null;
