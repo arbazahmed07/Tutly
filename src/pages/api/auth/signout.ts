@@ -18,7 +18,15 @@ export const GET: APIRoute = async ({ cookies }) => {
     },
   });
 
+
   cookies.delete("app_auth_token", {
+    path: "/",
+  });
+
+  cookies.delete("google_code_challenge", {
+    path: "/",
+  });
+  cookies.delete("google_oauth_state", {
     path: "/",
   });
 

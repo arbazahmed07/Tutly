@@ -45,9 +45,13 @@ export async function GET({ request, clientAddress, cookies }: APIContext) {
   const storedState = cookies.get("google_oauth_state")?.value;
   const codeVerifier = cookies.get("google_code_challenge")?.value;
 
+  const deleteOAuthCookies = () => {
+    cookies.delete("google_oauth_state", { path: "/" });
+    cookies.delete("google_code_challenge", { path: "/" });
+  };
+
   if (storedState !== state || !codeVerifier || !code) {
-    cookies.delete("google_oauth_state");
-    cookies.delete("google_code_challenge");
+    deleteOAuthCookies();
     return new Response(null, {
       status: 302,
       headers: {
@@ -88,6 +92,7 @@ export async function GET({ request, clientAddress, cookies }: APIContext) {
     });
 
     if (!userExists) {
+      deleteOAuthCookies();
       return new Response(null, {
         status: 302,
         headers: {
@@ -109,8 +114,7 @@ export async function GET({ request, clientAddress, cookies }: APIContext) {
       });
     }
 
-    cookies.delete("google_oauth_state", { path: "/" });
-    cookies.delete("google_code_challenge", { path: "/" });
+    deleteOAuthCookies();
 
     const session = await db.session.create({
       data: {
@@ -136,8 +140,7 @@ export async function GET({ request, clientAddress, cookies }: APIContext) {
       },
     });
   } catch (error) {
-    cookies.delete("google_oauth_state", { path: "/" });
-    cookies.delete("google_code_challenge", { path: "/" });
+    deleteOAuthCookies();
     return new Response(null, {
       status: 302,
       headers: {
