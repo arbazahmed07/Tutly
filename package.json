@@ -134,5 +134,8 @@
     "*.{json,css,md,yml,yaml}": [
       "prettier --write"
     ]
+  },
+  "engines": {
+    "node": ">=18.18.0"
   }
 }
