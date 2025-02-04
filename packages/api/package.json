@@ -1,0 +1,40 @@
+{
+  "name": "@tutly/api",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "prettier": "@tutly/prettier-config",
+  "dependencies": {
+    "@trpc/server": "catalog:",
+    "@tutly/auth": "workspace:*",
+    "@tutly/db": "workspace:*",
+    "@tutly/validators": "workspace:*",
+    "pg": "^8.13.1",
+    "superjson": "2.2.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tutly/eslint-config": "workspace:*",
+    "@tutly/prettier-config": "workspace:*",
+    "@tutly/tsconfig": "workspace:*",
+    "@types/pg": "^8.11.11",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  }
+}
