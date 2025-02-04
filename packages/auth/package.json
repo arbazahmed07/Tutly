@@ -28,6 +28,7 @@
     "@better-auth/expo": "^1.1.15-beta.7",
     "@t3-oss/env-nextjs": "^0.11.1",
     "@tutly/db": "workspace:*",
+    "@tutly/emails": "workspace:*",
     "better-auth": "^1.1.15-beta.7",
     "next": "^14.2.15",
     "next-auth": "5.0.0-beta.20",

@@ -2,9 +2,10 @@ import type { BetterAuthOptions } from "better-auth";
 import { expo } from "@better-auth/expo";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oAuthProxy } from "better-auth/plugins";
+import { oAuthProxy, organization, twoFactor } from "better-auth/plugins";
 
 import { db } from "@tutly/db/client";
+import { sendPasswordResetEmail, sendVerificationEmail } from "@tutly/emails";
 
 import { env } from "../env";
 
@@ -13,13 +14,30 @@ export const config = {
     provider: "pg",
   }),
   secret: env.AUTH_SECRET,
-  plugins: [oAuthProxy(), expo()],
+  plugins: [oAuthProxy(), expo(), organization(), twoFactor()],
+  emailVerification: {
+    async sendVerificationEmail({ user, url }) {
+      await sendVerificationEmail({
+        email: user.email,
+        username: user.name ?? user.email,
+        url,
+      });
+    },
+  },
   emailAndPassword: {
     enabled: true,
-    // TODO: Implement email logic
-    // async sendResetPassword(data, request) {
-    //   console.log("sendResetPassword", data, request);
-    // },
+    async sendResetPassword({ user, url }) {
+      await sendPasswordResetEmail({
+        email: user.email,
+        username: user.name ?? user.email,
+        resetLink: url,
+      });
+    },
+  },
+  account: {
+    accountLinking: {
+      trustedProviders: ["google", "github"],
+    },
   },
   socialProviders: {
     google: {
