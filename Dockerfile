@@ -1,48 +1,39 @@
-# Stage 1: Build the application
-FROM node:18-alpine AS builder
-
-# Set the working directory inside the container
+FROM node:lts AS base
 WORKDIR /app
 
-RUN apk add --no-cache libc6-compat curl
+RUN apt-get update && apt-get install -y openssl curl && apt-get clean
 
-# Copy package.json and package-lock.json files
-COPY package*.json ./
+COPY package.json package-lock.json ./
 COPY prisma ./prisma/
 
-# Install dependencies
-RUN npm install --frozen-lockfile
+FROM base AS prod-deps
 
-# Copy the rest of the application code
+ENV HUSKY=0
+
+RUN npm ci
+RUN npx prisma generate
+
+RUN cp ./node_modules/.prisma/client/*.* ./node_modules/@prisma/client/
+
+FROM base AS build
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY . .
 
-# Build the Next.js application
+ENV NODE_OPTIONS="--experimental-vm-modules"
 RUN npm run build
 
-# Stage 2: Production Image
-FROM node:18-alpine AS runner
+FROM base AS runtime
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=prod-deps /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=prod-deps /app/node_modules/@prisma/client ./node_modules/@prisma/client
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/prisma ./prisma
 
-# Set environment variables
+ENV HOST=0.0.0.0
+ENV PORT=4321
 ENV NODE_ENV=production
-ENV HOSTNAME=0.0.0.0
 
-# Set the working directory
-WORKDIR /app
+EXPOSE 4321
 
-RUN apk add --no-cache libc6-compat curl
-
-
-# Copy built application from the builder stage
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/prisma ./prisma
-
-# Install only production dependencies
-RUN npm install --only=production
-
-# Expose the port for the Next.js application
-EXPOSE 4000
-
-# Start the application
-CMD ["npm", "start"]
+CMD ["sh", "-c", "node ./dist/server/entry.mjs"]

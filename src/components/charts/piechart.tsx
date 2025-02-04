@@ -1,66 +1,76 @@
-"use client";
-import { useRef, useEffect } from "react";
-import { Chart, type ChartConfiguration } from "chart.js/auto";
+// @ts-nocheck
+import { Pie, PieChart, Sector } from "recharts";
+import { PieSectorDataItem } from "recharts/types/polar/Pie";
 
-interface PiechartProps {
-  mentorPieChart: number[];
-}
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
-export default function Piechart({ mentorPieChart }: PiechartProps) {
-  const chartRef = useRef<HTMLCanvasElement | null>(null);
-  const chartInstanceRef = useRef<Chart | null>(null);
+const chartData = [
+  { browser: "Evaluated", visitors: 175, fill: "var(--color-chrome)" },
+  { browser: "Unreviewed", visitors: 187, fill: "var(--color-firefox)" },
+  { browser: "Unsubmitted", visitors: 90, fill: "var(--color-other)" },
+];
 
-  useEffect(() => {
-    if (chartRef.current) {
-      const ctx = chartRef.current.getContext("2d");
+const chartConfig = {
+  visitors: {
+    label: "Visitors",
+  },
+  chrome: {
+    label: "Chrome",
+    color: "hsl(var(--chart-1))",
+  },
+  safari: {
+    label: "Safari",
+    color: "hsl(var(--chart-2))",
+  },
+  firefox: {
+    label: "Firefox",
+    color: "hsl(var(--chart-3))",
+  },
+  edge: {
+    label: "Edge",
+    color: "hsl(var(--chart-4))",
+  },
+  other: {
+    label: "Other",
+    color: "hsl(var(--chart-5))",
+  },
+} satisfies ChartConfig;
 
-      if (ctx) {
-        if (chartInstanceRef.current) {
-          chartInstanceRef.current.destroy();
-        }
-
-        const config: ChartConfiguration = {
-          type: "pie",
-          data: {
-            labels: ["Reviewed", "Under review", "Unsubmitted"],
-            datasets: [
-              {
-                label: "Assignments",
-                data: mentorPieChart,
-                backgroundColor: [
-                  "rgb(22,163,74)",
-                  "rgb(202,138,4)",
-                  "rgb(37,99,235)",
-                ],
-                borderColor: "black",
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                position: "bottom",
-              },
-            },
-          },
-        };
-
-        chartInstanceRef.current = new Chart(ctx, config);
-      }
-    }
-
-    return () => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-      }
-    };
-  }, [mentorPieChart]);
-
+export function Piechart({ data }: { data: any }) {
+  // realtime data
+  chartData.forEach((item, index) => {
+    item.visitors = data[index];
+  });
   return (
-    <div className="m-auto w-full max-w-[300px]">
-      <canvas ref={chartRef} />
-    </div>
+    <Card className="flex flex-col h-full">
+      <CardHeader className="items-center pb-0">
+        <CardTitle>Assignments</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 pb-0">
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square">
+          <PieChart>
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <Pie
+              data={chartData}
+              dataKey="visitors"
+              nameKey="browser"
+              innerRadius={60}
+              strokeWidth={5}
+              activeIndex={0}
+              activeShape={({ outerRadius = 0, ...props }: PieSectorDataItem) => (
+                <Sector {...props} outerRadius={outerRadius + 10} />
+              )}
+            />
+          </PieChart>
+        </ChartContainer>
+      </CardContent>
+      {/* <CardFooter className="flex-col gap-2 text-sm"></CardFooter> */}
+    </Card>
   );
 }

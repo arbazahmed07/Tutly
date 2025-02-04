@@ -1,7 +1,7 @@
-import { db } from "@/lib/db";
-import getCurrentUser from "./getCurrentUser";
-import { getEnrolledCourses, getMentorCourses } from "./courses";
-import type { User, Course, submission } from "@prisma/client";
+import type { Course, User, submission } from "@prisma/client";
+import { defineAction } from "astro:actions";
+
+import db from "@/lib/db";
 
 interface LeaderboardSubmission extends Partial<submission> {
   totalPoints: number;
@@ -15,142 +15,30 @@ interface LeaderboardSubmission extends Partial<submission> {
   };
 }
 
-interface LeaderboardData {
-  sortedSubmissions: LeaderboardSubmission[];
-  currentUser: Omit<User, "oneTimePassword">;
-  enrolledCourses: Course[];
-}
-
-export default async function getLeaderboardData(): Promise<LeaderboardData | null> {
-  try {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) {
-      return null;
-    }
-    const mentor = await db.enrolledUsers.findMany({
-      where: {
-        username: currentUser.username,
-      },
-      select: {
-        mentorUsername: true,
-      },
-    });
-    const enrolledCourses = await getEnrolledCourses();
-    if (!enrolledCourses) return null;
-    const submissions = await db.submission.findMany({
-      where: {
-        enrolledUser: {
-          // TODO: Fix this to not use mentor[0]
-          mentorUsername: mentor[0]?.mentorUsername,
-        },
-      },
-      select: {
-        id: true,
-        points: true,
-        assignment: {
-          select: {
-            class: {
-              select: {
-                course: {
-                  select: {
-                    id: true,
-                    title: true,
-                    startDate: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        submissionDate: true,
-        enrolledUser: {
-          select: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                username: true,
-                image: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    const submissionsUptoLastSunday = submissions.filter((submission) => {
-      const submissionDate = new Date(submission.submissionDate);
-      const currentDate = new Date();
-      const currentDayOfWeek = currentDate.getDay();
-      const daysToLastSunday = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
-      const lastSunday = new Date(currentDate);
-      lastSunday.setDate(currentDate.getDate() - daysToLastSunday);
-      lastSunday.setHours(12, 0, 0, 0);
-      return submissionDate < lastSunday;
-    });
-
-    const totalPoints: LeaderboardSubmission[] = submissionsUptoLastSunday.map(
-      (submission) => {
-        const totalPoints = submission.points.reduce(
-          (acc, curr) => acc + (curr.score ?? 0),
-          0,
-        );
-        return {
-          id: submission.id,
-          totalPoints,
-          submissionDate: submission.submissionDate,
-          enrolledUser: submission.enrolledUser,
-          assignment: submission.assignment,
-        };
-      },
-    );
-
-    const sortedSubmissions = totalPoints.sort(
-      (a, b) => b.totalPoints - a.totalPoints,
-    );
-
-    // @ts-ignore
-
-    return { sortedSubmissions, currentUser, enrolledCourses };
-  } catch (error) {
-    console.error("Error in getLeaderboardData:", error);
-    return null;
-  }
-}
-
-export const getLeaderboardDataForStudent = async (): Promise<
-  number | null
-> => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const leaderboardData = await getLeaderboardData();
-  if (!leaderboardData) return null;
-
-  const totalPoints = leaderboardData.sortedSubmissions
-    .filter((submission) => submission.enrolledUser.user.id === currentUser.id)
-    .reduce((total, submission) => total + submission.totalPoints, 0);
-  return totalPoints;
-};
-
-export const getInstructorLeaderboardData =
-  async (): Promise<LeaderboardData | null> => {
+export const getLeaderboardData = defineAction({
+  async handler(_, { locals }) {
     try {
-      const currentUser = await getCurrentUser();
+      const currentUser = locals.user;
       if (!currentUser) {
-        return null;
+        return { error: "Unauthorized" };
       }
+      const mentor = await db.enrolledUsers.findMany({
+        where: {
+          username: currentUser.username,
+          user: {
+            organizationId: currentUser.organizationId,
+          },
+        },
+        select: {
+          mentorUsername: true,
+        },
+      });
 
-      const enrolledCourses = await getEnrolledCourses();
-      if (!enrolledCourses) return null;
       const submissions = await db.submission.findMany({
         where: {
           enrolledUser: {
-            course: {
-              id: {
-                in: enrolledCourses.map((course) => course.id),
-              },
-            },
+            // TODO: Fix this to not use mentor[0]
+            mentorUsername: mentor[0]?.mentorUsername ?? null,
           },
         },
         select: {
@@ -171,6 +59,7 @@ export const getInstructorLeaderboardData =
               },
             },
           },
+          submissionDate: true,
           enrolledUser: {
             select: {
               user: {
@@ -181,85 +70,114 @@ export const getInstructorLeaderboardData =
                   image: true,
                 },
               },
-              mentor: {
-                select: {
-                  username: true,
-                },
+            },
+          },
+        },
+      });
+      const submissionsUptoLastSunday = submissions.filter((submission) => {
+        const submissionDate = new Date(submission.submissionDate);
+        const currentDate = new Date();
+        const currentDayOfWeek = currentDate.getDay();
+        const daysToLastSunday = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
+        const lastSunday = new Date(currentDate);
+        lastSunday.setDate(currentDate.getDate() - daysToLastSunday);
+        lastSunday.setHours(12, 0, 0, 0);
+        return submissionDate < lastSunday;
+      });
+
+      const totalPoints: LeaderboardSubmission[] = submissionsUptoLastSunday.map((submission) => {
+        const totalPoints = submission.points.reduce(
+          (acc: number, curr: { score: number | null }) => acc + (curr.score ?? 0),
+          0
+        );
+        return {
+          id: submission.id,
+          totalPoints,
+          submissionDate: submission.submissionDate,
+          enrolledUser: submission.enrolledUser,
+          assignment: submission.assignment,
+        };
+      });
+
+      const sortedSubmissions = totalPoints.sort((a, b) => b.totalPoints - a.totalPoints);
+
+      return { success: true, data: { sortedSubmissions, currentUser } };
+    } catch (error) {
+      console.error("Error in getLeaderboardData:", error);
+      return { error: "Failed to get leaderboard data" };
+    }
+  },
+});
+
+export const getLeaderboardDataForStudent = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const leaderboardData = await getLeaderboardData.call(undefined, { locals });
+    if (!leaderboardData.data?.success) return { error: "Failed to get leaderboard data" };
+
+    const totalPoints = leaderboardData.data?.data?.sortedSubmissions
+      .filter(
+        (submission: LeaderboardSubmission) => submission.enrolledUser.user.id === currentUser.id
+      )
+      .reduce(
+        (total: number, submission: LeaderboardSubmission) => total + submission.totalPoints,
+        0
+      );
+
+    return { success: true, data: totalPoints };
+  },
+});
+
+export const getSubmissionsCountOfAllStudents = defineAction({
+  async handler(_, { locals }) {
+    try {
+      const currentUser = locals.user;
+      if (!currentUser) return { error: "Unauthorized" };
+
+      const submissions = await db.submission.findMany({
+        select: {
+          enrolledUser: {
+            select: {
+              username: true,
+            },
+          },
+          points: true,
+        },
+        where: {
+          points: {
+            some: {
+              score: {
+                gt: 0,
               },
             },
           },
         },
       });
 
-      const totalPoints = submissions.map((submission) => {
-        const totalPoints = submission.points.reduce(
-          (acc, curr) => acc + (curr.score ?? 0),
-          0,
-        );
-        return { ...submission, totalPoints };
-      });
-
-      const sortedSubmissions = totalPoints.sort(
-        (a, b) => b.totalPoints - a.totalPoints,
-      );
-
-      return { sortedSubmissions, currentUser, enrolledCourses };
-    } catch (error) {
-      console.error("Error in getInstructorLeaderboardData:", error);
-      return null;
-    }
-  };
-
-export const getSubmissionsCountOfAllStudents = async (): Promise<Record<
-  string,
-  number
-> | null> => {
-  try {
-    const submissions = await db.submission.findMany({
-      select: {
-        enrolledUser: {
-          select: {
-            username: true,
-          },
-        },
-        points: true,
-      },
-      where: {
-        points: {
-          some: {
-            score: {
-              gt: 0,
-            },
-          },
-        },
-      },
-    });
-    const groupedSubmissions = submissions.reduce(
-      (acc: Record<string, number>, curr) => {
+      const groupedSubmissions = submissions.reduce((acc: Record<string, number>, curr) => {
         const username = curr.enrolledUser.username;
         acc[username] = (acc[username] ?? 0) + 1;
         return acc;
-      },
-      {},
-    );
+      }, {});
 
-    return groupedSubmissions;
-  } catch (error) {
-    console.error("Error in getSubmissionsCountOfAllStudents:", error);
-    return null;
-  }
-};
+      return { success: true, data: groupedSubmissions };
+    } catch (error) {
+      console.error("Error in getSubmissionsCountOfAllStudents:", error);
+      return { error: "Failed to get submissions count" };
+    }
+  },
+});
 
-export const getMentorLeaderboardData =
-  async (): Promise<LeaderboardData | null> => {
+export const getMentorLeaderboardData = defineAction({
+  async handler(_, { locals }) {
     try {
-      const currentUser = await getCurrentUser();
+      const currentUser = locals.user;
       if (!currentUser) {
-        return null;
+        return { error: "Unauthorized" };
       }
 
-      const createdCourses = await getMentorCourses();
-      if (!createdCourses) return null;
       const submissions = await db.submission.findMany({
         where: {
           enrolledUser: {
@@ -301,76 +219,77 @@ export const getMentorLeaderboardData =
 
       const totalPoints = submissions.map((submission) => {
         const totalPoints = submission.points.reduce(
-          (acc, curr) => acc + (curr.score ?? 0),
-          0,
+          (acc: number, curr: { score: number | null }) => acc + (curr.score ?? 0),
+          0
         );
         return { ...submission, totalPoints, rank: 0 };
       });
 
-      const sortedSubmissions = totalPoints.sort(
-        (a, b) => b.totalPoints - a.totalPoints,
-      );
+      const sortedSubmissions = totalPoints.sort((a, b) => b.totalPoints - a.totalPoints);
 
       sortedSubmissions.forEach((submission, index) => {
         submission.rank = index + 1;
       });
 
-      return {
-        sortedSubmissions,
-        currentUser,
-        enrolledCourses: createdCourses,
-      };
+      return { success: true, data: { sortedSubmissions, currentUser } };
     } catch (error) {
       console.error("Error in getMentorLeaderboardData:", error);
-      return null;
+      return { error: "Failed to get mentor leaderboard data" };
     }
-  };
+  },
+});
 
-export const getMentorLeaderboardDataForDashboard = async (): Promise<
-  number | null
-> => {
-  try {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) {
-      return null;
-    }
+export const getMentorLeaderboardDataForDashboard = defineAction({
+  async handler(_, { locals }) {
+    try {
+      const currentUser = locals.user;
+      if (!currentUser) {
+        return { error: "Unauthorized" };
+      }
 
-    const createdCourses = await getMentorCourses();
-    if (!createdCourses) return null;
-    const submissions = await db.submission.findMany({
-      where: {
-        enrolledUser: {
-          mentorUsername: currentUser.username,
+      const submissions = await db.submission.findMany({
+        where: {
+          enrolledUser: {
+            mentorUsername: currentUser.username,
+          },
         },
+        include: {
+          points: true,
+        },
+      });
+
+      const filteredSubmissions = submissions.filter((submission) => submission.points.length > 0);
+
+      return { success: true, data: filteredSubmissions.length };
+    } catch (error) {
+      console.error("Error in getMentorLeaderboardDataForDashboard:", error);
+      return { error: "Failed to get mentor dashboard data" };
+    }
+  },
+});
+
+export const getDashboardData = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const { data: leaderboardData } = await getLeaderboardData.call(undefined, { locals });
+    if (!leaderboardData?.success || !leaderboardData?.data)
+      return { error: "Failed to get leaderboard data" };
+
+    const { sortedSubmissions } = leaderboardData.data;
+
+    const assignmentsSubmitted = sortedSubmissions.filter(
+      (x: LeaderboardSubmission) => x.enrolledUser.user.id === currentUser.id
+    ).length;
+
+    return {
+      success: true,
+      data: {
+        sortedSubmissions,
+        assignmentsSubmitted,
+        currentUser,
       },
-      include: {
-        points: true,
-      },
-    });
-    const filteredSubmissions = submissions.filter(
-      (submission) => submission.points.length > 0,
-    );
-    return filteredSubmissions.length;
-  } catch (error) {
-    console.error("Error in getMentorLeaderboardDataForDashboard:", error);
-    return null;
-  }
-};
-
-export const getDashboardData = async () => {
-  const leaderboardData = await getLeaderboardData();
-  if (!leaderboardData) return null;
-
-  const { currentUser, enrolledCourses, sortedSubmissions } = leaderboardData;
-
-  const assignmentsSubmitted = sortedSubmissions.filter(
-    (x) => x.enrolledUser.user.id === currentUser.id,
-  ).length;
-
-  return {
-    sortedSubmissions,
-    assignmentsSubmitted,
-    currentUser,
-    enrolledCourses,
-  };
-};
+    };
+  },
+});

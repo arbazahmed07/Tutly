@@ -1,317 +1,429 @@
-import { db } from "@/lib/db";
-import getCurrentUser from "./getCurrentUser";
-import { type Role } from "@prisma/client";
+import { defineAction } from "astro:actions";
+import { z } from "zod";
 
-export const getAllCourses = async () => {
-  const currentUser = await getCurrentUser();
-  try {
-    if (!currentUser) return null;
-    let courses;
-    if (currentUser.role === "INSTRUCTOR") {
-      courses = await db.course.findMany({
-        where: {
-          createdById: currentUser.id,
-        },
-        include: {
-          _count: {
-            select: {
-              classes: true,
-            },
+import db from "@/lib/db";
+
+export const getAllCourses = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    try {
+      if (!currentUser) return { error: "Unauthorized" };
+      let courses;
+      if (currentUser.role === "INSTRUCTOR") {
+        courses = await db.course.findMany({
+          where: {
+            createdById: currentUser.id,
           },
-        },
-      });
-    } else if (currentUser.role === "MENTOR") {
-      courses = await db.course.findMany({
-        where: {
-          enrolledUsers: {
-            some: {
-              mentorUsername: currentUser.username,
-            },
-          },
-        },
-        include: {
-          _count: {
-            select: {
-              classes: true,
-            },
-          },
-        },
-      });
-    } else {
-      courses = await db.course.findMany({
-        where: {
-          enrolledUsers: {
-            some: {
-              user: {
-                id: currentUser.id,
+          include: {
+            _count: {
+              select: {
+                classes: true,
               },
             },
           },
+        });
+      } else if (currentUser.role === "MENTOR") {
+        courses = await db.course.findMany({
+          where: {
+            enrolledUsers: {
+              some: {
+                mentorUsername: currentUser.username,
+              },
+            },
+          },
+          include: {
+            _count: {
+              select: {
+                classes: true,
+              },
+            },
+          },
+        });
+      } else {
+        courses = await db.course.findMany({
+          where: {
+            enrolledUsers: {
+              some: {
+                user: {
+                  id: currentUser.id,
+                },
+              },
+            },
+          },
+          include: {
+            _count: {
+              select: {
+                classes: true,
+              },
+            },
+          },
+        });
+      }
+
+      return { success: true, data: courses };
+    } catch (e) {
+      console.error("Detailed error while fetching courses:", e);
+      return {
+        error: "Failed to fetch courses",
+        details: e instanceof Error ? e.message : String(e),
+      };
+    }
+  },
+});
+
+export const getCourseClasses = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const classes = await db.class.findMany({
+      where: {
+        courseId: id,
+      },
+      include: {
+        course: true,
+        video: true,
+        attachments: true,
+        Folder: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+    return { success: true, data: classes };
+  },
+});
+
+export const foldersByCourseId = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }) {
+    const folders = await db.folder.findMany({
+      where: {
+        Class: {
+          some: {
+            courseId: id,
+          },
         },
-        include: {
-          _count: {
-            select: {
-              classes: true,
+      },
+    });
+    return folders ?? [];
+  },
+});
+
+export const getEnrolledCourses = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const courses = await db.course.findMany({
+      where: {
+        enrolledUsers: {
+          some: {
+            username: currentUser.username,
+          },
+        },
+      },
+      include: {
+        classes: true,
+        createdBy: true,
+        _count: {
+          select: {
+            classes: true,
+          },
+        },
+        courseAdmins: true,
+      },
+    });
+
+    courses.forEach((course) => {
+      course.classes.sort((a, b) => {
+        return Number(a.createdAt) - Number(b.createdAt);
+      });
+    });
+
+    const publishedCourses = courses.filter((course) => course.isPublished);
+
+    if (currentUser.role === "INSTRUCTOR") {
+      return { success: true, data: courses };
+    }
+    return { success: true, data: publishedCourses };
+  },
+});
+
+export const getCreatedCourses = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const courses = await db.course.findMany({
+      where: {
+        createdById: currentUser.id,
+      },
+      include: {
+        classes: true,
+        createdBy: true,
+        _count: {
+          select: {
+            classes: true,
+          },
+        },
+      },
+    });
+
+    courses.forEach((course) => {
+      course.classes.sort((a, b) => {
+        return Number(a.createdAt) - Number(b.createdAt);
+      });
+    });
+
+    return { success: true, data: courses };
+  },
+});
+
+export const getEnrolledCoursesById = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }) {
+    const courses = await db.course.findMany({
+      where: {
+        enrolledUsers: {
+          some: {
+            user: {
+              id: id,
             },
           },
         },
-      });
-    }
-    return courses;
-  } catch (e) {
-    console.log("error while fetching courses :", e);
-  }
-};
-
-export const getCourseClasses = async (id: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const classes = await db.class.findMany({
-    where: {
-      courseId: id,
-    },
-    include: {
-      course: true,
-      video: true,
-      attachments: true,
-      Folder: true,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-  return classes;
-};
-
-export const foldersByCourseId = async (id: string) => {
-  const folders = await db.folder.findMany({
-    where: {
-      Class: {
-        some: {
-          courseId: id,
+      },
+      include: {
+        classes: true,
+        createdBy: true,
+        _count: {
+          select: {
+            classes: true,
+          },
         },
       },
-    },
-  });
-  return folders;
-};
-
-export const getEnrolledCourses = async () => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-  const courses = await db.course.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          username: currentUser.username,
-        },
-      },
-    },
-    include: {
-      classes: true,
-      createdBy: {
-        select: {
-          id: true,
-          username: true,
-          name: true,
-          image: true,
-          email: true,
-          role: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-      _count: {
-        select: {
-          classes: true,
-        },
-      },
-      courseAdmins: {
-        select: {
-          id: true,
-          username: true,
-          name: true,
-          image: true,
-          email: true,
-          role: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
-    },
-  });
-
-  courses.forEach((course) => {
-    course.classes.sort((a, b) => {
-      return Number(a.createdAt) - Number(b.createdAt);
     });
-  });
+    return { success: true, data: courses };
+  },
+});
 
-  const publishedCourses = courses.filter((course) => course.isPublished);
-  // const createdCourses = courses.filter(
-  //   (course) => course.createdById === currentUser.id
-  // );
+export const getMentorStudents = defineAction({
+  input: z.object({
+    courseId: z.string(),
+  }),
+  async handler({ courseId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
 
-  if (currentUser.role === "INSTRUCTOR") return courses;
-  return publishedCourses;
-};
-
-export const getCreatedCourses = async () => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-  const courses = await db.course.findMany({
-    where: {
-      createdById: currentUser.id,
-    },
-    include: {
-      classes: true,
-      createdBy: true,
-      _count: {
-        select: {
-          classes: true,
-        },
-      },
-    },
-  });
-
-  courses.forEach((course) => {
-    course.classes.sort((a, b) => {
-      return Number(a.createdAt) - Number(b.createdAt);
-    });
-  });
-
-  return courses;
-};
-
-export const getEnrolledCoursesById = async (id: string) => {
-  const courses = await db.course.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          user: {
-            id: id,
-          },
-        },
-      },
-    },
-    include: {
-      classes: true,
-      createdBy: true,
-      _count: {
-        select: {
-          classes: true,
-        },
-      },
-    },
-  });
-  return courses;
-};
-export const getEnrolledCoursesByUsername = async (username: string) => {
-  const courses = await db.course.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          user: {
-            username: username,
-          },
-        },
-      },
-    },
-    include: {
-      classes: true,
-      createdBy: true,
-      _count: {
-        select: {
-          classes: true,
-        },
-      },
-    },
-  });
-  return courses;
-};
-
-export const getMentorStudents = async (courseId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const students = await db.user.findMany({
-    where: {
-      role: "STUDENT",
-      enrolledUsers: {
-        some: {
-          mentorUsername: currentUser.username,
-          courseId,
-        },
-      },
-    },
-    include: {
-      course: true,
-      enrolledUsers: true,
-    },
-    orderBy: {
-      username: "asc",
-    },
-  });
-
-  return students;
-};
-export const getMentorStudentsById = async (id: string, courseId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const students = await db.user.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          mentorUsername: id,
-          courseId,
-        },
-      },
-    },
-    include: {
-      course: true,
-      enrolledUsers: true,
-    },
-    orderBy: {
-      username: "asc",
-    },
-  });
-
-  return students;
-};
-
-export const getEnrolledStudents = async (courseId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const students = await db.user.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          course: {
-            id: courseId,
-          },
-        },
-      },
-      role: "STUDENT",
-    },
-    include: {
-      course: true,
-      enrolledUsers: true,
-    },
-  });
-
-  return students;
-};
-
-export const getAllStudents = async () => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-  if (currentUser.role === "MENTOR") {
     const students = await db.user.findMany({
       where: {
         role: "STUDENT",
+        enrolledUsers: {
+          some: {
+            mentorUsername: currentUser.username,
+            courseId,
+          },
+        },
+        organizationId: currentUser.organizationId,
+      },
+      include: {
+        course: true,
+        enrolledUsers: true,
+      },
+      orderBy: {
+        username: "asc",
+      },
+    });
+
+    return { success: true, data: students };
+  },
+});
+
+export const getMentorStudentsById = defineAction({
+  input: z.object({
+    id: z.string(),
+    courseId: z.string(),
+  }),
+  async handler({ id, courseId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const students = await db.user.findMany({
+      where: {
+        enrolledUsers: {
+          some: {
+            mentorUsername: id,
+            courseId: courseId,
+          },
+        },
+        organizationId: currentUser.organizationId,
+      },
+      include: {
+        course: true,
+        enrolledUsers: true,
+      },
+      orderBy: {
+        username: "asc",
+      },
+    });
+
+    return { success: true, data: students };
+  },
+});
+
+export const getEnrolledStudents = defineAction({
+  input: z.object({
+    courseId: z.string(),
+  }),
+  async handler({ courseId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const students = await db.user.findMany({
+      where: {
+        enrolledUsers: {
+          some: {
+            course: {
+              id: courseId,
+            },
+          },
+        },
+        role: "STUDENT",
+        organizationId: currentUser.organizationId,
+      },
+      include: {
+        course: true,
+        enrolledUsers: true,
+      },
+    });
+
+    return { success: true, data: students };
+  },
+});
+
+export const getAllStudents = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const students = await db.user.findMany({
+      where: {
+        role: "STUDENT",
+        organizationId: currentUser.organizationId,
+      },
+      include: {
+        course: true,
+        enrolledUsers: true,
+      },
+    });
+
+    return { success: true, data: students };
+  },
+});
+
+export const getEnrolledMentees = defineAction({
+  input: z.object({
+    courseId: z.string(),
+  }),
+  async handler({ courseId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const students = await db.user.findMany({
+      where: {
+        role: "MENTOR",
+        enrolledUsers: {
+          some: {
+            course: {
+              id: courseId,
+            },
+          },
+        },
+        organizationId: currentUser.organizationId,
+      },
+      include: {
+        course: true,
+        enrolledUsers: true,
+      },
+    });
+
+    return { success: true, data: students };
+  },
+});
+
+export const createCourse = defineAction({
+  input: z.object({
+    title: z.string(),
+    isPublished: z.boolean(),
+    image: z.string().optional(),
+  }),
+  async handler({ title, isPublished, image }, { locals }) {
+    const currentUser = locals.user;
+    if (currentUser?.role !== "INSTRUCTOR") return { error: "Unauthorized" };
+    if (!title.trim()) {
+      return { error: "Title is required" };
+    }
+
+    const newCourse = await db.course.create({
+      data: {
+        title: title,
+        createdById: currentUser.id,
+        isPublished: isPublished,
+        image: image || null,
+        enrolledUsers: {
+          create: {
+            username: currentUser.username,
+          },
+        },
+      },
+    });
+    return { success: true, data: newCourse };
+  },
+});
+
+export const updateCourse = defineAction({
+  input: z.object({
+    id: z.string(),
+    title: z.string(),
+    isPublished: z.boolean(),
+    image: z.string().optional(),
+  }),
+  async handler({ id, title, isPublished, image }, { locals }) {
+    const currentUser = locals.user;
+    if (currentUser?.role !== "INSTRUCTOR") return { error: "Unauthorized" };
+
+    if (!title.trim()) {
+      return { error: "Title is required" };
+    }
+
+    const course = await db.course.update({
+      where: {
+        id: id,
+      },
+      data: {
+        title: title,
+        isPublished: isPublished,
+        image: image || null,
+      },
+    });
+    return course;
+  },
+});
+
+export const getMentorCourses = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const courses = await db.course.findMany({
+      where: {
         enrolledUsers: {
           some: {
             mentorUsername: currentUser.username,
@@ -319,335 +431,277 @@ export const getAllStudents = async () => {
         },
       },
       include: {
-        course: true,
-        enrolledUsers: true,
-      },
-    });
-    return students;
-  }
-
-  const students = await db.user.findMany({
-    where: {
-      role: "STUDENT",
-    },
-    include: {
-      course: true,
-      enrolledUsers: true,
-    },
-  });
-
-  return students;
-};
-export const getEnrolledMentees = async (courseId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const students = await db.user.findMany({
-    where: {
-      role: "MENTOR",
-      enrolledUsers: {
-        some: {
-          course: {
-            id: courseId,
+        classes: true,
+        createdBy: true,
+        _count: {
+          select: {
+            classes: true,
           },
         },
       },
-    },
-    include: {
-      course: true,
-      enrolledUsers: true,
-    },
-  });
-
-  return students;
-};
-
-export const createCourse = async ({
-  title,
-  isPublished,
-  image,
-}: {
-  title: string;
-  isPublished: boolean;
-  image: string;
-}) => {
-  const currentUser = await getCurrentUser();
-  if (currentUser?.role !== "INSTRUCTOR") return null;
-  if (!title.trim() || title === "") {
-    return null;
-  }
-
-  const newCourse = await db.course.create({
-    data: {
-      title: title,
-      createdById: currentUser.id,
-      isPublished,
-      image: image,
-      enrolledUsers: {
-        create: {
-          username: currentUser.username,
-        },
-      },
-    },
-  });
-  return newCourse;
-};
-
-export const updateCourse = async ({
-  id,
-  title,
-  isPublished,
-  image,
-}: {
-  id: string;
-  title: string;
-  isPublished: boolean;
-  image: string;
-}) => {
-  const currentUser = await getCurrentUser();
-  if (currentUser?.role !== "INSTRUCTOR") return null;
-
-  if (!title.trim() || title === "") {
-    return null;
-  }
-
-  const course = await db.course.update({
-    where: {
-      id: id,
-    },
-    data: {
-      title: title,
-      isPublished,
-      image,
-    },
-  });
-  return course;
-};
-
-export const getMentorCourses = async () => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-
-  const courses = await db.course.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          mentorUsername: currentUser.username,
-        },
-      },
-    },
-    include: {
-      classes: true,
-      createdBy: true,
-      _count: {
-        select: {
-          classes: true,
-        },
-      },
-    },
-  });
-
-  courses.forEach((course) => {
-    course.classes.sort((a, b) => {
-      return Number(a.createdAt) - Number(b.createdAt);
-    });
-  });
-
-  return courses;
-};
-
-export const getClassDetails = async (id: string) => {
-  const classDetails = await db.class.findUnique({
-    where: {
-      id: id,
-    },
-    include: {
-      video: true,
-      attachments: true,
-      Folder: true,
-    },
-  });
-  return classDetails;
-};
-
-export const getCourseByCourseId = async (id: string) => {
-  const course = await db.course.findUnique({
-    where: {
-      id: id,
-    },
-  });
-  return course;
-};
-
-export const enrollStudentToCourse = async (
-  courseId: string,
-  username: string,
-) => {
-  try {
-    const currentUser = await getCurrentUser();
-    if (!currentUser || currentUser.role !== "INSTRUCTOR") {
-      throw new Error("Unauthorized to enroll student to course");
-    }
-
-    const user = await db.user.findUnique({
-      where: { username },
     });
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+    courses.forEach((course) => {
+      course.classes.sort((a, b) => {
+        return Number(a.createdAt) - Number(b.createdAt);
+      });
+    });
 
+    return { success: true, data: courses };
+  },
+});
+
+export const getClassDetails = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }) {
+    try {
+      const classDetails = await db.class.findUnique({
+        where: {
+          id: id,
+        },
+        include: {
+          video: true,
+          attachments: true,
+          Folder: true,
+        },
+      });
+
+      if (!classDetails) {
+        return { success: false, error: "Class not found" };
+      }
+
+      return { success: true, data: classDetails };
+    } catch (error) {
+      console.error("Error fetching class details:", error);
+      return { success: false, error: "Failed to fetch class details" };
+    }
+  },
+});
+
+export const getCourseByCourseId = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }) {
     const course = await db.course.findUnique({
-      where: { id: courseId },
-    });
-
-    if (!course) {
-      throw new Error("Course not found");
-    }
-
-    const existingEnrollment = await db.enrolledUsers.findFirst({
       where: {
-        courseId,
-        username,
+        id: id,
       },
     });
+    return { success: true, data: course };
+  },
+});
 
-    if (existingEnrollment) {
-      throw new Error("User is already enrolled in the course");
+export const enrollStudentToCourse = defineAction({
+  input: z.object({
+    courseId: z.string(),
+    username: z.string(),
+  }),
+  async handler({ courseId, username }, { locals }) {
+    try {
+      const currentUser = locals.user;
+      if (!currentUser || currentUser.role !== "INSTRUCTOR") {
+        return { error: "Unauthorized to enroll student to course" };
+      }
+
+      const user = await db.user.findUnique({
+        where: { username: username },
+      });
+
+      if (!user) {
+        return { error: "User not found" };
+      }
+
+      const course = await db.course.findUnique({
+        where: { id: courseId },
+      });
+
+      if (!course) {
+        return { error: "Course not found" };
+      }
+
+      const existingEnrollment = await db.enrolledUsers.findFirst({
+        where: {
+          courseId: courseId,
+          username: username,
+        },
+      });
+
+      if (existingEnrollment) {
+        return { error: "User is already enrolled in the course" };
+      }
+
+      const newEnrollment = await db.enrolledUsers.create({
+        data: {
+          courseId: courseId,
+          username: username,
+        },
+      });
+
+      await db.events.create({
+        data: {
+          eventCategory: "STUDENT_ENROLLMENT_IN_COURSE",
+          causedById: currentUser.id,
+          eventCategoryDataId: newEnrollment.id,
+        },
+      });
+
+      return { success: true, data: newEnrollment };
+    } catch {
+      return { error: "Failed to enroll student" };
     }
+  },
+});
 
-    const newEnrollment = await db.enrolledUsers.create({
-      data: {
-        courseId,
-        username,
-      },
-    });
+export const unenrollStudentFromCourse = defineAction({
+  input: z.object({
+    courseId: z.string(),
+    username: z.string(),
+  }),
+  async handler({ courseId, username }, { locals }) {
+    try {
+      const currentUser = locals.user;
+      if (!currentUser || currentUser.role !== "INSTRUCTOR") {
+        return { error: "Unauthorized to unenroll student from course" };
+      }
 
-    await db.events.create({
-      data: {
-        eventCategory: "STUDENT_ENROLLMENT_IN_COURSE",
-        causedById: currentUser.id,
-        eventCategoryDataId: newEnrollment.id,
-      },
-    });
+      const user = await db.user.findUnique({
+        where: { username: username },
+      });
 
-    return newEnrollment;
-  } catch {
-    throw new Error(`Failed to enroll student`);
-  }
-};
+      if (!user) {
+        return { error: "User not found" };
+      }
 
-export const unenrollStudentFromCourse = async (
-  courseId: string,
-  username: string,
-) => {
-  try {
-    const currentUser = await getCurrentUser();
-    if (!currentUser || currentUser.role !== "INSTRUCTOR") {
-      throw new Error("Unauthorized to unenroll student from course");
+      const course = await db.course.findUnique({
+        where: { id: courseId },
+      });
+
+      if (!course) {
+        return { error: "Course not found" };
+      }
+
+      const existingEnrollment = await db.enrolledUsers.findFirst({
+        where: {
+          courseId: courseId,
+          username: username,
+        },
+      });
+
+      if (!existingEnrollment) {
+        return { error: "User is not enrolled in the course" };
+      }
+
+      await db.enrolledUsers.delete({
+        where: {
+          id: existingEnrollment.id,
+        },
+      });
+
+      return { success: true, data: existingEnrollment };
+    } catch {
+      return { error: "Failed to unenroll student" };
     }
+  },
+});
 
-    const user = await db.user.findUnique({
-      where: { username },
-    });
+export const updateRole = defineAction({
+  input: z.object({
+    username: z.string(),
+    role: z.enum(["STUDENT", "MENTOR"]),
+  }),
+  async handler({ username, role }, { locals }) {
+    try {
+      const currentUser = locals.user;
+      if (!currentUser || currentUser.role !== "INSTRUCTOR") {
+        return { error: "Unauthorized to update user role" };
+      }
 
-    if (!user) {
-      throw new Error("User not found");
+      const user = await db.user.findUnique({
+        where: { username: username },
+      });
+
+      if (!user) {
+        return { error: "User not found" };
+      }
+
+      const updatedUser = await db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          role: role,
+        },
+      });
+
+      return { success: true, data: updatedUser };
+    } catch {
+      return { error: "Failed to update user role" };
     }
+  },
+});
 
-    const course = await db.course.findUnique({
-      where: { id: courseId },
-    });
+export const updateMentor = defineAction({
+  input: z.object({
+    courseId: z.string(),
+    username: z.string(),
+    mentorUsername: z.string(),
+  }),
+  async handler({ courseId, username, mentorUsername }, { locals }) {
+    try {
+      const currentUser = locals.user;
+      if (!currentUser || currentUser.role !== "INSTRUCTOR") {
+        return { error: "Unauthorized to update mentor" };
+      }
 
-    if (!course) {
-      throw new Error("Course not found");
+      const enrolledUser = await db.enrolledUsers.findFirst({
+        where: {
+          courseId: courseId,
+          username: username,
+        },
+      });
+
+      if (!enrolledUser) {
+        return { error: "User is not enrolled in the course" };
+      }
+
+      const updatedUser = await db.enrolledUsers.update({
+        where: {
+          id: enrolledUser.id,
+        },
+        data: {
+          mentorUsername: mentorUsername,
+        },
+      });
+
+      return { success: true, data: updatedUser };
+    } catch {
+      return { error: "Failed to update mentor" };
     }
+  },
+});
 
-    const existingEnrollment = await db.enrolledUsers.findFirst({
-      where: {
-        courseId,
-        username,
-      },
-    });
+export const deleteCourse = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }, { locals }) {
+    const currentUser = locals.user;
+    if (currentUser?.role !== "INSTRUCTOR") return { error: "Unauthorized" };
 
-    if (!existingEnrollment) {
-      throw new Error("User is not enrolled in the course");
+    try {
+      await db.course.delete({
+        where: {
+          id: id,
+          createdById: currentUser.id,
+        },
+      });
+
+      return { success: true };
+    } catch {
+      return { error: "Failed to delete course" };
     }
-
-    await db.enrolledUsers.delete({
-      where: {
-        id: existingEnrollment.id,
-      },
-    });
-
-    return existingEnrollment;
-  } catch {
-    throw new Error(`Failed to unenroll student`);
-  }
-};
-
-export const updateRole = async (username: string, role: Role) => {
-  try {
-    const currentUser = await getCurrentUser();
-    if (!currentUser || currentUser.role !== "INSTRUCTOR") {
-      throw new Error("Unauthorized to update user role");
-    }
-
-    const user = await db.user.findUnique({
-      where: { username },
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const updatedUser = await db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        role: role as "STUDENT" | "MENTOR",
-      },
-    });
-
-    return updatedUser;
-  } catch {
-    throw new Error(`Failed to update user role`);
-  }
-};
-
-export const updateMentor = async (
-  courseId: string,
-  username: string,
-  mentorUsername: string,
-) => {
-  try {
-    const currentUser = await getCurrentUser();
-    if (!currentUser || currentUser.role !== "INSTRUCTOR") {
-      throw new Error("Unauthorized to update mentor");
-    }
-    const enrolledUser = await db.enrolledUsers.findFirst({
-      where: {
-        courseId,
-        username,
-      },
-    });
-
-    if (!enrolledUser) {
-      throw new Error("User is not enrolled in the course");
-    }
-
-    const updatedUser = await db.enrolledUsers.update({
-      where: {
-        id: enrolledUser.id,
-      },
-      data: {
-        mentorUsername,
-      },
-    });
-
-    return updatedUser;
-  } catch {
-    throw new Error(`Failed to update mentor`);
-  }
-};
+  },
+});

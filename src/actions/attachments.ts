@@ -1,104 +1,160 @@
-import { db } from "@/lib/db";
-import getCurrentUser from "./getCurrentUser";
-import { type Attachment } from "@prisma/client";
+import { attachmentType, submissionMode } from "@prisma/client";
+import { defineAction } from "astro:actions";
+import { z } from "zod";
 
-export const createAttachment = async (data: Attachment) => {
-  const currentUser = await getCurrentUser();
+import db from "@/lib/db";
 
-  const isCourseAdmin = currentUser?.adminForCourses?.some(
-    (course) => course.id === data.courseId,
-  );
-  const haveAccess =
-    currentUser && (currentUser.role === "INSTRUCTOR" || isCourseAdmin);
-
-  if (!haveAccess) {
-    throw new Error("Unauthorized");
-  }
-
-  if (data.maxSubmissions && data.maxSubmissions <= 0) {
-    throw new Error("Max Submissions must be greater than 0");
-  }
-
-  const attachment = await db.attachment.create({
-    data: {
-      title: data.title,
-      classId: data.classId,
-      courseId: data.courseId,
-      link: data.link,
-      attachmentType: data.attachmentType,
-      submissionMode: data.submissionMode,
-      details: data.details,
-      dueDate: data.dueDate,
-      maxSubmissions: data.maxSubmissions,
+export const createAttachment = defineAction({
+  input: z.object({
+    title: z.string(),
+    details: z.string().optional(),
+    link: z.string().optional(),
+    dueDate: z.date().optional(),
+    attachmentType: z.enum(["ASSIGNMENT", "GITHUB", "ZOOM", "OTHERS"] as const),
+    courseId: z.string(),
+    classId: z.string(),
+    maxSubmissions: z.number().optional(),
+    submissionMode: z.enum(["HTML_CSS_JS", "REACT", "EXTERNAL_LINK"]),
+  }),
+  async handler(
+    {
+      title,
+      details,
+      link,
+      dueDate,
+      attachmentType,
+      courseId,
+      classId,
+      maxSubmissions,
+      submissionMode,
     },
-  });
+    { locals }
+  ) {
+    try {
+      const currentUser = locals.user;
+      if (!currentUser || currentUser.role !== "INSTRUCTOR") {
+        return { error: "Unauthorized" };
+      }
 
-  await db.events.create({
-    data: {
-      eventCategory: "ATTACHMENT_CREATION",
-      causedById: currentUser.id,
-      eventCategoryDataId: attachment.id,
-    },
-  });
+      const attachment = await db.attachment.create({
+        data: {
+          title,
+          classId,
+          link: link || null,
+          details: details || null,
+          attachmentType: attachmentType as attachmentType,
+          submissionMode: submissionMode as submissionMode,
+          dueDate: dueDate || null,
+          courseId,
+          maxSubmissions: maxSubmissions || null,
+        },
+      });
 
-  return attachment;
-};
+      return { success: true, data: attachment };
+    } catch (error) {
+      console.error("Error creating attachment:", error);
+      return { error: "Failed to create attachment" };
+    }
+  },
+});
 
-export const getAttachmentByID = async (id: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    throw new Error("You must be logged in to view an attachment");
-  }
+export const getAttachmentByID = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }) {
+    const attachment = await db.attachment.findUnique({
+      where: {
+        id,
+      },
+    });
 
-  const attachment = await db.attachment.findUnique({
-    where: {
+    return {
+      success: true,
+      data: attachment,
+    };
+  },
+});
+
+export const deleteAttachment = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  async handler({ id }, { locals }) {
+    const currentUser = locals.user!;
+
+    if (currentUser.role !== "INSTRUCTOR") {
+      return { error: "You must be an instructor to delete an attachment" };
+    }
+
+    const attachment = await db.attachment.delete({
+      where: {
+        id,
+      },
+    });
+
+    return {
+      success: true,
+      data: attachment,
+    };
+  },
+});
+
+export const updateAttachment = defineAction({
+  input: z.object({
+    id: z.string(),
+    title: z.string(),
+    details: z.string().optional(),
+    link: z.string().optional(),
+    dueDate: z.date().optional(),
+    attachmentType: z.enum(["ASSIGNMENT", "GITHUB", "ZOOM", "OTHERS"] as const),
+    courseId: z.string(),
+    classId: z.string(),
+    maxSubmissions: z.number().optional(),
+    submissionMode: z.enum(["HTML_CSS_JS", "REACT", "EXTERNAL_LINK"]),
+  }),
+  async handler(
+    {
       id,
+      title,
+      details,
+      link,
+      dueDate,
+      attachmentType,
+      courseId,
+      classId,
+      maxSubmissions,
+      submissionMode,
     },
-  });
+    { locals }
+  ) {
+    try {
+      const currentUser = locals.user;
+      if (!currentUser || currentUser.role !== "INSTRUCTOR") {
+        return { error: "Unauthorized" };
+      }
 
-  return attachment;
-};
+      const attachment = await db.attachment.update({
+        where: {
+          id,
+        },
+        data: {
+          title,
+          classId,
+          link: link || null,
+          details: details || null,
+          attachmentType: attachmentType as attachmentType,
+          submissionMode: submissionMode as submissionMode,
+          dueDate: dueDate || null,
+          courseId,
+          maxSubmissions: maxSubmissions || null,
+        },
+      });
 
-export const deleteAttachment = async (id: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    throw new Error("You must be logged in to delete an attachment");
-  }
-  if (currentUser.role !== "INSTRUCTOR") {
-    throw new Error("You must be an instructor to delete an attachment");
-  }
-
-  const attachment = await db.attachment.delete({
-    where: {
-      id,
-    },
-  });
-
-  return attachment;
-};
-
-export const editAttachment = async (id: string, data: Attachment) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    throw new Error("You must be logged in to edit an attachment");
-  }
-
-  const attachment = await db.attachment.update({
-    where: {
-      id,
-    },
-    data: {
-      title: data.title,
-      classId: data.classId,
-      courseId: data.courseId,
-      link: data.link,
-      attachmentType: data.attachmentType,
-      submissionMode: data.submissionMode,
-      details: data.details,
-      dueDate: data.dueDate,
-      maxSubmissions: data.maxSubmissions,
-    },
-  });
-
-  return attachment;
-};
+      return { success: true, data: attachment };
+    } catch (error) {
+      console.error("Error updating attachment:", error);
+      return { error: "Failed to update attachment" };
+    }
+  },
+});

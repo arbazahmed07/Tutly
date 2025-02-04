@@ -1,7 +1,18 @@
-# .dockerignore
-node_modules
+node_modules/
 npm-debug.log
-Dockerfile
-.dockerignore
-.next
-.env.local
+.git
+.gitignore
+.env
+.env.*
+dist
+.docker
+.vscode
+README.md
+docker-compose*.yml
+Makefile
+.prettierrc
+.eslintrc
+coverage
+test
+*.test.*
+*.spec.*

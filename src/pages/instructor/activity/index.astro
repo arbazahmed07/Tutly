@@ -1,0 +1,98 @@
+---
+import db from "@/lib/db";
+import RootLayout from "@/layouts/RootLayout.astro";
+import UserCards from "./_components/UserCards";
+import { Role } from "@prisma/client";
+
+const user = Astro.locals.user;
+
+if (user?.role !== "INSTRUCTOR") {
+  return Astro.redirect("/404");
+}
+
+const searchParams = Astro.url.searchParams;
+const page = parseInt(searchParams.get("page") || "1");
+const limit = parseInt(searchParams.get("limit") || "10");
+const search = searchParams.get("search") || "";
+const sort = searchParams.get("sort") || "last-login";
+const role = searchParams.get("role");
+const showOnline = searchParams.get("online-only") === "true";
+
+const skip = (page - 1) * limit;
+
+const onlineCutoff = new Date(Date.now() - 2 * 60 * 1000);
+
+const orderBy = {
+  "last-login": { lastSeen: "desc" },
+  "active-desc": { lastSeen: "asc" },
+  "name-asc": { name: "asc" },
+  "name-desc": { name: "desc" },
+  "join-date-desc": { createdAt: "desc" },
+  "join-date-asc": { createdAt: "asc" },
+}[sort] as any;
+
+const [users, totalCount, activeCount] = await Promise.all([
+  db.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      email: true,
+      mobile: true,
+      image: true,
+      role: true,
+      lastSeen: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+    where: {
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { username: { contains: search, mode: "insensitive" } },
+      ],
+      role: role ? { equals: role as Role } : { in: ["MENTOR", "STUDENT"] },
+      organizationId: user.organizationId,
+      ...(showOnline ? { lastSeen: { gte: onlineCutoff } } : {}),
+      ...(orderBy?.lastSeen ? { lastSeen: { not: null } } : {}),
+    },
+    skip,
+    take: limit,
+    orderBy,
+  }),
+  db.user.count({
+    where: {
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { username: { contains: search, mode: "insensitive" } },
+      ],
+      role: role ? { equals: role as Role } : { in: ["MENTOR", "STUDENT"] },
+      organizationId: user.organizationId,
+      ...(showOnline ? { lastSeen: { gte: onlineCutoff } } : {}),
+    },
+  }),
+  db.user.count({
+    where: {
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { username: { contains: search, mode: "insensitive" } },
+      ],
+      role: role ? { equals: role as Role } : { in: ["MENTOR", "STUDENT"] },
+      organizationId: user.organizationId,
+      lastSeen: { gte: onlineCutoff },
+    },
+  }),
+]);
+---
+
+<RootLayout title="Users">
+  <UserCards
+    users={users}
+    totalItems={totalCount}
+    activeCount={activeCount}
+    defaultPageSize={limit}
+    client:load
+  />
+</RootLayout>

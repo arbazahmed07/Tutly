@@ -1,215 +1,267 @@
-import { db } from "@/lib/db";
-import getCurrentUser from "./getCurrentUser";
-import { getMentorCourses } from "./courses";
+import { defineAction } from "astro:actions";
+import { z } from "zod";
 
-export const getUserDoubtsByCourseId = async (courseId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-  const doubts = await db.doubt.findMany({
-    where: {
-      courseId: courseId,
-    },
-    include: {
-      user: true,
-      course: true,
-      response: {
-        include: {
-          user: true,
+import db from "@/lib/db";
+
+export const getUserDoubtsByCourseId = defineAction({
+  input: z.object({
+    courseId: z.string(),
+  }),
+  async handler({ courseId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const doubts = await db.doubt.findMany({
+      where: {
+        courseId: courseId,
+      },
+      include: {
+        user: true,
+        course: true,
+        response: {
+          include: {
+            user: true,
+          },
         },
       },
-    },
-  });
-  return doubts;
-};
+    });
+    return { success: true, data: doubts };
+  },
+});
 
-//get all doubts based on enrolled courses for user
-export const getEnrolledCoursesDoubts = async () => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
+export const getEnrolledCoursesDoubts = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
 
-  const courses = await db.course.findMany({
-    where: {
-      enrolledUsers: {
-        some: {
-          username: currentUser.username,
+    const courses = await db.course.findMany({
+      where: {
+        enrolledUsers: {
+          some: {
+            username: currentUser.username,
+          },
         },
       },
-    },
-    include: {
-      doubts: {
-        include: {
-          user: true,
-          response: {
-            include: {
-              user: true,
+      include: {
+        doubts: {
+          include: {
+            user: true,
+            response: {
+              include: {
+                user: true,
+              },
             },
           },
         },
       },
-    },
-  });
-  return courses;
-};
+    });
+    return { success: true, data: courses };
+  },
+});
 
-//get all doubts based on created courses for user (instructor)
-export const getCreatedCoursesDoubts = async () => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-  const courses = await db.course.findMany({
-    where: {
-      createdById: currentUser.id,
-    },
-    include: {
-      doubts: {
-        include: {
-          user: true,
-          response: {
-            include: {
-              user: true,
+export const getCreatedCoursesDoubts = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const courses = await db.course.findMany({
+      where: {
+        createdById: currentUser.id,
+      },
+      include: {
+        doubts: {
+          include: {
+            user: true,
+            response: {
+              include: {
+                user: true,
+              },
             },
           },
         },
       },
-    },
-  });
-  return courses;
-};
+    });
+    return { success: true, data: courses };
+  },
+});
 
-//get all doubts for mentor
-export const getAllDoubtsForMentor = async () => {
-  const mentorCourses = await getMentorCourses();
-  if (!mentorCourses) return null;
-  const courses = await db.course.findMany({
-    where: {
-      id: {
-        in: mentorCourses.map((course) => course.id),
+export const getAllDoubtsForMentor = defineAction({
+  async handler(_, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const mentorCourses = await db.course.findMany({
+      where: {
+        enrolledUsers: {
+          some: {
+            mentorUsername: currentUser.username,
+          },
+        },
       },
-    },
-    include: {
-      doubts: {
-        include: {
-          user: true,
-          response: {
-            include: {
-              user: true,
+    });
+
+    if (!mentorCourses) return { error: "No courses found" };
+
+    const courses = await db.course.findMany({
+      where: {
+        id: {
+          in: mentorCourses.map((course) => course.id),
+        },
+      },
+      include: {
+        doubts: {
+          include: {
+            user: true,
+            response: {
+              include: {
+                user: true,
+              },
             },
           },
         },
       },
-    },
-  });
-  return courses;
-};
+    });
+    return { success: true, data: courses };
+  },
+});
 
-export const createDoubt = async (
-  courseId: string,
-  title?: string,
-  description?: string,
-) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-  const doubt = await db.doubt.create({
-    data: {
-      courseId: courseId,
-      userId: currentUser.id,
-      title: title,
-      description: description,
-    },
-    include: {
-      user: true,
-      course: true,
-      response: {
-        include: {
-          user: true,
+export const createDoubt = defineAction({
+  input: z.object({
+    courseId: z.string(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+  }),
+  async handler({ courseId, title, description }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const doubt = await db.doubt.create({
+      data: {
+        courseId: courseId,
+        userId: currentUser.id,
+        title: title ?? null,
+        description: description ?? null,
+      },
+      include: {
+        user: true,
+        course: true,
+        response: {
+          include: {
+            user: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  await db.events.create({
-    data: {
-      eventCategory: "DOUBT_CREATION",
-      causedById: currentUser.id,
-      eventCategoryDataId: doubt.id,
-    },
-  });
+    await db.events.create({
+      data: {
+        eventCategory: "DOUBT_CREATION",
+        causedById: currentUser.id,
+        eventCategoryDataId: doubt.id,
+      },
+    });
 
-  return doubt;
-};
+    return { success: true, data: doubt };
+  },
+});
 
-//for user/mentor/instructor to create response for user doubts , even user can create response for his own doubts(like commenting)
-export const createResponse = async (doubtId: string, description: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
+export const createResponse = defineAction({
+  input: z.object({
+    doubtId: z.string(),
+    description: z.string(),
+  }),
+  async handler({ doubtId, description }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
 
-  const response = await db.response.create({
-    data: {
-      doubtId: doubtId,
-      userId: currentUser.id,
-      description: description,
-    },
-    include: {
-      user: true,
-    },
-  });
+    const response = await db.response.create({
+      data: {
+        doubtId: doubtId,
+        userId: currentUser.id,
+        description: description,
+      },
+      include: {
+        user: true,
+      },
+    });
 
-  await db.events.create({
-    data: {
-      eventCategory: "DOUBT_RESPONSE",
-      causedById: currentUser.id,
-      eventCategoryDataId: response.id,
-    },
-  });
-  return response;
-};
+    await db.events.create({
+      data: {
+        eventCategory: "DOUBT_RESPONSE",
+        causedById: currentUser.id,
+        eventCategoryDataId: response.id,
+      },
+    });
+    return { success: true, data: response };
+  },
+});
 
-//for user to delete his own doubts
-export const deleteDoubt = async (doubtId: string) => {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
-  const doubt = await db.doubt.delete({
-    where: {
-      id: doubtId,
-      userId: currentUser.id,
-    },
-    include: {
-      user: true,
-      course: true,
-      response: {
-        include: {
-          user: true,
+export const deleteDoubt = defineAction({
+  input: z.object({
+    doubtId: z.string(),
+  }),
+  async handler({ doubtId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const doubt = await db.doubt.delete({
+      where: {
+        id: doubtId,
+        userId: currentUser.id,
+      },
+      include: {
+        user: true,
+        course: true,
+        response: {
+          include: {
+            user: true,
+          },
         },
       },
-    },
-  });
-  return doubt;
-};
+    });
+    return { success: true, data: doubt };
+  },
+});
 
-//for mentor/instructor to delete any doubts
-export const deleteAnyDoubt = async (doubtId: string) => {
-  const doubt = await db.doubt.delete({
-    where: {
-      id: doubtId,
-    },
-    include: {
-      user: true,
-      course: true,
-      response: {
-        include: {
-          user: true,
+export const deleteAnyDoubt = defineAction({
+  input: z.object({
+    doubtId: z.string(),
+  }),
+  async handler({ doubtId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const doubt = await db.doubt.delete({
+      where: {
+        id: doubtId,
+      },
+      include: {
+        user: true,
+        course: true,
+        response: {
+          include: {
+            user: true,
+          },
         },
       },
-    },
-  });
-  return doubt;
-};
+    });
+    return { success: true, data: doubt };
+  },
+});
 
-//for user to delete his own response
-export const deleteResponse = async (responseId: string) => {
-  const response = await db.response.delete({
-    where: {
-      id: responseId,
-    },
-  });
-  return response;
-};
+export const deleteResponse = defineAction({
+  input: z.object({
+    responseId: z.string(),
+  }),
+  async handler({ responseId }, { locals }) {
+    const currentUser = locals.user;
+    if (!currentUser) return { error: "Unauthorized" };
+
+    const response = await db.response.delete({
+      where: {
+        id: responseId,
+      },
+    });
+    return { success: true, data: response };
+  },
+});

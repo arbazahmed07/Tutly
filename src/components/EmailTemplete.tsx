@@ -6,11 +6,7 @@ interface EmailTemplateProps {
   device: string | null;
 }
 
-export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
-  email,
-  ip,
-  device,
-}) => (
+export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({ email, ip, device }) => (
   <div>
     <p>
       A new user has logged in from {email} at {new Date().toLocaleString()}.

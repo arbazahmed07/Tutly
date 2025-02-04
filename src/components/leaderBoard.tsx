@@ -1,10 +1,20 @@
-"use client";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import { FaCrown } from "react-icons/fa6";
-import { useState, useEffect } from "react";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useSearchParams } from "@/hooks/use-search-params";
+
 import NoDataFound from "./NoDataFound";
 
 interface Submission {
+  id: string;
+  totalPoints: number;
   enrolledUser: {
     user: {
       id: string;
@@ -14,16 +24,16 @@ interface Submission {
     };
     mentor: {
       username: string;
-    };
+    } | null;
   };
   assignment: {
     class: {
       course: {
         id: string;
-      };
-    };
+      } | null;
+    } | null;
   };
-  totalPoints: number;
+  points: Array<{ score: number | null }>;
   rank: number;
 }
 
@@ -33,33 +43,55 @@ interface Course {
   isPublished: boolean;
 }
 
-interface User {
-  id: string;
-  username: string;
-  role: "INSTRUCTOR" | "STUDENT";
-}
-
 interface Mentor {
   id: string;
   username: string;
 }
 
+interface CurrentUser {
+  id: string;
+  username: string;
+  role: string;
+  name?: string;
+  email?: string | null;
+  image?: string | null;
+  organizationId?: string | null;
+}
+
 interface LeaderboardProps {
   submissions: Submission[];
   courses: Course[];
-  currentUser: User;
+  currentUser: CurrentUser;
   mentors?: Mentor[];
+  selectedCourse?: string | null;
+  selectedMentor?: string | null;
 }
 
-export default function Leaderboard({
+const LeaderBoard = ({
   submissions,
   courses,
   currentUser,
   mentors,
-}: LeaderboardProps) {
-  const [currentCourse, setCurrentCourse] = useState<string>(
-    courses[0]?.id || "",
-  );
+  selectedCourse,
+}: LeaderboardProps) => {
+  const [_, setSearchParams] = useSearchParams();
+  const [activeMentor, setActiveMentor] = useState<string | null>(null);
+
+  const handleCourseChange = (courseId: string) => {
+    setSearchParams((prev: URLSearchParams) => {
+      prev.set("course", courseId);
+      prev.delete("mentor");
+      return prev;
+    });
+    setActiveMentor(null);
+  };
+
+  useEffect(() => {
+    if (!selectedCourse && courses[0]) {
+      handleCourseChange(courses[0].id);
+    }
+  }, []);
+
   const [leaderboardData, setLeaderboardData] = useState<
     Array<{
       userId: string;
@@ -71,15 +103,13 @@ export default function Leaderboard({
     }>
   >([]);
 
-  const [mentorUsername, setMentorUsername] = useState<string>(
-    mentors ? mentors[0]?.username || "" : "",
-  );
   useEffect(() => {
     const filteredSubmissions = submissions.filter((submission) =>
       currentUser.role === "INSTRUCTOR"
-        ? submission.enrolledUser.mentor.username === mentorUsername &&
-          submission.assignment.class.course.id === currentCourse
-        : submission.assignment.class.course.id === currentCourse,
+        ? activeMentor
+          ? submission.enrolledUser.mentor?.username === activeMentor
+          : true
+        : true
     );
 
     const leaderboardMap = new Map<
@@ -115,53 +145,51 @@ export default function Leaderboard({
     leaderboardArray.sort((a, b) => b.totalPoints - a.totalPoints);
 
     setLeaderboardData(leaderboardArray);
-  }, [currentCourse, submissions, mentorUsername, currentUser.role]);
+  }, [selectedCourse, submissions, activeMentor, currentUser.role]);
 
   return (
     <div className="mx-2 mb-10 mt-6 flex flex-col gap-4 md:mx-14">
-      {/* Leaderboard-header */}
       <div className="flex flex-col text-center">
         <FaCrown className="m-auto h-20 w-20 text-blue-500 dark:text-yellow-400" />
-        <h1 className="text-2xl font-semibold text-blue-500 dark:text-yellow-400">
-          Leaderboard
-        </h1>
+        <h1 className="text-2xl font-semibold text-blue-500 dark:text-yellow-400">Leaderboard</h1>
       </div>
-      {/* Mentors list for instructor */}
-      {currentUser.role === "INSTRUCTOR" && (
-        <div className="mt-4 flex gap-3">
-          {mentors?.map((mentor) => (
+
+      <div className="mt-4 flex flex-wrap justify-between items-center gap-4">
+        <div className="flex flex-wrap gap-3">
+          {courses?.map((course) => (
             <button
-              onClick={() => setMentorUsername(mentor.username)}
-              key={mentor.id}
-              className={`rounded p-1 px-2 text-blue-500 dark:text-primary-500 ${
-                mentor.username === mentorUsername
-                  ? "shadow-sm shadow-primary-500"
-                  : ""
+              hidden={!course.isPublished}
+              onClick={() => handleCourseChange(course.id)}
+              className={`w-20 rounded p-1 px-2 sm:w-auto ${
+                selectedCourse === course.id && "rounded border"
               }`}
+              key={course.id}
             >
-              {mentor.username}
+              <h1 className="max-w-xs truncate text-sm font-medium">{course.title}</h1>
             </button>
           ))}
         </div>
-      )}
-      {/* Courses list */}
-      <div className="mt-4 flex gap-3">
-        {courses?.map((course) => (
-          <button
-            hidden={!course.isPublished}
-            onClick={() => setCurrentCourse(course.id)}
-            className={`w-20 rounded p-1 px-2 sm:w-auto ${
-              currentCourse === course.id && "rounded border"
-            }`}
-            key={course.id}
+
+        {currentUser.role === "INSTRUCTOR" && (
+          <Select
+            value={activeMentor || ""}
+            onValueChange={(value) => setActiveMentor(value === "all" ? null : value)}
           >
-            <h1 className="max-w-xs truncate text-sm font-medium">
-              {course.title}
-            </h1>
-          </button>
-        ))}
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Mentor" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Mentors</SelectItem>
+              {mentors?.map((mentor) => (
+                <SelectItem key={mentor.id} value={mentor.username}>
+                  {mentor.username}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
-      {/* Leaderboard */}
+
       {leaderboardData.length === 0 ? (
         <NoDataFound message="No data found!" />
       ) : (
@@ -193,9 +221,9 @@ export default function Leaderboard({
                 >
                   <td className="pl-12">{index + 1}</td>
                   <td className="flex items-center md:gap-4">
-                    <Image
-                      unoptimized
-                      src={data.image || "/images/placeholder.jpg"}
+                    <img
+                      loading="lazy"
+                      src={data.image || "/placeholder.jpg"}
                       alt={`User ${index + 1}`}
                       width={35}
                       height={35}
@@ -207,9 +235,7 @@ export default function Leaderboard({
                     </div>
                   </td>
                   <td>
-                    <h1 className="text-xs font-medium md:text-sm">
-                      {data.totalPoints} points
-                    </h1>
+                    <h1 className="text-xs font-medium md:text-sm">{data.totalPoints} points</h1>
                   </td>
                 </tr>
               );
@@ -219,4 +245,6 @@ export default function Leaderboard({
       )}
     </div>
   );
-}
+};
+
+export default LeaderBoard;

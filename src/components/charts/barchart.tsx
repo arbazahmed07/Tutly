@@ -1,77 +1,70 @@
-"use client";
-import { useRef, useEffect } from "react";
-import { Chart, type ChartConfiguration } from "chart.js/auto";
+// @ts-nocheck
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 
-interface BarchartProps {
-  classes: string[];
-  attendanceInEachClass: number[];
-  label: string;
-  bgColors: string[];
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
-export default function Barchart({
-  classes,
-  attendanceInEachClass,
-  label,
-  bgColors,
-}: BarchartProps) {
-  const chartRef = useRef<HTMLCanvasElement | null>(null);
-  const chartInstanceRef = useRef<Chart | null>(null);
+const chartData = [
+  { assignment: "Assignment-1", submissions: 186 },
+  { assignment: "Assignment-2", submissions: 505 },
+  { assignment: "Assignment-3", submissions: 237 },
+  { assignment: "Assignment-4", submissions: 73 },
+  { assignment: "Assignment-5", submissions: 209 },
+  { assignment: "Assignment-6", submissions: 214 },
+  { assignment: "Assignment-7", submissions: 466 },
+  { assignment: "Assignment-8", submissions: 134 },
+  { assignment: "Assignment-9", submissions: 237 },
+  { assignment: "Assignment-10", submissions: 73 },
+  { assignment: "Assignment-11", submissions: 409 },
+  { assignment: "Assignment-12", submissions: 214 },
+];
 
-  useEffect(() => {
-    if (chartRef.current) {
-      const ctx = chartRef.current.getContext("2d");
+const chartConfig = {
+  submissions: {
+    label: "Submissions",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig;
 
-      if (ctx) {
-        if (chartInstanceRef.current) {
-          chartInstanceRef.current.destroy();
-        }
-
-        const config: ChartConfiguration = {
-          type: "bar",
-          data: {
-            labels: classes,
-            datasets: [
-              {
-                label: label,
-                data: attendanceInEachClass,
-                backgroundColor: bgColors,
-                borderColor: "white",
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            scales: {
-              x: {
-                type: "category",
-              },
-              y: {
-                beginAtZero: true,
-              },
-            },
-            plugins: {
-              legend: {
-                position: "top",
-              },
-            },
-          },
-        };
-
-        chartInstanceRef.current = new Chart(ctx, config);
-      }
-    }
-
-    return () => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-      }
-    };
-  }, [classes, attendanceInEachClass, label, bgColors]);
-
+export function Barchart({ data }: { data: any }) {
   return (
-    <div className="h-full w-4/5">
-      <canvas ref={chartRef} />
-    </div>
+    <Card className="h-full w-full">
+      <CardHeader>
+        <CardTitle>Submissions</CardTitle>
+        <CardDescription>Submissions per assignment</CardDescription>
+      </CardHeader>
+      <CardContent className="h-[190px] w-full">
+        <ChartContainer config={chartConfig} className="h-[190px] w-full">
+          <BarChart
+            accessibilityLayer
+            data={data} // realtime data
+            // data={chartData} // fake data
+            margin={{
+              top: 20,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="assignment"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              // tickFormatter={(value) => value.slice(0,3)}
+            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <Bar dataKey="submissions" fill="var(--color-submissions)" radius={[8, 8, 0, 0]}>
+              <LabelList position="top" offset={12} className="fill-foreground" fontSize={12} />
+            </Bar>
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      {/* <CardFooter className="flex-col items-start gap-2 text-sm">
+      </CardFooter> */}
+    </Card>
   );
 }
