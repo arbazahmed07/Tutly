@@ -14,11 +14,17 @@ export const config = {
   }),
   secret: env.AUTH_SECRET,
   plugins: [oAuthProxy(), expo()],
+  emailAndPassword: {
+    enabled: true,
+    // TODO: Implement email logic
+    // async sendResetPassword(data, request) {
+    //   console.log("sendResetPassword", data, request);
+    // },
+  },
   socialProviders: {
-    discord: {
-      clientId: env.AUTH_DISCORD_ID,
-      clientSecret: env.AUTH_DISCORD_SECRET,
-      redirectURI: `${env.BETTER_AUTH_URL}/api/auth/callback/discord`,
+    google: {
+      clientId: env.AUTH_GOOGLE_ID,
+      clientSecret: env.AUTH_GOOGLE_SECRET,
     },
   },
   trustedOrigins: ["exp://"],

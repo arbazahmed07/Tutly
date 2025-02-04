@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
@@ -9,8 +9,6 @@ import { Toaster } from "@tutly/ui/toast";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
-
-import { env } from "~/env";
 
 export const viewport: Viewport = {
   themeColor: [

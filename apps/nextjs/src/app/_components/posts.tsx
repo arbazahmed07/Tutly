@@ -79,9 +79,7 @@ export function CreatePostForm() {
   );
 }
 
-export function PostList() {
-  const [posts] = api.post.all.useSuspenseQuery();
-
+export function PostList({ posts }: { posts: RouterOutputs["post"]["all"] }) {
   if (posts.length === 0) {
     return (
       <div className="relative flex w-full flex-col gap-4">

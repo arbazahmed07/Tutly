@@ -7,25 +7,7 @@ import { Button } from "@tutly/ui/button";
 export async function AuthShowcase() {
   const session = await getSession();
   if (!session) {
-    return (
-      <form>
-        <Button
-          size="lg"
-          formAction={async () => {
-            "use server";
-            const res = await auth.api.signInSocial({
-              body: {
-                provider: "discord",
-                callbackURL: "/",
-              },
-            });
-            redirect(res.url ?? "/");
-          }}
-        >
-          Sign in with Discord
-        </Button>
-      </form>
-    );
+    return redirect("/sign-in");
   }
 
   return (
@@ -42,7 +24,7 @@ export async function AuthShowcase() {
             await auth.api.signOut({
               headers: headers(),
             });
-            throw redirect("/");
+            redirect("/");
           }}
         >
           Sign out

@@ -34,9 +34,11 @@ interface CreateContextOptions {
 }
 
 export const createTRPCContext = async (opts: CreateContextOptions) => {
-  const session = opts.session ?? await auth.api.getSession({
-    headers: opts.headers,
-  });
+  const session =
+    opts.session ??
+    (await auth.api.getSession({
+      headers: opts.headers,
+    }));
   return {
     session,
     db,

@@ -4,7 +4,7 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter, createTRPCContext } from "@tutly/api";
 import { auth } from "@tutly/auth";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 /**
  * Configure basic CORS headers
@@ -24,7 +24,6 @@ export const OPTIONS = () => {
   setCorsHeaders(response);
   return response;
 };
-
 const handler = async (req: NextRequest) => {
   const session = await auth.api.getSession({
     headers: req.headers,
