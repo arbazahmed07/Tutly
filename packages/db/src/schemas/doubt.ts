@@ -8,7 +8,7 @@ export const doubts = pgTable("doubt", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }),
   description: text("description"),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id),
   courseId: uuid("course_id").references(() => courses.id),
@@ -29,7 +29,7 @@ export const doubtsRelations = relations(doubts, ({ one, many }) => ({
 export const responses = pgTable("response", {
   id: uuid("id").primaryKey().defaultRandom(),
   description: text("description"),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id),
   doubtId: uuid("doubt_id")

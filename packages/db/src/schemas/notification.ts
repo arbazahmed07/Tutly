@@ -9,7 +9,7 @@ export const pushSubscriptions = pgTable("push_subscription", {
   endpoint: varchar("endpoint", { length: 255 }).notNull().unique(),
   p256dh: varchar("p256dh", { length: 255 }).notNull(),
   auth: varchar("auth", { length: 255 }).notNull(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -32,12 +32,12 @@ export const pushSubscriptionsRelations = relations(
 
 export const notifications = pgTable("notification", {
   id: uuid("id").primaryKey().defaultRandom(),
-  intendedForId: uuid("intended_for_id")
+  intendedForId: text("intended_for_id")
     .notNull()
     .references(() => user.id),
   mediumSent: notificationMediumEnum("medium_sent").default("PUSH"),
   customLink: varchar("custom_link", { length: 255 }),
-  causedById: uuid("caused_by_id").references(() => user.id),
+  causedById: text("caused_by_id").references(() => user.id),
   eventType: notificationEventEnum("event_type").notNull(),
   message: text("message"),
   causedObjects: text("caused_objects").default("{}"),

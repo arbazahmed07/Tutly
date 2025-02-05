@@ -72,6 +72,18 @@ export const config = {
       });
     },
   },
+  user: {
+    additionalFields: {
+      username: {
+        type: "string",
+        required: false,
+      },
+      lastSeen: {
+        type: "date",
+        required: false,
+      },
+    },
+  },
   account: {
     accountLinking: {
       trustedProviders: ["google", "github"],

@@ -10,10 +10,10 @@ CREATE TYPE "public"."role" AS ENUM('INSTRUCTOR', 'MENTOR', 'STUDENT', 'ADMIN');
 CREATE TYPE "public"."submission_mode" AS ENUM('HTML_CSS_JS', 'REACT', 'EXTERNAL_LINK');--> statement-breakpoint
 CREATE TYPE "public"."video_type" AS ENUM('DRIVE', 'YOUTUBE', 'ZOOM');--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "account" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"account_id" text NOT NULL,
 	"provider_id" text NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"access_token" text,
 	"refresh_token" text,
 	"id_token" text,
@@ -26,81 +26,79 @@ CREATE TABLE IF NOT EXISTS "account" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "invitation" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"organization_id" text NOT NULL,
 	"email" text NOT NULL,
-	"role" "role",
+	"role" text,
 	"status" text NOT NULL,
 	"expires_at" timestamp NOT NULL,
-	"inviter_id" uuid NOT NULL
+	"inviter_id" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "member" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"organization_id" uuid NOT NULL,
-	"user_id" uuid NOT NULL,
-	"role" "role" NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"organization_id" text NOT NULL,
+	"user_id" text NOT NULL,
+	"role" text NOT NULL,
 	"created_at" timestamp NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "organization" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"slug" text,
 	"logo" text,
-	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+	"created_at" timestamp NOT NULL,
 	"metadata" text,
 	CONSTRAINT "organization_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "session" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"expires_at" timestamp NOT NULL,
 	"token" text NOT NULL,
-	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+	"created_at" timestamp NOT NULL,
+	"updated_at" timestamp NOT NULL,
 	"ip_address" text,
 	"user_agent" text,
-	"user_id" uuid NOT NULL,
-	"active_organization_id" uuid,
-	"impersonated_by" uuid,
+	"user_id" text NOT NULL,
+	"active_organization_id" text,
+	"impersonated_by" text,
 	CONSTRAINT "session_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "two_factor" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"secret" text NOT NULL,
 	"backup_codes" text NOT NULL,
-	"user_id" uuid NOT NULL
+	"user_id" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"email" text NOT NULL,
-	"username" text NOT NULL,
 	"email_verified" boolean NOT NULL,
 	"image" text,
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL,
 	"two_factor_enabled" boolean,
-	"role" "role" DEFAULT 'STUDENT',
+	"role" text,
 	"banned" boolean,
 	"ban_reason" text,
 	"ban_expires" timestamp,
-	"last_seen" timestamp with time zone,
-	CONSTRAINT "user_email_unique" UNIQUE("email"),
-	CONSTRAINT "user_username_unique" UNIQUE("username")
+	"username" text,
+	"last_seen" timestamp,
+	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "verification" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"identifier" text NOT NULL,
 	"value" text NOT NULL,
 	"expires_at" timestamp NOT NULL,
-	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+	"created_at" timestamp,
+	"updated_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "post" (
@@ -120,9 +118,9 @@ CREATE TABLE IF NOT EXISTS "file" (
 	"is_public" boolean DEFAULT false,
 	"public_url" varchar(255),
 	"is_uploaded" boolean DEFAULT false,
-	"uploaded_by_id" uuid,
+	"uploaded_by_id" text,
 	"is_archived" boolean DEFAULT false,
-	"archived_by_id" uuid,
+	"archived_by_id" text,
 	"archive_reason" text,
 	"archived_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -131,10 +129,10 @@ CREATE TABLE IF NOT EXISTS "file" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "notification" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"intended_for_id" uuid NOT NULL,
+	"intended_for_id" text NOT NULL,
 	"medium_sent" "notification_medium" DEFAULT 'PUSH',
 	"custom_link" varchar(255),
-	"caused_by_id" uuid,
+	"caused_by_id" text,
 	"event_type" "notification_event" NOT NULL,
 	"message" text,
 	"caused_objects" text DEFAULT '{}',
@@ -148,7 +146,7 @@ CREATE TABLE IF NOT EXISTS "push_subscription" (
 	"endpoint" varchar(255) NOT NULL,
 	"p256dh" varchar(255) NOT NULL,
 	"auth" varchar(255) NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT "push_subscription_endpoint_unique" UNIQUE("endpoint")
@@ -156,7 +154,7 @@ CREATE TABLE IF NOT EXISTS "push_subscription" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "course_admins" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"course_id" uuid NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
@@ -164,7 +162,7 @@ CREATE TABLE IF NOT EXISTS "course_admins" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "course" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"created_by_id" uuid NOT NULL,
+	"created_by_id" text NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"image" varchar(255),
 	"start_date" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -202,7 +200,7 @@ CREATE TABLE IF NOT EXISTS "class" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "attendance" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"userId" uuid NOT NULL,
+	"userId" text NOT NULL,
 	"class_id" uuid NOT NULL,
 	"attended_duration" integer,
 	"attended" boolean DEFAULT false,
@@ -213,8 +211,8 @@ CREATE TABLE IF NOT EXISTS "attendance" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "enrolled_users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
-	"mentor_id" uuid,
+	"user_id" text NOT NULL,
+	"mentor_id" text,
 	"start_date" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"end_date" timestamp with time zone,
 	"course_id" uuid,
@@ -264,7 +262,7 @@ CREATE TABLE IF NOT EXISTS "doubt" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" varchar(255),
 	"description" text,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"course_id" uuid,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
@@ -273,7 +271,7 @@ CREATE TABLE IF NOT EXISTS "doubt" (
 CREATE TABLE IF NOT EXISTS "response" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"description" text,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"doubt_id" uuid NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
@@ -291,6 +289,16 @@ CREATE TABLE IF NOT EXISTS "event_attachment" (
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "holidays" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"reason" varchar(255) NOT NULL,
+	"description" text,
+	"start_date" timestamp with time zone NOT NULL,
+	"end_date" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "schedule_event" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" varchar(255) NOT NULL,
@@ -298,7 +306,7 @@ CREATE TABLE IF NOT EXISTS "schedule_event" (
 	"end_time" timestamp with time zone NOT NULL,
 	"is_published" boolean DEFAULT false,
 	"course_id" uuid,
-	"created_by_id" uuid NOT NULL,
+	"created_by_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
@@ -308,14 +316,14 @@ CREATE TABLE IF NOT EXISTS "bookmarks" (
 	"category" "bookmark_category" NOT NULL,
 	"object_id" uuid NOT NULL,
 	"caused_objects" text DEFAULT '{}',
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "notes" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"category" "note_category" NOT NULL,
 	"object_id" uuid NOT NULL,
 	"caused_objects" text DEFAULT '{}',
@@ -327,7 +335,7 @@ CREATE TABLE IF NOT EXISTS "notes" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "profile" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"date_of_birth" timestamp with time zone,
 	"hobbies" text[],
 	"about_me" text,

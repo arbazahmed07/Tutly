@@ -5,7 +5,7 @@ import { user } from "./auth";
 
 export const profiles = pgTable("profile", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id)
     .unique(),

@@ -20,7 +20,7 @@ export const scheduleEvents = pgTable("schedule_event", {
   endTime: timestamp("end_time", { withTimezone: true }).notNull(),
   isPublished: boolean("is_published").default(false),
   courseId: uuid("course_id").references(() => courses.id),
-  createdById: uuid("created_by_id")
+  createdById: text("created_by_id")
     .notNull()
     .references(() => user.id),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -73,3 +73,19 @@ export const eventAttachmentsRelations = relations(
     }),
   }),
 );
+
+export const holidays = pgTable("holidays", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  reason: varchar("reason", { length: 255 }).notNull(),
+  description: text("description"),
+
+  startDate: timestamp("start_date", { withTimezone: true }).notNull(),
+  endDate: timestamp("end_date", { withTimezone: true }).notNull(),
+
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});

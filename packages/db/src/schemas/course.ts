@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   pgTable,
+  text,
   timestamp,
   uuid,
   varchar,
@@ -16,7 +17,7 @@ import { scheduleEvents } from "./event";
 
 export const courses = pgTable("course", {
   id: uuid("id").primaryKey().defaultRandom(),
-  createdById: uuid("created_by_id")
+  createdById: text("created_by_id")
     .notNull()
     .references(() => user.id),
   title: varchar("title", { length: 255 }).notNull(),
@@ -36,7 +37,7 @@ export const courses = pgTable("course", {
 
 export const courseAdmins = pgTable("course_admins", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id),
   courseId: uuid("course_id")

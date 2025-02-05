@@ -18,10 +18,10 @@ export const enrolledUsers = pgTable(
   "enrolled_users",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => user.id),
-    mentorId: uuid("mentor_id").references(() => user.id),
+    mentorId: text("mentor_id").references(() => user.id),
     startDate: timestamp("start_date", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -68,7 +68,7 @@ export const attendance = pgTable(
   "attendance",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("userId")
+    userId: text("userId")
       .notNull()
       .references(() => user.id),
     classId: uuid("class_id")

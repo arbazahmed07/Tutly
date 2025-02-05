@@ -20,9 +20,9 @@ export const files = pgTable("file", {
   isPublic: boolean("is_public").default(false),
   publicUrl: varchar("public_url", { length: 255 }),
   isUploaded: boolean("is_uploaded").default(false),
-  uploadedById: uuid("uploaded_by_id").references(() => user.id),
+  uploadedById: text("uploaded_by_id").references(() => user.id),
   isArchived: boolean("is_archived").default(false),
-  archivedById: uuid("archived_by_id").references(() => user.id),
+  archivedById: text("archived_by_id").references(() => user.id),
   archiveReason: text("archive_reason"),
   archivedAt: timestamp("archived_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })

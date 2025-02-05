@@ -17,7 +17,7 @@ export const bookmarks = pgTable(
     category: bookmarkCategoryEnum("category").notNull(),
     objectId: uuid("object_id").notNull(),
     causedObjects: text("caused_objects").default("{}"),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => user.id),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -43,7 +43,7 @@ export const notes = pgTable(
   "notes",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
+    userId: text("user_id")
       .notNull()
       .references(() => user.id),
     category: noteCategoryEnum("category").notNull(),
