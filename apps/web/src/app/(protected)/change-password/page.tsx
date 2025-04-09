@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth/session";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import ChangePassword from "@/app/(protected)/profile/_components/ChangePassword";
 
 export default async function ChangePasswordPage() {

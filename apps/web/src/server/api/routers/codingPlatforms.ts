@@ -5,7 +5,7 @@ import {
   getPlatformScores,
   validatePlatformHandles,
 } from "@/lib/coding-platforms";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 
 export const codingPlatformsRouter = createTRPCRouter({
   validatePlatformHandles: protectedProcedure

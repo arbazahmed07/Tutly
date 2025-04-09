@@ -1,4 +1,4 @@
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import AssignmentPage from "../_components/AssignmentPage";
 import { getServerSessionOrRedirect } from "@/lib/auth/session";
 import { redirect } from "next/navigation";

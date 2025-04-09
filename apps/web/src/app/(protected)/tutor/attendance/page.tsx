@@ -1,6 +1,6 @@
 import { getServerSessionOrRedirect } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import type { Course, Class } from "@prisma/client";
 import AttendanceClient from "./_components/Attendancefilters";
 import { api } from "@/trpc/server";

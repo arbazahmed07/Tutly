@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import type { Course, User } from "@prisma/client";
 import { getServerSessionOrRedirect } from "@/lib/auth/session";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import AssignmentDashboard from "./_components/AssignmentDashboard";
 
 type StudentWithRelations = User & {
@@ -88,7 +88,7 @@ export default async function AssignmentsPage() {
         },
       },
     },
-  }) ;
+  });
 
   courses.forEach((course) => {
     course.classes.sort((a, b) => {

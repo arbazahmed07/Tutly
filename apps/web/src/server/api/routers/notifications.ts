@@ -3,7 +3,7 @@ import webPush from "web-push";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { env } from "@/env";
 
 webPush.setVapidDetails(

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth/session";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import UserCards from "./_components/UserCards";
 
 export default async function ActivityPage({

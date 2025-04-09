@@ -11,7 +11,7 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import type { SessionWithUser, SessionUser } from "@/lib/auth/session";
 
 type CreateContextOptions = Partial<CreateNextContextOptions> & {

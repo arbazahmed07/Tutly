@@ -1,4 +1,4 @@
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import AssignmentBoard from "./_components/AssignmentBoard";
 import NoDataFound from "@/components/NoDataFound";
 import { getServerSessionOrRedirect } from "@/lib/auth/session";

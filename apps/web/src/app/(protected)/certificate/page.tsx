@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth/session";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import StudentCertificate from "./_components/StudentCertificate";
 
 interface Course {

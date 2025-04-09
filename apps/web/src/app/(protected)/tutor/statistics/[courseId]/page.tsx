@@ -9,7 +9,7 @@ import StudentStats from "../_components/studentStats";
 import TabView from "../_components/TabView";
 import { EvaluationStats } from "../_components/evaluationStats";
 import { getServerSessionOrRedirect } from "@/lib/auth/session";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 

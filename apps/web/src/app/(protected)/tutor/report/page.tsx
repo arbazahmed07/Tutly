@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerSessionOrRedirect } from "@/lib/auth/session";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 
 export default async function ReportPage() {
   const session = await getServerSessionOrRedirect();

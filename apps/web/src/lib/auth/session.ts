@@ -2,7 +2,7 @@ import type { Course, Organization, Role, Session, User } from "@prisma/client";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { AUTH_COOKIE_NAME } from "@/lib/constants";
 
 export type SessionUser = Omit<User, "password" | "oneTimePassword"> & {

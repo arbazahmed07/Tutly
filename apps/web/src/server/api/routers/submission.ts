@@ -8,7 +8,7 @@ import type {
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import type { InputJsonValue } from "@prisma/client/runtime/library";
 
 export interface AssignmentDetails {

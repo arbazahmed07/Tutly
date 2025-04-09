@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Role } from "@prisma/client";
 import type { DashboardData } from "./types";
 import Dashboard from "./_components/dashboard";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { getServerSession } from "@/lib/auth/session";
 
 export default async function DashboardPage() {

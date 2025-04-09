@@ -3,7 +3,7 @@ import type { Role, Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 
 interface StudentData {
   Duration: number;

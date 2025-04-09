@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { AUTH_COOKIE_NAME } from "@/lib/constants";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 
 export const GET = async (request: Request) => {
   const cookieStore = await cookies();

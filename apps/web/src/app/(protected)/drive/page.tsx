@@ -1,5 +1,5 @@
 import { getServerSession } from "@/lib/auth/session";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { redirect } from "next/navigation";
 import Drive from "./_components/Drive";
 

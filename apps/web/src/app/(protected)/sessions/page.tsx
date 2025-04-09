@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import Sessions from "./_components/Sessions";
 import { getServerSession } from "@/lib/auth/session";
 

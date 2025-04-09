@@ -2,7 +2,7 @@ import type { EventAttachmentType } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 
 export const scheduleRouter = createTRPCRouter({
   getSchedule: protectedProcedure

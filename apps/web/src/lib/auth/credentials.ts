@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import generateRandomPassword from "@/utils/generateRandomPassword";
 
 async function validateCredentials(identifier: string, password: string) {

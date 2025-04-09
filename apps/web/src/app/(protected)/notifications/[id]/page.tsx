@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { NOTIFICATION_HREF_MAP } from "@/components/Notifications";
 import type { causedObjects } from "@/components/Notifications";
 

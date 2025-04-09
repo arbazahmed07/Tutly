@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { format } from "date-fns";
 
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { getServerSession } from "@/lib/auth/session";
 import { Calendar } from "./_components/calendar";
 import { EventsSidebar } from "./_components/events";

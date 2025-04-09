@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import type { Attendance, Class, submission, User } from "@prisma/client";
 
 interface AttendanceWithClass extends Attendance {

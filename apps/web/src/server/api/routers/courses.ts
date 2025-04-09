@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 
 export async function getEnrolledCourseIds(username: string) {
   const enrolledCourses = await db.enrolledUsers.findMany({

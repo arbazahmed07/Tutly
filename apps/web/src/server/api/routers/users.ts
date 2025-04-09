@@ -7,7 +7,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import generateRandomPassword from "@/utils/generateRandomPassword";
 
 export const usersRouter = createTRPCRouter({

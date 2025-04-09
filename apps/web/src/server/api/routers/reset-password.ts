@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import OTPEmailTemplate from "@/components/email/OTPEmailTemplate";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { env } from "@/env";
 
 const resend = new Resend(env.RESEND_API_KEY);

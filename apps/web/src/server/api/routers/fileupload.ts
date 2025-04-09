@@ -9,7 +9,7 @@ import { v4 as uuid } from "uuid";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import { getExtension } from "@/utils/file";
 
 export const allowedMimeTypes = [

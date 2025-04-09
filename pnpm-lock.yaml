@@ -121,9 +121,6 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.7.0
         version: 4.7.0(monaco-editor@0.52.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@prisma/client':
-        specifier: ^6.5.0
-        version: 6.6.0(prisma@6.6.0(typescript@5.8.2))(typescript@5.8.2)
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.6
         version: 1.1.6(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -187,6 +184,12 @@ importers:
       '@trpc/server':
         specifier: ^11.0.0
         version: 11.0.0(typescript@5.8.2)
+      '@tutly/api':
+        specifier: workspace:*
+        version: link:../../packages/api
+      '@tutly/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       axios:
         specifier: ^1.8.4
         version: 1.8.4
@@ -341,9 +344,6 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.6.11
         version: 0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3))(prettier@3.5.3)
-      prisma:
-        specifier: ^6.5.0
-        version: 6.6.0(typescript@5.8.2)
       tailwindcss:
         specifier: ^4.0.15
         version: 4.1.3

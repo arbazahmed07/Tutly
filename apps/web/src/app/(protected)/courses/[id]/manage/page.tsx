@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { db } from "@/server/db";
+import { db } from "@tutly/db";
 import UsersTable from "./_components/UsersTable";
 import { getServerSessionOrRedirect } from "@/lib/auth/session";
 
