@@ -13,13 +13,13 @@ check-env:
 check-db:
 	@echo "Checking database..."
 	@set -a && . .env && set +a && \
-	if ! npx prisma db execute --stdin <<< "SELECT 1" >/dev/null 2>&1; then \
+	if ! pnpx prisma db execute --stdin <<< "SELECT 1" >/dev/null 2>&1; then \
 		echo "Database connection failed. Setting up database..." && \
-		npx prisma db push || exit 1 && \
+		pnpx prisma db push || exit 1 && \
 		$(MAKE) load-dummy-data; \
 	else \
 		echo "Database connection successful. Checking for data..." && \
-		USER_COUNT=$$(npx prisma db execute --stdin <<< "SELECT COUNT(*) FROM \"User\";" 2>/dev/null | grep -o '[0-9]*') && \
+		USER_COUNT=$$(pnpx prisma db execute --stdin <<< "SELECT COUNT(*) FROM \"User\";" 2>/dev/null | grep -o '[0-9]*') && \
 		if [ "$$USER_COUNT" = "0" ]; then \
 			echo "Database is empty. Loading dummy data..." && \
 			$(MAKE) load-dummy-data; \
@@ -58,30 +58,31 @@ init:
 	@echo "Initializing Tutly..."
 	cp .env.example .env
 	@echo "Installing dependencies..."
-	npm install
+	pnpm install
 	mkdir -p data/localstack
 	@echo "Setting up services..."
 	make services
 	@echo "Setting up database..."
-	set -a && . .env && set +a && npx prisma generate
-	set -a && . .env && set +a && npx prisma db push
+	set -a && . .env && set +a && pnpx prisma generate
+	set -a && . .env && set +a && pnpx prisma db push
 	@echo "Loading initial data..."
 	make load-dummy-data
 	@echo "Initialization complete!"
 
 dev:
 	@echo "Starting development server..."
-	set -a && . .env && set +a && npm run dev & \
+	set -a && . .env && set +a && pnpm dev & \
 	echo "Starting Prisma Studio..." && \
-	set -a && . .env && set +a && npx prisma studio
+	set -a && . .env && set +a && pnpx prisma studio
 
 load-dummy-data:
 	@echo "Loading dummy data..."
-	@set -a && . .env && set +a && npx tsx prisma/seed/index.ts && echo "Dummy data loaded successfully" || echo "Failed to load dummy data"
+	@set -a && . .env && set +a && pnpx tsx prisma/seed/index.ts && echo "Dummy data loaded successfully" || echo "Failed to load dummy data"
 
 up: check-env services check-db
 	$(MAKE) dev
 
 down:
 	$(MAKE) services-down
-	@pkill -f "prisma studio" || true	@echo "All services have been stopped"
+	@pkill -f "prisma studio" || true
+	@echo "All services have been stopped"
