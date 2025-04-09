@@ -1,30 +1,21 @@
+"use client";
+
 import {
-  ArrowUpDown,
-  CopyIcon,
   Download,
-  Edit2,
-  Eye,
   Filter,
   LayoutGrid,
-  MoreHorizontal,
-  MoreVertical,
   Plus,
   Table as TableIcon,
-  Trash2,
   X,
 } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { toast } from "sonner";
+import { useQueryState } from "nuqs";
+import { useDebounce } from "use-debounce";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -35,20 +26,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useSearchParams } from "@/hooks/use-search-params";
-import { useToast } from "@/hooks/use-toast";
 
 import { AdvancedCrudDialog } from "./AdvancedCrudDialog";
 import BulkImport from "./BulkImport";
 import { Pagination } from "./Pagination";
+import { DeleteConfirmation } from "./DeleteConfirmationDialog";
+import ViewModal from "./ViewModal";
+import TableList from "./TableList";
+import GridView from "./GridView";
 
 export interface IAction {
   label: string;
@@ -68,24 +53,24 @@ export type Column = {
   name: string;
   label?: string;
   type?:
-    | "text"
-    | "number"
-    | "date"
-    | "datetime-local"
-    | "time"
-    | "email"
-    | "tel"
-    | "url"
-    | "password"
-    | "select"
-    | "textarea"
-    | "checkbox"
-    | "radio"
-    | "color"
-    | "file"
-    | "range"
-    | "month"
-    | "week";
+  | "text"
+  | "number"
+  | "date"
+  | "datetime-local"
+  | "time"
+  | "email"
+  | "tel"
+  | "url"
+  | "password"
+  | "select"
+  | "textarea"
+  | "checkbox"
+  | "radio"
+  | "color"
+  | "file"
+  | "range"
+  | "month"
+  | "week";
   options?: { label: string; value: any }[];
   sortable?: boolean;
   filterable?: boolean;
@@ -110,17 +95,16 @@ export type Column = {
   hideInTable?: boolean;
 };
 
-type ActionResponse = Promise<{ data: any; error?: { message: string } }>;
 
 type DisplayTableProps = {
   data: Record<string, any>[];
   columns: Column[];
   actions?: IAction[];
-  onEdit?: ((data: any) => ActionResponse) | null;
-  onDelete?: (({ id }: { id: any }) => ActionResponse) | null;
-  onCreate?: ((data: any) => ActionResponse) | null;
-  onView?: (({ id }: { id: any }) => ActionResponse) | null;
-  onBulkImport?: ((data: any[]) => ActionResponse) | null;
+  onEdit?: ((data: any) => Promise<any>) | null;
+  onDelete?: ((data: any) => Promise<any>) | null;
+  onCreate?: ((data: any) => Promise<any>) | null;
+  onView?: ((data: any) => Promise<any>) | null;
+  onBulkImport?: ((data: any[]) => Promise<any>) | null;
   exportable?: boolean;
   searchable?: boolean;
   title?: string;
@@ -152,41 +136,46 @@ export default function DisplayTable({
   defaultPageSize = 10,
   gridViewRender,
 }: DisplayTableProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useQueryState("search");
+  const [view, setView] = useQueryState("view", { defaultValue: defaultView });
+  const [page, setPage] = useQueryState("page", { defaultValue: "1" });
+  const [limit, setLimit] = useQueryState("limit", { defaultValue: defaultPageSize.toString() });
+  const [sort, setSort] = useQueryState("sort");
+  const [direction, setDirection] = useQueryState("direction");
+  const [filters, setFilters] = useQueryState("filter", {
+    parse: (value) => value ? value.split(",") : [],
+    serialize: (value) => value.join(",")
+  });
+
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
-  const [data, setData] = useState(initialData);
 
-  const searchTerm = searchParams.get("search") || "";
-  const viewMode = (searchParams.get("view") as "table" | "grid") || defaultView;
-  const { toast } = useToast();
+  const viewMode = view as "table" | "grid";
 
-  const activeFilters: FilterCondition[] = searchParams
-    .getAll("filter")
-    .map((f: string) => {
-      const [column, operator, value] = f.split(":");
-      if (!column || !operator || !value) return undefined;
-      return {
-        column,
-        operator: operator as FilterCondition["operator"],
-        value,
-      };
-    })
-    .filter((f: FilterCondition | undefined): f is FilterCondition => f !== undefined);
+  const activeFilters: FilterCondition[] = (filters || []).map((f: string) => {
+    const [column, operator, value] = f.split(":");
+    if (!column || !operator || !value) return undefined;
+    return {
+      column,
+      operator: operator as FilterCondition["operator"],
+      value,
+    };
+  }).filter((f: FilterCondition | undefined): f is FilterCondition => f !== undefined);
 
-  const sortConfig = searchParams.get("sort")
-    ? {
-        key: searchParams.get("sort") || "",
-        direction: (searchParams.get("direction") as "asc" | "desc") || "asc",
-      }
-    : null;
+  const sortConfig = useMemo(() =>
+    sort ? {
+      key: sort,
+      direction: (direction as "asc" | "desc") || "asc",
+    } : null,
+    [sort, direction]
+  );
 
-  useEffect(() => {
-    if (!clientSideProcessing) return;
+  const sortedData = useMemo(() => {
+    if (!clientSideProcessing) return initialData;
 
-    let sortedData = [...initialData];
+    const sorted = [...initialData];
 
     if (sortConfig) {
-      sortedData.sort((a, b) => {
+      sorted.sort((a, b) => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
 
@@ -203,40 +192,31 @@ export default function DisplayTable({
       });
     }
 
-    setData(sortedData);
+    return sorted;
   }, [initialData, sortConfig, clientSideProcessing]);
 
   const handleSort = (key: string) => {
     const column = columns.find((col) => col.key === key);
     if (!column?.sortable) return;
 
-    let direction: "asc" | "desc" = "asc";
+    let newDirection: "asc" | "desc" = "asc";
     if (sortConfig?.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
+      newDirection = "desc";
     }
 
-    setSearchParams((prev: URLSearchParams) => {
-      prev.set("sort", key);
-      prev.set("direction", direction);
-      return prev;
-    });
+    void setSort(key);
+    void setDirection(newDirection);
   };
 
   const addFilter = (column: string, value: string, operator: FilterCondition["operator"]) => {
-    setSearchParams((prev: URLSearchParams) => {
-      prev.append("filter", `${column}:${operator}:${value}`);
-      return prev;
-    });
+    const newFilter = `${column}:${operator}:${value}`;
+    void setFilters([...(filters || []), newFilter]);
   };
 
   const removeFilter = (index: number) => {
-    setSearchParams((prev: URLSearchParams) => {
-      const filters: string[] = prev.getAll("filter");
-      filters.splice(index, 1);
-      prev.delete("filter");
-      filters.forEach((f) => prev.append("filter", f));
-      return prev;
-    });
+    const newFilters = [...(filters || [])];
+    newFilters.splice(index, 1);
+    void setFilters(newFilters);
   };
 
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -245,14 +225,18 @@ export default function DisplayTable({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
 
-  const handleView = (row: any) => {
+  const handleView = async (row: any) => {
+    if (!onView) return;
     try {
-      if (onView) {
-        setSelectedRow(row);
-        setIsViewModalOpen(true);
+      const result = await onView(row);
+      if (result.error) {
+        toast.error(result.error.message);
+        return;
       }
-    } catch (error) {
-      console.error("View error:", error);
+      setSelectedRow(row);
+      setIsViewModalOpen(true);
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred");
     }
   };
 
@@ -262,152 +246,6 @@ export default function DisplayTable({
     setIsDeleteModalOpen(false);
     setIsCreateModalOpen(false);
     setSelectedRow(null);
-  };
-
-  const DeleteConfirmation = () => (
-    <Dialog open={isDeleteModalOpen} onOpenChange={handleDialogClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Record</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <p>Are you sure you want to delete this record?</p>
-          <div className="p-4 border rounded-md bg-muted space-y-2">
-            <div className="font-medium">Record ID: {selectedRow?.id}</div>
-            {columns
-              .filter((col) => !col.hidden)
-              .slice(0, 3)
-              .map((col) => (
-                <div key={col.key} className="text-sm">
-                  <span className="font-medium">{col.label || col.name}:</span>{" "}
-                  {col.type === "date"
-                    ? new Date(selectedRow?.[col.key]).toLocaleDateString()
-                    : col.render
-                      ? col.render(selectedRow?.[col.key], selectedRow)
-                      : selectedRow?.[col.key]}
-                </div>
-              ))}
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={handleDialogClose}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                if (selectedRow) {
-                  const success = await handleDelete(selectedRow);
-                  if (success) {
-                    handleDialogClose();
-                  }
-                }
-              }}
-            >
-              Delete
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-
-  const renderGridView = () => {
-    if (gridViewRender) {
-      const dataWithActions = filteredData.map((row) => ({
-        ...row,
-        __actions: (
-          <div className="absolute top-2 right-2">
-            {(actions.length > 0 || onEdit || onDelete || onView) && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {actions.map((action) => (
-                    <DropdownMenuItem
-                      key={action.label}
-                      onClick={() => action.onClick(row)}
-                      className={action.variant === "destructive" ? "text-destructive" : ""}
-                    >
-                      <div className="flex items-center">
-                        {action.icon}
-                        {action.label}
-                      </div>
-                    </DropdownMenuItem>
-                  ))}
-                  {actions.length > 0 && (onView || onEdit || onDelete) && (
-                    <DropdownMenuSeparator className="my-2" />
-                  )}
-                  {onView && (
-                    <DropdownMenuItem onClick={() => handleView(row)}>
-                      <div className="flex items-center">
-                        <Eye className="mr-2 h-4 w-4" />
-                        View
-                      </div>
-                    </DropdownMenuItem>
-                  )}
-                  {onEdit && (
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setSelectedRow(row);
-                        setIsEditModalOpen(true);
-                      }}
-                    >
-                      <div className="flex items-center">
-                        <Edit2 className="mr-2 h-4 w-4" />
-                        Edit
-                      </div>
-                    </DropdownMenuItem>
-                  )}
-                  {onDelete && (
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setSelectedRow(row);
-                        setIsDeleteModalOpen(true);
-                      }}
-                    >
-                      <div className="flex items-center">
-                        <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-                        Delete
-                      </div>
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        ),
-      }));
-      return gridViewRender(dataWithActions);
-    }
-
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredData.map((row, index) => (
-          <div
-            key={index}
-            className="bg-background rounded-lg border shadow-sm hover:shadow-md transition-shadow p-4 relative"
-          >
-            <div className="space-y-2 pt-4">
-              {columns
-                .filter((column) => !column.hidden)
-                .map((column) => (
-                  <div key={column.key} className="flex justify-between items-center">
-                    <div className="text-sm font-medium text-muted-foreground">
-                      {column.label || column.name}:
-                    </div>
-                    <div className="text-sm">
-                      {column.render ? column.render(row[column.key], row) : row[column.key]}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
   };
 
   const FilterMenu = () => {
@@ -493,7 +331,7 @@ export default function DisplayTable({
   const exportToCSV = () => {
     const visibleColumns = columns.filter((col) => !col.hidden);
     const headers = visibleColumns.map((col) => col.label || col.name).join(",");
-    const rows = data.map((row) =>
+    const rows = sortedData.map((row) =>
       visibleColumns.map((col) => JSON.stringify(row[col.key] ?? "")).join(",")
     );
     const csv = [headers, ...rows].join("\n");
@@ -507,183 +345,124 @@ export default function DisplayTable({
   };
 
   const handleCreate = async (data: any) => {
+    if (!onCreate) return;
     try {
-      if (onCreate) {
-        const { error } = await onCreate(data);
-        if (error) {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
-          return false;
-        }
-        toast({
-          title: "Success",
-          description: "Record created successfully",
-        });
-        return true;
-      }
-      return false;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create record",
-        variant: "destructive",
-      });
-      return false;
+      await onCreate(data);
+      toast.success("Created successfully");
+      setIsCreateModalOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred");
     }
   };
 
   const handleEdit = async (row: any) => {
+    if (!onEdit) return;
     try {
-      if (onEdit) {
-        const { error } = await onEdit(row);
-        if (error) {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
-          return false;
-        }
-        toast({
-          title: "Success",
-          description: "Record updated successfully",
-        });
-        return true;
-      }
-      return false;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update record",
-        variant: "destructive",
-      });
-      return false;
+      await onEdit(row);
+      toast.success("Updated successfully");
+      setIsEditModalOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred");
     }
   };
 
   const handleDelete = async (row: any) => {
+    if (!onDelete) return;
     try {
-      if (onDelete) {
-        const { error } = await onDelete(row);
-        if (error) {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
-          return false;
-        }
-        toast({
-          title: "Success",
-          description: "Record deleted successfully",
-        });
-        return true;
-      }
-      return false;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete record",
-        variant: "destructive",
-      });
-      return false;
+      await onDelete(row);
+      toast.success("Deleted successfully");
+      setIsDeleteModalOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred");
     }
   };
 
-  const searchTimeoutRef = useRef<NodeJS.Timeout>();
-  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+  const [localSearchTerm, setLocalSearchTerm] = useState(search || "");
+  const [debouncedSearchTerm] = useDebounce(localSearchTerm, 500);
+
+  useEffect(() => {
+    void setSearch(debouncedSearchTerm || null);
+  }, [debouncedSearchTerm, setSearch]);
 
   const handleSearch = useCallback(
     (value: string) => {
       setLocalSearchTerm(value);
-
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-
-      searchTimeoutRef.current = setTimeout(() => {
-        setSearchParams((prev: URLSearchParams) => {
-          if (value) {
-            prev.set("search", value);
-          } else {
-            prev.delete("search");
-          }
-          return prev;
-        });
-      }, 500);
     },
-    [setSearchParams]
+    []
   );
 
-  const filteredData = clientSideProcessing
-    ? data.filter((row) => {
-        if (localSearchTerm) {
-          const searchFields = columns
-            .filter((col) => !col.hidden)
-            .map((col) => row[col.key])
-            .join(" ")
-            .toLowerCase();
+  const filteredData = useMemo(() => {
+    if (!clientSideProcessing) return sortedData;
 
-          if (!searchFields.includes(localSearchTerm.toLowerCase())) {
-            return false;
-          }
+    return sortedData.filter((row) => {
+      if (localSearchTerm) {
+        const searchFields = columns
+          .filter((col) => !col.hidden)
+          .map((col) => row[col.key])
+          .join(" ")
+          .toLowerCase();
+
+        if (!searchFields.includes(localSearchTerm.toLowerCase())) {
+          return false;
         }
-
-        return activeFilters.every((filter) => {
-          const value = row[filter.column];
-          if (value === undefined || value === null) return false;
-
-          const stringValue = String(value).toLowerCase();
-          const filterValue = filter.value.toLowerCase();
-
-          switch (filter.operator) {
-            case "contains":
-              return stringValue.includes(filterValue);
-            case "equals":
-              return stringValue === filterValue;
-            case "startsWith":
-              return stringValue.startsWith(filterValue);
-            case "endsWith":
-              return stringValue.endsWith(filterValue);
-            case "greaterThan":
-              return Number(value) > Number(filterValue);
-            case "lessThan":
-              return Number(value) < Number(filterValue);
-            default:
-              return true;
-          }
-        });
-      })
-    : data;
-
-  useEffect(() => {
-    return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
       }
-    };
-  }, []);
 
-  const currentPage = parseInt(searchParams.get("page") || "1");
-  const pageSize = parseInt(searchParams.get("limit") || defaultPageSize.toString());
+      return activeFilters.every((filter) => {
+        const value = row[filter.column];
+        if (value === undefined || value === null) return false;
+
+        const stringValue = String(value).toLowerCase();
+        const filterValue = filter.value.toLowerCase();
+
+        switch (filter.operator) {
+          case "contains":
+            return stringValue.includes(filterValue);
+          case "equals":
+            return stringValue === filterValue;
+          case "startsWith":
+            return stringValue.startsWith(filterValue);
+          case "endsWith":
+            return stringValue.endsWith(filterValue);
+          case "greaterThan":
+            return Number(value) > Number(filterValue);
+          case "lessThan":
+            return Number(value) < Number(filterValue);
+          default:
+            return true;
+        }
+      });
+    });
+  }, [sortedData, localSearchTerm, activeFilters, columns, clientSideProcessing]);
+
+  const currentPage = parseInt(page || "1");
+  const pageSize = parseInt(limit || defaultPageSize.toString());
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  const handlePageChange = (page: number) => {
-    setSearchParams((prev: URLSearchParams) => {
-      prev.set("page", page.toString());
-      return prev;
-    });
+  const handlePageChange = (newPage: number) => {
+    void setPage(newPage.toString());
   };
 
   const handlePageSizeChange = (size: number) => {
-    setSearchParams((prev: URLSearchParams) => {
-      prev.set("limit", size.toString());
-      prev.set("page", "1");
-      return prev;
-    });
+    void setLimit(size.toString());
+    void setPage("1");
+  };
+
+  const handleBulkImport = async (data: any[]) => {
+    if (!onBulkImport) return;
+    try {
+      await onBulkImport(data);
+      toast.success("Bulk import successful");
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred");
+    }
+  };
+
+  const handleAction = async (action: IAction, row: any) => {
+    try {
+      await action.onClick(row);
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred");
+    }
   };
 
   return (
@@ -704,10 +483,7 @@ export default function DisplayTable({
             variant="outline"
             size="sm"
             onClick={() => {
-              setSearchParams((prev: URLSearchParams) => {
-                prev.set("view", viewMode === "table" ? "grid" : "table");
-                return prev;
-              });
+              void setView(viewMode === "table" ? "grid" : "table");
             }}
             className="flex items-center gap-2 px-3"
           >
@@ -737,23 +513,7 @@ export default function DisplayTable({
             <BulkImport
               columns={columns}
               data={[]}
-              onImport={async (importedData) => {
-                if (onBulkImport) {
-                  try {
-                    await onBulkImport(importedData);
-                    toast({
-                      title: "Success",
-                      description: "Bulk import completed successfully",
-                    });
-                  } catch (error) {
-                    toast({
-                      title: "Error",
-                      description: "Bulk import failed",
-                      variant: "destructive",
-                    });
-                  }
-                }
-              }}
+              onImport={handleBulkImport}
             />
           )}
           {exportable && (
@@ -790,12 +550,7 @@ export default function DisplayTable({
               variant="ghost"
               size="sm"
               className="h-6"
-              onClick={() =>
-                setSearchParams((prev: URLSearchParams) => {
-                  prev.delete("filter");
-                  return prev;
-                })
-              }
+              onClick={() => void setFilters([])}
             >
               Clear all
             </Button>
@@ -804,160 +559,58 @@ export default function DisplayTable({
       )}
 
       {viewMode === "table" ? (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {columns
-                  .filter((column) => !column.hidden && !column.hideInTable)
-                  .map((column) => (
-                    <TableHead
-                      key={column.key}
-                      className={column.sortable ? "cursor-pointer" : ""}
-                      onClick={() => column.sortable && handleSort(column.key)}
-                    >
-                      <div className="flex items-center">
-                        <span>{column.label || column.name}</span>
-                        {column.sortable && <ArrowUpDown className="ml-2 h-4 w-4" />}
-                      </div>
-                    </TableHead>
-                  ))}
-                {(actions.length > 0 || onEdit || onDelete || onView) && (
-                  <TableHead>Actions</TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredData.map((row, index) => (
-                <TableRow key={index}>
-                  {columns
-                    .filter((column) => !column.hidden && !column.hideInTable)
-                    .map((column) => (
-                      <TableCell key={`${index}-${column.key}`}>
-                        {column.render ? column.render(row[column.key], row) : row[column.key]}
-                      </TableCell>
-                    ))}
-                  {(actions.length > 0 || onEdit || onDelete || onView) && (
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {actions.map((action) => (
-                              <DropdownMenuItem
-                                key={action.label}
-                                onClick={() => action.onClick(row)}
-                                className={action.variant === "destructive" ? "text-red-500" : ""}
-                              >
-                                <div className="flex items-center">
-                                  {action.icon}
-                                  {action.label}
-                                </div>
-                              </DropdownMenuItem>
-                            ))}
-                            {actions.length > 0 && (onView || onEdit || onDelete) && (
-                              <DropdownMenuSeparator className="my-2" />
-                            )}
-                            {onView && (
-                              <DropdownMenuItem onClick={() => handleView(row)}>
-                                <div className="flex items-center">
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  View
-                                </div>
-                              </DropdownMenuItem>
-                            )}
-                            {onEdit && (
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedRow(row);
-                                  setIsEditModalOpen(true);
-                                }}
-                              >
-                                <div className="flex items-center">
-                                  <Edit2 className="mr-2 h-4 w-4" />
-                                  Edit
-                                </div>
-                              </DropdownMenuItem>
-                            )}
-                            {onDelete && (
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedRow(row);
-                                  setIsDeleteModalOpen(true);
-                                }}
-                              >
-                                <div className="flex items-center">
-                                  <Trash2 className="mr-2 h-4 w-4 text-red-500" />
-                                  Delete
-                                </div>
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <TableList
+          columns={columns}
+          data={filteredData}
+          actions={actions}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onView={handleView}
+          onSort={handleSort}
+          onEditClick={(row) => {
+            setSelectedRow(row);
+            setIsEditModalOpen(true);
+          }}
+          onDeleteClick={(row) => {
+            setSelectedRow(row);
+            setIsDeleteModalOpen(true);
+          }}
+          handleAction={handleAction}
+        />
       ) : (
-        renderGridView()
+        <GridView
+          data={filteredData}
+          columns={columns}
+          actions={actions}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onView={onView}
+          gridViewRender={gridViewRender}
+          setSelectedRow={setSelectedRow}
+          setIsEditModalOpen={setIsEditModalOpen}
+          setIsDeleteModalOpen={setIsDeleteModalOpen}
+          handleView={handleView}
+          handleAction={handleAction}
+        />
       )}
 
       {isDeleteModalOpen && (
-        <Dialog open={isDeleteModalOpen} onOpenChange={handleDialogClose}>
-          <DeleteConfirmation />
-        </Dialog>
+        <DeleteConfirmation
+          isDeleteModalOpen={isDeleteModalOpen}
+          handleDialogClose={handleDialogClose}
+          selectedRow={selectedRow}
+          columns={columns}
+          onDelete={handleDelete}
+        />
       )}
 
       {isViewModalOpen && (
-        <Dialog open={isViewModalOpen} onOpenChange={handleDialogClose}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>View Record</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              {columns
-                .filter((col) => !col.hidden)
-                .map((col) => (
-                  <div key={col.key} className="space-y-2 relative group">
-                    <div>
-                      <Label>{col.label || col.name}</Label>
-                      <div className="relative">
-                        <div className="p-2 border rounded-md bg-muted">
-                          {selectedRow?.[col.key]}
-                        </div>
-                        <Button
-                          className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            navigator.clipboard.writeText(selectedRow?.[col.key]);
-                            toast({
-                              title: "Copied to clipboard",
-                              description: `${col.label || col.name} copied successfully`,
-                              duration: 2000,
-                            });
-                          }}
-                        >
-                          <CopyIcon className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              <div className="flex justify-end">
-                <Button onClick={handleDialogClose}>Close</Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ViewModal
+          isViewModalOpen={isViewModalOpen}
+          handleDialogClose={handleDialogClose}
+          selectedRow={selectedRow}
+          columns={columns}
+        />
       )}
 
       {(isCreateModalOpen || isEditModalOpen) && (
@@ -965,35 +618,21 @@ export default function DisplayTable({
           isOpen={true}
           onClose={handleDialogClose}
           onSubmit={async (formData) => {
-            try {
-              if (isCreateModalOpen) {
-                const success = await handleCreate(formData);
-                if (success) {
-                  handleDialogClose();
-                }
-              } else if (isEditModalOpen) {
-                const success = await handleEdit({
-                  id: selectedRow?.id,
-                  ...formData,
-                });
-                if (success) {
-                  handleDialogClose();
-                }
-              }
-            } catch (error) {
-              toast({
-                title: "Error",
-                description: `Failed to ${isCreateModalOpen ? "create" : "edit"} record`,
-                variant: "destructive",
+            if (isCreateModalOpen) {
+              await handleCreate(formData);
+              handleDialogClose();
+            } else if (isEditModalOpen) {
+              await handleEdit({
+                id: selectedRow?.id,
+                ...formData,
               });
+              handleDialogClose();
             }
           }}
           onDelete={async () => {
             if (selectedRow) {
-              const success = await handleDelete(selectedRow);
-              if (success) {
-                handleDialogClose();
-              }
+              await handleDelete(selectedRow);
+              handleDialogClose();
             }
           }}
           title={isCreateModalOpen ? "Create New Record" : "Edit Record"}

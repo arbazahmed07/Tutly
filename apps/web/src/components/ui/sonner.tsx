@@ -1,33 +1,25 @@
-import * as React from "react";
-import { Toaster as Sonner } from "sonner";
+"use client"
 
-type ToasterProps = React.ComponentProps<typeof Sonner>;
+import { useTheme } from "next-themes"
+import { type ToasterProps, Toaster as Sonner } from "sonner"
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const isDark =
-    typeof window !== "undefined"
-      ? localStorage.getItem("theme") === "dark" ||
-        (!localStorage.getItem("theme") &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      : true;
+  const { theme = "system" } = useTheme()
 
   return (
     <Sonner
-      richColors
-      theme={isDark ? "dark" : "light"}
-      className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-        },
-      }}
+      theme={theme as ToasterProps["theme"]}
+      className="group toaster"
+      style={
+        {
+          "--normal-bg": "var(--popover)",
+          "--normal-text": "var(--popover-foreground)",
+          "--normal-border": "var(--border)",
+        } as React.CSSProperties
+      }
       {...props}
     />
-  );
-};
+  )
+}
 
-export { Toaster };
+export { Toaster }

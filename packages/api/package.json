@@ -2,7 +2,6 @@
   "name": "@tutly/api",
   "version": "0.1.0",
   "private": true,
-  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
@@ -10,6 +9,7 @@
       "default": "./src/index.ts"
     }
   },
+  "license": "AGPL-3.0",
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -18,23 +18,21 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
-  "prettier": "@tutly/prettier-config",
   "dependencies": {
     "@trpc/server": "catalog:",
     "@tutly/auth": "workspace:*",
     "@tutly/db": "workspace:*",
     "@tutly/validators": "workspace:*",
-    "pg": "^8.13.1",
-    "superjson": "2.2.1",
+    "superjson": "2.2.2",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@tutly/eslint-config": "workspace:*",
     "@tutly/prettier-config": "workspace:*",
     "@tutly/tsconfig": "workspace:*",
-    "@types/pg": "^8.11.11",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
-  }
+  },
+  "prettier": "@tutly/prettier-config"
 }

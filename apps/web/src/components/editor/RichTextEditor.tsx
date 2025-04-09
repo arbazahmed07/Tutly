@@ -5,7 +5,7 @@ import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
   TRANSFORMERS,
-  Transformer,
+  type Transformer,
 } from "@lexical/markdown";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
@@ -18,8 +18,8 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
-import { FileType } from "@prisma/client";
-import { $createTextNode, LexicalNode, TextNode } from "lexical";
+import { type FileType } from "@prisma/client";
+import { $createTextNode, type LexicalNode, type TextNode } from "lexical";
 
 import { cn } from "@/lib/utils";
 
@@ -62,13 +62,13 @@ const customTransformers: Transformer[] = [
     },
     importRegExp: IMAGE_MARKDOWN_REGEXP,
     regExp: IMAGE_MARKDOWN_REGEXP,
-    replace: (textNode: TextNode, match: RegExpMatchArray | null) => {
-      if (!match) return false;
+    replace: (textNode: TextNode, match: RegExpMatchArray) => {
+      if (!match) return;
 
       try {
         const [fullMatch = "", altText = "", src = "", width, height] = match;
 
-        if (!src) return false;
+        if (!src) return;
 
         const cleanSrc = src.trim();
 
@@ -99,11 +99,8 @@ const customTransformers: Transformer[] = [
           const newTextNode = $createTextNode(textAfterImage);
           imageNode.insertAfter(newTextNode);
         }
-
-        return true;
       } catch (error) {
         console.error("Error creating image node:", error, match);
-        return false;
       }
     },
     type: "text-match",
@@ -174,7 +171,7 @@ export default function RichTextEditor({
     },
     editorState: () => {
       try {
-        const state = $convertFromMarkdownString(initialValue || "", customTransformers);
+        const state = $convertFromMarkdownString(initialValue ?? "", customTransformers);
         return state;
       } catch (error) {
         console.error("Error converting markdown:", error);
@@ -213,7 +210,11 @@ export default function RichTextEditor({
               onChange={(editorState) => {
                 editorState.read(() => {
                   const markdown = $convertToMarkdownString(customTransformers);
-                  onChange(markdown);
+                  if (typeof markdown === "string") {
+                    onChange(markdown);
+                  } else {
+                    onChange("");
+                  }
                 });
               }}
             />

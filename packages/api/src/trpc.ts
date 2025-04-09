@@ -11,8 +11,19 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import type { Session } from "@tutly/auth";
-import { auth } from "@tutly/auth";
+import { auth, validateToken } from "@tutly/auth";
 import { db } from "@tutly/db/client";
+
+/**
+ * Isomorphic Session getter for API requests
+ * - Expo requests will have a session token in the Authorization header
+ * - Next.js requests will have a session token in cookies
+ */
+const isomorphicGetSession = async (headers: Headers) => {
+  const authToken = headers.get("Authorization") ?? null;
+  if (authToken) return validateToken(authToken);
+  return auth();
+};
 
 /**
  * 1. CONTEXT
@@ -26,22 +37,20 @@ import { db } from "@tutly/db/client";
  *
  * @see https://trpc.io/docs/server/context
  */
-
-// Add type for context options
-interface CreateContextOptions {
+export const createTRPCContext = async (opts: {
   headers: Headers;
-  session?: Session | null;
-}
+  session: Session | null;
+}) => {
+  const authToken = opts.headers.get("Authorization") ?? null;
+  const session = await isomorphicGetSession(opts.headers);
 
-export const createTRPCContext = async (opts: CreateContextOptions) => {
-  const session =
-    opts.session ??
-    (await auth.api.getSession({
-      headers: opts.headers,
-    }));
+  const source = opts.headers.get("x-trpc-source") ?? "unknown";
+  console.log(">>> tRPC Request from", source, "by", session?.user);
+
   return {
     session,
     db,
+    token: authToken,
   };
 };
 
@@ -124,7 +133,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (!ctx.session?.user) {
+    if (!ctx.session?.user || !ctx.session.user.organization) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({

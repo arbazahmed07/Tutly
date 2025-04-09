@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -16,7 +15,6 @@ import * as React from "react";
 import { Suspense } from "react";
 
 const ImageComponent = React.lazy(
-  // @ts-ignore
   () => import("./ImageComponent")
 );
 
@@ -32,7 +30,7 @@ export interface ImagePayload {
   captionsEnabled?: boolean;
 }
 
-function convertImageElement(domNode: Node): null | DOMConversionOutput {
+function convertImageElement(domNode: Node): { node: ImageNode } | null {
   if (domNode instanceof HTMLImageElement) {
     const { alt: altText, src } = domNode;
     const node = $createImageNode({ altText, src });
@@ -56,7 +54,7 @@ export type SerializedImageNode = Spread<
   SerializedLexicalNode
 >;
 
-export class ImageNode extends DecoratorNode<JSX.Element> {
+export class ImageNode extends DecoratorNode<React.ReactElement> {
   __src: string;
   __altText: string;
   __width: "inherit" | number;
@@ -64,7 +62,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   __maxWidth: number;
   __showCaption: boolean;
   __caption: LexicalEditor;
-  // Captions cannot yet be used within editor cells
   __captionsEnabled: boolean;
 
   static override getType(): string {
@@ -89,11 +86,11 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     const { altText, height, width, maxWidth, caption, src, showCaption } = serializedNode;
     const node = $createImageNode({
       altText,
-      height: height || "inherit",
+      height: height ?? "inherit",
       maxWidth,
       showCaption,
       src,
-      width: width || "inherit",
+      width: width ?? "inherit",
     });
 
     if (caption) {
@@ -114,7 +111,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     return { element };
   }
 
-  static override importDOM(): DOMConversionMap | null {
+  static override importDOM(): DOMConversionMap {
     return {
       img: (_node: Node) => ({
         conversion: convertImageElement,
@@ -138,11 +135,11 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     this.__src = src;
     this.__altText = altText;
     this.__maxWidth = maxWidth;
-    this.__width = width || "inherit";
-    this.__height = height || "inherit";
-    this.__showCaption = showCaption || false;
-    this.__caption = caption || createEditor();
-    this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
+    this.__width = width ?? "inherit";
+    this.__height = height ?? "inherit";
+    this.__showCaption = showCaption ?? false;
+    this.__caption = caption ?? createEditor();
+    this.__captionsEnabled = captionsEnabled ?? captionsEnabled === undefined;
   }
 
   override exportJSON(): SerializedImageNode {
@@ -208,7 +205,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     return this.__altText;
   }
 
-  override decorate(): JSX.Element {
+  override decorate(): React.ReactElement {
     return (
       <Suspense fallback={null}>
         <ImageComponent
@@ -224,24 +221,21 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     );
   }
 
-  override remove(): void {
+  remove(): void {
     const writable = this.getWritable();
-    const dom = this.getDOMElement();
+    const dom = (this as any).getDOMElement();
 
-    // Safely remove the node if it exists and has a parent
-    if (dom && dom.parentNode) {
+    if (dom?.parentNode) {
       dom.parentNode.removeChild(dom);
     }
 
     super.remove();
   }
 
-  override destroy(): void {
-    // Cleanup any resources
+  destroy(): void {
     if (this.__caption) {
-      this.__caption.destroy();
+      (this.__caption as any).destroy?.();
     }
-    super.destroy();
   }
 }
 
@@ -269,6 +263,6 @@ export function $createImageNode({
   );
 }
 
-export function $isImageNode(node: LexicalNode | null | undefined): node is ImageNode {
+export function $isImageNode(node: unknown): node is ImageNode {
   return node instanceof ImageNode;
 }

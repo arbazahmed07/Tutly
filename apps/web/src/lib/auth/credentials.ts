@@ -1,8 +1,7 @@
-import { ActionError } from "astro:actions";
 import bcrypt from "bcrypt";
 
-import db from "@/lib/db";
-import { generateRandomPassword } from "@/lib/db";
+import { db } from "@/server/db";
+import generateRandomPassword from "@/utils/generateRandomPassword";
 
 async function validateCredentials(identifier: string, password: string) {
   const isEmail = identifier.includes("@");
@@ -54,15 +53,18 @@ async function validateCredentials(identifier: string, password: string) {
 export async function signInWithCredentials(
   identifier: string,
   password: string,
-  userAgent?: string | null
+  userAgent?: string | null,
 ) {
   try {
-    const { user, isOneTimePassword } = await validateCredentials(identifier, password);
+    const { user, isOneTimePassword } = await validateCredentials(
+      identifier,
+      password,
+    );
 
     const session = await db.session.create({
       data: {
         userId: user.id,
-        userAgent: userAgent || "Unknown Device",
+        userAgent: userAgent ?? "Unknown Device",
         expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
       },
       include: {
@@ -85,9 +87,8 @@ export async function signInWithCredentials(
       isPasswordSet: !!user.password && !isOneTimePassword, // password is set and not using oneTimePassword
     };
   } catch (error) {
-    throw new ActionError({
-      code: "UNAUTHORIZED",
-      message: error instanceof Error ? error.message : "Authentication failed",
-    });
+    throw new Error(
+      error instanceof Error ? error.message : "Authentication failed",
+    );
   }
 }

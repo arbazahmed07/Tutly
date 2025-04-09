@@ -75,6 +75,9 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-non-null-assertion": "error",
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+
+      // todo: remove this
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   {

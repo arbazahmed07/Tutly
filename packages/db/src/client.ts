@@ -1,8 +1,17 @@
-import { drizzle } from "drizzle-orm/node-postgres";
+import { PrismaClient } from "@prisma/client";
 
-import * as schema from "./schema";
+const createPrismaClient = () =>
+  new PrismaClient({
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+  });
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-export const db = drizzle(process.env.POSTGRES_URL!, {
-  schema,
-});
+const globalForPrisma = globalThis as unknown as {
+  prisma: ReturnType<typeof createPrismaClient> | undefined;
+};
+
+export const db = globalForPrisma.prisma ?? createPrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;

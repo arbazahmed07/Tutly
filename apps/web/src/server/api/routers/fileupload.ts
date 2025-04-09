@@ -1,0 +1,236 @@
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { v4 as uuid } from "uuid";
+import { z } from "zod";
+
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { db } from "@/server/db";
+import { getExtension } from "@/utils/file";
+
+export const allowedMimeTypes = [
+  // Images
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/bmp",
+  "image/webp",
+  "image/svg+xml",
+  // Videos
+  "video/mp4",
+  "video/mpeg",
+  "video/x-msvideo",
+  "video/quicktime",
+  "video/x-ms-wmv",
+  "video/x-flv",
+  "video/webm",
+  // Audio
+  "audio/mpeg",
+  "audio/wav",
+  "audio/aac",
+  "audio/ogg",
+  "audio/midi",
+  "audio/x-midi",
+  "audio/webm",
+  "audio/mp4",
+  // Documents
+  "text/plain",
+  "text/csv",
+  "application/rtf",
+  "application/msword",
+  "application/vnd.oasis.opendocument.text",
+  "application/pdf",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.oasis.opendocument.spreadsheet",
+];
+
+const s3Client = new S3Client({
+  region: process.env.AWS_BUCKET_REGION!,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY!,
+    secretAccessKey: process.env.AWS_SECRET_KEY!,
+  },
+  // only for dev (localstack)
+  ...(process.env.AWS_ENDPOINT && {
+    endpoint: process.env.AWS_ENDPOINT,
+    forcePathStyle: true,
+  }),
+});
+
+export const fileUploadRouter = createTRPCRouter({
+  createFileAndGetUploadUrl: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        fileType: z.enum(["AVATAR", "ATTACHMENT", "NOTES", "OTHER"]),
+        associatingId: z.string().optional(),
+        isPublic: z.boolean().default(false),
+        mimeType: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.session?.user;
+      if (!currentUser) return null;
+
+      // todo: add mime type validation
+      // if (mimeType && !allowedMimeTypes.includes(mimeType)) {
+      //   throw new Error("Invalid MIME type");
+      // }
+
+      const internalName = `${uuid()}_${Date.now()}${getExtension(input.name)}`;
+
+      const file = await db.file.create({
+        data: {
+          name: input.name,
+          internalName,
+          fileType: input.fileType,
+          associatingId: input.associatingId ?? null,
+          isPublic: input.isPublic,
+          uploadedById: currentUser.id,
+        },
+      });
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${file.fileType}/${file.internalName}`,
+        ContentType: input.mimeType,
+      });
+
+      const signedUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 3600,
+      }); // 1 hour
+
+      return { signedUrl, file };
+    }),
+
+  getDownloadUrl: protectedProcedure
+    .input(
+      z.object({
+        fileId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const file = await db.file.findUnique({
+        where: { id: input.fileId },
+      });
+      if (!file) throw new Error("File not found");
+
+      if (file.isPublic) {
+        return file.publicUrl;
+      }
+
+      const command = new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${file.fileType}/${file.internalName}`,
+      });
+
+      const signedUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 3600,
+      });
+      return { signedUrl };
+    }),
+
+  archiveFile: protectedProcedure
+    .input(
+      z.object({
+        fileId: z.string(),
+        reason: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.session?.user;
+      if (!currentUser) return null;
+
+      const file = await db.file.update({
+        where: { id: input.fileId },
+        data: {
+          isArchived: true,
+          archivedById: currentUser.id,
+          archiveReason: input.reason,
+          archivedAt: new Date(),
+        },
+      });
+
+      return file;
+    }),
+
+  markFileUploaded: protectedProcedure
+    .input(
+      z.object({
+        fileId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.session?.user;
+      if (!currentUser) return null;
+
+      const file = await db.file.findUnique({
+        where: { id: input.fileId },
+      });
+
+      if (!file) throw new Error("File not found");
+
+      const publicUrl = file.isPublic
+        ? `${process.env.AWS_S3_URL}/${file.fileType}/${file.internalName}`
+        : null;
+
+      const updatedFile = await db.file.update({
+        where: { id: input.fileId },
+        data: {
+          isUploaded: true,
+          uploadedById: currentUser.id,
+          publicUrl,
+        },
+      });
+
+      return updatedFile;
+    }),
+
+  deleteFile: protectedProcedure
+    .input(
+      z.object({
+        fileId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const file = await db.file.findUnique({
+        where: { id: input.fileId },
+      });
+      if (!file) throw new Error("File not found");
+
+      // Delete from S3
+      const command = new DeleteObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `${file.fileType}/${file.internalName}`,
+      });
+      await s3Client.send(command);
+
+      // Delete from database
+      await db.file.delete({
+        where: { id: input.fileId },
+      });
+
+      return true;
+    }),
+
+  updateAssociatingId: protectedProcedure
+    .input(
+      z.object({
+        fileId: z.string(),
+        associatingId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const file = await db.file.update({
+        where: { id: input.fileId },
+        data: { associatingId: input.associatingId },
+      });
+
+      return file;
+    }),
+});

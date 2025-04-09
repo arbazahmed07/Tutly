@@ -1,10 +1,5 @@
 {
   "extends": "@tutly/tsconfig/base.json",
-  "compilerOptions": {
-    "downlevelIteration": true,
-    "useDefineForClassFields": true,
-    "skipLibCheck": true
-  },
   "include": ["src", "*.ts"],
   "exclude": ["node_modules"]
 }

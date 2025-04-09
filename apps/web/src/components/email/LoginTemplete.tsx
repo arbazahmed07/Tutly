@@ -39,6 +39,7 @@ const LoginTemplete = ({
             backgroundColor: "#ffffff",
           }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://learn.tutly.in/logo-with-bg.png"
             alt="Tutly Logo"
@@ -112,7 +113,7 @@ const LoginTemplete = ({
             }}
           >
             <p style={{ margin: "0" }}>
-              <strong>Security Notice:</strong> If you didn't perform this login, please secure your
+              <strong>Security Notice:</strong> If you didn&apos;t perform this login, please secure your
               account immediately.
             </p>
           </div>

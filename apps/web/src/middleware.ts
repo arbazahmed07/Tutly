@@ -1,135 +1,98 @@
-import { defineMiddleware } from "astro:middleware";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { AUTH_COOKIE_NAME } from "@/lib/constants";
 
-import { validateSessionToken } from "@/lib/auth/session";
-
-import { AUTH_COOKIE_NAME } from "./lib/constants";
-
-export const onRequest = defineMiddleware(async ({ cookies, locals, url, request }, next) => {
+export async function middleware(request: NextRequest) {
   const start = Date.now();
-  locals.session = null;
-  locals.user = null;
-  locals.organization = null;
-  locals.role = null;
-
-  const sessionId = cookies.get(AUTH_COOKIE_NAME)?.value || request.headers.get(AUTH_COOKIE_NAME);
-  const pathname = url.pathname;
+  const pathname = request.nextUrl.pathname;
   const publicRoutes = ["/sign-in", "/sign-up", "/forgot-password"];
-
-  let requestBody = "";
-  if (request.body) {
-    try {
-      const clonedRequest = request.clone();
-      requestBody = await clonedRequest.text();
-    } catch (e) {
-      requestBody = "Could not parse body";
-    }
-  }
 
   if (
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/reset-password") ||
-    pathname.startsWith("/_actions/reset_password")
+    pathname.startsWith("/api/trpc")
   ) {
-    const response = await next();
-    logRequest(request.method, pathname, response.status, Date.now() - start, null, requestBody);
-    return response;
+    return NextResponse.next();
   }
+
+  const sessionId = request.cookies.get(AUTH_COOKIE_NAME)?.value;
 
   if (sessionId) {
-    const { session, user } = await validateSessionToken(sessionId);
-
-    if (session && user) {
-      locals.session = session;
-      locals.user = user;
-      locals.organization = user.organization;
-      locals.role = user.role;
-
-      if (publicRoutes.includes(pathname)) {
-        const response = Response.redirect(new URL("/dashboard", url));
-        logRequest(
-          request.method,
-          pathname,
-          response.status,
-          Date.now() - start,
-          user.id,
-          requestBody
-        );
-        return response;
-      }
-    } else {
-      cookies.delete(AUTH_COOKIE_NAME, {
-        path: "/",
-      });
-      if (!publicRoutes.includes(pathname)) {
-        const response = Response.redirect(new URL("/sign-in", url));
-        logRequest(
-          request.method,
-          pathname,
-          response.status,
-          Date.now() - start,
-          null,
-          requestBody
-        );
-        return response;
-      }
+    if (publicRoutes.includes(pathname)) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-  } else if (!publicRoutes.includes(pathname)) {
-    const response = Response.redirect(new URL("/sign-in", url));
-    logRequest(request.method, pathname, response.status, Date.now() - start, null, requestBody);
-    return response;
-  }
 
-  if (pathname.startsWith("/instructor") && locals.user?.role !== "INSTRUCTOR") {
-    const response = new Response("Not Found", { status: 404 });
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set("x-session-id", sessionId);
+
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+
     logRequest(
       request.method,
       pathname,
       response.status,
       Date.now() - start,
-      locals.user?.id ?? null,
-      requestBody
+      "authenticated",
     );
     return response;
   }
 
-  if (pathname.startsWith("/tutor") && locals.user?.role === "STUDENT") {
-    const response = new Response("Not Found", { status: 404 });
+  // No session cookie and trying to access protected route
+  if (!publicRoutes.includes(pathname)) {
+    const response = NextResponse.redirect(new URL("/sign-in", request.url));
     logRequest(
       request.method,
       pathname,
       response.status,
       Date.now() - start,
-      locals.user?.id ?? null,
-      requestBody
+      null,
     );
     return response;
   }
 
-  const response = await next();
+  const response = NextResponse.next();
   logRequest(
     request.method,
     pathname,
     response.status,
     Date.now() - start,
-    locals.user?.id ?? null,
-    requestBody
+    null,
   );
   return response;
-});
+}
 
-const logRequest = (
+// Configure which routes to run middleware on
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
+  ],
+};
+
+function logRequest(
   method: string,
   path: string,
   status: number,
   time: number,
   userId: string | null,
-  body: string
-) => {
-  console.log(
-    `=>[${method}] ${path} - ${status} - ${time}ms - User: ${userId || "anonymous"} - Body: ${body || "no body"}`
-  );
+) {
+  if (process.env.NODE_ENV === "production") {
+    console.log(
+      `=>[${method}] ${path} - ${status} - ${time}ms - User: ${userId ?? "anonymous"}`,
+    );
 
-  if (status === 302) {
-    console.log("Redirecting to:", path);
+    if (status === 302) {
+      console.log("Redirecting to:", path);
+    }
   }
-};
+}

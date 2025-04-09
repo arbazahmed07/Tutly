@@ -1,13 +1,17 @@
+"use client";
+
 import { FileType } from "@prisma/client";
-import { actions } from "astro:actions";
 import axios from "axios";
 import imageCompression from "browser-image-compression";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
+
+import { api } from "@/trpc/react";
+import { getExtension } from "@/utils/file";
 
 export type FileUploadOptions = {
   fileType: FileType;
-  onUpload?: (file: any) => Promise<void>;
+  onUpload?: (file: { id: string; name: string; publicUrl: string | null }) => Promise<void>;
   allowedExtensions?: string[];
 };
 
@@ -18,15 +22,13 @@ const ExtImage: string[] = ["jpeg", "jpg", "png", "gif", "svg", "bmp", "webp", "
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-export function getExtension(filename: string): string {
-  const parts = filename.split(".");
-  return parts.length > 1 ? `.${parts[parts.length - 1]?.toLowerCase()}` : "";
-}
-
 export const useFileUpload = (options: FileUploadOptions) => {
   const { fileType, onUpload, allowedExtensions } = options;
   const [isUploading, setIsUploading] = useState(false);
   const [uploadPercent, setUploadPercent] = useState<number | null>(null);
+
+  const { mutateAsync: createFile } = api.fileupload.createFileAndGetUploadUrl.useMutation();
+  const { mutateAsync: markFileUploaded } = api.fileupload.markFileUploaded.useMutation();
 
   const uploadFile = async (file: File, associatingId?: string) => {
     setIsUploading(true);
@@ -55,7 +57,7 @@ export const useFileUpload = (options: FileUploadOptions) => {
         throw new Error("Files must not exceed 10MB");
       }
 
-      const { data } = await actions.fileupload_createFileAndGetUploadUrl({
+      const result = await createFile({
         name: fileToUpload.name,
         fileType,
         associatingId,
@@ -64,13 +66,14 @@ export const useFileUpload = (options: FileUploadOptions) => {
         mimeType: fileToUpload.type,
       });
 
-      if (!data) throw new Error("Failed to get upload URL");
+      if (!result) throw new Error("Failed to create file");
+      const { signedUrl, file: uploadedFile } = result;
 
-      const { signedUrl, file: uploadedFile } = data;
+      if (!signedUrl || !uploadedFile) throw new Error("Failed to get upload URL");
 
       await axios.put(signedUrl, fileToUpload, {
         headers: { "Content-Type": fileToUpload.type },
-        onUploadProgress: (progressEvent) => {
+        onUploadProgress: (progressEvent: { loaded: number; total?: number }) => {
           if (progressEvent.total) {
             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
             setUploadPercent(percent);
@@ -78,9 +81,11 @@ export const useFileUpload = (options: FileUploadOptions) => {
         },
       });
 
-      const { data: updatedFile } = await actions.fileupload_markFileUploaded({
+      const updatedFile = await markFileUploaded({
         fileId: uploadedFile.id,
       });
+
+      if (!updatedFile) throw new Error("Failed to mark file as uploaded");
 
       toast.success("File uploaded successfully");
       onUpload && (await onUpload(updatedFile));

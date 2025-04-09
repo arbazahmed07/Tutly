@@ -51,4 +51,6 @@ dist/
 # turbo
 .turbo
 .DS_Store
-.cursor*
+
+# localstack
+apps/web/data/

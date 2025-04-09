@@ -1,11 +1,5 @@
-import { eq } from "drizzle-orm";
+import type { attachmentType, submissionMode } from "@prisma/client";
 import { z } from "zod";
-
-import {
-  attachments,
-  attachmentTypeEnum,
-  submissionModeEnum,
-} from "@tutly/db/schema";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -17,32 +11,42 @@ export const attachmentsRouter = createTRPCRouter({
         details: z.string().optional(),
         link: z.string().optional(),
         dueDate: z.date().optional(),
-        attachmentType: z.enum(attachmentTypeEnum.enumValues),
+        attachmentType: z.enum([
+          "ASSIGNMENT",
+          "GITHUB",
+          "ZOOM",
+          "OTHERS",
+        ] as const),
         courseId: z.string(),
         classId: z.string(),
         maxSubmissions: z.number().optional(),
-        submissionMode: z.enum(submissionModeEnum.enumValues),
+        submissionMode: z.enum(["HTML_CSS_JS", "REACT", "EXTERNAL_LINK"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const attachment = await ctx.db
-          .insert(attachments)
-          .values({
+        const currentUser = ctx.session.user;
+        if (currentUser.role !== "INSTRUCTOR") {
+          return { error: "Unauthorized" };
+        }
+
+        const attachment = await ctx.db.attachment.create({
+          data: {
             title: input.title,
             classId: input.classId,
             link: input.link ?? null,
             details: input.details ?? null,
-            attachmentType: input.attachmentType,
-            submissionMode: input.submissionMode,
+            attachmentType: input.attachmentType as attachmentType,
+            submissionMode: input.submissionMode as submissionMode,
             dueDate: input.dueDate ?? null,
             courseId: input.courseId,
             maxSubmissions: input.maxSubmissions ?? null,
-          })
-          .returning();
+          },
+        });
 
         return { success: true, data: attachment };
-      } catch {
+      } catch (error) {
+        console.error("Error creating attachment:", error);
         return { error: "Failed to create attachment" };
       }
     }),
@@ -54,8 +58,10 @@ export const attachmentsRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const attachment = await ctx.db.query.attachments.findFirst({
-        where: (attachments, { eq }) => eq(attachments.id, input.id),
+      const attachment = await ctx.db.attachment.findUnique({
+        where: {
+          id: input.id,
+        },
       });
 
       return {
@@ -71,10 +77,17 @@ export const attachmentsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const attachment = await ctx.db
-        .delete(attachments)
-        .where(eq(attachments.id, input.id))
-        .returning();
+      const currentUser = ctx.session.user;
+
+      if (currentUser.role !== "INSTRUCTOR") {
+        return { error: "You must be an instructor to delete an attachment" };
+      }
+
+      const attachment = await ctx.db.attachment.delete({
+        where: {
+          id: input.id,
+        },
+      });
 
       return {
         success: true,
@@ -104,25 +117,60 @@ export const attachmentsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const attachment = await ctx.db
-          .update(attachments)
-          .set({
+        const currentUser = ctx.session.user;
+        if (currentUser.role !== "INSTRUCTOR") {
+          return { error: "Unauthorized" };
+        }
+
+        const attachment = await ctx.db.attachment.update({
+          where: {
+            id: input.id,
+          },
+          data: {
             title: input.title,
             classId: input.classId,
             link: input.link ?? null,
             details: input.details ?? null,
-            attachmentType: input.attachmentType,
-            submissionMode: input.submissionMode,
+            attachmentType: input.attachmentType as attachmentType,
+            submissionMode: input.submissionMode as submissionMode,
             dueDate: input.dueDate ?? null,
             courseId: input.courseId,
             maxSubmissions: input.maxSubmissions ?? null,
-          })
-          .where(eq(attachments.id, input.id))
-          .returning();
+          },
+        });
 
         return { success: true, data: attachment };
-      } catch {
+      } catch (error) {
+        console.error("Error updating attachment:", error);
         return { error: "Failed to update attachment" };
+      }
+    }),
+
+  getCourseAssignments: protectedProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const assignments = await ctx.db.attachment.findMany({
+          where: {
+            courseId: input.courseId,
+            attachmentType: "ASSIGNMENT",
+          },
+          include: {
+            submissions: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        return { success: true, data: assignments };
+      } catch (error) {
+        console.error("Error getting course assignments:", error);
+        return { error: "Failed to get course assignments" };
       }
     }),
 });

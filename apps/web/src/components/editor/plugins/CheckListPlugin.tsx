@@ -22,6 +22,7 @@ import {
   getNearestEditorFromDOMNode,
 } from "lexical";
 import { useEffect } from "react";
+import type { ElementNode } from "lexical";
 
 export function CheckListPlugin(): null {
   const [editor] = useLexicalComposerContext();
@@ -167,8 +168,7 @@ function handleCheckItemEvent(event: PointerEvent, callback: () => void) {
 
   const parentNode = target.parentNode;
 
-  // @ts-ignore internal field
-  if (!parentNode || parentNode.__lexicalListType !== "check") {
+  if (!parentNode || (parentNode as HTMLElement).dataset.lexicalListType !== "check") {
     return;
   }
 
@@ -189,7 +189,7 @@ function handleClick(event: Event) {
       const domNode = event.target;
       const editor = getNearestEditorFromDOMNode(domNode);
 
-      if (editor != null && editor.isEditable()) {
+      if (editor?.isEditable()) {
         editor.update(() => {
           const node = $getNearestNodeFromDOMNode(domNode);
 
@@ -216,20 +216,19 @@ function getActiveCheckListItem(): HTMLElement | null {
   return activeElement != null &&
     activeElement.tagName === "LI" &&
     activeElement.parentNode != null &&
-    // @ts-ignore internal field
-    activeElement.parentNode.__lexicalListType === "check"
+    (activeElement.parentNode as HTMLElement).dataset.lexicalListType === "check"
     ? activeElement
     : null;
 }
 
-function findCheckListItemSibling(node: ListItemNode, backward: boolean): ListItemNode | null {
+function findCheckListItemSibling(node: ListItemNode, backward: boolean) {
   let sibling = backward ? node.getPreviousSibling() : node.getNextSibling();
-  let parent: ListItemNode | null = node;
+  let parent = node;
 
   // Going up in a tree to get non-null sibling
   while (sibling == null && $isListItemNode(parent)) {
     // Get li -> parent ul/ol -> parent li
-    parent = parent.getParentOrThrow().getParent();
+    parent = parent.getParentOrThrow().getParent() as ListItemNode;
 
     if (parent != null) {
       sibling = backward ? parent.getPreviousSibling() : parent.getNextSibling();
@@ -267,7 +266,7 @@ function handleArrownUpOrDown(event: KeyboardEvent, editor: LexicalEditor, backw
         nextListItem.selectStart();
         const dom = editor.getElementByKey(nextListItem.__key);
 
-        if (dom != null) {
+        if (dom) {
           event.preventDefault();
           setTimeout(() => {
             dom.focus();

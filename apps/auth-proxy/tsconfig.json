@@ -1,0 +1,4 @@
+{
+  "extends": "@tutly/tsconfig/base.json",
+  "include": ["routes"]
+}

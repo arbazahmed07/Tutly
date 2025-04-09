@@ -1,13 +1,18 @@
-import type { User } from "better-auth";
-import { headers } from "next/headers";
+import NextAuth from "next-auth";
 
-import { auth } from "./auth";
+import { authConfig } from "./config";
+import generateRandomPassword from "./utils";
 
-export const getSession = async () =>
-  auth.api.getSession({
-    headers: headers(),
-  });
+export type { Session } from "next-auth";
 
-export type SessionUser = User;
+const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
 
-export * from "./auth";
+export { handlers, auth, signIn, signOut };
+
+export {
+  invalidateSessionToken,
+  validateToken,
+  isSecureContext,
+} from "./config";
+
+export { generateRandomPassword };

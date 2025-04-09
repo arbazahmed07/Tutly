@@ -1,6 +1,6 @@
 import { Info, Plus, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,50 +20,12 @@ import {
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-type ColumnDef = {
-  key: string;
-  name: string;
-  type?:
-    | "text"
-    | "number"
-    | "date"
-    | "datetime-local"
-    | "time"
-    | "email"
-    | "tel"
-    | "url"
-    | "password"
-    | "select"
-    | "textarea"
-    | "checkbox"
-    | "radio"
-    | "color"
-    | "file"
-    | "range"
-    | "month"
-    | "week";
-  options?: { label: string; value: any }[];
-  min?: number | string;
-  max?: number | string;
-  step?: number | string;
-  rows?: number;
-  accept?: string;
-  multiple?: boolean;
-  placeholder?: string;
-  validation?: {
-    required?: boolean;
-    regex?: RegExp;
-    message?: string;
-    minLength?: number;
-    maxLength?: number;
-    custom?: (value: any) => string | undefined;
-  };
-};
+import type { Column } from "./DisplayTable";
 
 type BulkImportProps = {
-  columns: ColumnDef[];
-  data: any[];
-  onImport: (data: any[]) => void;
+  columns: Column[];
+  data: Record<string, any>[];
+  onImport: (data: Record<string, any>[]) => void;
 };
 
 type Row = Record<string, any>;
@@ -84,7 +46,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
     }
   }, [isOpen, data]);
 
-  const validateRow = (row: Row, rowIndex: number) => {
+  const validateRow = useCallback((row: Row, rowIndex: number) => {
     const newErrors: Record<string, string[]> = {};
 
     columns.forEach((col) => {
@@ -115,16 +77,16 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
     });
 
     return newErrors;
-  };
+  }, [columns]);
 
-  const validateAllRows = (rows: Row[]) => {
+  const validateAllRows = useCallback((rows: Row[]) => {
     const allErrors: Record<string, string[]> = {};
     rows.forEach((row, index) => {
       const rowErrors = validateRow(row, index);
       Object.assign(allErrors, rowErrors);
     });
     return allErrors;
-  };
+  }, [validateRow]);
 
   const handlePaste = useCallback(
     (event: React.ClipboardEvent<HTMLDivElement>) => {
@@ -196,18 +158,17 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
         return currentData;
       });
     },
-    [columns]
+    [columns, validateAllRows]
   );
 
-  const renderInput = (column: ColumnDef, value: any, rowIndex: number) => {
+  const renderInput = (column: Column, value: any, rowIndex: number) => {
     const commonProps = {
       value: value ?? "",
       onChange: (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
       ) => handleCellChange(rowIndex, column.key, e.target.value),
-      className: `w-full outline-none bg-transparent ${
-        errors[`${rowIndex}-${column.key}`] ? "border-red-500" : ""
-      }`,
+      className: `w-full outline-none bg-transparent ${errors[`${rowIndex}-${column.key}`] ? "border-red-500" : ""
+        }`,
       placeholder: column.placeholder,
       min: column.min,
       max: column.max,
@@ -318,7 +279,7 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
     }
   };
 
-  const getValidationRules = (col: ColumnDef): string => {
+  const getValidationRules = (col: Column): string => {
     const rules: string[] = [];
 
     if (col.validation?.required) {
@@ -408,9 +369,8 @@ export default function BulkImport({ columns, data, onImport }: BulkImportProps)
                     {columns.map((col) => (
                       <td
                         key={`${rowIndex}-${col.key}`}
-                        className={`border dark:border-gray-100 p-2 relative  ${
-                          errors[`${rowIndex}-${col.key}`] ? "bg-red-50" : ""
-                        }`}
+                        className={`border dark:border-gray-100 p-2 relative  ${errors[`${rowIndex}-${col.key}`] ? "bg-red-50" : ""
+                          }`}
                       >
                         <div className="min-h-[40px]">
                           {renderInput(col, row[col.key], rowIndex)}

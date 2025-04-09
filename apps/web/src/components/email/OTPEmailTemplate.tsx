@@ -32,6 +32,7 @@ const OTPEmailTemplate = ({ otp, name = "User" }: Readonly<OTPEmailTemplateProps
             backgroundColor: "#ffffff",
           }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://learn.tutly.in/logo-with-bg.png"
             alt="Tutly Logo"
@@ -117,7 +118,7 @@ const OTPEmailTemplate = ({ otp, name = "User" }: Readonly<OTPEmailTemplateProps
             color: "#666666",
           }}
         >
-          <p>If you didn't request this OTP, please ignore this email.</p>
+          <p>If you didn&apos;t request this OTP, please ignore this email.</p>
         </div>
 
         <div

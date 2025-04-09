@@ -1,65 +1,52 @@
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { courses, doubts, responses } from "@tutly/db/schema";
-
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { getEnrolledCourseIds } from "./courses";
 
 export const doubtsRouter = createTRPCRouter({
   getUserDoubtsByCourseId: protectedProcedure
-    .input(z.object({ courseId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const doubtsData = await ctx.db.query.doubts.findMany({
-        where: eq(doubts.courseId, input.courseId),
-        with: {
-          user: true,
-          course: true,
-          responses: {
-            with: { user: true },
-            orderBy: desc(responses.createdAt),
-          },
-        },
-      });
-      return { success: true, data: doubtsData };
-    }),
-
-  createDoubt: protectedProcedure
     .input(
       z.object({
         courseId: z.string(),
-        title: z.string().optional(),
-        description: z.string().optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      const [doubt] = await ctx.db
-        .insert(doubts)
-        .values({
+    .query(async ({ ctx, input }) => {
+      const doubts = await ctx.db.doubt.findMany({
+        where: {
           courseId: input.courseId,
-          userId: ctx.session.user.id,
-          title: input.title ?? null,
-          description: input.description ?? null,
-        })
-        .returning();
-
-      return { success: true, data: doubt };
+        },
+        include: {
+          user: true,
+          course: true,
+          response: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+      return { success: true, data: doubts };
     }),
 
   getEnrolledCoursesDoubts: protectedProcedure.query(async ({ ctx }) => {
     const currentUser = ctx.session.user;
 
-    const courses = await ctx.db.query.courses.findMany({
-      where: sql`EXISTS (
-        SELECT 1 FROM enrolled_users
-        WHERE enrolled_users.course_id = courses.id
-        AND enrolled_users.user_id = ${currentUser.id}
-      )`,
-      with: {
+    const courses = await ctx.db.course.findMany({
+      where: {
+        enrolledUsers: {
+          some: {
+            username: currentUser.username,
+          },
+        },
+      },
+      include: {
         doubts: {
-          with: {
+          include: {
             user: true,
-            responses: {
-              with: { user: true },
+            response: {
+              include: {
+                user: true,
+              },
             },
           },
         },
@@ -69,101 +56,210 @@ export const doubtsRouter = createTRPCRouter({
   }),
 
   getCreatedCoursesDoubts: protectedProcedure.query(async ({ ctx }) => {
-    const coursesRes = await ctx.db.query.courses.findMany({
-      where: eq(courses.createdById, ctx.session.user.id),
-      with: {
+    const currentUser = ctx.session.user;
+
+    const courseIds = await getEnrolledCourseIds(currentUser.username);
+
+    const courses = await ctx.db.course.findMany({
+      where: {
+        id: {
+          in: courseIds,
+        },
+      },
+      include: {
         doubts: {
-          with: {
+          include: {
             user: true,
-            responses: {
-              with: { user: true },
+            response: {
+              include: {
+                user: true,
+              },
             },
           },
         },
       },
     });
-    return { success: true, data: coursesRes };
+    return { success: true, data: courses };
   }),
 
   getAllDoubtsForMentor: protectedProcedure.query(async ({ ctx }) => {
     const currentUser = ctx.session.user;
 
-    const mentorCourses = await ctx.db.query.courses.findMany({
-      where: sql`EXISTS (
-        SELECT 1 FROM enrolled_users
-        WHERE enrolled_users.course_id = courses.id
-        AND enrolled_users.mentor_username = ${currentUser.username}
-      )`,
-    });
-
-    const courseIds = mentorCourses.map((c) => c.id);
-
-    const coursesData = await ctx.db.query.courses.findMany({
-      where: inArray(courses.id, courseIds),
-      with: {
-        doubts: {
-          with: {
-            user: true,
-            responses: {
-              with: { user: true },
-            },
+    const mentorCourses = await ctx.db.course.findMany({
+      where: {
+        enrolledUsers: {
+          some: {
+            mentorUsername: currentUser.username,
           },
         },
       },
     });
 
-    return { success: true, data: coursesData };
+    if (mentorCourses.length === 0) return { error: "No courses found" };
+
+    const courses = await ctx.db.course.findMany({
+      where: {
+        id: {
+          in: mentorCourses.map((course) => course.id),
+        },
+      },
+      include: {
+        doubts: {
+          include: {
+            user: true,
+            response: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return { success: true, data: courses };
   }),
 
-  deleteDoubt: protectedProcedure
-    .input(z.object({ doubtId: z.string() }))
+  createDoubt: protectedProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+        title: z.string(),
+        description: z.string(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      const [deletedDoubt] = await ctx.db
-        .delete(doubts)
-        .where(
-          and(
-            eq(doubts.id, input.doubtId),
-            eq(doubts.userId, ctx.session.user.id),
-          ),
-        )
-        .returning();
+      const currentUser = ctx.session.user;
 
-      return {
-        success: true,
-        data: deletedDoubt,
-      };
+      if (currentUser.role === "INSTRUCTOR") {
+        const userCourseIds = await getEnrolledCourseIds(currentUser.username);
+        if (!userCourseIds.includes(input.courseId)) {
+          throw new Error("You do not have access to this course");
+        }
+      }
+
+      const doubt = await ctx.db.doubt.create({
+        data: {
+          courseId: input.courseId,
+          userId: currentUser.id,
+          title: input.title,
+          description: input.description,
+        },
+        include: {
+          user: true,
+          course: true,
+          response: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      await ctx.db.events.create({
+        data: {
+          eventCategory: "DOUBT_CREATION",
+          causedById: currentUser.id,
+          eventCategoryDataId: doubt.id,
+        },
+      });
+
+      return { success: true, data: doubt };
+    }),
+
+  createResponse: protectedProcedure
+    .input(
+      z.object({
+        doubtId: z.string(),
+        description: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.session.user;
+
+      const response = await ctx.db.response.create({
+        data: {
+          doubtId: input.doubtId,
+          userId: currentUser.id,
+          description: input.description,
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      await ctx.db.events.create({
+        data: {
+          eventCategory: "DOUBT_RESPONSE",
+          causedById: currentUser.id,
+          eventCategoryDataId: response.id,
+        },
+      });
+      return { success: true, data: response };
+    }),
+
+  deleteDoubt: protectedProcedure
+    .input(
+      z.object({
+        doubtId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.session.user;
+
+      const doubt = await ctx.db.doubt.delete({
+        where: {
+          id: input.doubtId,
+          userId: currentUser.id,
+        },
+        include: {
+          user: true,
+          course: true,
+          response: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+      return { success: true, data: doubt };
     }),
 
   deleteAnyDoubt: protectedProcedure
-    .input(z.object({ doubtId: z.string() }))
+    .input(
+      z.object({
+        doubtId: z.string(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      const doubt = await ctx.db
-        .delete(doubts)
-        .where(eq(doubts.id, input.doubtId));
+      const doubt = await ctx.db.doubt.delete({
+        where: {
+          id: input.doubtId,
+        },
+        include: {
+          user: true,
+          course: true,
+          response: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
       return { success: true, data: doubt };
     }),
 
   deleteResponse: protectedProcedure
-    .input(z.object({ responseId: z.string() }))
+    .input(
+      z.object({
+        responseId: z.string(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      const response = await ctx.db
-        .delete(responses)
-        .where(eq(responses.id, input.responseId));
-      return { success: true, data: response };
-    }),
-
-  createResponse: protectedProcedure
-    .input(z.object({ doubtId: z.string(), description: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const [response] = await ctx.db
-        .insert(responses)
-        .values({
-          doubtId: input.doubtId,
-          userId: ctx.session.user.id,
-          description: input.description,
-        })
-        .returning();
-
+      const response = await ctx.db.response.delete({
+        where: {
+          id: input.responseId,
+        },
+      });
       return { success: true, data: response };
     }),
 });

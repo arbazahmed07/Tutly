@@ -82,7 +82,7 @@ const MarkdownPreview = ({ content, className }: MarkdownPreviewProps) => {
       setHtml(renderedHtml);
     };
 
-    renderMarkdown();
+    void renderMarkdown();
   }, [content]);
 
   return (

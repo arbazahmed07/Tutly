@@ -34,6 +34,7 @@ const EnrollMail = ({ name, email, password }: Readonly<EnrollMailProps>) => {
             backgroundColor: "#ffffff",
           }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://learn.tutly.in/logo-with-bg.png"
             alt="Tutly Logo"

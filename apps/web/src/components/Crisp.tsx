@@ -1,28 +1,32 @@
+"use client";
+
 import { useEffect } from "react";
 
-// interface CrispProps {
-//   user?: {
-//     email: string;
-//     name: string;
-//     image: string;
-//     role: string;
-//     id: string;
-//     username: string;
-//     mobile: string;
-//   };
-//   organization?: {
-//     orgCode: string;
-//   };
-// }
+interface CrispProps {
+  user?: {
+    email: string;
+    name: string;
+    image: string;
+    role: string;
+    id: string;
+    username: string;
+    mobile: string;
+  };
+  organization?: {
+    orgCode: string;
+  };
+}
+
+type CrispCommand = [string, ...unknown[]];
 
 declare global {
   interface Window {
-    $crisp: any[];
+    $crisp: CrispCommand[];
     CRISP_WEBSITE_ID: string;
   }
 }
 
-export default function Crisp({ user, organization }: any) {
+export default function Crisp({ user, organization }: CrispProps) {
   useEffect(() => {
     window.$crisp = [];
     window.CRISP_WEBSITE_ID = "b1db5fec-2104-4c63-a771-59dcdcd17215";
