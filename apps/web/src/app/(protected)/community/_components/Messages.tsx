@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 import { api } from "@/trpc/react";
 
 interface Doubt {

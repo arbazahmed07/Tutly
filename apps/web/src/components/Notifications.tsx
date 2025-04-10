@@ -33,7 +33,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 import day from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
 import { env } from "process";

@@ -1,4 +1,4 @@
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 import type { Course } from "@prisma/client";
 
 import AddCourse from "./_components/AddCourse";

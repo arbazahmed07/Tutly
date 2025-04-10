@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import type { Course, User } from "@prisma/client";
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 import { db } from "@tutly/db";
 import AssignmentDashboard from "./_components/AssignmentDashboard";
 

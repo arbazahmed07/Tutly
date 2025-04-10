@@ -1,4 +1,4 @@
-const generateRandomPassword = (length = 8) => {
+export const generateRandomPassword = (length = 8) => {
   const lowercase = "abcdefghijklmnopqrstuvwxyz";
   const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const numbers = "0123456789";
@@ -20,5 +20,3 @@ const generateRandomPassword = (length = 8) => {
     .sort(() => Math.random() - 0.5)
     .join("");
 };
-
-export default generateRandomPassword;

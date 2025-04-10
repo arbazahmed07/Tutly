@@ -1,25 +1,28 @@
 import { cache } from "react";
-import NextAuth from "next-auth";
 
-import { authConfig } from "./config";
-import generateRandomPassword from "./utils";
+import { getServerSession, getServerSessionOrRedirect } from "./config";
+import { generateRandomPassword } from "./utils";
 
-export type { Session } from "next-auth";
+export type {
+  SessionUser,
+  SessionWithUser,
+  SessionValidationResult,
+} from "./config";
 
-const { handlers, auth: defaultAuth, signIn, signOut } = NextAuth(authConfig);
+export { AUTH_COOKIE_NAME, isSecureContext } from "./config";
 
-/**
- * This is the main way to get session data for your RSCs.
- * This will de-duplicate all calls to next-auth's default `auth()` function and only call it once per request
- */
-const auth = cache(defaultAuth);
-
-export { handlers, auth, signIn, signOut };
-
+// Server-only exports
 export {
-  invalidateSessionToken,
-  validateToken,
-  isSecureContext,
+  validateSessionToken,
+  validateCredentials,
+  signInWithCredentials,
 } from "./config";
 
 export { generateRandomPassword };
+
+export const getCachedServerSession = cache(getServerSession);
+export const getCachedServerSessionOrRedirect = cache(
+  getServerSessionOrRedirect,
+);
+
+export { getServerSession, getServerSessionOrRedirect };

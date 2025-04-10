@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getServerSession, getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSession, getServerSessionOrRedirect } from "@tutly/auth";
 import { db } from "@tutly/db";
 import Report from "./_components/Report";
 import { api } from "@/trpc/server";

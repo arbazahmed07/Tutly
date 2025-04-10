@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Course, User } from "@prisma/client";
 
 import MentorAssignmentBoard from "./MentorAssignmentBoard";
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 
 type CourseWithRelations = Course & {
   classes: {

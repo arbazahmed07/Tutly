@@ -8,8 +8,7 @@ import { cookies } from "next/headers";
 import { createCaller, type AppRouter } from "@/server/api/root";
 import { createTRPCContext } from "@/server/api/trpc";
 import { createQueryClient } from "./query-client";
-import { validateSessionToken } from "@/lib/auth/session";
-import { AUTH_COOKIE_NAME } from "@/lib/constants";
+import { validateSessionToken, AUTH_COOKIE_NAME } from "@tutly/auth";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -22,18 +21,15 @@ const createContext = cache(async () => {
   const cookieStore = await cookies();
   const sessionId = cookieStore.get(AUTH_COOKIE_NAME)?.value;
   let session = null;
-  let user = null;
 
   if (sessionId) {
     const result = await validateSessionToken(sessionId);
     session = result.session;
-    user = result.user;
   }
 
   return createTRPCContext({
-    session,
-    user,
     headers: heads,
+    session,
   });
 });
 

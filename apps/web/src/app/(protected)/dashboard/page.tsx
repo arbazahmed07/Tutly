@@ -3,7 +3,7 @@ import { Role } from "@prisma/client";
 import type { DashboardData } from "./types";
 import Dashboard from "./_components/dashboard";
 import { db } from "@tutly/db";
-import { getServerSession } from "@/lib/auth/session";
+import { getServerSession } from "@tutly/auth";
 
 export default async function DashboardPage() {
   const session = await getServerSession();

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import { db } from "@tutly/db";
 import Sessions from "./_components/Sessions";
-import { getServerSession } from "@/lib/auth/session";
+import { getServerSession } from "@tutly/auth";
 
 export default async function SessionsPage() {
   const session = await getServerSession();

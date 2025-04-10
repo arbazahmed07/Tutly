@@ -1,4 +1,4 @@
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 import ReactPlayground from "./ReactPlayground";
 
 export default async function ReactPlaygroundPage() {

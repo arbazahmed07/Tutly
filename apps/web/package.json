@@ -45,6 +45,7 @@
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
     "@tutly/api": "workspace:*",
+    "@tutly/auth": "workspace:*",
     "@tutly/db": "workspace:*",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",

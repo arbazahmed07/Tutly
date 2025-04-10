@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "@/lib/auth/session";
+import { getServerSession } from "@tutly/auth";
 import { db } from "@tutly/db";
 import StudentCertificate from "./_components/StudentCertificate";
 

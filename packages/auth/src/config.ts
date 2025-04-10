@@ -1,173 +1,176 @@
-import type { Course, Organization, Role } from "@prisma/client";
-import type {
-  DefaultSession,
-  NextAuthConfig,
-  Session as NextAuthSession,
-  User as NextAuthUser,
-} from "next-auth";
-import { skipCSRFCheck } from "@auth/core";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { Course, Organization, Role, Session, User } from "@prisma/client";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { compare } from "bcryptjs";
-import Credentials from "next-auth/providers/credentials";
 
-import { db } from "@tutly/db/client";
+import { db } from "@tutly/db";
 
 import { env } from "../env";
-import generateRandomPassword from "./utils";
+import { generateRandomPassword } from "./utils";
 
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      role: Role;
-      organization: Organization | null;
-      adminForCourses: Course[];
-      username: string;
-    } & DefaultSession["user"];
-  }
+export type SessionUser = Omit<User, "password" | "oneTimePassword"> & {
+  organization: Organization | null;
+  role: Role;
+  adminForCourses: Course[];
+};
+
+export type SessionWithUser = Session & {
+  user: SessionUser;
+};
+
+export interface SessionValidationResult {
+  session: SessionWithUser | null;
+  user: SessionUser | null;
 }
 
-const adapter = PrismaAdapter(db);
+export const AUTH_COOKIE_NAME = "tutly_session";
 
 export const isSecureContext = env.NODE_ENV !== "development";
 
-type ExtendedUser = NextAuthUser & {
-  role: Role;
-  organization: Organization | null;
-  adminForCourses: Course[];
-  username: string;
-};
-
-export const authConfig = {
-  adapter,
-  // In development, we need to skip checks to allow Expo to work
-  ...(!isSecureContext
-    ? { skipCSRFCheck: skipCSRFCheck, trustHost: true }
-    : {}),
-  secret: env.AUTH_SECRET,
-  providers: [
-    Credentials({
-      name: "credentials",
-      credentials: {
-        identifier: { label: "Email or Username", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials.identifier || !credentials.password) {
-          return null;
-        }
-
-        const identifier = credentials.identifier as string;
-        const password = credentials.password as string;
-
-        const isEmail = identifier.includes("@");
-        const query = isEmail
-          ? { email: identifier.toLowerCase() }
-          : { username: identifier.toUpperCase() };
-
-        const user = await db.user.findFirst({
-          where: query,
-          select: {
-            id: true,
-            email: true,
-            username: true,
-            password: true,
-            oneTimePassword: true,
-            name: true,
-            image: true,
-            role: true,
+export async function validateSessionToken(
+  token: string,
+): Promise<SessionValidationResult> {
+  try {
+    const session = await db.session.findUnique({
+      where: { id: token },
+      include: {
+        user: {
+          include: {
             organization: true,
+            profile: true,
             adminForCourses: true,
           },
-        });
-
-        if (!user) {
-          return null;
-        }
-
-        if (password === user.oneTimePassword) {
-          const newOneTimePassword = generateRandomPassword(10);
-          await db.user.update({
-            where: { id: user.id },
-            data: { oneTimePassword: newOneTimePassword },
-          });
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-            role: user.role,
-            organization: user.organization,
-            adminForCourses: user.adminForCourses,
-            username: user.username,
-          };
-        }
-
-        if (!user.password) {
-          return null;
-        }
-
-        const isPasswordValid = await compare(password, user.password);
-        if (!isPasswordValid) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-          role: user.role,
-          organization: user.organization,
-          adminForCourses: user.adminForCourses,
-          username: user.username,
-        };
-      },
-    }),
-  ],
-  callbacks: {
-    session: (opts) => {
-      if (!("user" in opts))
-        throw new Error("unreachable with session strategy");
-
-      const extendedUser = opts.user as unknown as ExtendedUser;
-      return {
-        ...opts.session,
-        user: {
-          ...opts.session.user,
-          id: extendedUser.id,
-          role: extendedUser.role,
-          organization: extendedUser.organization,
-          adminForCourses: extendedUser.adminForCourses,
-          username: extendedUser.username,
         },
-      };
+      },
+    });
+
+    if (!session?.user) {
+      return { session: null, user: null };
+    }
+
+    await db.user.update({
+      where: { id: session.user.id },
+      data: { lastSeen: new Date() },
+    });
+
+    if (Date.now() >= session.expiresAt.getTime()) {
+      await db.session.delete({ where: { id: token } });
+      return { session: null, user: null };
+    }
+
+    return {
+      session: session as SessionWithUser,
+      user: session.user as SessionUser,
+    };
+  } catch (error) {
+    console.error("[Session] Error validating session:", error);
+    return { session: null, user: null };
+  }
+}
+
+export async function getServerSession() {
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get(AUTH_COOKIE_NAME)?.value;
+
+  if (!sessionId) {
+    return null;
+  }
+
+  const { session, user } = await validateSessionToken(sessionId);
+  return { session, user };
+}
+
+export async function getServerSessionOrRedirect(
+  redirectTo = "/sign-in",
+): Promise<{ session: SessionWithUser; user: SessionUser }> {
+  const result = await getServerSession();
+
+  if (!result?.user) {
+    redirect(redirectTo);
+  }
+
+  return result as { session: SessionWithUser; user: SessionUser };
+}
+
+export async function validateCredentials(
+  identifier: string,
+  password: string,
+) {
+  const isEmail = identifier.includes("@");
+  const query = isEmail
+    ? { email: identifier.toLowerCase() }
+    : { username: identifier.toUpperCase() };
+
+  const user = await db.user.findFirst({
+    where: query,
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      password: true,
+      oneTimePassword: true,
+      name: true,
+      image: true,
+      role: true,
+      organization: true,
     },
-  },
-} satisfies NextAuthConfig;
+  });
 
-export const validateToken = async (
-  token: string,
-): Promise<NextAuthSession | null> => {
-  const sessionToken = token.slice("Bearer ".length);
-  const session = await adapter.getSessionAndUser?.(sessionToken);
-  if (!session) return null;
+  if (!user) {
+    throw new Error(isEmail ? "Email not found" : "Username not found");
+  }
 
-  const extendedUser = session.user as unknown as ExtendedUser;
+  if (password === user.oneTimePassword) {
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        oneTimePassword: generateRandomPassword(8),
+      },
+    });
+    return { user, isOneTimePassword: true };
+  }
+
+  if (!user.password) {
+    throw new Error("Password not set for this account");
+  }
+
+  const isValidPassword = await compare(password, user.password);
+  if (!isValidPassword) {
+    throw new Error("Invalid password");
+  }
+
+  return { user, isOneTimePassword: false };
+}
+
+export async function signInWithCredentials(
+  identifier: string,
+  password: string,
+  userAgent?: string | null,
+) {
+  const { user, isOneTimePassword } = await validateCredentials(
+    identifier,
+    password,
+  );
+
+  const session = await db.session.create({
+    data: {
+      userId: user.id,
+      userAgent: userAgent ?? "Unknown Device",
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+    },
+    include: {
+      user: {
+        include: {
+          organization: true,
+          profile: true,
+        },
+      },
+    },
+  });
+
   return {
-    user: {
-      ...session.user,
-      role: extendedUser.role,
-      organization: extendedUser.organization,
-      adminForCourses: extendedUser.adminForCourses,
-      username: extendedUser.username,
-    },
-    expires: session.session.expires.toISOString(),
+    sessionId: session.id,
+    user: session.user,
+    isPasswordSet: !!user.password && !isOneTimePassword,
   };
-};
-
-export const invalidateSessionToken = async (token: string) => {
-  const sessionToken = token.slice("Bearer ".length);
-  await adapter.deleteSession?.(sessionToken);
-};
+}

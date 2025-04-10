@@ -1,4 +1,4 @@
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 import { redirect } from "next/navigation";
 import { db } from "@tutly/db";
 import type { Course, Class } from "@prisma/client";

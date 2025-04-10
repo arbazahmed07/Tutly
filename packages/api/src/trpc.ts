@@ -10,8 +10,8 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import type { Session } from "@tutly/auth";
-import { auth, validateToken } from "@tutly/auth";
+import type { SessionWithUser } from "@tutly/auth";
+import { getServerSession, validateSessionToken } from "@tutly/auth";
 import { db } from "@tutly/db/client";
 
 /**
@@ -21,8 +21,12 @@ import { db } from "@tutly/db/client";
  */
 const isomorphicGetSession = async (headers: Headers) => {
   const authToken = headers.get("Authorization") ?? null;
-  if (authToken) return validateToken(authToken);
-  return auth();
+  if (authToken) {
+    const result = await validateSessionToken(authToken);
+    return result.session;
+  }
+  const result = await getServerSession();
+  return result?.session ?? null;
 };
 
 /**
@@ -39,7 +43,7 @@ const isomorphicGetSession = async (headers: Headers) => {
  */
 export const createTRPCContext = async (opts: {
   headers: Headers;
-  session: Session | null;
+  session: SessionWithUser | null;
 }) => {
   const authToken = opts.headers.get("Authorization") ?? null;
   const session = await isomorphicGetSession(opts.headers);

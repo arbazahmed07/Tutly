@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 import { db } from "@tutly/db";
 import type { Course } from "@prisma/client";
 import StudentWiseAssignments from "../_components/StudentWiseAssignments";

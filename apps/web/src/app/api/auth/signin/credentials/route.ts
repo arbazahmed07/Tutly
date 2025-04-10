@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { signInWithCredentials } from "@/lib/auth/credentials";
-import { AUTH_COOKIE_NAME } from "@/lib/constants";
+import { signInWithCredentials, AUTH_COOKIE_NAME } from "@tutly/auth";
 
 export const POST = async (request: Request) => {
   try {

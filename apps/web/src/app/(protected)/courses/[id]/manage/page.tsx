@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { db } from "@tutly/db";
 import UsersTable from "./_components/UsersTable";
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 
 export default async function ManageCoursePage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSessionOrRedirect();

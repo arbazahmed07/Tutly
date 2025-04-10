@@ -18,13 +18,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@auth/core": "catalog:",
-    "@auth/prisma-adapter": "catalog:",
     "@t3-oss/env-nextjs": "^0.12.0",
     "@tutly/db": "workspace:*",
     "bcryptjs": "^3.0.2",
     "next": "^15.2.3",
-    "next-auth": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "zod": "catalog:"

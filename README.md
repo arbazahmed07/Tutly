@@ -18,19 +18,15 @@ Learning Management System (LMS) with attendance tracking, assignment management
 .vscode
   └─ Recommended extensions and settings for VSCode users
 apps
-  ├─ auth-proxy
-  |   ├─ Nitro server to proxy OAuth requests in preview deployments
-  |   └─ Uses Auth.js Core
   └─ web
-      ├─ Next.js 14
-      ├─ React 18
-      ├─ Tailwind CSS
-      └─ E2E Typesafe API Server & Client
+      ├─ Next.js 15
+      ├─ React 19
+      └─ Tailwind CSS v4
 packages
   ├─ api
   |   └─ tRPC v11 router definition
   ├─ auth
-  |   └─ Authentication using next-auth
+  |   └─ Custom authentication
   ├─ db
   |   └─ Typesafe db calls using Prisma
   ├─ ui

@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getDefaultSidebarItems } from "@/config/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 import { cn } from "@/lib/utils";
 
 export interface SidebarItem {

@@ -1,18 +1,17 @@
-import NextAuth from "next-auth";
-
-import { authConfig } from "./config";
-import generateRandomPassword from "./utils";
-
-export type { Session } from "next-auth";
-
-const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
-
-export { handlers, auth, signIn, signOut };
-
-export {
-  invalidateSessionToken,
-  validateToken,
-  isSecureContext,
+export type {
+  SessionUser,
+  SessionWithUser,
+  SessionValidationResult,
 } from "./config";
 
-export { generateRandomPassword };
+export {
+  AUTH_COOKIE_NAME,
+  isSecureContext,
+  validateSessionToken,
+  validateCredentials,
+  signInWithCredentials,
+} from "./config";
+
+export { generateRandomPassword } from "./utils";
+
+export { getServerSession, getServerSessionOrRedirect } from "./config";

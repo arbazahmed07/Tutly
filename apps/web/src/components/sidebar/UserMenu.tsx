@@ -1,3 +1,5 @@
+"use client";
+
 import { Download, LockIcon, LogOut, UserIcon } from "lucide-react";
 // import {  Settings } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -15,7 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {

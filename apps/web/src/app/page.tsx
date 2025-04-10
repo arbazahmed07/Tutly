@@ -1,4 +1,4 @@
-import { getServerSession } from '@/lib/auth/session';
+import { getServerSession } from '@tutly/auth';
 import { redirect } from 'next/navigation';
 import NoDataFound from '@/components/NoDataFound';
 import { Button } from '@/components/ui/button';

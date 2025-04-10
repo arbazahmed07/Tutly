@@ -1,7 +1,7 @@
 import { db } from "@tutly/db";
 import AssignmentBoard from "./_components/AssignmentBoard";
 import NoDataFound from "@/components/NoDataFound";
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 
 export default async function AssignmentsPage() {
   const session = await getServerSessionOrRedirect();

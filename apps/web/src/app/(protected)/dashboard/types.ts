@@ -1,4 +1,4 @@
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 
 interface CourseData {
   courseId: string | undefined;

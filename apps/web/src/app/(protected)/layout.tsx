@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { AppHeader } from "@/components/sidebar/AppHeader";
 import posthog from 'posthog-js';
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;

@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Tabs } from "@/components/ui/tabs";
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 
 import Messages from "./Messages";
 

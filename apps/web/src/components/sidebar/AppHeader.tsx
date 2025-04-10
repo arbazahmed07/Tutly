@@ -2,7 +2,7 @@
 
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 
 import { ModeToggle } from "../ModeToggle";
 import { DynamicBreadcrumbs } from "./DynamicBreadcrumbs";

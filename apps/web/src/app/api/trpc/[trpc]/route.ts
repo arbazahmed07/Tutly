@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { env } from "@/env";
 import { appRouter } from "@/server/api/root";
 import { createTRPCContext } from "@/server/api/trpc";
-import { validateSessionToken } from "@/lib/auth/session";
+import { validateSessionToken } from "@tutly/auth";
 import { AUTH_COOKIE_NAME } from "@/lib/constants";
 
 /**

@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 import { db } from "@tutly/db";
 
 export default async function ReportPage() {

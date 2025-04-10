@@ -1,4 +1,4 @@
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 import { notFound } from "next/navigation";
 import type { Role } from "@prisma/client";
 

@@ -12,7 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@tutly/db";
-import type { SessionWithUser, SessionUser } from "@/lib/auth/session";
+import type { SessionWithUser, SessionUser } from "@tutly/auth";
 
 type CreateContextOptions = Partial<CreateNextContextOptions> & {
   session?: SessionWithUser | null;

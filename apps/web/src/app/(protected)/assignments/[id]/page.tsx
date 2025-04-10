@@ -1,6 +1,6 @@
 import { db } from "@tutly/db";
 import AssignmentPage from "../_components/AssignmentPage";
-import { getServerSessionOrRedirect } from "@/lib/auth/session";
+import { getServerSessionOrRedirect } from "@tutly/auth";
 import { redirect } from "next/navigation";
 
 export default async function AssignmentDetailPage({

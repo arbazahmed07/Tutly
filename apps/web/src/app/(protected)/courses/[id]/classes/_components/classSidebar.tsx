@@ -8,7 +8,7 @@ import { MdOndemandVideo } from "react-icons/md";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { SessionUser } from "@/lib/auth/session";
+import type { SessionUser } from "@tutly/auth";
 import { cn } from "@/lib/utils";
 
 import ManageFolders from "./ManageFolders";
