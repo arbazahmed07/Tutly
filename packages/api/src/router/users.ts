@@ -365,41 +365,41 @@ export const usersRouter = createTRPCRouter({
       }
     }),
 
-  // deleteSession: protectedProcedure
-  //   .input(
-  //     z.object({
-  //       sessionId: z.string(),
-  //     }),
-  //   )
-  //   .mutation(async ({ ctx, input }) => {
-  //     const currentUser = ctx.session.user;
+  deleteSession: protectedProcedure
+    .input(
+      z.object({
+        sessionId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.session.user;
 
-  //     const session = await ctx.db.session.findUnique({
-  //       where: {
-  //         id: input.sessionId,
-  //         userId: currentUser.id,
-  //       },
-  //     });
+      const session = await ctx.db.session.findUnique({
+        where: {
+          id: input.sessionId,
+          userId: currentUser.id,
+        },
+      });
 
-  //     if (!session) {
-  //       throw new Error("Session not found");
-  //     }
+      if (!session) {
+        throw new Error("Session not found");
+      }
 
-  //     if (ctx.session.id === input.sessionId) {
-  //       throw new Error("Cannot delete current session");
-  //     }
+      if (ctx.session.id === input.sessionId) {
+        throw new Error("Cannot delete current session");
+      }
 
-  //     try {
-  //       await ctx.db.session.delete({
-  //         where: {
-  //           id: input.sessionId,
-  //           userId: currentUser.id,
-  //         },
-  //       });
-  //     } catch {
-  //       throw new Error("Failed to delete session");
-  //     }
-  //   }),
+      try {
+        await ctx.db.session.delete({
+          where: {
+            id: input.sessionId,
+            userId: currentUser.id,
+          },
+        });
+      } catch {
+        throw new Error("Failed to delete session");
+      }
+    }),
 
   resetPassword: publicProcedure
     .input(

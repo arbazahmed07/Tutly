@@ -218,7 +218,7 @@ export default function Class({
         causedObjects: { classId: classId, courseId: courseId },
       });
 
-      if (response.error) {
+      if (!response.success) {
         toast.error("failed to add bookmark");
       } else {
         toast.success(isBookmarked ? "Bookmark removed" : "Bookmark added");
