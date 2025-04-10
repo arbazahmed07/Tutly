@@ -5,8 +5,7 @@ import { headers } from "next/headers";
 import { cache } from "react";
 import { cookies } from "next/headers";
 
-import { createCaller, type AppRouter } from "@/server/api/root";
-import { createTRPCContext } from "@/server/api/trpc";
+import { createCaller, type AppRouter, createTRPCContext } from "@tutly/api";
 import { createQueryClient } from "./query-client";
 import { validateSessionToken, AUTH_COOKIE_NAME } from "@tutly/auth";
 
