@@ -1,41 +1,62 @@
-FROM node:lts AS base
+FROM node:18-alpine AS base
+
+FROM base AS builder
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk update
+RUN apk add --no-cache libc6-compat curl
+
+# Set working directory
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y openssl curl && apt-get clean
+# install turbo globally
+RUN npm install -g turbo
 
-COPY package.json package-lock.json ./
-COPY prisma ./prisma/
-
-FROM base AS prod-deps
-
-ENV HUSKY=0
-
-RUN npm ci
-RUN npx prisma generate
-
-RUN cp ./node_modules/.prisma/client/*.* ./node_modules/@prisma/client/
-
-FROM base AS build
-COPY --from=prod-deps /app/node_modules ./node_modules
 COPY . .
+RUN turbo prune "@tutly/web" --docker
 
-ENV NODE_OPTIONS="--experimental-vm-modules"
-RUN npm run build
+# Add lockfile and package.json's of isolated subworkspace
+FROM base AS installer
+RUN apk update
+RUN apk add --no-cache libc6-compat curl
+WORKDIR /app
 
-FROM base AS runtime
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=prod-deps /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=prod-deps /app/node_modules/@prisma/client ./node_modules/@prisma/client
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/prisma ./prisma
+# Enable corepack for pnpm
+RUN corepack enable
+RUN corepack prepare pnpm@10.6.3 --activate
 
-ENV HOST=0.0.0.0
-ENV PORT=4321
+# First install the dependencies (as they change less often)
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+RUN pnpm install --frozen-lockfile
+
+# Build the project
+COPY --from=builder /app/out/full/ .
+
+# Generate Prisma client
+RUN cd packages/db && pnpm dlx prisma generate
+
+# todo: remove this
+ENV SKIP_ENV_VALIDATION=1
+
 ENV NODE_ENV=production
 
-RUN npx astro telemetry disable
+# Build only the web app directly
+WORKDIR /app/apps/web
+RUN pnpm build
 
-EXPOSE 4321
+FROM base AS runner
+WORKDIR /app
 
-CMD ["sh", "-c", "node ./dist/server/entry.mjs"]
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+
+CMD node apps/web/server.js

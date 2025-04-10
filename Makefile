@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: up down services services-down init dev clean check-env load-dummy-data check-db
+.PHONY: up down services services-down init dev clean check-env load-dummy-data check-db prod-deploy
 
 check-env:
 	@if [ ! -f .env ]; then \
@@ -71,8 +71,10 @@ init:
 
 dev:
 	@echo "Starting development server..."
-	pnpm dev & \
-	echo "Starting Prisma Studio..." && \
+	pnpm run dev:web
+
+studio:
+	@echo "Starting Prisma Studio..."
 	pnpm --filter @tutly/db with-env prisma studio
 
 load-dummy-data:
@@ -80,9 +82,17 @@ load-dummy-data:
 	@pnpm --filter @tutly/db seed && echo "Dummy data loaded successfully" || echo "Failed to load dummy data"
 
 up: check-env services check-db
-	$(MAKE) dev
+	@echo ""
+	@echo "All services are ready. Now you can run one of these commands in a new terminal:"
+	@echo "  make dev     - Start the web application"
+	@echo "  make studio  - Start Prisma Studio for database management"
+	@echo ""
 
 down:
 	$(MAKE) services-down
 	@pkill -f "prisma studio" || true
 	@echo "All services have been stopped"
+
+prod-deploy:
+	@echo "Building and deploying production Docker image..."
+	docker compose -f docker-compose.prod.yml up -d --build 

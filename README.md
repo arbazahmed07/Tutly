@@ -51,7 +51,7 @@ tooling
 - Node.js (version specified in .nvmrc)
 - pnpm
 
-### Installation
+### Installation and Development Setup
 
 1. Fork the repository
 2. Clone your forked repository
@@ -61,13 +61,7 @@ git clone https://github.com/yourusername/tutly.git
 cd tutly
 ```
 
-3. Navigate to the web app directory
-
-```bash
-cd apps/web
-```
-
-4. Start the development server
+3. Set up the development environment
 
 ```bash
 make up
@@ -75,13 +69,38 @@ make up
 
 This will:
 
+- Copy the example environment file to `.env`
 - Install all dependencies
-- Set up the development environment
-- Start the development server
+- Set up local Docker services (PostgreSQL and Localstack for S3)
+- Initialize the database schema
+- Load initial dummy data
 
-### Development
+4. Start the development server
+
+```bash
+make dev
+```
 
 The development server will be running at `http://localhost:3000`
+
+### Useful Commands
+
+```bash
+# Start the development server
+make dev
+
+# Open Prisma Studio for database management
+make studio
+
+# Stop all services
+make down
+
+# Clean all services, volumes, and .env
+make clean
+
+# Re-initialize the project (after cleaning)
+make init
+```
 
 ## License
 

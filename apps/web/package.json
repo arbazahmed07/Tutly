@@ -57,6 +57,7 @@
     "dayjs": "^1.11.13",
     "html2canvas": "^1.4.1",
     "input-otp": "^1.4.2",
+    "jiti": "^2.4.2",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lexical": "^0.30.0",
@@ -107,5 +108,5 @@
   "ct3aMetadata": {
     "initVersion": "7.39.3"
   },
-  "packageManager": "npm@11.2.0"
+  "packageManager": "pnpm@10.6.3"
 }
