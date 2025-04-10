@@ -13,13 +13,13 @@ check-env:
 check-db:
 	@echo "Checking database..."
 	@set -a && . .env && set +a && \
-	if ! pnpx prisma db execute --stdin <<< "SELECT 1" >/dev/null 2>&1; then \
+	if ! pnpm --filter @tutly/db with-env prisma db execute --stdin <<< "SELECT 1" >/dev/null 2>&1; then \
 		echo "Database connection failed. Setting up database..." && \
-		pnpx prisma db push || exit 1 && \
+		pnpm --filter @tutly/db with-env prisma db push || exit 1 && \
 		$(MAKE) load-dummy-data; \
 	else \
 		echo "Database connection successful. Checking for data..." && \
-		USER_COUNT=$$(pnpx prisma db execute --stdin <<< "SELECT COUNT(*) FROM \"User\";" 2>/dev/null | grep -o '[0-9]*') && \
+		USER_COUNT=$$(pnpm --filter @tutly/db with-env prisma db execute --stdin <<< "SELECT COUNT(*) FROM \"User\";" 2>/dev/null | grep -o '[0-9]*') && \
 		if [ "$$USER_COUNT" = "0" ]; then \
 			echo "Database is empty. Loading dummy data..." && \
 			$(MAKE) load-dummy-data; \
@@ -63,21 +63,21 @@ init:
 	@echo "Setting up services..."
 	make services
 	@echo "Setting up database..."
-	set -a && . .env && set +a && pnpx prisma generate
-	set -a && . .env && set +a && pnpx prisma db push
+	pnpm --filter @tutly/db with-env prisma generate
+	pnpm --filter @tutly/db with-env prisma db push
 	@echo "Loading initial data..."
 	make load-dummy-data
 	@echo "Initialization complete!"
 
 dev:
 	@echo "Starting development server..."
-	set -a && . .env && set +a && pnpm dev & \
+	pnpm dev & \
 	echo "Starting Prisma Studio..." && \
-	set -a && . .env && set +a && pnpx prisma studio
+	pnpm --filter @tutly/db with-env prisma studio
 
 load-dummy-data:
 	@echo "Loading dummy data..."
-	@set -a && . .env && set +a && pnpx tsx prisma/seed/index.ts && echo "Dummy data loaded successfully" || echo "Failed to load dummy data"
+	@pnpm --filter @tutly/db seed && echo "Dummy data loaded successfully" || echo "Failed to load dummy data"
 
 up: check-env services check-db
 	$(MAKE) dev

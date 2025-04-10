@@ -1,4 +1,4 @@
-import type { Course, User } from "@prisma/client";
+import type { Course, Role, User } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -30,6 +30,7 @@ async function seedUsers(organizationId: string) {
     const createdUser = await prisma.user.create({
       data: {
         ...user,
+        role: user.role as Role,
         password: hashedPassword,
         organizationId,
         isProfilePublic: true,

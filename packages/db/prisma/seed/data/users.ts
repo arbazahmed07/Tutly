@@ -1,5 +1,3 @@
-import { Role } from "@prisma/client";
-
 export const organization = {
   name: "Tutly Org",
   orgCode: "TUTLY001",
@@ -22,27 +20,27 @@ export const users = [
     username: "INSTRUCTOR_001",
     email: "instructor@tutly.in",
     password: "instructor@123",
-    role: Role.INSTRUCTOR,
+    role: "INSTRUCTOR",
   },
   {
     name: "Mentor 1",
     username: "MENTOR_001",
     email: "mentor1@tutly.in",
     password: "mentor@123",
-    role: Role.MENTOR,
+    role: "MENTOR",
   },
   {
     name: "Mentor 2",
     username: "MENTOR_002",
     email: "mentor2@tutly.in",
     password: "mentor@123",
-    role: Role.MENTOR,
+    role: "MENTOR",
   },
   ...Array.from({ length: 10 }, (_, i) => ({
     name: `Student ${i + 1}`,
     username: `STUDENT_${String(i + 1).padStart(3, "0")}`,
     email: `student${i + 1}@tutly.in`,
     password: "student@123",
-    role: Role.STUDENT,
+    role: "STUDENT",
   })),
 ];
