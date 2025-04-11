@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { AUTH_COOKIE_NAME } from "@tutly/auth";
+import { NODE_ENV } from "@/lib/constants";
 
 export async function middleware(request: NextRequest) {
   const start = Date.now();
@@ -83,7 +84,7 @@ function logRequest(
   time: number,
   userId: string | null,
 ) {
-  if (process.env.NODE_ENV === "production") {
+  if (NODE_ENV === "production") {
     console.log(
       `=>[${method}] ${path} - ${status} - ${time}ms - User: ${userId ?? "anonymous"}`,
     );

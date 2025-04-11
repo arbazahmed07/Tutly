@@ -4,12 +4,17 @@ import { z } from "zod";
 
 import { db } from "@tutly/db";
 
+import {
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  VAPID_PRIVATE_KEY,
+  VAPID_SUBJECT,
+} from "../lib/constants";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 webPush.setVapidDetails(
-  process.env.VAPID_SUBJECT ?? "",
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "",
-  process.env.VAPID_PRIVATE_KEY ?? "",
+  VAPID_SUBJECT,
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  VAPID_PRIVATE_KEY,
 );
 
 async function sendPushNotification(

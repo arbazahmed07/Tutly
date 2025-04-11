@@ -36,7 +36,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import type { SessionUser } from "@tutly/auth";
 import day from "@/lib/dayjs";
 import { cn } from "@/lib/utils";
-import { env } from "process";
+import { NEXT_PUBLIC_VAPID_PUBLIC_KEY } from "@/lib/constants";
 
 interface NotificationLink {
   href: string;
@@ -236,7 +236,7 @@ export default function Notifications({ user }: { user: SessionUser }) {
         }
       }
 
-      const public_key = env.NEXT_PUBLIC_PUSH_PUBLIC_KEY;
+      const public_key = NEXT_PUBLIC_VAPID_PUBLIC_KEY;
       if (!public_key) {
         toast.error("Push notification public key not configured");
         return;

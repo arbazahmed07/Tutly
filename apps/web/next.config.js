@@ -1,10 +1,3 @@
-import { fileURLToPath } from "url";
-import jiti from "jiti";
-
-// Import env files to validate at build time
-const jitiInstance = jiti(fileURLToPath(import.meta.url));
-jitiInstance("./src/env");
-
 /** @type {import("next").NextConfig} */
 const config = {
   output: 'standalone',

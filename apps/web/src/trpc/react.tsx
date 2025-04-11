@@ -9,6 +9,7 @@ import SuperJSON from "superjson";
 
 import { type AppRouter } from "@tutly/api";
 import { createQueryClient } from "./query-client";
+import { NODE_ENV, PORT, VERCEL_URL } from "@/lib/constants";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
@@ -46,7 +47,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
       links: [
         loggerLink({
           enabled: (op) =>
-            process.env.NODE_ENV === "development" ||
+            NODE_ENV === "development" ||
             (op.direction === "down" && op.result instanceof Error),
         }),
         httpBatchStreamLink({
@@ -79,6 +80,6 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return window.location.origin;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  if (VERCEL_URL) return `https://${VERCEL_URL}`;
+  return `http://localhost:${PORT ?? 3000}`;
 }

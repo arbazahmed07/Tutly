@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { signInWithCredentials, AUTH_COOKIE_NAME } from "@tutly/auth";
+import { NODE_ENV } from "@/lib/constants";
 
 export const POST = async (request: Request) => {
   try {
@@ -31,7 +32,7 @@ export const POST = async (request: Request) => {
       name: AUTH_COOKIE_NAME,
       value: sessionId,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day

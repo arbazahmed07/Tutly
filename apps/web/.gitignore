@@ -46,7 +46,6 @@ yarn-error.log*
 .idea
 
 
-/data
 *.local
 *.log
 *.swp

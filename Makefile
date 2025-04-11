@@ -95,4 +95,6 @@ down:
 
 prod-deploy:
 	@echo "Building and deploying production Docker image..."
+	@# Check if the network exists, create it if not
+	@docker network inspect app_network >/dev/null 2>&1 || docker network create app_network
 	docker compose -f docker-compose.prod.yml up -d --build 

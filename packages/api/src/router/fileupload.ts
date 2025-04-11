@@ -7,6 +7,14 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod";
 
+import {
+  AWS_ACCESS_KEY,
+  AWS_BUCKET_NAME,
+  AWS_BUCKET_REGION,
+  AWS_ENDPOINT,
+  AWS_S3_URL,
+  AWS_SECRET_KEY,
+} from "../lib/constants";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const allowedMimeTypes = [
@@ -47,14 +55,14 @@ export const allowedMimeTypes = [
 ];
 
 const s3Client = new S3Client({
-  region: process.env.AWS_BUCKET_REGION ?? "",
+  region: AWS_BUCKET_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY ?? "",
-    secretAccessKey: process.env.AWS_SECRET_KEY ?? "",
+    accessKeyId: AWS_ACCESS_KEY,
+    secretAccessKey: AWS_SECRET_KEY,
   },
   // only for dev (localstack)
-  ...(process.env.AWS_ENDPOINT && {
-    endpoint: process.env.AWS_ENDPOINT,
+  ...(AWS_ENDPOINT && {
+    endpoint: AWS_ENDPOINT,
     forcePathStyle: true,
   }),
 });
@@ -97,7 +105,7 @@ export const fileUploadRouter = createTRPCRouter({
       });
 
       const command = new PutObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
+        Bucket: AWS_BUCKET_NAME,
         Key: `${file.fileType}/${file.internalName}`,
         ContentType: input.mimeType,
       });
@@ -126,7 +134,7 @@ export const fileUploadRouter = createTRPCRouter({
       }
 
       const command = new GetObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
+        Bucket: AWS_BUCKET_NAME,
         Key: `${file.fileType}/${file.internalName}`,
       });
 
@@ -175,7 +183,7 @@ export const fileUploadRouter = createTRPCRouter({
       if (!file) throw new Error("File not found");
 
       const publicUrl = file.isPublic
-        ? `${process.env.AWS_S3_URL}/${file.fileType}/${file.internalName}`
+        ? `${AWS_S3_URL}/${file.fileType}/${file.internalName}`
         : null;
 
       const updatedFile = await ctx.db.file.update({
@@ -204,7 +212,7 @@ export const fileUploadRouter = createTRPCRouter({
 
       // Delete from S3
       const command = new DeleteObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
+        Bucket: AWS_BUCKET_NAME,
         Key: `${file.fileType}/${file.internalName}`,
       });
       await s3Client.send(command);

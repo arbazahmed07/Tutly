@@ -4,6 +4,9 @@ services:
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile
+      args:
+        TURBO_TEAM: ${TURBO_TEAM}
+        TURBO_TOKEN: ${TURBO_TOKEN}
     restart: always
     ports:
       - 3000:3000
@@ -21,4 +24,4 @@ services:
 networks:
   app_network:
     name: app_network
-    driver: bridge
+    external: true

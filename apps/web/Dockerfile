@@ -36,14 +36,20 @@ COPY --from=builder /app/out/full/ .
 # Generate Prisma client
 RUN cd packages/db && pnpm dlx prisma generate
 
-# todo: remove this
+# skip env validation during build
 ENV SKIP_ENV_VALIDATION=1
 
 ENV NODE_ENV=production
 
-# Build only the web app directly
-WORKDIR /app/apps/web
-RUN pnpm build
+# Configure Turbo remote caching
+ARG TURBO_TEAM
+ENV TURBO_TEAM=$TURBO_TEAM
+
+ARG TURBO_TOKEN
+ENV TURBO_TOKEN=$TURBO_TOKEN
+
+# Build the entire app
+RUN pnpm turbo build
 
 FROM base AS runner
 WORKDIR /app

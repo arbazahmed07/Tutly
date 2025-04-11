@@ -1,5 +1,11 @@
 {
   "extends": "@tutly/tsconfig/internal-package.json",
-  "include": ["src", "prisma/seed"],
-  "exclude": ["node_modules"]
+  "include": ["src"],
+  "exclude": ["node_modules", "prisma/seed/*"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false
+  }
 }
