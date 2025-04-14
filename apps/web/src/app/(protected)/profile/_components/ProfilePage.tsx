@@ -45,24 +45,24 @@ export default function ProfilePage({ userProfile }: { userProfile: UserWithProf
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Profile</h1>
+    <div className="p-3 md:p-6">
 
       <Tabs defaultValue="basic" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
-          <TabsTrigger value="basic">Basic Details</TabsTrigger>
-          <TabsTrigger value="personal">Personal</TabsTrigger>
-          <TabsTrigger value="professional">Professional</TabsTrigger>
-          <TabsTrigger value="address">Address</TabsTrigger>
-          <TabsTrigger value="academic">Academic</TabsTrigger>
-          <TabsTrigger value="social">Social</TabsTrigger>
-          <TabsTrigger value="experience">Experience</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
-          {/* <TabsTrigger value="password">Password</TabsTrigger> */}
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="mb-2 w-max min-w-full md:grid md:grid-cols-4 lg:grid-cols-8">
+            <TabsTrigger value="basic" className="text-sm md:text-base">Basic Details</TabsTrigger>
+            <TabsTrigger value="personal" className="text-sm md:text-base">Personal</TabsTrigger>
+            <TabsTrigger value="professional" className="text-sm md:text-base">Professional</TabsTrigger>
+            <TabsTrigger value="address" className="text-sm md:text-base">Address</TabsTrigger>
+            <TabsTrigger value="academic" className="text-sm md:text-base">Academic</TabsTrigger>
+            <TabsTrigger value="social" className="text-sm md:text-base">Social</TabsTrigger>
+            <TabsTrigger value="experience" className="text-sm md:text-base">Experience</TabsTrigger>
+            <TabsTrigger value="documents" className="text-sm md:text-base">Documents</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="basic">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <BasicDetails
               avatar={userProfile?.image || ""}
               email={userProfile?.email || ""}
@@ -77,7 +77,7 @@ export default function ProfilePage({ userProfile }: { userProfile: UserWithProf
         </TabsContent>
 
         <TabsContent value="personal">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <PersonalDetails
               dateOfBirth={profile?.dateOfBirth as Date}
               hobbies={profile?.hobbies || []}
@@ -88,7 +88,7 @@ export default function ProfilePage({ userProfile }: { userProfile: UserWithProf
         </TabsContent>
 
         <TabsContent value="professional">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <ProfessionalProfiles
               professionalProfiles={profile?.professionalProfiles as Record<string, string>}
               onUpdate={handleUpdateProfile}
@@ -97,7 +97,7 @@ export default function ProfilePage({ userProfile }: { userProfile: UserWithProf
         </TabsContent>
 
         <TabsContent value="address">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <Address
               address={profile?.address as Record<string, string>}
               onUpdate={handleUpdateProfile}
@@ -106,7 +106,7 @@ export default function ProfilePage({ userProfile }: { userProfile: UserWithProf
         </TabsContent>
 
         <TabsContent value="academic">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <AcademicDetails
               academicDetails={profile?.academicDetails as Record<string, string>}
               onUpdate={handleUpdateProfile}
@@ -115,7 +115,7 @@ export default function ProfilePage({ userProfile }: { userProfile: UserWithProf
         </TabsContent>
 
         <TabsContent value="experience">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <Experience
               experiences={profile?.experiences as Array<Record<string, any>>}
               onUpdate={handleUpdateProfile}
@@ -124,7 +124,7 @@ export default function ProfilePage({ userProfile }: { userProfile: UserWithProf
         </TabsContent>
 
         <TabsContent value="social">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <SocialLinks
               socialLinks={profile?.socialLinks as Record<string, string>}
               onUpdate={handleUpdateProfile}
@@ -133,7 +133,7 @@ export default function ProfilePage({ userProfile }: { userProfile: UserWithProf
         </TabsContent>
 
         <TabsContent value="documents">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             <Documents
               documents={profile?.documents as Record<string, string>}
               onUpdate={handleUpdateProfile}
