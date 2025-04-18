@@ -32,6 +32,7 @@ export default async function TutorLeaderboardPage({
   const courses = enrolledCourses
     .map((enrolled) => enrolled.course)
     .filter((course): course is NonNullable<typeof course> => course !== null);
+    
 
   const courseIds = courses.map((course) => course.id);
 
@@ -39,9 +40,8 @@ export default async function TutorLeaderboardPage({
     currentUser.role === "INSTRUCTOR"
       ? await db.enrolledUsers.findMany({
         where: {
-          courseId: {
-            in: courseIds,
-          },
+          courseId:
+          {in:courseIds},
           user: {
             role: "MENTOR",
             organizationId: currentUser.organizationId,
@@ -57,6 +57,7 @@ export default async function TutorLeaderboardPage({
               mobile: true,
             },
           },
+          
         },
         distinct: ["username"],
       })
@@ -134,8 +135,8 @@ export default async function TutorLeaderboardPage({
     name: mentor.user.name,
     image: mentor.user.image,
     mobile: mentor.user.mobile,
+    courseId:mentor.courseId
   }));
-
   return (
     <Leaderboard
       submissions={sortedSubmissions}

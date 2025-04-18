@@ -52,6 +52,7 @@ interface Mentor {
   name: string;
   image: string | null;
   mobile: string | null;
+  courseId:string|null;
 }
 
 interface CurrentUser {
@@ -162,7 +163,8 @@ const LeaderBoard = ({
 
       <div className="mt-4 flex flex-wrap justify-between items-center gap-4">
         <div className="flex flex-wrap gap-3">
-          {courses?.map((course) => (
+          {courses?.sort((a, b) => a.title.localeCompare(b.title))
+          .map((course) => (
             <button
               hidden={!course.isPublished}
               onClick={() => handleCourseChange(course.id)}
@@ -185,7 +187,7 @@ const LeaderBoard = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Mentors</SelectItem>
-              {mentors?.map((mentor) => (
+              {mentors?.filter((mentor)=>mentor.courseId==selectedCourse).map((mentor) => (
                 <SelectItem key={mentor.id} value={mentor.username}>
                   {mentor.username}
                 </SelectItem>
