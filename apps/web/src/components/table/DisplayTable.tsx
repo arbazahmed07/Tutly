@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  Download,
   Filter,
+  ImportIcon,
   LayoutGrid,
   Plus,
   Table as TableIcon,
@@ -34,6 +34,7 @@ import { DeleteConfirmation } from "./DeleteConfirmationDialog";
 import ViewModal from "./ViewModal";
 import TableList from "./TableList";
 import GridView from "./GridView";
+import { ExportIcon } from "@codesandbox/sandpack-react";
 
 export interface IAction {
   label: string;
@@ -260,7 +261,7 @@ export default function DisplayTable({
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" className="flex items-center gap-2">
             <Filter className="h-4 w-4" />
-            <span>Filter</span>
+            <span className="hidden lg:inline">Filter</span>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80">
@@ -465,19 +466,26 @@ export default function DisplayTable({
     }
   };
 
+    
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">{title}</h2>
-        <div className="flex gap-2 items-center">
-          {searchable && (
-            <Input
-              placeholder="Search..."
-              value={localSearchTerm}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="max-w-sm"
-            />
-          )}
+      <h2 className="text-2xl font-bold">{title}</h2>
+        <div className="flex flex-wrap items-center gap-2 w-full md:justify-between">
+          <div>
+            {searchable && (
+              <div className="relative">
+                <div className="block w-[200px]">
+                  <Input
+                    placeholder="Search..."
+                    value={localSearchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
           {filterable && <FilterMenu />}
           <Button
             variant="outline"
@@ -489,13 +497,13 @@ export default function DisplayTable({
           >
             {viewMode === "table" ? (
               <>
-                <TableIcon className="h-4 w-4" />
-                <span>Table View</span>
+                <TableIcon className="h-5 w-5" />
+                <span className="hidden lg:inline">Table View</span>
               </>
             ) : (
               <>
-                <LayoutGrid className="h-4 w-4" />
-                <span>Grid View</span>
+                <LayoutGrid className="h-5 w-5" />
+                <span className="hidden lg:inline">Grid View</span>
               </>
             )}
           </Button>
@@ -506,9 +514,10 @@ export default function DisplayTable({
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              <span>New</span>
+              <span className="hidden lg:inline">New</span>
             </Button>
           )}
+
           {onBulkImport && (
             <BulkImport
               columns={columns}
@@ -516,13 +525,18 @@ export default function DisplayTable({
               onImport={handleBulkImport}
             />
           )}
+
           {exportable && (
-            <Button onClick={exportToCSV} variant="outline" className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              <span>Export</span>
+            <Button
+              onClick={exportToCSV}
+              variant="outline"
+              className="flex items-center gap-1"
+            >
+              <ImportIcon size={20} className="rotate-180" />
+              <span className="hidden lg:inline">Export</span>
             </Button>
           )}
-        </div>
+          </div>
       </div>
 
       {activeFilters.length > 0 && (
