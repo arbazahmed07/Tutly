@@ -253,8 +253,9 @@ export const submissionRouter = createTRPCRouter({
 
     const submissionsByAssignment = filteredSubmissions.reduce(
       (acc, submission) => {
-        acc[submission.attachmentId] ??= [];
-        acc[submission.attachmentId]?.push(submission);
+        const attachmentId = submission.attachmentId;
+        acc[attachmentId] = acc[attachmentId] ?? [];
+        acc[attachmentId].push(submission);
         return acc;
       },
       {} as Record<string, SubmissionWithDetails[]>,
@@ -312,8 +313,6 @@ export const submissionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { user: _user } = ctx.session;
-
       const submission = await ctx.db.submission.findUnique({
         where: {
           id: input.submissionId,
